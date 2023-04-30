@@ -73,7 +73,7 @@ public class UserRepository : IUserRepository
             _applicationDbContext.Users.Remove(foundedUser);
             await _applicationDbContext.SaveChangesAsync();
         }
-        catch (Exception exception)
+        catch (Exception)
         {
             return false;
         }
