@@ -14,12 +14,9 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Controllers\" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\MeowLib.Domain\MeowLib.Domain.csproj" />
       <ProjectReference Include="..\MeowLib.WebApi.DAL\MeowLib.WebApi.DAL.csproj" />
+      <ProjectReference Include="..\MeowLIb.WebApi.Services\MeowLIb.WebApi.Services.csproj" />
     </ItemGroup>
 
 </Project>
