@@ -1,3 +1,4 @@
+using System.Security.Cryptography;
 using AutoMapper;
 using MeowLib.Domain.DbModels.UserEntity;
 using MeowLib.Domain.Dto.User;
@@ -109,7 +110,38 @@ public class UserRepository : IUserRepository
     }
 
     /// <summary>
-    /// Метод возвоаеь пользователя по его Id.
+    /// Метод проверяет существует ли пользователь с заданным логином.
+    /// </summary>
+    /// <param name="login">Логин для проверки.</param>
+    /// <returns>True - если существует, иначе - false</returns>
+    public async Task<bool> CheckForUserExistAsync(string login)
+    {
+        var user = await _applicationDbContext.Users.FirstOrDefaultAsync(u => u.Login == login);
+        return user != null;
+    }
+
+    /// <summary>
+    /// Метод получает пользователя по логину и паролю
+    /// </summary>
+    /// <param name="login">Логин пользователя.</param>
+    /// <param name="password">Хеш пароля пользователя.</param>
+    /// <returns>Dto-модель пользователя.</returns>
+    public async Task<UserDto?> GetByLoginAndPasswordAsync(string login, string password)
+    {
+        var foundedUser = await _applicationDbContext.Users.FirstOrDefaultAsync(u => u.Login == login &&
+            u.Password == password);
+
+        if (foundedUser is null)
+        {
+            return null;
+        }
+
+        var dtoUser = _mapper.Map<UserEntityModel, UserDto>(foundedUser);
+        return dtoUser;
+    }
+
+    /// <summary>
+    /// Метод возвращает пользователя по его Id.
     /// </summary>
     /// <param name="id">Id для поиска.</param>
     /// <returns></returns>
