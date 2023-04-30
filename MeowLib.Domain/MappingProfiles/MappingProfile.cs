@@ -10,7 +10,7 @@ namespace MeowLib.Domain.MappingProfiles;
 public class MappingProfile : Profile
 {
     /// <summary>
-    /// Конструктор.
+    /// Конструктор. sueta
     /// </summary>
     public MappingProfile()
     {
