@@ -22,7 +22,7 @@ public class UserController : BaseController
 
     [HttpPost]
     [Route("sign-in")]
-    [ProducesResponseType(200, Type = typeof(UserDto))]
+    [ProducesResponseType(200)]
     [ProducesResponseType(400, Type = typeof(BaseErrorResponse))]
     [ProducesResponseType(403, Type = typeof(ValidationErrorResponse))]
     public async Task<ActionResult> SignIn([FromBody] SignInRequest input)
