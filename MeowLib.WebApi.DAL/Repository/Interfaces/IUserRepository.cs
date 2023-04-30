@@ -6,10 +6,43 @@ namespace MeowLib.WebApi.DAL.Repository.Interfaces;
 
 public interface IUserRepository
 {
+    /// <summary>
+    /// Создаёт пользователя в БД и возвращает его Dto-модель.
+    /// </summary>
+    /// <param name="createUserData">Данные для создания пользователя.</param>
+    /// <returns>Dto-модель пользователя.</returns>
     Task<UserDto> CreateAsync(CreateUserEntityModel createUserData);
+    
+    /// <summary>
+    /// Метод возвращает DTO-модель пользователя по его Id.
+    /// </summary>
+    /// <param name="id">Id пользователя.</param>
+    /// <returns>Dto-модель пользователя в случае успешного поиска или null если пользователь не найден</returns>
     Task<UserDto?> GetByIdAsync(int id);
+    
+    /// <summary>
+    /// Метод удаляет пользователя по Id.
+    /// </summary>
+    /// <param name="id">Id пользователя.</param>
+    /// <returns>True - в случае удачного удаления, иначе - false</returns>
     Task<bool> DeleteByIdAsync(int id);
+    
+    /// <summary>
+    /// Метод обновляет информацию о пользователе.
+    /// </summary>
+    /// <param name="id">Id пользователя.</param>
+    /// <param name="updateUserData">Данные для обновления.</param>
+    /// <returns>Dto-модель пользователя.</returns>
+    /// <exception cref="EntityNotFoundException">
+    /// Возникает в том случае, если пользователь с заданным Id не найден
+    /// </exception>
     Task<UserDto> UpdateAsync(int id, UpdateUserEntityModel updateUserData);
+    
+    /// <summary>
+    /// Метод проверяет существует ли пользователь с заданным логином.
+    /// </summary>
+    /// <param name="login">Логин для проверки.</param>
+    /// <returns>True - если существует, иначе - false</returns>
     Task<bool> CheckForUserExistAsync(string login);
 
     /// <summary>

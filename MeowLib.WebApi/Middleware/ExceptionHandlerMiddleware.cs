@@ -2,6 +2,9 @@ using MeowLib.Domain.Exceptions;
 
 namespace MeowLib.WebApi.Middleware;
 
+/// <summary>
+/// Хендлер ошибок.
+/// </summary>
 public class ExceptionHandlerMiddleware
 {
     private readonly RequestDelegate _next;
