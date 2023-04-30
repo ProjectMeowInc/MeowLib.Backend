@@ -10,14 +10,6 @@ public class ApiException : Exception
     public string ErrorMessage { get; protected set; } = "API error";
 
     /// <summary>
-    /// Конструктор.
-    /// </summary>
-    public ApiException()
-    {
-        
-    }
-
-    /// <summary>
     /// Конструктор
     /// </summary>
     /// <param name="errorMessage">Сообщение.</param>

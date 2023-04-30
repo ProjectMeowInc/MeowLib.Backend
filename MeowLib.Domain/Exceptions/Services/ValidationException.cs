@@ -6,9 +6,9 @@ public class ValidationException : ApiException
 {
     public IEnumerable<ValidationErrorModel> ValidationErrors { get; protected set; }
     
-    public ValidationException(IEnumerable<ValidationErrorModel> validationErrors)
+    public ValidationException(IEnumerable<ValidationErrorModel> validationErrors) 
+        : base("Некорректные входные данные")
     {
-        ErrorMessage = "Некорректные входные данные";
         ValidationErrors = validationErrors;
     }
 }
