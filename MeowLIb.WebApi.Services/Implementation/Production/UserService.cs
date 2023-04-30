@@ -83,7 +83,7 @@ public class UserService : IUserService
     /// <param name="login">Логин пользователя.</param>
     /// <param name="password">Пароль пользователя.</param>
     /// <returns>JWT-токен для авторизации.</returns>
-    /// <exception cref="ApiException"></exception>
+    /// <exception cref="ApiException">Возникает в случае если указан неверный логин или пароль</exception>
     public async Task<string> LogIn(string login, string password)
     {
         var hashedPassword = _hashService.HashString(password);
