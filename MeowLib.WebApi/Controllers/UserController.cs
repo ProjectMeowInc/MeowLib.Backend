@@ -3,13 +3,14 @@ using MeowLib.Domain.Exceptions;
 using MeowLib.Domain.Exceptions.Services;
 using MeowLib.Domain.Requests.User;
 using MeowLib.Domain.Responses;
+using MeowLib.Domain.Responses.User;
 using MeowLib.WebApi.Abstractions;
 using MeowLIb.WebApi.Services.Interface;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MeowLib.WebApi.Controllers;
 
-[Route("users")]
+[Route("api/users")]
 public class UserController : BaseController
 {
     private readonly IUserService _userService;
@@ -28,8 +29,8 @@ public class UserController : BaseController
     {
         try
         {
-            var user = await _userService.SignInAsync(input.Login, input.Password);
-            return Json(user);
+            var _ = await _userService.SignInAsync(input.Login, input.Password);
+            return Ok();
         }
         catch (ValidationException validationException)
         {
@@ -40,6 +41,25 @@ public class UserController : BaseController
         {
             var responseData = new BaseErrorResponse(apiException.ErrorMessage);
             return Json(responseData, 403);
+        }
+    }
+
+    [HttpPost]
+    [Route("log-in")]
+    [ProducesResponseType(200, Type = typeof(LogInResponse))]
+    [ProducesResponseType(401, Type = typeof(BaseErrorResponse))]
+    public async Task<ActionResult> LogIn([FromBody] LogInRequest input)
+    {
+        try
+        {
+            var jwtToken = await _userService.LogIn(input.Login, input.Password);
+            var responseData = new LogInResponse(jwtToken);
+            return Json(responseData);
+        }
+        catch (ApiException apiException)
+        {
+            var responseData = new BaseErrorResponse(apiException.ErrorMessage);
+            return Json(responseData, 401);
         }
     }
 }
