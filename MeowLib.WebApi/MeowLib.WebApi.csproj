@@ -19,6 +19,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\MeowLib.Domain\MeowLib.Domain.csproj" />
+      <ProjectReference Include="..\MeowLib.WebApi.DAL\MeowLib.WebApi.DAL.csproj" />
     </ItemGroup>
 
 </Project>
