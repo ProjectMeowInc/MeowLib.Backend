@@ -37,6 +37,13 @@ builder.Services.AddDbContext<ApplicationDbContext>(dbOptions =>
 
 var app = builder.Build();
 
+app.UseCors(corsBuilder =>
+{
+    corsBuilder.AllowAnyHeader();
+    corsBuilder.AllowAnyMethod();
+    corsBuilder.AllowAnyOrigin();
+});
+
 app.UseMiddleware<ExceptionHandlerMiddleware>();
 
 if (app.Environment.IsDevelopment())
