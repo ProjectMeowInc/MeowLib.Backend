@@ -1,17 +1,32 @@
 using MeowLib.Domain.MappingProfiles;
 using MeowLib.WebApi.DAL;
+using MeowLib.WebApi.DAL.Repository.Implementation.Production;
+using MeowLib.WebApi.DAL.Repository.Interfaces;
+using MeowLib.WebApi.Middleware;
+using MeowLIb.WebApi.Services.Implementation.Production;
+using MeowLIb.WebApi.Services.Interface;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-builder.Services.AddAutoMapper(typeof(MappingProfile));
+var services = builder.Services;
+services.AddControllers();
+services.AddEndpointsApiExplorer();
+services.AddSwaggerGen();
+services.AddAutoMapper(typeof(MappingProfile));
+
+// Init repos
+services.AddScoped<IUserRepository, UserRepository>();
+
+// Init services
+services.AddSingleton<IHashService, HashService>();
+services.AddSingleton<IJwtTokenService, JwtTokensService>();
+
+services.AddScoped<IUserService, UserService>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(dbOptions =>
 {
-    var connectionString = builder.Configuration.GetValue<string>("ConnectionString:Main");
+    var connectionString = builder.Configuration.GetValue<string>("ConnectionStrings:Main");
     if (string.IsNullOrEmpty(connectionString))
     {
         throw new Exception("Connection string is null or empty");
@@ -21,6 +36,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(dbOptions =>
 });
 
 var app = builder.Build();
+
+app.UseMiddleware<ExceptionHandlerMiddleware>();
 
 if (app.Environment.IsDevelopment())
 {

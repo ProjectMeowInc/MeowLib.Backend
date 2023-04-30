@@ -1,3 +1,5 @@
+using MeowLib.Domain.Enums;
+
 namespace MeowLib.Domain.DbModels.UserEntity;
 
 /// <summary>
@@ -19,4 +21,9 @@ public class UserEntityModel
     /// Пароль пользователя.
     /// </summary>
     public string Password { get; set; } = null!;
+
+    /// <summary>
+    /// Роль пользователя.
+    /// </summary>
+    public UserRolesEnum Role { get; set; } = UserRolesEnum.User;
 }

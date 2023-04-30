@@ -1,4 +1,5 @@
 using MeowLib.Domain.DbModels.UserEntity;
+using MeowLib.Domain.Enums;
 
 namespace MeowLib.Domain.Dto.User;
 
@@ -16,4 +17,9 @@ public class UserDto
     /// Логин пользователя.
     /// </summary>
     public string Login { get; set; } = null!;
+    
+    /// <summary>
+    /// Роль пользователя.
+    /// </summary>
+    public UserRolesEnum Role { get; set; }
 }
