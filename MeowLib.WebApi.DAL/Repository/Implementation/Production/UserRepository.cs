@@ -144,7 +144,7 @@ public class UserRepository : IUserRepository
     /// Метод возвращает пользователя по его Id.
     /// </summary>
     /// <param name="id">Id для поиска.</param>
-    /// <returns></returns>
+    /// <returns>Модель пользователя если нашёл, иначе - null</returns>
     private async Task<UserEntityModel?> GetUserByIdAsync(int id)
     {
         var foundedUser = await _applicationDbContext.Users.FirstOrDefaultAsync(u => u.Id == id);
