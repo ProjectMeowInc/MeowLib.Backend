@@ -1,3 +1,4 @@
+using MeowLib.Domain.DbModels.AuthorEntity;
 using MeowLib.Domain.DbModels.UserEntity;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,8 +9,6 @@ namespace MeowLib.WebApi.DAL;
 /// </summary>
 public class ApplicationDbContext : DbContext
 {
-    public DbSet<UserEntityModel> Users { get; set; } = null!;
-
     /// <summary>
     /// Конструктор.
     /// </summary>
@@ -18,4 +17,14 @@ public class ApplicationDbContext : DbContext
     {
         Database.EnsureCreated();
     }
+    
+    /// <summary>
+    /// Таблица пользователей.
+    /// </summary>
+    public DbSet<UserEntityModel> Users { get; set; } = null!;
+    
+    /// <summary>
+    /// Таблица авторов.
+    /// </summary>
+    public DbSet<AuthorEntityModel> Authors { get; set; } = null!;
 }
