@@ -68,7 +68,7 @@ public class UserService : IUserService
             throw new ValidationException(validationErrors);
         }
         
-        var hashedPassword = _hashService.HashString(login);
+        var hashedPassword = _hashService.HashString(password);
         var userData = new CreateUserEntityModel
         {
             Login = login,
