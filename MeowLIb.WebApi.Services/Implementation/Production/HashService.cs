@@ -17,7 +17,8 @@ public class HashService : IHashService
     public string HashString(string stringToHash)
     {
         var stringBytes = Encoding.UTF8.GetBytes(stringToHash);
-        var hashedBytes = SHA256.HashData(stringBytes);
+        using var hashAlg = SHA256.Create();
+        var hashedBytes = hashAlg.ComputeHash(stringBytes);
         return BitConverter.ToString(hashedBytes).Replace("-", string.Empty);
     }
 }
