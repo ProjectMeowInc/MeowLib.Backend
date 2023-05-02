@@ -1,3 +1,5 @@
+using System.Text.Encodings.Web;
+using System.Text.Unicode;
 using MeowLib.Domain.MappingProfiles;
 using MeowLib.WebApi.DAL;
 using MeowLib.WebApi.DAL.Repository.Implementation.Production;
@@ -10,7 +12,12 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 var services = builder.Services;
-services.AddControllers();
+services.AddControllers()
+    .AddJsonOptions(jsonOptions =>
+    {
+        jsonOptions.JsonSerializerOptions.Encoder = JavaScriptEncoder.Create(UnicodeRanges.All);
+    });
+    
 services.AddEndpointsApiExplorer();
 services.AddSwaggerGen();
 services.AddAutoMapper(typeof(MappingProfile));
