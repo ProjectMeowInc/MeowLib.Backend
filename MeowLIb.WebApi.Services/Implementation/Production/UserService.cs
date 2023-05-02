@@ -52,6 +52,8 @@ public class UserService : IUserService
             });
         }
 
+        password = password.Trim();
+        
         if (password.Length < 6)
         {
             validationErrors.Add(new ValidationErrorModel
