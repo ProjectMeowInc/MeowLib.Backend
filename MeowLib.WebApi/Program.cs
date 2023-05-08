@@ -8,6 +8,7 @@ using MeowLib.WebApi.Middleware;
 using MeowLIb.WebApi.Services.Implementation.Production;
 using MeowLIb.WebApi.Services.Interface;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,7 +20,35 @@ services.AddControllers()
     });
     
 services.AddEndpointsApiExplorer();
-services.AddSwaggerGen();
+
+services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo { Title = "BEST READER API", Version = "v1"});
+    options.AddSecurityDefinition("AuthToken", new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header,
+        Name = "AuthToken",
+        Description = "Access token",
+        Type = SecuritySchemeType.Http,
+        BearerFormat = "JWT",
+        Scheme = "Bearer"
+    });
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Id = "AuthToken",
+                    Type = ReferenceType.SecurityScheme,
+                }
+            },
+            new List<string>()
+        }
+    });
+});
+
 services.AddAutoMapper(typeof(MappingProfile));
 
 // Init repos
