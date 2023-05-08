@@ -19,7 +19,7 @@ public class BaseController : ControllerBase
     [NonAction]
     protected async Task<UserDto> GetUserData()
     {
-        if (HttpContext.Items.TryGetValue("AuthUserData", out object? authData))
+        if (HttpContext.Items.TryGetValue("UserData", out object? authData))
         {
             if (authData is null)
             {
