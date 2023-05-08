@@ -19,5 +19,5 @@ public interface IJwtTokenService
     /// </summary>
     /// <param name="token">Токен.</param>
     /// <returns>Информация о пользователе в случае удачного парсинга, иначе - null</returns>
-    Task<UserDto?> ParseToken(string token);
+    Task<UserDto?> ParseTokenAsync(string token);
 }
