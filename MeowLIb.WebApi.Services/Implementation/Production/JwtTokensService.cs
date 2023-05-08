@@ -24,7 +24,7 @@ public class JwtTokensService : IJwtTokenService
     public JwtTokensService()
     {
         // Init secret key
-        var secretString = "shahjashkjwqlkjqyqw";
+        var secretString = "askgjiou21SAJDKSAJLDJasdasd";
         var secretKey = Encoding.UTF8.GetBytes(secretString);
         _securityKey = new SymmetricSecurityKey(secretKey);
         
@@ -47,10 +47,10 @@ public class JwtTokensService : IJwtTokenService
                 new Claim("Login", userData.Login),
                 new Claim("Role", userData.Role.ToString())
             }),
-            Expires = DateTime.UtcNow.AddDays(7),
+            Expires = DateTime.UtcNow.AddHours(1),
             Issuer = _issuer,
             Audience = _audience,
-            SigningCredentials = new SigningCredentials(_securityKey, SecurityAlgorithms.HmacSha256Signature)
+            SigningCredentials = new SigningCredentials(_securityKey, SecurityAlgorithms.HmacSha256Signature),
         };
 
         var token = TokenHandler.CreateToken(tokenDescription);
@@ -62,9 +62,9 @@ public class JwtTokensService : IJwtTokenService
     /// </summary>
     /// <param name="token">Токен.</param>
     /// <returns>Информация о пользователе в случае удачного парсинга, иначе - null</returns>
-    public async Task<UserDto?> ParseToken(string token)
+    public async Task<UserDto?> ParseTokenAsync(string token)
     {
-        var tokenData = await TokenHandler.ValidateTokenAsync(token, new TokenValidationParameters
+        var tokenValidationResult = await TokenHandler.ValidateTokenAsync(token, new TokenValidationParameters
         {
             ValidateIssuer = true,
             ValidateAudience = true,
@@ -74,18 +74,32 @@ public class JwtTokensService : IJwtTokenService
             IssuerSigningKey = _securityKey
         });
 
-        if (tokenData is null)
+        if (!tokenValidationResult.IsValid)
         {
             return null;
         }
 
-        var claims = tokenData.Claims;
+        var claims = tokenValidationResult.Claims;
+
+        var expiredAtObject = claims["exp"];
+        if (expiredAtObject is not int expiredAtInt)
+        {
+            // TODO: ADD LOG
+            return null;
+        }
+        
+        var expirationTime = DateTimeOffset.FromUnixTimeSeconds(expiredAtInt).UtcDateTime;
+
+        if (expirationTime < DateTime.UtcNow)
+        {
+            return null;
+        }
         
         var userData = new UserDto
         {
-            Id = (int)claims["Id"],
+            Id = int.Parse((string)claims["Id"]),
             Login = (string)claims["Login"],
-            Role = (UserRolesEnum)claims["Role"]
+            Role = Enum.Parse<UserRolesEnum>((string)claims["Role"])
         };
 
         return userData;
