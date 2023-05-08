@@ -1,6 +1,8 @@
 using MeowLib.Domain.Dto.Author;
+using MeowLib.Domain.Enums;
 using MeowLib.Domain.Requests.Author;
 using MeowLib.WebApi.Abstractions;
+using MeowLib.WebApi.Filters;
 using MeowLIb.WebApi.Services.Interface;
 using Microsoft.AspNetCore.Mvc;
 
@@ -24,7 +26,7 @@ public class AuthorController : BaseController
         return Json(authors);
     }
 
-    [HttpPost]
+    [HttpPost, AuthorizationFilter(RequiredRoles = new [] { UserRolesEnum.Editor, UserRolesEnum.Admin})]
     [ProducesResponseType(200, Type = typeof(AuthorDto))]
     public async Task<ActionResult> CreateAuthor([FromBody] CreateAuthorRequest input)
     {
