@@ -43,9 +43,9 @@ public class JwtTokensService : IJwtTokenService
         {
             Subject = new ClaimsIdentity(new[]
             {
-                new Claim("Id", userData.Id.ToString()),
-                new Claim("Login", userData.Login),
-                new Claim("Role", userData.Role.ToString())
+                new Claim("id", userData.Id.ToString()),
+                new Claim("login", userData.Login),
+                new Claim("role", userData.Role.ToString())
             }),
             Expires = DateTime.UtcNow.AddHours(1),
             Issuer = _issuer,
@@ -97,9 +97,9 @@ public class JwtTokensService : IJwtTokenService
         
         var userData = new UserDto
         {
-            Id = int.Parse((string)claims["Id"]),
-            Login = (string)claims["Login"],
-            Role = Enum.Parse<UserRolesEnum>((string)claims["Role"])
+            Id = int.Parse((string)claims["id"]),
+            Login = (string)claims["login"],
+            Role = Enum.Parse<UserRolesEnum>((string)claims["role"])
         };
 
         return userData;
