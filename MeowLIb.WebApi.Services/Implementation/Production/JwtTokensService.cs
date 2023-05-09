@@ -24,7 +24,7 @@ public class JwtTokensService : IJwtTokenService
     public JwtTokensService()
     {
         // Init secret key
-        var secretString = "askgjiou21SAJDKSAJLDJasdasd";
+        var secretString = "QevAyHIKuOHJwG6sdYwnfrrbUW61cu4r3vuyzSNkBw1itzJD5AMXdKqLfzv";
         var secretKey = Encoding.UTF8.GetBytes(secretString);
         _securityKey = new SymmetricSecurityKey(secretKey);
         
@@ -45,7 +45,7 @@ public class JwtTokensService : IJwtTokenService
             {
                 new Claim("id", userData.Id.ToString()),
                 new Claim("login", userData.Login),
-                new Claim("role", userData.Role.ToString())
+                new Claim("userRole", userData.Role.ToString())
             }),
             Expires = DateTime.UtcNow.AddHours(1),
             Issuer = _issuer,
@@ -99,7 +99,7 @@ public class JwtTokensService : IJwtTokenService
         {
             Id = int.Parse((string)claims["id"]),
             Login = (string)claims["login"],
-            Role = Enum.Parse<UserRolesEnum>((string)claims["role"])
+            Role = Enum.Parse<UserRolesEnum>((string)claims["userRole"])
         };
 
         return userData;
