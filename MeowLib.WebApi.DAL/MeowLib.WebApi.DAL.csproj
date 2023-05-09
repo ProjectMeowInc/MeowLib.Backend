@@ -14,8 +14,4 @@
       <ProjectReference Include="..\MeowLib.Domain\MeowLib.Domain.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Repository\Implementation\Tests\" />
-    </ItemGroup>
-
 </Project>

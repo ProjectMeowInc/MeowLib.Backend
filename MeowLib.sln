@@ -8,6 +8,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeowLib.WebApi.DAL", "MeowL
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeowLIb.WebApi.Services", "MeowLIb.WebApi.Services\MeowLIb.WebApi.Services.csproj", "{83648EFB-49E6-4C41-B63D-4251F75AEA17}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MeowLib.Tests", "MeowLib.Tests", "{ED876681-426D-489A-859E-157A4073E983}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeowLib.Tests.Services", "MeowLib.Tests.Services\MeowLib.Tests.Services.csproj", "{FF071EB1-7C3B-44D3-8F2E-83E65D6D685C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +34,12 @@ Global
 		{83648EFB-49E6-4C41-B63D-4251F75AEA17}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{83648EFB-49E6-4C41-B63D-4251F75AEA17}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{83648EFB-49E6-4C41-B63D-4251F75AEA17}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FF071EB1-7C3B-44D3-8F2E-83E65D6D685C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FF071EB1-7C3B-44D3-8F2E-83E65D6D685C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FF071EB1-7C3B-44D3-8F2E-83E65D6D685C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FF071EB1-7C3B-44D3-8F2E-83E65D6D685C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{FF071EB1-7C3B-44D3-8F2E-83E65D6D685C} = {ED876681-426D-489A-859E-157A4073E983}
 	EndGlobalSection
 EndGlobal
