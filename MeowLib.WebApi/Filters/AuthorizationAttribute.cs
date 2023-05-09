@@ -7,7 +7,7 @@ using Microsoft.Extensions.Primitives;
 
 namespace MeowLib.WebApi.Filters;
 
-public class AuthorizationFilterAttribute : Attribute, IAsyncAuthorizationFilter
+public class AuthorizationAttribute : Attribute, IAsyncAuthorizationFilter
 {
     public UserRolesEnum[] RequiredRoles { get; set; } = Array.Empty<UserRolesEnum>();
     
