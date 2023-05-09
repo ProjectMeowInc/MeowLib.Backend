@@ -39,6 +39,8 @@ public class ExceptionHandlerMiddleware
             
             Console.WriteLine("Неожиданное исключение!");
             Console.WriteLine(exception.Message);
+            Console.WriteLine(exception.StackTrace);
+            
             context.Response.StatusCode = 500;
             await context.Response.WriteAsJsonAsync(new
             {
