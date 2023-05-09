@@ -1,5 +1,6 @@
 using MeowLib.Domain.Dto.User;
 using MeowLib.Domain.Exceptions;
+using MeowLib.Domain.Responses;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MeowLib.WebApi.Abstractions;
@@ -14,6 +15,12 @@ public class BaseController : ControllerBase
         {
             StatusCode = statusCode
         };
+    }
+
+    [NonAction]
+    protected JsonResult Error(string errorMessage, int statusCode = 200)
+    {
+        return Json(new BaseErrorResponse(errorMessage), statusCode);
     }
     
     [NonAction]
