@@ -22,11 +22,21 @@ public class ExceptionHandlerMiddleware
         }
         catch (ApiException apiException)
         {
+            if (context.Response.HasStarted)
+            {
+                return;
+            }
+            
             context.Response.StatusCode = 500;
             await context.Response.WriteAsJsonAsync(apiException);
         }
         catch (Exception exception)
         {
+            if (context.Response.HasStarted)
+            {
+                return;
+            }
+            
             Console.WriteLine("Неожиданное исключение!");
             Console.WriteLine(exception.Message);
             context.Response.StatusCode = 500;
