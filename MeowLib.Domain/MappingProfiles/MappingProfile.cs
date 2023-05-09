@@ -3,6 +3,7 @@ using MeowLib.Domain.DbModels.AuthorEntity;
 using MeowLib.Domain.DbModels.UserEntity;
 using MeowLib.Domain.Dto.Author;
 using MeowLib.Domain.Dto.User;
+using MeowLib.Domain.Requests.Author;
 
 namespace MeowLib.Domain.MappingProfiles;
 
@@ -23,5 +24,7 @@ public class MappingProfile : Profile
         // Authors mapping
         CreateMap<CreateAuthorEntityModel, AuthorEntityModel>();
         CreateMap<AuthorEntityModel, AuthorDto>();
+        CreateMap<UpdateAuthorEntityModel, UpdateAuthorRequest>()
+            .ReverseMap();
     }
 }
