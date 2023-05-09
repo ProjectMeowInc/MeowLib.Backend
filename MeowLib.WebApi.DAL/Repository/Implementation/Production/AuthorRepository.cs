@@ -1,6 +1,7 @@
 using AutoMapper;
 using MeowLib.Domain.DbModels.AuthorEntity;
 using MeowLib.Domain.Dto.Author;
+using MeowLib.Domain.Exceptions.DAL;
 using MeowLib.WebApi.DAL.Repository.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -77,6 +78,34 @@ public class AuthorRepository : IAuthorRepository
     }
 
     /// <summary>
+    /// Метод обновляет автора по Id.
+    /// </summary>
+    /// <param name="id">Id автора.</param>
+    /// <param name="updateAuthorData">Данные для обновления.</param>
+    /// <returns>Обновлённую информацию об авторе.</returns>
+    /// <exception cref="EntityNotFoundException">Возникает если автор под указаным Id не найден.</exception>
+    public async Task<AuthorDto> UpdateByIdAsync(int id, UpdateAuthorEntityModel updateAuthorData)
+    {
+        var foundedAuthor = await GetAuthorById(id);
+        if (foundedAuthor is null)
+        {
+            throw new EntityNotFoundException(nameof(AuthorEntityModel), $"{nameof(id)} = {id}");
+        }
+
+        if (updateAuthorData.Name is not null)
+        {
+            foundedAuthor.Name = updateAuthorData.Name;
+        }
+
+        _applicationDbContext.Authors.Update(foundedAuthor);
+        await _applicationDbContext.SaveChangesAsync();
+
+        return _mapper.Map<AuthorEntityModel, AuthorDto>(foundedAuthor);
+    }
+
+    #region Приватные методы
+    
+    /// <summary>
     /// Метод получает автора по его Id.  
     /// </summary>
     /// <param name="id">Id автора.</param>
@@ -87,4 +116,6 @@ public class AuthorRepository : IAuthorRepository
 
         return foundedAuthor;
     }
+
+    #endregion
 }

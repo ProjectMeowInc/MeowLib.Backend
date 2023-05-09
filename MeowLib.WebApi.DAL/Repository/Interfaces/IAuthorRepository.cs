@@ -1,5 +1,6 @@
 using MeowLib.Domain.DbModels.AuthorEntity;
 using MeowLib.Domain.Dto.Author;
+using MeowLib.Domain.Exceptions.DAL;
 
 namespace MeowLib.WebApi.DAL.Repository.Interfaces;
 
@@ -31,4 +32,13 @@ public interface IAuthorRepository
     /// </summary>
     /// <returns>Список всех авторов</returns>
     Task<IEnumerable<AuthorDto>> GetAll();
+
+    /// <summary>
+    /// Метод обновляет автора по Id.
+    /// </summary>
+    /// <param name="id">Id автора.</param>
+    /// <param name="updateAuthorData">Данные для обновления.</param>
+    /// <returns>Обновлённую информацию об авторе.</returns>
+    /// <exception cref="EntityNotFoundException">Возникает если автор под указаным Id не найден.</exception>
+    Task<AuthorDto> UpdateByIdAsync(int id, UpdateAuthorEntityModel updateAuthorData);
 }
