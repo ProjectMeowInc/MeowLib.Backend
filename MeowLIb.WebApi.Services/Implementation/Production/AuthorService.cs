@@ -1,5 +1,7 @@
 using MeowLib.Domain.DbModels.AuthorEntity;
 using MeowLib.Domain.Dto.Author;
+using MeowLib.Domain.Exceptions;
+using MeowLib.Domain.Exceptions.DAL;
 using MeowLib.Domain.Exceptions.Services;
 using MeowLib.Domain.Models;
 using MeowLib.WebApi.DAL.Repository.Interfaces;
@@ -61,5 +63,41 @@ public class AuthorService : IAuthorService
     {
         var authors = await _authorRepository.GetAll();
         return authors;
+    }
+
+    /// <summary>
+    /// Метод обновляет информацию об авторе.
+    /// </summary>
+    /// <param name="id">Id автора.</param>
+    /// <param name="updateAuthorEntityModel">Данные для обновления.</param>
+    /// <returns>Обновлённую модель данных.</returns>
+    /// <exception cref="ValidationException">Возникает в случае, если введёные данные некорректны.</exception>
+    /// <exception cref="ApiException">Возникает если автор не был найден.</exception>
+    public async Task<AuthorDto> UpdateAuthor(int id, UpdateAuthorEntityModel updateAuthorEntityModel)
+    {
+        var validationErrors = new List<ValidationErrorModel>();
+        
+        if (string.IsNullOrEmpty(updateAuthorEntityModel.Name) || updateAuthorEntityModel.Name.Length < 6)
+        {
+            validationErrors.Add(new ValidationErrorModel
+            {
+                PropertyName = nameof(updateAuthorEntityModel.Name),
+                Message = "Имя автора не может быть пустым или короче 6 символов"
+            });
+        }
+
+        if (validationErrors.Any())
+        {
+            throw new ValidationException(validationErrors);
+        }
+
+        try
+        {
+            return await _authorRepository.UpdateByIdAsync(id, updateAuthorEntityModel);
+        }
+        catch (EntityNotFoundException entityNotFoundException)
+        {
+            throw new ApiException($"Автор с Id {id} не найден");
+        }
     }
 }
