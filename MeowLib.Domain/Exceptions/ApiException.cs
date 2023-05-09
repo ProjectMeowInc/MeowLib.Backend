@@ -7,7 +7,7 @@ namespace MeowLib.Domain.Exceptions;
 /// </summary>
 public class ApiException : Exception
 {
-    public string ErrorMessage { get; protected set; } = "API error";
+    public string ErrorMessage { get; protected set; }
 
     /// <summary>
     /// Конструктор
