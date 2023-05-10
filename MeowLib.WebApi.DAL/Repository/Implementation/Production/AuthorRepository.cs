@@ -1,6 +1,7 @@
 using AutoMapper;
 using MeowLib.Domain.DbModels.AuthorEntity;
 using MeowLib.Domain.Dto.Author;
+using MeowLib.Domain.Enums;
 using MeowLib.Domain.Exceptions.DAL;
 using MeowLib.WebApi.DAL.Repository.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -60,10 +61,28 @@ public class AuthorRepository : IAuthorRepository
     /// Метод удаляет автора по Id.
     /// </summary>
     /// <param name="id">Id автора.</param>
-    /// <returns>True - в случае удачного удаления, иначе - False. </returns>
+    /// <returns>True - в случае удачного удаления, False - если автор не найден. </returns>
+    /// <exception cref="DbSavingException">Возникает в случае неудачного сохранения данных.</exception>
     public async Task<bool> DeleteByIdAsync(int id)
     {
-        throw new NotImplementedException();
+        var foundedAuthor = await GetAuthorById(id);
+        if (foundedAuthor is null)
+        {
+            return false;
+        }
+
+        try
+        {
+            _applicationDbContext.Authors.Remove(foundedAuthor);
+            await _applicationDbContext.SaveChangesAsync();
+        }
+        catch (DbUpdateException)
+        {
+            // TODO: Add log
+            throw new DbSavingException(nameof(AuthorEntityModel), DbSavingTypesEnum.Delete);
+        }
+
+        return true;
     }
 
     /// <summary>
