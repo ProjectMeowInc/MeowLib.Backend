@@ -64,7 +64,7 @@ public class AuthorController : BaseController
         }
     }
 
-    [HttpDelete, Authorization(RequiredRoles = new [] { UserRolesEnum.Editor, UserRolesEnum.Admin })]
+    [HttpDelete("{id:int}"), Authorization(RequiredRoles = new [] { UserRolesEnum.Editor, UserRolesEnum.Admin })]
     [ProducesResponseType(200)]
     [ProducesResponseType(404, Type = typeof(BaseErrorResponse))]
     [ProducesResponseType(500, Type = typeof(BaseErrorResponse))]
