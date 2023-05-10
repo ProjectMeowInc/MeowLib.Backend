@@ -28,7 +28,7 @@ public class AuthorService : IAuthorService
     /// <param name="name">Имя автора.</param>
     /// <returns>DTO-модель автора.</returns>
     /// <exception cref="ValidationException">Возникает в случае ошибки валидации данных.</exception>
-    public async Task<AuthorDto> CreateAuthor(string name)
+    public async Task<AuthorDto> CreateAuthorAsync(string name)
     {
         var validationErrors = new List<ValidationErrorModel>();
         
@@ -59,7 +59,7 @@ public class AuthorService : IAuthorService
     /// Метод получает всех авторов.
     /// </summary>
     /// <returns>DTO список авторов.</returns>
-    public async Task<IEnumerable<AuthorDto>> GetAllAuthors()
+    public async Task<IEnumerable<AuthorDto>> GetAllAuthorsAsync()
     {
         var authors = await _authorRepository.GetAll();
         return authors;
@@ -73,7 +73,7 @@ public class AuthorService : IAuthorService
     /// <returns>Обновлённую модель данных.</returns>
     /// <exception cref="ValidationException">Возникает в случае, если введёные данные некорректны.</exception>
     /// <exception cref="ApiException">Возникает если автор не был найден.</exception>
-    public async Task<AuthorDto> UpdateAuthor(int id, UpdateAuthorEntityModel updateAuthorEntityModel)
+    public async Task<AuthorDto> UpdateAuthorAsync(int id, UpdateAuthorEntityModel updateAuthorEntityModel)
     {
         var validationErrors = new List<ValidationErrorModel>();
         
@@ -95,9 +95,28 @@ public class AuthorService : IAuthorService
         {
             return await _authorRepository.UpdateByIdAsync(id, updateAuthorEntityModel);
         }
-        catch (EntityNotFoundException entityNotFoundException)
+        catch (EntityNotFoundException)
         {
             throw new ApiException($"Автор с Id {id} не найден");
+        }
+    }
+
+    /// <summary>
+    /// Метод удаляет автора.
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns>True - в случае удачного удаления, false - в случае если автор не найден.</returns>
+    /// <exception cref="ApiException">Возникает в случае внутренней ошибки.</exception>
+    public async Task<bool> DeleteAuthorAsync(int id)
+    {
+        try
+        {
+            var result = await _authorRepository.DeleteByIdAsync(id);
+            return result;
+        }
+        catch (DbSavingException)
+        {
+            throw new ApiException("Внутреняя ошибка сервера");
         }
     }
 }
