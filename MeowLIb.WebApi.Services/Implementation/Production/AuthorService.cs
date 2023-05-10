@@ -111,8 +111,7 @@ public class AuthorService : IAuthorService
     {
         try
         {
-            var result = await _authorRepository.DeleteByIdAsync(id);
-            return result;
+            return await _authorRepository.DeleteByIdAsync(id);
         }
         catch (DbSavingException)
         {
