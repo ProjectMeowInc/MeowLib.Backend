@@ -12,10 +12,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="UserService\" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\MeowLIb.WebApi.Services\MeowLIb.WebApi.Services.csproj" />
     </ItemGroup>
 
