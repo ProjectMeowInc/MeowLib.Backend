@@ -29,7 +29,7 @@ public class AuthorController : BaseController
     [ProducesResponseType(200, Type = typeof(IEnumerable<AuthorDto>))]
     public async Task<ActionResult> GetAllAuthors()
     {
-        var authors = await _authorService.GetAllAuthors();
+        var authors = await _authorService.GetAllAuthorsAsync();
         return Json(authors);
     }
 
@@ -37,18 +37,20 @@ public class AuthorController : BaseController
     [ProducesResponseType(200, Type = typeof(AuthorDto))]
     public async Task<ActionResult> CreateAuthor([FromBody] CreateAuthorRequest input)
     {
-        var author = await _authorService.CreateAuthor(input.Name);
+        var author = await _authorService.CreateAuthorAsync(input.Name);
         return Json(author);
     }
 
     [HttpPut("{id:int}"), Authorization(RequiredRoles = new [] { UserRolesEnum.Editor, UserRolesEnum.Admin })]
     [ProducesResponseType(200, Type = typeof(AuthorDto))]
+    [ProducesResponseType(403, Type = typeof(ValidationErrorResponse))]
+    [ProducesResponseType(404, Type = typeof(BaseErrorResponse))]
     public async Task<ActionResult> UpdateAuthor([FromRoute] int id, [FromBody] UpdateAuthorRequest input)
     {
         var updateAuthorModel = _mapper.Map<UpdateAuthorRequest, UpdateAuthorEntityModel>(input);
         try
         {
-            var updatedAuthor = await _authorService.UpdateAuthor(id, updateAuthorModel);
+            var updatedAuthor = await _authorService.UpdateAuthorAsync(id, updateAuthorModel);
             return Json(updatedAuthor);
         }
         catch (ValidationException validationException)
@@ -59,6 +61,28 @@ public class AuthorController : BaseController
         catch (ApiException apiException)
         {
             return Error(apiException.ErrorMessage, 404);
+        }
+    }
+
+    [HttpDelete, Authorization(RequiredRoles = new [] { UserRolesEnum.Editor, UserRolesEnum.Admin })]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(404, Type = typeof(BaseErrorResponse))]
+    [ProducesResponseType(500, Type = typeof(BaseErrorResponse))]
+    public async Task<ActionResult> DeleteAuthor([FromRoute] int id)
+    {
+        try
+        {
+            var isDeleted = await _authorService.DeleteAuthorAsync(id);
+            if (!isDeleted)
+            {
+                return Error($"Автор с Id = {id} не найден", 404);
+            }
+
+            return Ok();
+        }
+        catch (ApiException apiException)
+        {
+            return Error(apiException.ErrorMessage, 500);
         }
     }
 }
