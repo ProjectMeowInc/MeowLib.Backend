@@ -9,6 +9,9 @@ using MeowLIb.WebApi.Services.Interface;
 
 namespace MeowLIb.WebApi.Services.Implementation.Production;
 
+/// <summary>
+/// Сервис для работы с авторами.
+/// </summary>
 public class AuthorService : IAuthorService
 {
     private readonly IAuthorRepository _authorRepository;

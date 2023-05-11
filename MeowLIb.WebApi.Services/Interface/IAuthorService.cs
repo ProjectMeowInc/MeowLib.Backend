@@ -5,6 +5,9 @@ using MeowLib.Domain.Exceptions.Services;
 
 namespace MeowLIb.WebApi.Services.Interface;
 
+/// <summary>
+/// Абстракция сервиса для работы с авторами.
+/// </summary>
 public interface IAuthorService
 {
     /// <summary>
