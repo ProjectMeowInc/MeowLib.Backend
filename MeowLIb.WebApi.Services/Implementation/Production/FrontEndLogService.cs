@@ -40,7 +40,7 @@ public class FrontEndLogService : IFrontEndLogService
                          $"✉️ Сообщение: {errorData.Message}\n\n" +
                          $"📦 Модуль в котором произошла ошибка: {errorData.ErrorModule}\n\n" +
                          $"👤 Логин пользователя: {userLogin}\n\n" +
-                         $"🕷️ Ошибка связана c Api: {isApiError}\n" +
+                         $"🕷️ Ошибка связана c Api: {isApiError}\n\n" +
                          $"{additionalInfoStringBuilder}";
 
         await _botClient.SendTextMessageAsync(_chatId, textToSend);
