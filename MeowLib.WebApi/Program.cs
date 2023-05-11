@@ -59,6 +59,7 @@ services.AddScoped<ITagRepository, TagRepository>();
 // Init services
 services.AddSingleton<IHashService, HashService>();
 services.AddSingleton<IJwtTokenService, JwtTokensService>();
+services.AddSingleton<IFrontEndLogService, FrontEndLogService>();
 
 services.AddScoped<IUserService, UserService>();
 services.AddScoped<IAuthorService, AuthorService>();
