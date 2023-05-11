@@ -36,11 +36,11 @@ public class FrontEndLogService : IFrontEndLogService
         
         var isApiError = errorData.IsApiError ? "Да" : "Нет";
         var textToSend = "[Лог | FrontEnd]\n\n" +
-                         $"📅 Дата {DateTime.Now}\n" +
-                         $"✉️ Сообщение {errorData.Message}\n" +
-                         $"📦 Модуль в котором произошла ошибка {errorData.ErrorModule}\n" +
-                         $"👤 Логин пользователя {userLogin}\n" +
-                         $"🕷️ Ошибка связана c Api {isApiError}\n" +
+                         $"📅 Дата: {DateTime.Now}\n\n" +
+                         $"✉️ Сообщение: {errorData.Message}\n\n" +
+                         $"📦 Модуль в котором произошла ошибка: {errorData.ErrorModule}\n\n" +
+                         $"👤 Логин пользователя: {userLogin}\n\n" +
+                         $"🕷️ Ошибка связана c Api: {isApiError}\n" +
                          $"{additionalInfoStringBuilder}";
 
         await _botClient.SendTextMessageAsync(_chatId, textToSend);
