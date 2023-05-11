@@ -18,7 +18,7 @@ public class BaseController : ControllerBase
     }
 
     [NonAction]
-    protected JsonResult Error(string errorMessage, int statusCode = 200)
+    protected JsonResult Error(string errorMessage, int statusCode = 500)
     {
         return Json(new BaseErrorResponse(errorMessage), statusCode);
     }
