@@ -1,4 +1,5 @@
 using MeowLib.Domain.DbModels.AuthorEntity;
+using MeowLib.Domain.DbModels.TagEntity;
 using MeowLib.Domain.DbModels.UserEntity;
 using Microsoft.EntityFrameworkCore;
 
@@ -27,4 +28,9 @@ public class ApplicationDbContext : DbContext
     /// Таблица авторов.
     /// </summary>
     public DbSet<AuthorEntityModel> Authors { get; set; } = null!;
+    
+    /// <summary>
+    /// Таблица тегов.
+    /// </summary>
+    public DbSet<TagEntityModel> Tags { get; set; } = null!;
 }
