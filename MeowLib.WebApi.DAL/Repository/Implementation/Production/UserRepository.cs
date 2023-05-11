@@ -1,4 +1,3 @@
-using System.Security.Cryptography;
 using AutoMapper;
 using MeowLib.Domain.DbModels.UserEntity;
 using MeowLib.Domain.Dto.User;

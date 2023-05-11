@@ -8,6 +8,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MeowLib.WebApi.DAL.Repository.Implementation.Production;
 
+/// <summary>
+/// Репозиторий для работы с авторами.
+/// </summary>
 public class AuthorRepository : IAuthorRepository
 {
     private readonly ApplicationDbContext _applicationDbContext;
