@@ -54,6 +54,7 @@ services.AddAutoMapper(typeof(MappingProfile));
 // Init repos
 services.AddScoped<IUserRepository, UserRepository>();
 services.AddScoped<IAuthorRepository, AuthorRepository>();
+services.AddScoped<ITagRepository, TagRepository>();
 
 // Init services
 services.AddSingleton<IHashService, HashService>();
@@ -61,6 +62,7 @@ services.AddSingleton<IJwtTokenService, JwtTokensService>();
 
 services.AddScoped<IUserService, UserService>();
 services.AddScoped<IAuthorService, AuthorService>();
+services.AddScoped<ITagService, TagService>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(dbOptions =>
 {
