@@ -24,7 +24,7 @@ public class BaseController : ControllerBase
     }
     
     [NonAction]
-    protected async Task<UserDto> GetUserData()
+    protected async Task<UserDto> GetUserDataAsync()
     {
         if (HttpContext.Items.TryGetValue("UserData", out object? authData))
         {
