@@ -119,6 +119,6 @@ public class TagController : BaseController
             return Error($"Тег с Id = {id} не найден", 404);
         }
 
-        return Ok(foundedTag);
+        return Json(foundedTag);
     }
 }
