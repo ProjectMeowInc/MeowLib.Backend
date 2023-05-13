@@ -4,6 +4,9 @@ using MeowLib.Domain.Dto.User;
 
 namespace MeowLib.WebApi.DAL.Repository.Interfaces;
 
+/// <summary>
+/// Абстракция репозитория пользователей.
+/// </summary>
 public interface IUserRepository
 {
     /// <summary>
