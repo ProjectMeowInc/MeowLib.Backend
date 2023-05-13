@@ -67,13 +67,13 @@ services.AddScoped<ITagService, TagService>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(dbOptions =>
 {
-    var connectionString = builder.Configuration.GetValue<string>("ConnectionStrings:Main");
+    var connectionString = builder.Configuration.GetValue<string>("ConnectionStrings:SQLite");
     if (string.IsNullOrEmpty(connectionString))
     {
         throw new Exception("Connection string is null or empty");
     }
 
-    dbOptions.UseNpgsql(connectionString);
+    dbOptions.UseSqlite(connectionString);
 });
 
 var app = builder.Build();
