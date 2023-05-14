@@ -1,3 +1,5 @@
+using MeowLib.Domain.DbModels.BookEntity;
+
 namespace MeowLib.Domain.DbModels.TagEntity;
 
 /// <summary>
@@ -19,4 +21,9 @@ public class TagEntityModel
     /// Описание тега.
     /// </summary>
     public string Description { get; set; } = null!;
+
+    /// <summary>
+    /// Список книг с данным тегом.
+    /// </summary>
+    public IEnumerable<BookEntityModel> Books { get; set; } = null!;
 }
