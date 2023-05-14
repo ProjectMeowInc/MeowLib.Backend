@@ -55,6 +55,7 @@ services.AddAutoMapper(typeof(MappingProfile));
 services.AddScoped<IUserRepository, UserRepository>();
 services.AddScoped<IAuthorRepository, AuthorRepository>();
 services.AddScoped<ITagRepository, TagRepository>();
+services.AddScoped<IBookRepository, BookRepository>();
 
 // Init services
 services.AddSingleton<IHashService, HashService>();
