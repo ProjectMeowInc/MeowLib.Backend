@@ -1,4 +1,5 @@
 using MeowLib.Domain.DbModels.AuthorEntity;
+using MeowLib.Domain.DbModels.BookEntity;
 using MeowLib.Domain.DbModels.TagEntity;
 using MeowLib.Domain.DbModels.UserEntity;
 using Microsoft.EntityFrameworkCore;
@@ -18,7 +19,16 @@ public class ApplicationDbContext : DbContext
     {
         Database.EnsureCreated();
     }
-    
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<BookEntityModel>()
+            .HasMany(b => b.Tags)
+            .WithMany(t => t.Books);
+            
+        base.OnModelCreating(modelBuilder);
+    }
+
     /// <summary>
     /// Таблица пользователей.
     /// </summary>
@@ -33,4 +43,9 @@ public class ApplicationDbContext : DbContext
     /// Таблица тегов.
     /// </summary>
     public DbSet<TagEntityModel> Tags { get; set; } = null!;
+
+    /// <summary>
+    /// Таблица книг.
+    /// </summary>
+    public DbSet<BookEntityModel> Books { get; set; } = null!;
 }
