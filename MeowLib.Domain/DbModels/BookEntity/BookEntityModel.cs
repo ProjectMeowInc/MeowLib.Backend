@@ -8,6 +8,6 @@ public class BookEntityModel
     public int Id { get; set; }
     public string Name { get; set; } = null!;
     public string Description { get; set; } = null!;
-    public AuthorEntityModel Author { get; set; } = null!;
+    public AuthorEntityModel? Author { get; set; }
     public IEnumerable<TagEntityModel> Tags { get; set; } = null!;
 }
