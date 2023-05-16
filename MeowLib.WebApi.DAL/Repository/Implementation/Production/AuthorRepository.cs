@@ -44,20 +44,13 @@ public class AuthorRepository : IAuthorRepository
     }
 
     /// <summary>
-    /// Метод получает подробную информацию об авторе по его Id.
+    /// Метод получает модель автора по его Id.
     /// </summary>
     /// <param name="id">Id автора</param>
     /// <returns>DTO-модель автора</returns>
-    public async Task<AuthorDto?> GetByIdAsync(int id)
+    public async Task<AuthorEntityModel?> GetByIdAsync(int id)
     {
-        var foundedAuthor = await GetAuthorById(id);
-        if (foundedAuthor is null)
-        {
-            return null;
-        }
-
-        var authorDto = _mapper.Map<AuthorEntityModel, AuthorDto>(foundedAuthor);
-        return authorDto;
+        return await GetAuthorById(id);
     }
 
     /// <summary>

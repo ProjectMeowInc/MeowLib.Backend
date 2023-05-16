@@ -14,11 +14,11 @@ public interface IAuthorRepository
     Task<AuthorDto> CreateAsync(CreateAuthorEntityModel createAuthorData);
     
     /// <summary>
-    /// Метод получает подробную информацию об авторе по его Id.
+    /// Метод получает модель автора по его Id.
     /// </summary>
     /// <param name="id">Id автора</param>
     /// <returns>DTO-модель автора</returns>
-    Task<AuthorDto?> GetByIdAsync(int id);
+    Task<AuthorEntityModel?> GetByIdAsync(int id);
 
     /// <summary>
     /// Метод удаляет автора по Id.
