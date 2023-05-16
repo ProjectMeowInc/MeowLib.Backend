@@ -65,6 +65,7 @@ services.AddSingleton<IFrontEndLogService, FrontEndLogService>();
 services.AddScoped<IUserService, UserService>();
 services.AddScoped<IAuthorService, AuthorService>();
 services.AddScoped<ITagService, TagService>();
+services.AddScoped<IBookService, BookService>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(dbOptions =>
 {
