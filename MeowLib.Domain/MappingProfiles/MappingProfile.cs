@@ -1,11 +1,13 @@
 using AutoMapper;
 using MeowLib.Domain.DbModels.AuthorEntity;
+using MeowLib.Domain.DbModels.BookEntity;
 using MeowLib.Domain.DbModels.TagEntity;
 using MeowLib.Domain.DbModels.UserEntity;
 using MeowLib.Domain.Dto.Author;
 using MeowLib.Domain.Dto.Tag;
 using MeowLib.Domain.Dto.User;
 using MeowLib.Domain.Requests.Author;
+using MeowLib.Domain.Requests.Book;
 using MeowLib.Domain.Requests.Tag;
 
 namespace MeowLib.Domain.MappingProfiles;
@@ -35,6 +37,10 @@ public class MappingProfile : Profile
         CreateMap<CreateTagRequest, CreateTagEntityModel>()
             .ReverseMap();
         CreateMap<UpdateTagRequest, UpdateTagEntityModel>()
+            .ReverseMap();
+        
+        // Book mapping
+        CreateMap<CreateBookRequest, CreateBookEntityModel>()
             .ReverseMap();
     }
 }
