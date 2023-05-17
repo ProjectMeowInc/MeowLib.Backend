@@ -1,5 +1,4 @@
 using AutoMapper;
-using LanguageExt.Pipes;
 using MeowLib.Domain.DbModels.AuthorEntity;
 using MeowLib.Domain.Dto.Author;
 using MeowLib.Domain.Enums;
@@ -84,7 +83,7 @@ public class AuthorController : BaseController
         }
         catch (ApiException apiException)
         {
-            return Error(apiException.ErrorMessage, 500);
+            return Error(apiException.ErrorMessage);
         }
     }
 
