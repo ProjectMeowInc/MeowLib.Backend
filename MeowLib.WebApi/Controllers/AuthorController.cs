@@ -1,8 +1,10 @@
 using AutoMapper;
+using LanguageExt.Pipes;
 using MeowLib.Domain.DbModels.AuthorEntity;
 using MeowLib.Domain.Dto.Author;
 using MeowLib.Domain.Enums;
 using MeowLib.Domain.Exceptions;
+using MeowLib.Domain.Exceptions.DAL;
 using MeowLib.Domain.Requests.Author;
 using MeowLib.Domain.Responses;
 using MeowLib.WebApi.Abstractions;
@@ -84,5 +86,20 @@ public class AuthorController : BaseController
         {
             return Error(apiException.ErrorMessage, 500);
         }
+    }
+
+    [HttpGet("{authorId:int}")]
+    public async Task<ActionResult> GetAuthorById([FromRoute] int authorId)
+    {
+        var result = await _authorService.GetAuthorByIdAsync(authorId);
+        return result.Match<ActionResult>(author => Json(author), exception =>
+        {
+            if (exception is EntityNotFoundException)
+            {
+                return NotFoundError();
+            }
+
+            return ServerError();
+        });
     }
 }

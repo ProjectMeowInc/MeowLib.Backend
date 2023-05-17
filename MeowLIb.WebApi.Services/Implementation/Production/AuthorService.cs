@@ -1,3 +1,5 @@
+using AutoMapper;
+using LanguageExt.Common;
 using MeowLib.Domain.DbModels.AuthorEntity;
 using MeowLib.Domain.Dto.Author;
 using MeowLib.Domain.Exceptions;
@@ -15,14 +17,17 @@ namespace MeowLIb.WebApi.Services.Implementation.Production;
 public class AuthorService : IAuthorService
 {
     private readonly IAuthorRepository _authorRepository;
-
+    private readonly IMapper _mapper;
+    
     /// <summary>
     /// Конструктор.
     /// </summary>
     /// <param name="authorRepository">Репозиторий авторов.</param>
-    public AuthorService(IAuthorRepository authorRepository)
+    /// <param name="mapper">Автомаппер.</param>
+    public AuthorService(IAuthorRepository authorRepository, IMapper mapper)
     {
         _authorRepository = authorRepository;
+        _mapper = mapper;
     }
 
     /// <summary>
@@ -120,5 +125,22 @@ public class AuthorService : IAuthorService
         {
             throw new ApiException("Внутреняя ошибка сервера");
         }
+    }
+
+    /// <summary>
+    /// Метод получает автора по его Id.
+    /// </summary>
+    /// <param name="authorId">Id автора.</param>
+    /// <returns>DTO-модель автора.</returns>
+    public async Task<Result<AuthorDto>> GetAuthorByIdAsync(int authorId)
+    {
+        var foundedAuthor = await _authorRepository.GetByIdAsync(authorId);
+        if (foundedAuthor is null)
+        {
+            var notFoundException = new EntityNotFoundException(nameof(AuthorEntityModel), $"Id = {authorId}");
+            return new Result<AuthorDto>(notFoundException);
+        }
+
+        return _mapper.Map<AuthorEntityModel, AuthorDto>(foundedAuthor);
     }
 }

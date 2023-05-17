@@ -27,4 +27,10 @@
       </Content>
     </ItemGroup>
 
+    <ItemGroup>
+      <Reference Include="LanguageExt.Core">
+        <HintPath>..\..\..\.nuget\packages\languageext.core\4.4.3\lib\netstandard2.0\LanguageExt.Core.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
 </Project>

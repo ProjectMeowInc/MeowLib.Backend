@@ -1,3 +1,4 @@
+using LanguageExt.Common;
 using MeowLib.Domain.DbModels.AuthorEntity;
 using MeowLib.Domain.Dto.Author;
 using MeowLib.Domain.Exceptions;
@@ -41,4 +42,11 @@ public interface IAuthorService
     /// <returns>True - в случае удачного удаления, false - в случае если автор не найден.</returns>
     /// <exception cref="ApiException">Возникает в случае внутренней ошибки.</exception>
     Task<bool> DeleteAuthorAsync(int id);
+
+    /// <summary>
+    /// Метод получает автора по его Id.
+    /// </summary>
+    /// <param name="authorId">Id автора.</param>
+    /// <returns>DTO-модель автора.</returns>
+    Task<Result<AuthorDto>> GetAuthorByIdAsync(int authorId);
 }
