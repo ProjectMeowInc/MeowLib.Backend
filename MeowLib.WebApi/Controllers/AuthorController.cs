@@ -39,15 +39,11 @@ public class AuthorController : BaseController
     public async Task<ActionResult> CreateAuthor([FromBody] CreateAuthorRequest input)
     {
         var createResult = await _authorService.CreateAuthorAsync(input.Name);
-        return createResult.Match<ActionResult>(author =>
-        {
-            return Json(author);
-        }, exception =>
+        return createResult.Match<ActionResult>(author => Json(author), exception =>
         {
             if (exception is ValidationException validationException)
             {
-                var responseData = new ValidationErrorResponse(validationException.ValidationErrors);
-                return Json(responseData, 403);
+                return validationException.ToResponse();
             }
 
             return ServerError();
@@ -70,8 +66,7 @@ public class AuthorController : BaseController
         {
             if (exception is ValidationException validationException)
             {
-                var responseData = new ValidationErrorResponse(validationException.ValidationErrors);
-                return Json(responseData, 403);
+                return validationException.ToResponse();
             }
 
             if (exception is ApiException)
