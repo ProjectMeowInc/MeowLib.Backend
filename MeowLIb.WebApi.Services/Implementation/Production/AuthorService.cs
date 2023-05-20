@@ -36,7 +36,7 @@ public class AuthorService : IAuthorService
     /// <param name="name">Имя автора.</param>
     /// <returns>DTO-модель автора.</returns>
     /// <exception cref="ValidationException">Возникает в случае ошибки валидации данных.</exception>
-    public async Task<AuthorDto> CreateAuthorAsync(string name)
+    public async Task<Result<AuthorDto>> CreateAuthorAsync(string name)
     {
         var validationErrors = new List<ValidationErrorModel>();
         
@@ -51,7 +51,8 @@ public class AuthorService : IAuthorService
 
         if (validationErrors.Any())
         {
-            throw new ValidationException(validationErrors);
+            var validationException = new ValidationException(validationErrors);
+            return new Result<AuthorDto>(validationException);
         }
 
         var authorData = new CreateAuthorEntityModel
@@ -81,7 +82,7 @@ public class AuthorService : IAuthorService
     /// <returns>Обновлённую модель данных.</returns>
     /// <exception cref="ValidationException">Возникает в случае, если введёные данные некорректны.</exception>
     /// <exception cref="ApiException">Возникает если автор не был найден.</exception>
-    public async Task<AuthorDto> UpdateAuthorAsync(int id, UpdateAuthorEntityModel updateAuthorEntityModel)
+    public async Task<Result<AuthorDto>> UpdateAuthorAsync(int id, UpdateAuthorEntityModel updateAuthorEntityModel)
     {
         var validationErrors = new List<ValidationErrorModel>();
         
@@ -96,7 +97,8 @@ public class AuthorService : IAuthorService
 
         if (validationErrors.Any())
         {
-            throw new ValidationException(validationErrors);
+            var validationException = new ValidationException(validationErrors);
+            return new Result<AuthorDto>(validationException);
         }
 
         try
@@ -105,7 +107,8 @@ public class AuthorService : IAuthorService
         }
         catch (EntityNotFoundException)
         {
-            throw new ApiException($"Автор с Id {id} не найден");
+            var apiException = new ApiException($"Автор с Id {id} не найден");
+            return new Result<AuthorDto>(apiException);
         }
     }
 
@@ -115,7 +118,7 @@ public class AuthorService : IAuthorService
     /// <param name="id"></param>
     /// <returns>True - в случае удачного удаления, false - в случае если автор не найден.</returns>
     /// <exception cref="ApiException">Возникает в случае внутренней ошибки.</exception>
-    public async Task<bool> DeleteAuthorAsync(int id)
+    public async Task<Result<bool>> DeleteAuthorAsync(int id)
     {
         try
         {
@@ -123,7 +126,8 @@ public class AuthorService : IAuthorService
         }
         catch (DbSavingException)
         {
-            throw new ApiException("Внутреняя ошибка сервера");
+            var apiException = new ApiException("Внутреняя ошибка сервера");
+            return new Result<bool>(apiException);
         }
     }
 
