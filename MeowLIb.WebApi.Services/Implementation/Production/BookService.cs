@@ -1,3 +1,4 @@
+using LanguageExt.Common;
 using MeowLib.Domain.DbModels.BookEntity;
 using MeowLib.Domain.Exceptions;
 using MeowLib.Domain.Exceptions.DAL;
@@ -34,7 +35,7 @@ public class BookService : IBookService
     /// <returns>Модель созданной книги.</returns>
     /// <exception cref="ValidationException">Возникает в случае ошибки валидации.</exception>
     /// <exception cref="ApiException">Возникает в случае ошибки сохранения данных.</exception>
-    public async Task<BookEntityModel> CreateBookAsync(CreateBookEntityModel createBookEntityModel)
+    public async Task<Result<BookEntityModel>> CreateBookAsync(CreateBookEntityModel createBookEntityModel)
     {
         var validationErrors = new List<ValidationErrorModel>();
 
@@ -52,23 +53,24 @@ public class BookService : IBookService
 
         if (validationErrors.Any())
         {
-            throw new ValidationException(nameof(BookService), validationErrors);
+            var validationException = new ValidationException(nameof(BookService), validationErrors);
+            return new Result<BookEntityModel>(validationException);
         }
 
         try
         {
-            var dbBookEntity = await _bookRepository.CreateAsync(new BookEntityModel
+            return await _bookRepository.CreateAsync(new BookEntityModel
             {
                 Name = inputName,
                 Description = inputDescription,
                 Author = null
             });
-            return dbBookEntity;
         }
         catch (DbSavingException)
         {
             // TODO: Add logs
-            throw new ApiException("Внутреняя ошибка сервера");
+            var apiException = new ApiException("Внутреяя ошибка сервера");
+            return new Result<BookEntityModel>(apiException);
         }
     }
 
@@ -80,7 +82,7 @@ public class BookService : IBookService
     /// <returns>Обновлённая модель книги или null если книга не найдена.</returns>
     /// <exception cref="ValidationException">Возникает в случае ошибки валидации.</exception>
     /// <exception cref="ApiException">Возникает в случае ошибки сохранения данных.</exception>
-    public async Task<BookEntityModel?> UpdateBookInfoByIdAsync(int bookId, UpdateBookEntityModel updateBookEntityModel)
+    public async Task<Result<BookEntityModel?>> UpdateBookInfoByIdAsync(int bookId, UpdateBookEntityModel updateBookEntityModel)
     {
         var inputName = updateBookEntityModel.Name?.Trim() ?? null;
         var inputDescription = updateBookEntityModel.Name?.Trim() ?? null;
@@ -98,7 +100,8 @@ public class BookService : IBookService
 
         if (validationErrors.Any())
         {
-            throw new ValidationException(nameof(BookService), validationErrors);
+            var validationException = new ValidationException(nameof(BookService), validationErrors);
+            return new Result<BookEntityModel?>(validationException);
         }
 
         var foundedBook = await _bookRepository.GetByIdAsync(bookId);
@@ -118,7 +121,8 @@ public class BookService : IBookService
         catch (DbSavingException)
         {
             // TODO: Add logs
-            throw new ApiException("Внутреняя ошибка сервера.");
+            var apiException = new ApiException("Внутреняя ошибка сервера.");
+            return new Result<BookEntityModel?>(apiException);
         }
     }
     
@@ -129,7 +133,7 @@ public class BookService : IBookService
     /// <param name="authorId">Id автора для обновления.</param>
     /// <returns>Обновлённую модель книги при удачном обновления, null - если книга не была найдена.</returns>
     /// <exception cref="ApiException">Возникает в случае если автор не был найден или при ошибке сохранения данных.</exception>
-    public async Task<BookEntityModel?> UpdateBookAuthorAsync(int bookId, int authorId)
+    public async Task<Result<BookEntityModel?>> UpdateBookAuthorAsync(int bookId, int authorId)
     {
         var foundedBook = await _bookRepository.GetByIdAsync(bookId);
         if (foundedBook is null)
@@ -140,7 +144,8 @@ public class BookService : IBookService
         var foundedAuthor = await _authorRepository.GetByIdAsync(authorId);
         if (foundedAuthor is null)
         {
-            throw new ApiException($"Автор с Id = {authorId} не найден");
+            var apiException = new ApiException($"Автор с Id = {authorId} не найден");
+            return new Result<BookEntityModel?>(apiException);
         }
 
         foundedBook.Author = foundedAuthor;
@@ -152,7 +157,8 @@ public class BookService : IBookService
         }
         catch (DbSavingException)
         {
-            throw new ApiException("Внутренняя ошибка сервера");
+            var apiException = new ApiException("Внутренняя ошибка сервера");
+            return new Result<BookEntityModel?>(apiException);
         }
     }
 
@@ -162,7 +168,7 @@ public class BookService : IBookService
     /// <param name="bookId">Id книги.</param>
     /// <returns>True - если удачно, false - если книга не была найдена.</returns>
     /// <exception cref="ApiException">Возникает в случае если произошла ошибка сохранения данных.</exception>
-    public async Task<bool> DeleteBookByIdAsync(int bookId)
+    public async Task<Result<bool>> DeleteBookByIdAsync(int bookId)
     {
         try
         {
@@ -171,7 +177,8 @@ public class BookService : IBookService
         catch (DbSavingException)
         {
             // TODO: Add logs
-            throw new ApiException("Внутренняя ошибка сервера");
+            var apiException = new ApiException("Внутренняя ошибка сервера");
+            return new Result<bool>(apiException);
         }
     }
 }
