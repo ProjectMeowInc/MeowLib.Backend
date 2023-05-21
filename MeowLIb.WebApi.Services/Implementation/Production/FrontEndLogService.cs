@@ -13,7 +13,7 @@ public class FrontEndLogService : IFrontEndLogService
     public FrontEndLogService()
     {
         // change to cfg
-        var botToken = "5866960041:AAHLEyDKeqnMTkb4mQ9tl_y3YAOcffD3-C8";
+        var botToken = "0";
         var chatId = -1001781472659;
         
         _botClient = new TelegramBotClient(botToken);
