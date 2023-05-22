@@ -1,3 +1,4 @@
+using LanguageExt.Common;
 using MeowLib.Domain.DbModels.UserEntity;
 using MeowLib.Domain.Dto.User;
 using MeowLib.Domain.Exceptions;
@@ -32,13 +33,14 @@ public class UserService : IUserService
     /// <returns>Dto-модель пользователя.</returns>
     /// <exception cref="ApiException">Возникает в случае если логин пользователя занят.</exception>
     /// <exception cref="ValidationException">Возникает в случае ошибки валидации данных.</exception>
-    public async Task<UserDto> SignInAsync(string login, string password)
+    public async Task<Result<UserDto>> SignInAsync(string login, string password)
     {
         var loginAlreadyExist = await _userRepository.CheckForUserExistAsync(login);
 
         if (loginAlreadyExist)
         {
-            throw new ApiException($"Пользователь с логином {login} уже существует");
+            var apiException = new ApiException($"Пользователь с логином {login} уже существует");
+            return new Result<UserDto>(apiException);
         }
 
         var validationErrors = new List<ValidationErrorModel>();
@@ -65,7 +67,8 @@ public class UserService : IUserService
 
         if (validationErrors.Any())
         {
-            throw new ValidationException(validationErrors);
+            var validationException = new ValidationException(validationErrors);
+            return new Result<UserDto>(validationException);
         }
         
         var hashedPassword = _hashService.HashString(password);
@@ -86,14 +89,15 @@ public class UserService : IUserService
     /// <param name="password">Пароль пользователя.</param>
     /// <returns>JWT-токен для авторизации.</returns>
     /// <exception cref="ApiException">Возникает в случае если указан неверный логин или пароль</exception>
-    public async Task<string> LogIn(string login, string password)
+    public async Task<Result<string>> LogIn(string login, string password)
     {
         var hashedPassword = _hashService.HashString(password);
 
         var userData = await _userRepository.GetByLoginAndPasswordAsync(login, hashedPassword);
         if (userData is null)
         {
-            throw new ApiException("Неверный логин или пароль");
+            var apiException = new ApiException("Неверный логин или пароль");
+            return new Result<string>(apiException);
         }
 
         var userToken = _jwtTokenService.GenerateToken(userData);
