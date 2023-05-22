@@ -26,21 +26,22 @@ public class UserController : BaseController
     [ProducesResponseType(403, Type = typeof(ValidationErrorResponse))]
     public async Task<ActionResult> SignIn([FromBody] SignInRequest input)
     {
-        try
+        var signInResult = await _userService.SignInAsync(input.Login, input.Password);
+
+        return signInResult.Match<ActionResult>(user => Json(user), exception =>
         {
-            var _ = await _userService.SignInAsync(input.Login, input.Password);
-            return Ok();
-        }
-        catch (ValidationException validationException)
-        {
-            var responseData = new ValidationErrorResponse(validationException.ValidationErrors);
-            return Json(responseData, 400);
-        }
-        catch (ApiException apiException)
-        {
-            var responseData = new BaseErrorResponse(apiException.ErrorMessage);
-            return Json(responseData, 403);
-        }
+            if (exception is ValidationException validationException)
+            {
+                return validationException.ToResponse();
+            }
+
+            if (exception is ApiException)
+            {
+                return Error("Пользователь с таким логином уже занят", 400);
+            }
+
+            return ServerError();
+        });
     }
 
     [HttpPost]
@@ -49,16 +50,16 @@ public class UserController : BaseController
     [ProducesResponseType(401, Type = typeof(BaseErrorResponse))]
     public async Task<ActionResult> LogIn([FromBody] LogInRequest input)
     {
-        try
+        var logInResult = await _userService.LogIn(input.Login, input.Password);
+
+        return logInResult.Match<ActionResult>(jwtToken => Json(new LogInResponse(jwtToken)), exception =>
         {
-            var jwtToken = await _userService.LogIn(input.Login, input.Password);
-            var responseData = new LogInResponse(jwtToken);
-            return Json(responseData);
-        }
-        catch (ApiException apiException)
-        {
-            var responseData = new BaseErrorResponse(apiException.ErrorMessage);
-            return Json(responseData, 401);
-        }
+            if (exception is ApiException)
+            {
+                return Error("Неверный логин или пароль");
+            }
+
+            return ServerError();
+        });
     }
 }

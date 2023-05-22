@@ -1,3 +1,4 @@
+using LanguageExt.Common;
 using MeowLib.Domain.Dto.User;
 using MeowLib.Domain.Exceptions;
 using MeowLib.Domain.Exceptions.Services;
@@ -17,7 +18,7 @@ public interface IUserService
     /// <returns>Dto-модель пользователя.</returns>
     /// <exception cref="ApiException">Возникает в случае если логин пользователя занят.</exception>
     /// <exception cref="ValidationException">Возникает в случае ошибки валидации данных.</exception>
-    Task<UserDto> SignInAsync(string login, string password);
+    Task<Result<UserDto>> SignInAsync(string login, string password);
 
     /// <summary>
     /// Метод создаёт JWT-токег для авторизации пользователя.
@@ -26,5 +27,5 @@ public interface IUserService
     /// <param name="password">Пароль пользователя.</param>
     /// <returns>JWT-токен для авторизации.</returns>
     /// <exception cref="ApiException">Возникает в случае если указан неверный логин или пароль</exception>
-    Task<string> LogIn(string login, string password);
+    Task<Result<string>> LogIn(string login, string password);
 }

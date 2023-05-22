@@ -2,7 +2,6 @@ using AutoMapper;
 using MeowLib.Domain.DbModels.TagEntity;
 using MeowLib.Domain.Dto.Tag;
 using MeowLib.Domain.Enums;
-using MeowLib.Domain.Exceptions;
 using MeowLib.Domain.Exceptions.Services;
 using MeowLib.Domain.Requests.Tag;
 using MeowLib.Domain.Responses;
@@ -19,6 +18,11 @@ public class TagController : BaseController
     private readonly ITagService _tagService;
     private readonly IMapper _mapper;
     
+    /// <summary>
+    /// Конструктор.
+    /// </summary>
+    /// <param name="tagService">Сервис для работы с тегами.</param>
+    /// <param name="mapper">Автомаппер.</param>
     public TagController(ITagService tagService, IMapper mapper)
     {
         _tagService = tagService;
@@ -31,21 +35,18 @@ public class TagController : BaseController
     [ProducesResponseType(500, Type = typeof(BaseErrorResponse))]
     public async Task<ActionResult> CreateTag([FromBody] CreateTagRequest input)
     {
-        try
+        var createModel = _mapper.Map<CreateTagRequest, CreateTagEntityModel>(input);
+        var createTagResult = await _tagService.CreateTagAsync(createModel);
+
+        return createTagResult.Match<ActionResult>(createdTag => Json(createdTag), exception =>
         {
-            var createModel = _mapper.Map<CreateTagRequest, CreateTagEntityModel>(input);
-            var createdTag = await _tagService.CreateTagAsync(createModel);
-            return Json(createdTag);
-        }
-        catch (ValidationException validationException)
-        {
-            var responseData = new ValidationErrorResponse(validationException.ValidationErrors);
-            return Json(responseData, 403);
-        }
-        catch (ApiException apiException)
-        {
-            return Error(apiException.ErrorMessage);
-        }
+            if (exception is ValidationException validationException)
+            {
+                return validationException.ToResponse();
+            }
+
+            return ServerError();
+        });
     }
 
     [HttpDelete("{id:int}")]
@@ -54,20 +55,17 @@ public class TagController : BaseController
     [ProducesResponseType(500, Type = typeof(BaseErrorResponse))]
     public async Task<ActionResult> DeleteTag([FromRoute] int id)
     {
-        try
+        var deleteTagResult = await _tagService.DeleteTagByIdAsync(id);
+        
+        return deleteTagResult.Match<ActionResult>(ok =>
         {
-            var result = await _tagService.DeleteTagByIdAsync(id);
-            if (!result)
+            if (!ok)
             {
-                return Error($"Тег с Id = {id} не найден", 404);
+                return NotFoundError();
             }
 
             return Ok();
-        }
-        catch (ApiException apiException)
-        {
-            return Error(apiException.ErrorMessage);
-        }
+        }, _ => ServerError());
     }
 
     [HttpPut("{id:int}"), Authorization(RequiredRoles = new [] { UserRolesEnum.Admin })]
@@ -77,27 +75,26 @@ public class TagController : BaseController
     [ProducesResponseType(500, Type = typeof(BaseErrorResponse))]
     public async Task<ActionResult> UpdateTag([FromRoute] int id, [FromBody] UpdateTagRequest input)
     {
-        try
-        {
-            var updateModel = _mapper.Map<UpdateTagRequest, UpdateTagEntityModel>(input);
-            var updatedTag = await _tagService.UpdateTagByIdAsync(id, updateModel);
+        var updateModel = _mapper.Map<UpdateTagRequest, UpdateTagEntityModel>(input);
+        var updateTagResult = await _tagService.UpdateTagByIdAsync(id, updateModel);
 
+        return updateTagResult.Match<ActionResult>(updatedTag =>
+        {
             if (updatedTag is null)
             {
-                return Error($"Тег с Id = {id} не найден", 404);
+                return NotFoundError();
             }
 
             return Json(updatedTag);
-        }
-        catch (ValidationException validationException)
+        }, exception =>
         {
-            var responseData = new ValidationErrorResponse(validationException.ValidationErrors);
-            return Json(responseData, 403);
-        }
-        catch (ApiException apiException)
-        {
-            return Error(apiException.ErrorMessage);
-        }
+            if (exception is ValidationException validationException)
+            {
+                return validationException.ToResponse();
+            }
+
+            return ServerError();
+        });
     }
 
     [HttpGet]

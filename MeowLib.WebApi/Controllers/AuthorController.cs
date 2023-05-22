@@ -38,8 +38,16 @@ public class AuthorController : BaseController
     [ProducesResponseType(200, Type = typeof(AuthorDto))]
     public async Task<ActionResult> CreateAuthor([FromBody] CreateAuthorRequest input)
     {
-        var author = await _authorService.CreateAuthorAsync(input.Name);
-        return Json(author);
+        var createResult = await _authorService.CreateAuthorAsync(input.Name);
+        return createResult.Match<ActionResult>(author => Json(author), exception =>
+        {
+            if (exception is ValidationException validationException)
+            {
+                return validationException.ToResponse();
+            }
+
+            return ServerError();
+        });
     }
 
     [HttpPut("{id:int}"), Authorization(RequiredRoles = new [] { UserRolesEnum.Editor, UserRolesEnum.Admin })]
@@ -49,20 +57,22 @@ public class AuthorController : BaseController
     public async Task<ActionResult> UpdateAuthor([FromRoute] int id, [FromBody] UpdateAuthorRequest input)
     {
         var updateAuthorModel = _mapper.Map<UpdateAuthorRequest, UpdateAuthorEntityModel>(input);
-        try
+        var updateResult = await _authorService.UpdateAuthorAsync(id, updateAuthorModel);
+        
+        return updateResult.Match<ActionResult>(updatedAuthor => Json(updatedAuthor), exception =>
         {
-            var updatedAuthor = await _authorService.UpdateAuthorAsync(id, updateAuthorModel);
-            return Json(updatedAuthor);
-        }
-        catch (ValidationException validationException)
-        {
-            var responseData = new ValidationErrorResponse(validationException.ValidationErrors);
-            return Json(responseData, 403);
-        }
-        catch (ApiException apiException)
-        {
-            return Error(apiException.ErrorMessage, 404);
-        }
+            if (exception is ValidationException validationException)
+            {
+                return validationException.ToResponse();
+            }
+
+            if (exception is ApiException)
+            {
+                return NotFoundError();
+            }
+
+            return ServerError();
+        });
     }
 
     [HttpDelete("{id:int}"), Authorization(RequiredRoles = new [] { UserRolesEnum.Editor, UserRolesEnum.Admin })]
@@ -71,20 +81,16 @@ public class AuthorController : BaseController
     [ProducesResponseType(500, Type = typeof(BaseErrorResponse))]
     public async Task<ActionResult> DeleteAuthor([FromRoute] int id)
     {
-        try
+        var result = await _authorService.DeleteAuthorAsync(id);
+        return result.Match<ActionResult>(ok =>
         {
-            var isDeleted = await _authorService.DeleteAuthorAsync(id);
-            if (!isDeleted)
+            if (!ok)
             {
-                return Error($"Автор с Id = {id} не найден", 404);
+                return NotFoundError();
             }
-
+            
             return Ok();
-        }
-        catch (ApiException apiException)
-        {
-            return Error(apiException.ErrorMessage);
-        }
+        }, _ => ServerError());
     }
 
     [HttpGet("{authorId:int}")]

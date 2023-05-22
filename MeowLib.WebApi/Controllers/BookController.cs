@@ -1,7 +1,9 @@
 using AutoMapper;
 using MeowLib.Domain.DbModels.BookEntity;
 using MeowLib.Domain.Enums;
+using MeowLib.Domain.Exceptions.Services;
 using MeowLib.Domain.Requests.Book;
+using MeowLib.Domain.Responses.Book;
 using MeowLib.WebApi.Abstractions;
 using MeowLib.WebApi.DAL.Repository.Interfaces;
 using MeowLib.WebApi.Filters;
@@ -26,37 +28,49 @@ public class BookController : BaseController
     }
 
     [HttpGet]
+    [ProducesResponseType(200, Type = typeof(GetAllBooksResponse))]
     public async Task<ActionResult> GetAllBooks()
     {
-        var books = await _bookRepository.GetAll().Select(b => new
+        var response = new GetAllBooksResponse
         {
-            b.Id,
-            b.Description,
-            b.Name,
-            AuthorName = b.Author.Name
-        }).ToListAsync();
+            Items = await _bookRepository.GetAll().Select(book => book).ToListAsync(),
+        };
 
-        return Json(books);
+        return Json(response);
     }
 
     [HttpPost, Authorization(RequiredRoles = new [] { UserRolesEnum.Admin, UserRolesEnum.Editor })]
     public async Task<ActionResult> CreateBook([FromBody] CreateBookRequest input)
     {
         var createBookEntityModel = _mapper.Map<CreateBookRequest, CreateBookEntityModel>(input);
-        var createdBook = await _bookService.CreateBookAsync(createBookEntityModel);
-        return Json(createdBook);
+        
+        var createBookResult = await _bookService.CreateBookAsync(createBookEntityModel);
+
+        return createBookResult.Match<ActionResult>(createdBook => Json(createdBook), exception =>
+        {
+            if (exception is ValidationException validationException)
+            {
+                return validationException.ToResponse();
+            }
+
+            return ServerError();
+        });
     }
 
     [HttpDelete("{id:int}"), Authorization(RequiredRoles = new [] { UserRolesEnum.Admin, UserRolesEnum.Editor })]
     public async Task<ActionResult> DeleteBook([FromRoute] int id)
     {
-        var bookDeleted = await _bookService.DeleteBookByIdAsync(id);
-        if (!bookDeleted)
-        {
-            return Error($"Книга с Id = {id} не найдена");
-        }
+        var deleteBookResult = await _bookService.DeleteBookByIdAsync(id);
 
-        return Ok();
+        return deleteBookResult.Match<ActionResult>(ok =>
+        {
+            if (!ok)
+            {
+                return NotFoundError();
+            }
+
+            return Ok();
+        }, _ => ServerError());
     }
 
     [HttpPut("{id:int}/info")]
@@ -64,12 +78,23 @@ public class BookController : BaseController
     {
         var updateBookEntityModel = _mapper.Map<UpdateBookInfoRequest, UpdateBookEntityModel>(input);
         
-        var updatedBook = await _bookService.UpdateBookInfoByIdAsync(id, updateBookEntityModel);
-        if (updatedBook is null)
+        var updateBookResult = await _bookService.UpdateBookInfoByIdAsync(id, updateBookEntityModel);
+        return updateBookResult.Match<ActionResult>(updatedBook =>
         {
-            return Error($"Книга с Id = {id} не найдена");
-        }
+            if (updatedBook is null)
+            {
+                return NotFoundError();
+            }
 
-        return Json(updatedBook);
+            return Json(updatedBook);
+        }, exception =>
+        {
+            if (exception is ValidationException validationException)
+            {
+                return validationException.ToResponse();
+            }
+
+            return ServerError();
+        });
     }
 }

@@ -1,4 +1,5 @@
 using AutoMapper;
+using LanguageExt.Common;
 using MeowLib.Domain.DbModels.TagEntity;
 using MeowLib.Domain.Dto.Tag;
 using MeowLib.Domain.Exceptions;
@@ -37,7 +38,7 @@ public class TagService : ITagService
     /// <returns>Информацию о созданном теге.</returns>
     /// <exception cref="ValidationException">Возникает в случае ошибки валидации данных.</exception>
     /// <exception cref="ApiException">Возникает в случае ошибки сохранения данных.</exception>
-    public async Task<TagEntityModel> CreateTagAsync(CreateTagEntityModel createTagEntityModel)
+    public async Task<Result<TagEntityModel>> CreateTagAsync(CreateTagEntityModel createTagEntityModel)
     {
         var validationErrors = new List<ValidationErrorModel>();
 
@@ -82,7 +83,8 @@ public class TagService : ITagService
 
         if (validationErrors.Any())
         {
-            throw new ValidationException(nameof(TagService), validationErrors);
+            var validationException = new ValidationException(nameof(TagService), validationErrors);
+            return new Result<TagEntityModel>(validationException);
         }
 
         var createModel = new CreateTagEntityModel
@@ -97,7 +99,8 @@ public class TagService : ITagService
         }
         catch (DbUpdateException)
         {
-            throw new ApiException("Внутренняя ошибка сервера.");
+            var apiException = new ApiException("Внутренняя ошибка сервера.");
+            return new Result<TagEntityModel>(apiException);
         }
     }
 
@@ -132,7 +135,7 @@ public class TagService : ITagService
     /// <param name="id">Id тега.</param>
     /// <returns>True - в случае удачного удаления, false - если тег не был найден.</returns>
     /// <exception cref="ApiException">Возникает в случае ошибки сохранения данных.</exception>
-    public async Task<bool> DeleteTagByIdAsync(int id)
+    public async Task<Result<bool>> DeleteTagByIdAsync(int id)
     {
         try
         {
@@ -140,7 +143,8 @@ public class TagService : ITagService
         }
         catch (DbUpdateException)
         {
-            throw new ApiException("Внутренняя ошибка сервера");
+            var apiException = new ApiException("Внутренняя ошибка сервера");
+            return new Result<bool>(apiException);
         }
     }
 
@@ -152,7 +156,7 @@ public class TagService : ITagService
     /// <returns>Обновлённую информацию о теге или null если тег не был найден.</returns>
     /// <exception cref="ValidationException">Возникает в случае ошибки валидации данных.</exception>
     /// <exception cref="ApiException">Возникает в случае ошибки сохранения данных.</exception>
-    public async Task<TagEntityModel?> UpdateTagByIdAsync(int id, UpdateTagEntityModel updateTagEntityModel)
+    public async Task<Result<TagEntityModel?>> UpdateTagByIdAsync(int id, UpdateTagEntityModel updateTagEntityModel)
     {
         var validationErrors = new List<ValidationErrorModel>();
         
@@ -200,7 +204,8 @@ public class TagService : ITagService
 
         if (validationErrors.Any())
         {
-            throw new ValidationException(nameof(TagService), validationErrors);
+            var validationException = new ValidationException(nameof(TagService), validationErrors);
+            return new Result<TagEntityModel?>(validationException);
         }
         
         try
@@ -213,8 +218,8 @@ public class TagService : ITagService
         }
         catch (DbUpdateException)
         {
-            throw new ApiException("Внутренняя ошибка сервера");
+            var apiException = new ApiException("Внутренняя ошибка сервера");
+            return new Result<TagEntityModel?>(apiException);
         }
-        
     }
 }

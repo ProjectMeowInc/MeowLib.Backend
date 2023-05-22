@@ -1,3 +1,4 @@
+using LanguageExt.Common;
 using MeowLib.Domain.DbModels.BookEntity;
 using MeowLib.Domain.Exceptions;
 using MeowLib.Domain.Exceptions.Services;
@@ -13,7 +14,7 @@ public interface IBookService
     /// <returns>Модель созданной книги.</returns>
     /// <exception cref="ValidationException">Возникает в случае ошибки валидации.</exception>
     /// <exception cref="ApiException">Возникает в случае ошибки сохранения данных.</exception>
-    Task<BookEntityModel> CreateBookAsync(CreateBookEntityModel createBookEntityModel);
+    Task<Result<BookEntityModel>> CreateBookAsync(CreateBookEntityModel createBookEntityModel);
 
     /// <summary>
     /// Метод обновляет основную информацию о книге по её Id.
@@ -23,7 +24,7 @@ public interface IBookService
     /// <returns>Обновлённая модель книги или null если книга не найдена.</returns>
     /// <exception cref="ValidationException">Возникает в случае ошибки валидации.</exception>
     /// <exception cref="ApiException">Возникает в случае ошибки сохранения данных.</exception>
-    Task<BookEntityModel?> UpdateBookInfoByIdAsync(int bookId, UpdateBookEntityModel updateBookEntityModel);
+    Task<Result<BookEntityModel?>> UpdateBookInfoByIdAsync(int bookId, UpdateBookEntityModel updateBookEntityModel);
 
     /// <summary>
     /// Метод обновляет автора книги по её Id.
@@ -32,7 +33,7 @@ public interface IBookService
     /// <param name="authorId">Id автора для обновления.</param>
     /// <returns>Обновлённую модель книги при удачном обновления, null - если книга не была найдена.</returns>
     /// <exception cref="ApiException">Возникает в случае если автор не был найден или при ошибке сохранения данных.</exception>
-    Task<BookEntityModel?> UpdateBookAuthorAsync(int bookId, int authorId);
+    Task<Result<BookEntityModel?>> UpdateBookAuthorAsync(int bookId, int authorId);
 
     /// <summary>
     /// Удаляет книгу по её Id.
@@ -40,5 +41,5 @@ public interface IBookService
     /// <param name="bookId">Id книги.</param>
     /// <returns>True - если удачно, false - если книга не была найдена.</returns>
     /// <exception cref="ApiException">Возникает в случае если произошла ошибка сохранения данных.</exception>
-    Task<bool> DeleteBookByIdAsync(int bookId);
+    Task<Result<bool>> DeleteBookByIdAsync(int bookId);
 }

@@ -21,16 +21,27 @@ public class UserServiceTests
     }
 
     [Test]
-    public void SignInTestAlreadyExistUser()
+    public async Task SignInTestAlreadyExistUser()
     {
         // Логин пользователя, который уже занят.
         var login = "tester";
         var password = "testPassword";
         
-        Assert.CatchAsync<ApiException>(async () =>
+        var signInResult = await _userService.SignInAsync(login, password);
+        var _ = signInResult.Match(_ =>
         {
-            await _userService.SignInAsync(login, password);
-        }, $"Исключение {nameof(ApiException)} не было вызвано");
+            Assert.Fail($"Исключение {nameof(ApiException)} не было вызвано");
+            return 1;
+        }, exception =>
+        {
+            if (exception is ApiException)
+            {
+                return 0;
+            }
+
+            Assert.Fail($"Было вызвано исключение {exception.GetType().Name}, а ожидалось {nameof(ApiException)}");
+            return 1;
+        });
     }
 
     [Test]
@@ -39,8 +50,15 @@ public class UserServiceTests
         var login = "barsik";
         var password = "testerov";
 
-        var createUser = await _userService.SignInAsync(login, password);
-
-        Assert.AreEqual(login, createUser.Login);
+        var createUserResult = await _userService.SignInAsync(login, password);
+        createUserResult.Match(user =>
+        {
+            Assert.AreEqual(login, user.Login);
+            return 0;
+        }, exception =>
+        {
+            Assert.Fail($"Неожиданное исключение: {exception.Message}");
+            return 1;
+        });
     }
 }
