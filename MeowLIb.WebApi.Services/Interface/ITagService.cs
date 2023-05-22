@@ -1,3 +1,4 @@
+using LanguageExt.Common;
 using MeowLib.Domain.DbModels.TagEntity;
 using MeowLib.Domain.Dto.Tag;
 using MeowLib.Domain.Exceptions;
@@ -17,7 +18,7 @@ public interface ITagService
     /// <returns>Информацию о созданном теге.</returns>
     /// <exception cref="ValidationException">Возникает в случае ошибки валидации данных.</exception>
     /// <exception cref="ApiException">Возникает в случае ошибки сохранения данных.</exception>
-    Task<TagEntityModel> CreateTagAsync(CreateTagEntityModel createTagEntityModel);
+    Task<Result<TagEntityModel>> CreateTagAsync(CreateTagEntityModel createTagEntityModel);
 
     /// <summary>
     /// Метод получает тег по его Id.
@@ -38,7 +39,7 @@ public interface ITagService
     /// <param name="id">Id тега.</param>
     /// <returns>True - в случае удачного удаления, false - если тег не был найден.</returns>
     /// <exception cref="ApiException">Возникает в случае ошибки сохранения данных.</exception>
-    Task<bool> DeleteTagByIdAsync(int id);
+    Task<Result<bool>> DeleteTagByIdAsync(int id);
 
     /// <summary>
     /// Метод обновляет информацию о теге.
@@ -48,5 +49,5 @@ public interface ITagService
     /// <returns>Обновлённую информацию о теге или null если тег не был найден.</returns>
     /// <exception cref="ValidationException">Возникает в случае ошибки валидации данных.</exception>
     /// <exception cref="ApiException">Возникает в случае ошибки сохранения данных.</exception>
-    Task<TagEntityModel?> UpdateTagByIdAsync(int id, UpdateTagEntityModel updateTagEntityModel);
+    Task<Result<TagEntityModel?>> UpdateTagByIdAsync(int id, UpdateTagEntityModel updateTagEntityModel);
 }
