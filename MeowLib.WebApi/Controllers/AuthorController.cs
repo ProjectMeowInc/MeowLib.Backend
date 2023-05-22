@@ -59,10 +59,7 @@ public class AuthorController : BaseController
         var updateAuthorModel = _mapper.Map<UpdateAuthorRequest, UpdateAuthorEntityModel>(input);
         var updateResult = await _authorService.UpdateAuthorAsync(id, updateAuthorModel);
         
-        return updateResult.Match<ActionResult>(updatedAuthor =>
-        {
-            return Json(updatedAuthor);
-        }, exception =>
+        return updateResult.Match<ActionResult>(updatedAuthor => Json(updatedAuthor), exception =>
         {
             if (exception is ValidationException validationException)
             {
