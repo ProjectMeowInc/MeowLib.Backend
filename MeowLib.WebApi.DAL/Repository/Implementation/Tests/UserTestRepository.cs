@@ -8,7 +8,7 @@ namespace MeowLib.WebApi.DAL.Repository.Implementation.Tests;
 
 public class UserTestRepository : IUserRepository
 {
-    private List<UserDto> _userData = new()
+    private readonly List<UserDto> _userData = new()
     {
         new UserDto
         {
