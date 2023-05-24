@@ -117,6 +117,9 @@ public class AuthorController : BaseController
 
     [HttpPost]
     [Route("get-with-params")]
+    [ProducesResponseType(200, Type = typeof(IEnumerable<AuthorDto>))]
+    [ProducesResponseType(404, Type = typeof(BaseErrorResponse))]
+    [ProducesResponseType(500, Type = typeof(BaseErrorResponse))]
     public async Task<ActionResult> GetAuthorWithParams([FromBody] GetAuthorWithParamsRequest input)
     {
         var getAuthorWithParamsResult = await _authorService.GetAuthorWithParams(input);
