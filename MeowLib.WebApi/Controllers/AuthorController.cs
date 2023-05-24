@@ -4,6 +4,7 @@ using MeowLib.Domain.Dto.Author;
 using MeowLib.Domain.Enums;
 using MeowLib.Domain.Exceptions;
 using MeowLib.Domain.Exceptions.DAL;
+using MeowLib.Domain.Exceptions.Services;
 using MeowLib.Domain.Requests.Author;
 using MeowLib.Domain.Responses;
 using MeowLib.WebApi.Abstractions;
@@ -108,6 +109,22 @@ public class AuthorController : BaseController
             if (exception is EntityNotFoundException)
             {
                 return NotFoundError();
+            }
+
+            return ServerError();
+        });
+    }
+
+    [HttpPost]
+    [Route("get-with-params")]
+    public async Task<ActionResult> GetAuthorWithParams([FromBody] GetAuthorWithParamsRequest input)
+    {
+        var getAuthorWithParamsResult = await _authorService.GetAuthorWithParams(input);
+        return getAuthorWithParamsResult.Match<ActionResult>(authors => Json(authors), exception =>
+        {
+            if (exception is SearchNotFoundException)
+            {
+                return Error("Авторы с заданным параметрами не найдены", 404);
             }
 
             return ServerError();
