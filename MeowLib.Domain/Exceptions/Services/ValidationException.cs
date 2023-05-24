@@ -1,5 +1,6 @@
 using MeowLib.Domain.Interfaces;
 using MeowLib.Domain.Models;
+using MeowLib.Domain.Responses;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MeowLib.Domain.Exceptions.Services;
@@ -35,9 +36,6 @@ public class ValidationException : ServiceLevelException, IHasResponseForm
 
     public JsonResult ToResponse()
     {
-        return new JsonResult(ValidationErrors)
-        {
-            StatusCode = 403
-        };
+        return new JsonResult(new ValidationErrorResponse(ValidationErrors));
     }
 }
