@@ -192,12 +192,12 @@ public class TagService : ITagService
                 });
             }
             
-            if (updateTagEntityModel.Description.Length > 100)
+            if (updateTagEntityModel.Description.Length > 256)
             {
                 validationErrors.Add(new ValidationErrorModel
                 {
                     PropertyName = nameof(updateTagEntityModel.Description),
-                    Message = "Описание не может быть больше 100 символов"
+                    Message = "Описание не может быть больше 256 символов"
                 });
             }
         }
