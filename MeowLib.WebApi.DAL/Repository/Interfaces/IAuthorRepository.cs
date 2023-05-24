@@ -32,7 +32,7 @@ public interface IAuthorRepository
     /// Метод получает список всех авторов
     /// </summary>
     /// <returns>Список всех авторов</returns>
-    Task<IEnumerable<AuthorDto>> GetAll();
+    IQueryable<AuthorEntityModel> GetAll();
 
     /// <summary>
     /// Метод обновляет автора по Id.

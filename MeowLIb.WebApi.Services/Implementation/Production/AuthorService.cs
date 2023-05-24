@@ -6,8 +6,10 @@ using MeowLib.Domain.Exceptions;
 using MeowLib.Domain.Exceptions.DAL;
 using MeowLib.Domain.Exceptions.Services;
 using MeowLib.Domain.Models;
+using MeowLib.Domain.Requests.Author;
 using MeowLib.WebApi.DAL.Repository.Interfaces;
 using MeowLIb.WebApi.Services.Interface;
+using Microsoft.EntityFrameworkCore;
 
 namespace MeowLIb.WebApi.Services.Implementation.Production;
 
@@ -70,7 +72,11 @@ public class AuthorService : IAuthorService
     /// <returns>DTO список авторов.</returns>
     public async Task<IEnumerable<AuthorDto>> GetAllAuthorsAsync()
     {
-        var authors = await _authorRepository.GetAll();
+        var authors = await _authorRepository.GetAll().Select(a => new AuthorDto
+        {
+            Id = a.Id,
+            Name = a.Name
+        }).ToListAsync();
         return authors;
     }
 
@@ -146,5 +152,33 @@ public class AuthorService : IAuthorService
         }
 
         return _mapper.Map<AuthorEntityModel, AuthorDto>(foundedAuthor);
+    }
+
+    /// <summary>
+    /// Метод получает список авторов подходящих под поисковые параметры.
+    /// </summary>
+    /// <param name="searchParams">Параметры для поиска.</param>
+    /// <returns>Список авторов подходящих под параметры поиска.</returns>
+    /// <exception cref="SearchNotFoundException">Возникает если не был найден автор по заданным параметрам поиска.</exception>
+    public async Task<Result<IEnumerable<AuthorDto>>> GetAuthorWithParams(GetAuthorWithParamsRequest searchParams)
+    {
+        var filteredAuthors = _authorRepository.GetAll();
+
+        if (searchParams.Name is not null)
+        {
+            filteredAuthors = filteredAuthors.Where(a => a.Name.Contains(searchParams.Name));
+        }
+
+        if (!filteredAuthors.Any())
+        {
+            var notFoundException = new SearchNotFoundException(nameof(AuthorService));
+            return new Result<IEnumerable<AuthorDto>>(notFoundException);
+        }
+
+        return await filteredAuthors.Select(a => new AuthorDto
+        {
+            Id = a.Id,
+            Name = a.Name
+        }).ToListAsync();
     }
 }

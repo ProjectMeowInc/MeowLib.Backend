@@ -3,6 +3,7 @@ using MeowLib.Domain.DbModels.AuthorEntity;
 using MeowLib.Domain.Dto.Author;
 using MeowLib.Domain.Exceptions;
 using MeowLib.Domain.Exceptions.Services;
+using MeowLib.Domain.Requests.Author;
 
 namespace MeowLIb.WebApi.Services.Interface;
 
@@ -49,4 +50,12 @@ public interface IAuthorService
     /// <param name="authorId">Id автора.</param>
     /// <returns>DTO-модель автора.</returns>
     Task<Result<AuthorDto>> GetAuthorByIdAsync(int authorId);
+
+    /// <summary>
+    /// Метод получает список авторов подходящих под поисковые параметры.
+    /// </summary>
+    /// <param name="searchParams">Параметры для поиска.</param>
+    /// <returns>Список авторов подходящих под параметры поиска.</returns>
+    /// <exception cref="SearchNotFoundException">Возникает если не был найден автор по заданным параметрам поиска.</exception>
+    Task<Result<IEnumerable<AuthorDto>>> GetAuthorWithParams(GetAuthorWithParamsRequest searchParams);
 }
