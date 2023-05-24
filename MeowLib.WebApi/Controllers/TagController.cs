@@ -70,8 +70,8 @@ public class TagController : BaseController
 
     [HttpPut("{id:int}"), Authorization(RequiredRoles = new [] { UserRolesEnum.Admin })]
     [ProducesResponseType(200)]
+    [ProducesResponseType(403, Type = typeof(ValidationErrorResponse))]
     [ProducesResponseType(404, Type = typeof(BaseErrorResponse))]
-    [ProducesResponseType(403, Type = typeof(BaseErrorResponse))]
     [ProducesResponseType(500, Type = typeof(BaseErrorResponse))]
     public async Task<ActionResult> UpdateTag([FromRoute] int id, [FromBody] UpdateTagRequest input)
     {
@@ -113,7 +113,7 @@ public class TagController : BaseController
         var foundedTag = await _tagService.GetTagByIdAsync(id);
         if (foundedTag is null)
         {
-            return Error($"Тег с Id = {id} не найден", 404);
+            return NotFoundError();
         }
 
         return Json(foundedTag);

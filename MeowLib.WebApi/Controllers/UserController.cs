@@ -24,6 +24,7 @@ public class UserController : BaseController
     [ProducesResponseType(200)]
     [ProducesResponseType(400, Type = typeof(BaseErrorResponse))]
     [ProducesResponseType(403, Type = typeof(ValidationErrorResponse))]
+    [ProducesResponseType(500, Type = typeof(BaseErrorResponse))]
     public async Task<ActionResult> SignIn([FromBody] SignInRequest input)
     {
         var signInResult = await _userService.SignInAsync(input.Login, input.Password);
@@ -48,6 +49,7 @@ public class UserController : BaseController
     [Route("log-in")]
     [ProducesResponseType(200, Type = typeof(LogInResponse))]
     [ProducesResponseType(401, Type = typeof(BaseErrorResponse))]
+    [ProducesResponseType(500, Type = typeof(BaseErrorResponse))]
     public async Task<ActionResult> LogIn([FromBody] LogInRequest input)
     {
         var logInResult = await _userService.LogIn(input.Login, input.Password);
@@ -56,7 +58,7 @@ public class UserController : BaseController
         {
             if (exception is ApiException)
             {
-                return Error("Неверный логин или пароль");
+                return Error("Неверный логин или пароль", 401);
             }
 
             return ServerError();

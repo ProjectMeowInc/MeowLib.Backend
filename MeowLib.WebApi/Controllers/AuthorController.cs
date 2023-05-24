@@ -36,6 +36,8 @@ public class AuthorController : BaseController
 
     [HttpPost, Authorization(RequiredRoles = new [] { UserRolesEnum.Editor, UserRolesEnum.Admin })]
     [ProducesResponseType(200, Type = typeof(AuthorDto))]
+    [ProducesResponseType(403, Type = typeof(ValidationErrorResponse))]
+    [ProducesResponseType(500, Type = typeof(BaseErrorResponse))]
     public async Task<ActionResult> CreateAuthor([FromBody] CreateAuthorRequest input)
     {
         var createResult = await _authorService.CreateAuthorAsync(input.Name);
@@ -50,10 +52,11 @@ public class AuthorController : BaseController
         });
     }
 
-    [HttpPut("{id:int}"), Authorization(RequiredRoles = new [] { UserRolesEnum.Editor, UserRolesEnum.Admin })]
+    [HttpPut("{authorId:int}"), Authorization(RequiredRoles = new [] { UserRolesEnum.Editor, UserRolesEnum.Admin })]
     [ProducesResponseType(200, Type = typeof(AuthorDto))]
     [ProducesResponseType(403, Type = typeof(ValidationErrorResponse))]
     [ProducesResponseType(404, Type = typeof(BaseErrorResponse))]
+    [ProducesResponseType(500, Type = typeof(BaseErrorResponse))]
     public async Task<ActionResult> UpdateAuthor([FromRoute] int id, [FromBody] UpdateAuthorRequest input)
     {
         var updateAuthorModel = _mapper.Map<UpdateAuthorRequest, UpdateAuthorEntityModel>(input);
@@ -75,7 +78,7 @@ public class AuthorController : BaseController
         });
     }
 
-    [HttpDelete("{id:int}"), Authorization(RequiredRoles = new [] { UserRolesEnum.Editor, UserRolesEnum.Admin })]
+    [HttpDelete("{authorId:int}"), Authorization(RequiredRoles = new [] { UserRolesEnum.Editor, UserRolesEnum.Admin })]
     [ProducesResponseType(200)]
     [ProducesResponseType(404, Type = typeof(BaseErrorResponse))]
     [ProducesResponseType(500, Type = typeof(BaseErrorResponse))]
@@ -94,6 +97,9 @@ public class AuthorController : BaseController
     }
 
     [HttpGet("{authorId:int}")]
+    [ProducesResponseType(200, Type = typeof(AuthorDto))]
+    [ProducesResponseType(404,  Type = typeof(BaseErrorResponse))]
+    [ProducesResponseType(500,  Type = typeof(BaseErrorResponse))]
     public async Task<ActionResult> GetAuthorById([FromRoute] int authorId)
     {
         var result = await _authorService.GetAuthorByIdAsync(authorId);

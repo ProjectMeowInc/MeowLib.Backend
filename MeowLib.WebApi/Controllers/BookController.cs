@@ -3,6 +3,7 @@ using MeowLib.Domain.DbModels.BookEntity;
 using MeowLib.Domain.Enums;
 using MeowLib.Domain.Exceptions.Services;
 using MeowLib.Domain.Requests.Book;
+using MeowLib.Domain.Responses;
 using MeowLib.Domain.Responses.Book;
 using MeowLib.WebApi.Abstractions;
 using MeowLib.WebApi.DAL.Repository.Interfaces;
@@ -40,6 +41,9 @@ public class BookController : BaseController
     }
 
     [HttpPost, Authorization(RequiredRoles = new [] { UserRolesEnum.Admin, UserRolesEnum.Editor })]
+    [ProducesResponseType(200, Type = typeof(BookEntityModel))]
+    [ProducesResponseType(403, Type = typeof(ValidationErrorResponse))]
+    [ProducesResponseType(500, Type = typeof(BaseErrorResponse))]
     public async Task<ActionResult> CreateBook([FromBody] CreateBookRequest input)
     {
         var createBookEntityModel = _mapper.Map<CreateBookRequest, CreateBookEntityModel>(input);
@@ -58,6 +62,9 @@ public class BookController : BaseController
     }
 
     [HttpDelete("{id:int}"), Authorization(RequiredRoles = new [] { UserRolesEnum.Admin, UserRolesEnum.Editor })]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(404, Type = typeof(BaseErrorResponse))]
+    [ProducesResponseType(500, Type = typeof(BaseErrorResponse))]
     public async Task<ActionResult> DeleteBook([FromRoute] int id)
     {
         var deleteBookResult = await _bookService.DeleteBookByIdAsync(id);
@@ -73,7 +80,11 @@ public class BookController : BaseController
         }, _ => ServerError());
     }
 
-    [HttpPut("{id:int}/info")]
+    [HttpPut("{bookId:int}/info")]
+    [ProducesResponseType(200, Type = typeof(BookEntityModel))]
+    [ProducesResponseType(403, Type = typeof(ValidationErrorResponse))]
+    [ProducesResponseType(404, Type = typeof(BaseErrorResponse))]
+    [ProducesResponseType(500, Type = typeof(BaseErrorResponse))]
     public async Task<ActionResult> UpdateBookInfo([FromRoute] int id, [FromBody] UpdateBookInfoRequest input)
     {
         var updateBookEntityModel = _mapper.Map<UpdateBookInfoRequest, UpdateBookEntityModel>(input);

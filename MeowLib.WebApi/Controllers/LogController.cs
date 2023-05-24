@@ -17,6 +17,7 @@ public class LogController : BaseController
     }
 
     [HttpPost, Authorization]
+    [ProducesResponseType(200)]
     public async Task<ActionResult> SendLog([FromBody] LogRequest input)
     {
         var userInfo = await GetUserDataAsync();
