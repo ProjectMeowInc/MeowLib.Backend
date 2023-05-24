@@ -24,7 +24,7 @@ public class UserTestRepository : IUserRepository
         }
     };
 
-    public async Task<UserDto> CreateAsync(CreateUserEntityModel createUserData)
+    public Task<UserDto> CreateAsync(CreateUserEntityModel createUserData)
     {
         var userDto = new UserDto
         {
@@ -34,27 +34,27 @@ public class UserTestRepository : IUserRepository
         };
         
         _userData.Add(userDto);
-        return userDto;
+        return Task.FromResult(userDto);
     }
 
-    public async Task<UserDto?> GetByIdAsync(int id)
+    public Task<UserDto?> GetByIdAsync(int id)
     {
-        return _userData.FirstOrDefault(u => u.Id == id);
+        return Task.FromResult(_userData.FirstOrDefault(u => u.Id == id));
     }
 
-    public async Task<bool> DeleteByIdAsync(int id)
+    public Task<bool> DeleteByIdAsync(int id)
     {
         var foundedUser = _userData.FirstOrDefault(u => u.Id == id);
         if (foundedUser is null)
         {
-            return false;
+            return Task.FromResult(false);
         }
 
         _userData.Remove(foundedUser);
-        return true;
+        return Task.FromResult(true);
     }
 
-    public async Task<UserDto> UpdateAsync(int id, UpdateUserEntityModel updateUserData)
+    public Task<UserDto> UpdateAsync(int id, UpdateUserEntityModel updateUserData)
     {
         var foundedUser = _userData.FirstOrDefault(u => u.Id == id);
         if (foundedUser is null)
@@ -67,16 +67,16 @@ public class UserTestRepository : IUserRepository
             foundedUser.Login = updateUserData.Login;
         }
 
-        return foundedUser;
+        return Task.FromResult(foundedUser);
     }
 
-    public async Task<bool> CheckForUserExistAsync(string login)
+    public Task<bool> CheckForUserExistAsync(string login)
     {
         var foundedUser = _userData.FirstOrDefault(u => u.Login == login);
-        return foundedUser is not null;
+        return Task.FromResult(foundedUser is not null);
     }
 
-    public async Task<UserDto?> GetByLoginAndPasswordAsync(string login, string password)
+    public Task<UserDto?> GetByLoginAndPasswordAsync(string login, string password)
     {
         throw new NotImplementedException();
     }
