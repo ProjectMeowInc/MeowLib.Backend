@@ -109,9 +109,19 @@ public class TagService : ITagService
     /// </summary>
     /// <param name="id">Id тега.</param>
     /// <returns>Найденный тег, иначе - null</returns>
-    public async Task<TagEntityModel?> GetTagByIdAsync(int id)
+    public async Task<TagDto?> GetTagByIdAsync(int id)
     {
-        return await _tagRepository.GetByIdAsync(id);
+        var foundedTag = await _tagRepository.GetByIdAsync(id);
+        if (foundedTag is null)
+        {
+            return null;
+        }
+
+        return new TagDto
+        {
+            Id = foundedTag.Id,
+            Name = foundedTag.Name
+        };
     }
 
     /// <summary>
