@@ -85,11 +85,9 @@ public class AuthorRepository : IAuthorRepository
     /// Метод получает список всех авторов
     /// </summary>
     /// <returns>Список всех авторов</returns>
-    public async Task<IEnumerable<AuthorDto>> GetAll()
+    public IQueryable<AuthorEntityModel> GetAll()
     {
-        var authors = await _applicationDbContext.Authors.ToListAsync();
-
-        return _mapper.Map<IEnumerable<AuthorEntityModel>, IEnumerable<AuthorDto>>(authors);
+        return _applicationDbContext.Authors.AsQueryable();
     }
 
     /// <summary>
