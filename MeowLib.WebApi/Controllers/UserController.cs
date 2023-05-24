@@ -14,6 +14,10 @@ public class UserController : BaseController
 {
     private readonly IUserService _userService;
     
+    /// <summary>
+    /// Конструктор.
+    /// </summary>
+    /// <param name="userService">Сервис для взаимодействия с пользователями.</param>
     public UserController(IUserService userService)
     {
         _userService = userService;
