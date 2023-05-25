@@ -106,7 +106,7 @@ public class TagController : BaseController
     }
 
     [HttpGet("{id:int}")]
-    [ProducesResponseType(200, Type = typeof(TagDto))]
+    [ProducesResponseType(200, Type = typeof(TagEntityModel))]
     [ProducesResponseType(404, Type = typeof(BaseErrorResponse))]
     public async Task<ActionResult> GetTagById([FromRoute] int id)
     {

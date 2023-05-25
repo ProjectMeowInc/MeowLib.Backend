@@ -25,7 +25,7 @@ public interface ITagService
     /// </summary>
     /// <param name="id">Id тега.</param>
     /// <returns>Найденный тег, иначе - null.</returns>
-    Task<TagDto?> GetTagByIdAsync(int id);
+    Task<TagEntityModel?> GetTagByIdAsync(int id);
 
     /// <summary>
     /// Метод получает все теги в формате Dto.
