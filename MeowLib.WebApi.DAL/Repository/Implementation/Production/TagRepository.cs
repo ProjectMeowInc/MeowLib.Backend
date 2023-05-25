@@ -111,7 +111,7 @@ public class TagRepository : ITagRepository
         
         if (updateTagData.Description is not null)
         {
-            foundedTag.Name = updateTagData.Description;
+            foundedTag.Description = updateTagData.Description;
         }
 
         _applicationDbContext.Tags.Update(foundedTag);
