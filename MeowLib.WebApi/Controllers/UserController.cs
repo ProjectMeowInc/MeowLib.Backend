@@ -1,3 +1,4 @@
+using MeowLib.Domain.Dto.User;
 using MeowLib.Domain.Exceptions;
 using MeowLib.Domain.Exceptions.Services;
 using MeowLib.Domain.Requests.User;
@@ -67,5 +68,13 @@ public class UserController : BaseController
 
             return ServerError();
         });
+    }
+
+    [HttpGet]
+    [ProducesResponseType(200, Type = typeof(IEnumerable<UserDto>))]
+    public async Task<ActionResult> GetAll()
+    {
+        var users = await _userService.GetAllAsync();
+        return Json(users);
     }
 }
