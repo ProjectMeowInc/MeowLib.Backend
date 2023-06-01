@@ -6,6 +6,7 @@ using MeowLib.Domain.Exceptions.Services;
 using MeowLib.Domain.Models;
 using MeowLib.WebApi.DAL.Repository.Interfaces;
 using MeowLIb.WebApi.Services.Interface;
+using Microsoft.EntityFrameworkCore;
 
 namespace MeowLIb.WebApi.Services.Implementation.Production;
 
@@ -102,5 +103,19 @@ public class UserService : IUserService
 
         var userToken = _jwtTokenService.GenerateToken(userData);
         return userToken;
+    }
+
+    /// <summary>
+    /// Метод получает список всех пользователей.
+    /// </summary>
+    /// <returns>Список пользователей.</returns>
+    public async Task<IEnumerable<UserDto>> GetAllAsync()
+    {
+        return await _userRepository.GetAll().Select(u => new UserDto()
+        {
+            Id = u.Id,
+            Login = u.Login,
+            Role = u.Role
+        }).ToListAsync();
     }
 }

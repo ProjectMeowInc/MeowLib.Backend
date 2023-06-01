@@ -28,4 +28,10 @@ public interface IUserService
     /// <returns>JWT-токен для авторизации.</returns>
     /// <exception cref="ApiException">Возникает в случае если указан неверный логин или пароль</exception>
     Task<Result<string>> LogIn(string login, string password);
+
+    /// <summary>
+    /// Метод получает список всех пользователей.
+    /// </summary>
+    /// <returns>Список пользователей.</returns>
+    Task<IEnumerable<UserDto>> GetAllAsync();
 }
