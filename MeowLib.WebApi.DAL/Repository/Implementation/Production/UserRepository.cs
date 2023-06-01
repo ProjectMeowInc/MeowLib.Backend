@@ -140,6 +140,15 @@ public class UserRepository : IUserRepository
     }
 
     /// <summary>
+    /// Метод получает список всех пользователей.
+    /// </summary>
+    /// <returns>Список пользователей в формате IQueryable</returns>
+    public IQueryable<UserEntityModel> GetAll()
+    {
+        return _applicationDbContext.Users.AsQueryable();
+    }
+
+    /// <summary>
     /// Метод возвращает пользователя по его Id.
     /// </summary>
     /// <param name="id">Id для поиска.</param>

@@ -55,4 +55,10 @@ public interface IUserRepository
     /// <param name="password">Хеш пароля пользователя.</param>
     /// <returns>Dto-модель пользователя.</returns>
     Task<UserDto?> GetByLoginAndPasswordAsync(string login, string password);
+
+    /// <summary>
+    /// Метод получает список всех пользователей.
+    /// </summary>
+    /// <returns>Список пользователей в формате IQueryable</returns>
+    IQueryable<UserEntityModel> GetAll();
 }
