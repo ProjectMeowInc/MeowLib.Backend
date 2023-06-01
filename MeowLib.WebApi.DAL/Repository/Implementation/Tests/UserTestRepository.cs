@@ -80,4 +80,9 @@ public class UserTestRepository : IUserRepository
     {
         throw new NotImplementedException();
     }
+
+    public IQueryable<UserEntityModel> GetAll()
+    {
+        throw new NotImplementedException();
+    }
 }
