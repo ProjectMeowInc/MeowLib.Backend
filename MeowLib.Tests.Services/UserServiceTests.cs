@@ -17,7 +17,7 @@ public class UserServiceTests
         var hashService = new HashService();
         var userRepository = new UserTestRepository();
         var jwtTokenService = new JwtTokensService();
-        _userService = new UserService(hashService, userRepository, jwtTokenService, null!);
+        _userService = new UserService(hashService, userRepository, jwtTokenService);
     }
 
     [Test]
