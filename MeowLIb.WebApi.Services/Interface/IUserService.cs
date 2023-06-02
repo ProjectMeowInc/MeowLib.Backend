@@ -1,4 +1,5 @@
 using LanguageExt.Common;
+using MeowLib.Domain.DbModels.UserEntity;
 using MeowLib.Domain.Dto.User;
 using MeowLib.Domain.Exceptions;
 using MeowLib.Domain.Exceptions.Services;
@@ -34,4 +35,12 @@ public interface IUserService
     /// </summary>
     /// <returns>Список пользователей.</returns>
     Task<IEnumerable<UserDto>> GetAllAsync();
+
+    /// <summary>
+    /// Метод обновляет информацию о пользователе и возвращает его Dto-модель.
+    /// </summary>
+    /// <param name="id">Id пользователя.</param>
+    /// <param name="updateData">Данные для обновления.</param>
+    /// <returns>Dto-модель пользователя.</returns>
+    Task<Result<UserDto>> UpdateUser(int id, UpdateUserEntityModel updateData);
 }
