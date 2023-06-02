@@ -17,7 +17,7 @@ public class UserServiceTests
         var hashService = new HashService();
         var userRepository = new UserTestRepository();
         var jwtTokenService = new JwtTokensService();
-        _userService = new UserService(hashService, userRepository, jwtTokenService);
+        _userService = new UserService(hashService, userRepository, jwtTokenService, null!);
     }
 
     [Test]
@@ -51,7 +51,7 @@ public class UserServiceTests
         var password = "testerov";
 
         var createUserResult = await _userService.SignInAsync(login, password);
-        createUserResult.Match(user =>
+        var _ = createUserResult.Match(user =>
         {
             Assert.AreEqual(login, user.Login);
             return 0;
