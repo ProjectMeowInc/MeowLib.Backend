@@ -1,6 +1,7 @@
 using LanguageExt.Common;
 using MeowLib.Domain.DbModels.UserEntity;
 using MeowLib.Domain.Dto.User;
+using MeowLib.Domain.Exceptions.DAL;
 
 namespace MeowLib.WebApi.DAL.Repository.Interfaces;
 
@@ -36,9 +37,7 @@ public interface IUserRepository
     /// <param name="id">Id пользователя.</param>
     /// <param name="updateUserData">Данные для обновления.</param>
     /// <returns>Dto-модель пользователя.</returns>
-    /// <exception cref="EntityNotFoundException">
-    /// Возникает в том случае, если пользователь с заданным Id не найден
-    /// </exception>
+    /// <exception cref="EntityNotFoundException">Возникает в том случае, если пользователь с заданным Id не найден.</exception>
     Task<Result<UserDto>> UpdateAsync(int id, UpdateUserEntityModel updateUserData);
     
     /// <summary>

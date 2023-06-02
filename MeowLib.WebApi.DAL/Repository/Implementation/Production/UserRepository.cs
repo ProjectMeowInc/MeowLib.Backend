@@ -80,9 +80,7 @@ public class UserRepository : IUserRepository
     /// <param name="id">Id пользователя.</param>
     /// <param name="updateUserData">Данные для обновления.</param>
     /// <returns>Dto-модель пользователя.</returns>
-    /// <exception cref="EntityNotFoundException">
-    /// Возникает в том случае, если пользователь с заданным Id не найден
-    /// </exception>
+    /// <exception cref="EntityNotFoundException">Возникает в том случае, если пользователь с заданным Id не найден.</exception>
     public async Task<Result<UserDto>> UpdateAsync(int id, UpdateUserEntityModel updateUserData)
     {
         var foundedUser = await GetUserByIdAsync(id);
