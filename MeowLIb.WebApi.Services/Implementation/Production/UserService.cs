@@ -19,14 +19,18 @@ public class UserService : IUserService
     private readonly IHashService _hashService;
     private readonly IUserRepository _userRepository;
     private readonly IJwtTokenService _jwtTokenService;
-    private readonly IMapper _mapper;
     
-    public UserService(IHashService hashService, IUserRepository userRepository, IJwtTokenService jwtTokenService, IMapper mapper)
+    /// <summary>
+    /// Конструктор.
+    /// </summary>
+    /// <param name="hashService">Сервис для хеширования.</param>
+    /// <param name="userRepository">Репозиторий пользователей.</param>
+    /// <param name="jwtTokenService">Сервис JWT-токенов.</param>
+    public UserService(IHashService hashService, IUserRepository userRepository, IJwtTokenService jwtTokenService)
     {
         _hashService = hashService;
         _userRepository = userRepository;
         _jwtTokenService = jwtTokenService;
-        _mapper = mapper;
     }
 
     /// <summary>
@@ -122,6 +126,12 @@ public class UserService : IUserService
         }).ToListAsync();
     }
     
+    /// <summary>
+    /// Метод обновляет информацию о пользователе и возвращает его Dto-модель.
+    /// </summary>
+    /// <param name="id">Id пользователя.</param>
+    /// <param name="updateData">Данные для обновления.</param>
+    /// <returns>Dto-модель пользователя.</returns>
     public async Task<Result<UserDto>> UpdateUser(int id, UpdateUserEntityModel updateData)
     {
         var validationErrors = new List<ValidationErrorModel>();
