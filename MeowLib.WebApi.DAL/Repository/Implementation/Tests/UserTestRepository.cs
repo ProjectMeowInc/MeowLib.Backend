@@ -1,3 +1,4 @@
+using LanguageExt.Common;
 using MeowLib.Domain.DbModels.UserEntity;
 using MeowLib.Domain.Dto.User;
 using MeowLib.Domain.Enums;
@@ -8,36 +9,44 @@ namespace MeowLib.WebApi.DAL.Repository.Implementation.Tests;
 
 public class UserTestRepository : IUserRepository
 {
-    private readonly List<UserDto> _userData = new()
+    private readonly List<UserEntityModel> _userData = new()
     {
-        new UserDto
+        new UserEntityModel
         {
             Id = 1,
             Login = "tester",
-            Role = UserRolesEnum.Admin
+            Role = UserRolesEnum.Admin,
+            Password = "test",
         },
-        new UserDto
+        new UserEntityModel
         {
             Id = 2,
             Login = "sueta",
-            Role = UserRolesEnum.User
+            Role = UserRolesEnum.User,
+            Password = "test"
         }
     };
 
     public Task<UserDto> CreateAsync(CreateUserEntityModel createUserData)
     {
-        var userDto = new UserDto
+        var userModel = new UserEntityModel
         {
             Id = _userData.Count,
             Login = createUserData.Login,
+            Password = createUserData.Password,
             Role = UserRolesEnum.User
         };
         
-        _userData.Add(userDto);
-        return Task.FromResult(userDto);
+        _userData.Add(userModel);
+        return Task.FromResult(new UserDto
+        {
+            Id = userModel.Id,
+            Login = userModel.Login,
+            Role = userModel.Role
+        });
     }
 
-    public Task<UserDto?> GetByIdAsync(int id)
+    public Task<UserEntityModel?> GetByIdAsync(int id)
     {
         return Task.FromResult(_userData.FirstOrDefault(u => u.Id == id));
     }
@@ -54,7 +63,7 @@ public class UserTestRepository : IUserRepository
         return Task.FromResult(true);
     }
 
-    public Task<UserDto> UpdateAsync(int id, UpdateUserEntityModel updateUserData)
+    public Task<Result<UserDto>> UpdateAsync(int id, UpdateUserEntityModel updateUserData)
     {
         var foundedUser = _userData.FirstOrDefault(u => u.Id == id);
         if (foundedUser is null)
@@ -67,7 +76,12 @@ public class UserTestRepository : IUserRepository
             foundedUser.Login = updateUserData.Login;
         }
 
-        return Task.FromResult(foundedUser);
+        return Task.FromResult(new Result<UserDto>(new UserDto
+        {
+            Id = foundedUser.Id,
+            Login = foundedUser.Login,
+            Role = foundedUser.Role
+        }));
     }
 
     public Task<bool> CheckForUserExistAsync(string login)
