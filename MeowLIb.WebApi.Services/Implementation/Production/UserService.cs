@@ -1,3 +1,4 @@
+using AutoMapper;
 using LanguageExt.Common;
 using MeowLib.Domain.DbModels.UserEntity;
 using MeowLib.Domain.Dto.User;
@@ -18,12 +19,14 @@ public class UserService : IUserService
     private readonly IHashService _hashService;
     private readonly IUserRepository _userRepository;
     private readonly IJwtTokenService _jwtTokenService;
+    private readonly IMapper _mapper;
     
-    public UserService(IHashService hashService, IUserRepository userRepository, IJwtTokenService jwtTokenService)
+    public UserService(IHashService hashService, IUserRepository userRepository, IJwtTokenService jwtTokenService, IMapper mapper)
     {
         _hashService = hashService;
         _userRepository = userRepository;
         _jwtTokenService = jwtTokenService;
+        _mapper = mapper;
     }
 
     /// <summary>
@@ -111,11 +114,47 @@ public class UserService : IUserService
     /// <returns>Список пользователей.</returns>
     public async Task<IEnumerable<UserDto>> GetAllAsync()
     {
-        return await _userRepository.GetAll().Select(u => new UserDto()
+        return await _userRepository.GetAll().Select(u => new UserDto
         {
             Id = u.Id,
             Login = u.Login,
             Role = u.Role
         }).ToListAsync();
     }
+    
+    public async Task<Result<UserDto>> UpdateUser(int id, UpdateUserEntityModel updateData)
+    {
+        var validationErrors = new List<ValidationErrorModel>();
+        
+        if (updateData.Login is not null && updateData.Login.Length < 6)
+        {
+            validationErrors.Add(new ValidationErrorModel
+            {
+                PropertyName = nameof(updateData.Login),
+                Message = "Логин не может быть меньше 6 символов"
+            });
+        }
+
+        if (updateData.Password is not null && updateData.Password.Length < 6)
+        {
+            validationErrors.Add(new ValidationErrorModel
+            {
+                PropertyName = nameof(updateData.Password),
+                Message = "Пароль не может быть меньше 6 символов"
+            });
+        }
+
+        if (validationErrors.Any())
+        {
+            var validationException = new ValidationException(validationErrors);
+            return new Result<UserDto>(validationException);
+        }
+
+        if (updateData.Password is not null)
+        {
+            updateData.Password = _hashService.HashString(updateData.Password);
+        }
+        
+        return await _userRepository.UpdateAsync(id, updateData);
+    } 
 }
