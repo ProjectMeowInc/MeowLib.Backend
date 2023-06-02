@@ -9,6 +9,7 @@ using MeowLib.Domain.Dto.User;
 using MeowLib.Domain.Requests.Author;
 using MeowLib.Domain.Requests.Book;
 using MeowLib.Domain.Requests.Tag;
+using MeowLib.Domain.Requests.User;
 
 namespace MeowLib.Domain.MappingProfiles;
 
@@ -25,6 +26,8 @@ public class MappingProfile : Profile
         // Users mapping
         CreateMap<CreateUserEntityModel, UserEntityModel>();
         CreateMap<UserEntityModel, UserDto>();
+        CreateMap<UpdateUserRequest, UpdateUserEntityModel>()
+            .ReverseMap();
         
         // Authors mapping
         CreateMap<CreateAuthorEntityModel, AuthorEntityModel>();

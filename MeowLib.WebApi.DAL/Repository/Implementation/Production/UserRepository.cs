@@ -1,4 +1,5 @@
 using AutoMapper;
+using LanguageExt.Common;
 using MeowLib.Domain.DbModels.UserEntity;
 using MeowLib.Domain.Dto.User;
 using MeowLib.Domain.Exceptions.DAL;
@@ -38,21 +39,13 @@ public class UserRepository : IUserRepository
     }
 
     /// <summary>
-    /// Метод возвращает DTO-модель пользователя по его Id.
+    /// Метод возвращает модель пользователя по его Id.
     /// </summary>
     /// <param name="id">Id пользователя.</param>
-    /// <returns>Dto-модель пользователя в случае успешного поиска или null если пользователь не найден</returns>
-    public async Task<UserDto?> GetByIdAsync(int id)
+    /// <returns>Модель пользователя в случае успешного поиска или null если пользователь не найден</returns>
+    public async Task<UserEntityModel?> GetByIdAsync(int id)
     {
-        var foundedUser = await GetUserByIdAsync(id);
-        if (foundedUser is null)
-        {
-            return null;
-        }
-        
-        var userDto = _mapper.Map<UserEntityModel, UserDto>(foundedUser);
-
-        return userDto;
+        return await _applicationDbContext.Users.FirstOrDefaultAsync(u => u.Id == id);
     }
 
     /// <summary>
@@ -87,10 +80,8 @@ public class UserRepository : IUserRepository
     /// <param name="id">Id пользователя.</param>
     /// <param name="updateUserData">Данные для обновления.</param>
     /// <returns>Dto-модель пользователя.</returns>
-    /// <exception cref="EntityNotFoundException">
-    /// Возникает в том случае, если пользователь с заданным Id не найден
-    /// </exception>
-    public async Task<UserDto> UpdateAsync(int id, UpdateUserEntityModel updateUserData)
+    /// <exception cref="EntityNotFoundException">Возникает в том случае, если пользователь с заданным Id не найден.</exception>
+    public async Task<Result<UserDto>> UpdateAsync(int id, UpdateUserEntityModel updateUserData)
     {
         var foundedUser = await GetUserByIdAsync(id);
         if (foundedUser is null)

@@ -36,6 +36,9 @@ public class ValidationException : ServiceLevelException, IHasResponseForm
 
     public JsonResult ToResponse()
     {
-        return new JsonResult(new ValidationErrorResponse(ValidationErrors));
+        return new JsonResult(new ValidationErrorResponse(ValidationErrors))
+        {
+            StatusCode = 400
+        };
     }
 }

@@ -1,6 +1,7 @@
-
+using LanguageExt.Common;
 using MeowLib.Domain.DbModels.UserEntity;
 using MeowLib.Domain.Dto.User;
+using MeowLib.Domain.Exceptions.DAL;
 
 namespace MeowLib.WebApi.DAL.Repository.Interfaces;
 
@@ -17,11 +18,11 @@ public interface IUserRepository
     Task<UserDto> CreateAsync(CreateUserEntityModel createUserData);
     
     /// <summary>
-    /// Метод возвращает DTO-модель пользователя по его Id.
+    /// Метод возвращает модель пользователя по его Id.
     /// </summary>
     /// <param name="id">Id пользователя.</param>
-    /// <returns>Dto-модель пользователя в случае успешного поиска или null если пользователь не найден</returns>
-    Task<UserDto?> GetByIdAsync(int id);
+    /// <returns>Модель пользователя в случае успешного поиска или null если пользователь не найден</returns>
+    Task<UserEntityModel?> GetByIdAsync(int id);
     
     /// <summary>
     /// Метод удаляет пользователя по Id.
@@ -36,10 +37,8 @@ public interface IUserRepository
     /// <param name="id">Id пользователя.</param>
     /// <param name="updateUserData">Данные для обновления.</param>
     /// <returns>Dto-модель пользователя.</returns>
-    /// <exception cref="EntityNotFoundException">
-    /// Возникает в том случае, если пользователь с заданным Id не найден
-    /// </exception>
-    Task<UserDto> UpdateAsync(int id, UpdateUserEntityModel updateUserData);
+    /// <exception cref="EntityNotFoundException">Возникает в том случае, если пользователь с заданным Id не найден.</exception>
+    Task<Result<UserDto>> UpdateAsync(int id, UpdateUserEntityModel updateUserData);
     
     /// <summary>
     /// Метод проверяет существует ли пользователь с заданным логином.

@@ -2,6 +2,7 @@ using LanguageExt.Common;
 using MeowLib.Domain.DbModels.UserEntity;
 using MeowLib.Domain.Dto.User;
 using MeowLib.Domain.Exceptions;
+using MeowLib.Domain.Exceptions.DAL;
 using MeowLib.Domain.Exceptions.Services;
 using MeowLib.Domain.Models;
 using MeowLib.WebApi.DAL.Repository.Interfaces;
@@ -19,6 +20,12 @@ public class UserService : IUserService
     private readonly IUserRepository _userRepository;
     private readonly IJwtTokenService _jwtTokenService;
     
+    /// <summary>
+    /// Конструктор.
+    /// </summary>
+    /// <param name="hashService">Сервис для хеширования.</param>
+    /// <param name="userRepository">Репозиторий пользователей.</param>
+    /// <param name="jwtTokenService">Сервис JWT-токенов.</param>
     public UserService(IHashService hashService, IUserRepository userRepository, IJwtTokenService jwtTokenService)
     {
         _hashService = hashService;
@@ -111,11 +118,55 @@ public class UserService : IUserService
     /// <returns>Список пользователей.</returns>
     public async Task<IEnumerable<UserDto>> GetAllAsync()
     {
-        return await _userRepository.GetAll().Select(u => new UserDto()
+        return await _userRepository.GetAll().Select(u => new UserDto
         {
             Id = u.Id,
             Login = u.Login,
             Role = u.Role
         }).ToListAsync();
     }
+    
+    /// <summary>
+    /// Метод обновляет информацию о пользователе и возвращает его Dto-модель.
+    /// </summary>
+    /// <param name="id">Id пользователя.</param>
+    /// <param name="updateData">Данные для обновления.</param>
+    /// <returns>Dto-модель пользователя.</returns>
+    /// <exception cref="ValidationException">Возникает в случае, если входные данные были невалидны.</exception>
+    /// <exception cref="EntityNotFoundException">Возникает в том случае, если пользователь с заданным Id не найден.</exception>
+    public async Task<Result<UserDto>> UpdateUser(int id, UpdateUserEntityModel updateData)
+    {
+        var validationErrors = new List<ValidationErrorModel>();
+        
+        if (updateData.Login is not null && updateData.Login.Length < 6)
+        {
+            validationErrors.Add(new ValidationErrorModel
+            {
+                PropertyName = nameof(updateData.Login),
+                Message = "Логин не может быть меньше 6 символов"
+            });
+        }
+
+        if (updateData.Password is not null && updateData.Password.Length < 6)
+        {
+            validationErrors.Add(new ValidationErrorModel
+            {
+                PropertyName = nameof(updateData.Password),
+                Message = "Пароль не может быть меньше 6 символов"
+            });
+        }
+
+        if (validationErrors.Any())
+        {
+            var validationException = new ValidationException(validationErrors);
+            return new Result<UserDto>(validationException);
+        }
+
+        if (updateData.Password is not null)
+        {
+            updateData.Password = _hashService.HashString(updateData.Password);
+        }
+        
+        return await _userRepository.UpdateAsync(id, updateData);
+    } 
 }

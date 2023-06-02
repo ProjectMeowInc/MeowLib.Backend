@@ -1,6 +1,8 @@
 using LanguageExt.Common;
+using MeowLib.Domain.DbModels.UserEntity;
 using MeowLib.Domain.Dto.User;
 using MeowLib.Domain.Exceptions;
+using MeowLib.Domain.Exceptions.DAL;
 using MeowLib.Domain.Exceptions.Services;
 
 namespace MeowLIb.WebApi.Services.Interface;
@@ -34,4 +36,14 @@ public interface IUserService
     /// </summary>
     /// <returns>Список пользователей.</returns>
     Task<IEnumerable<UserDto>> GetAllAsync();
+
+    /// <summary>
+    /// Метод обновляет информацию о пользователе и возвращает его Dto-модель.
+    /// </summary>
+    /// <param name="id">Id пользователя.</param>
+    /// <param name="updateData">Данные для обновления.</param>
+    /// <returns>Dto-модель пользователя.</returns>
+    /// <exception cref="ValidationException">Возникает в случае, если входные данные были невалидны.</exception>
+    /// <exception cref="EntityNotFoundException">Возникает в том случае, если пользователь с заданным Id не найден.</exception>
+    Task<Result<UserDto>> UpdateUser(int id, UpdateUserEntityModel updateData);
 }

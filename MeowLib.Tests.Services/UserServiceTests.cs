@@ -51,7 +51,7 @@ public class UserServiceTests
         var password = "testerov";
 
         var createUserResult = await _userService.SignInAsync(login, password);
-        createUserResult.Match(user =>
+        var _ = createUserResult.Match(user =>
         {
             Assert.AreEqual(login, user.Login);
             return 0;
