@@ -1,8 +1,8 @@
-using AutoMapper;
 using LanguageExt.Common;
 using MeowLib.Domain.DbModels.UserEntity;
 using MeowLib.Domain.Dto.User;
 using MeowLib.Domain.Exceptions;
+using MeowLib.Domain.Exceptions.DAL;
 using MeowLib.Domain.Exceptions.Services;
 using MeowLib.Domain.Models;
 using MeowLib.WebApi.DAL.Repository.Interfaces;
@@ -132,6 +132,8 @@ public class UserService : IUserService
     /// <param name="id">Id пользователя.</param>
     /// <param name="updateData">Данные для обновления.</param>
     /// <returns>Dto-модель пользователя.</returns>
+    /// <exception cref="ValidationException">Возникает в случае, если входные данные были невалидны.</exception>
+    /// <exception cref="EntityNotFoundException">Возникает в том случае, если пользователь с заданным Id не найден.</exception>
     public async Task<Result<UserDto>> UpdateUser(int id, UpdateUserEntityModel updateData)
     {
         var validationErrors = new List<ValidationErrorModel>();
