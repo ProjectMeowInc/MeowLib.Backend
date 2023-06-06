@@ -99,4 +99,9 @@ public class UserTestRepository : IUserRepository
     {
         throw new NotImplementedException();
     }
+
+    public async Task<UserEntityModel?> GetByLoginAsync(string login)
+    {
+        throw new NotImplementedException();
+    }
 }

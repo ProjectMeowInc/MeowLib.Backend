@@ -8,10 +8,10 @@ public class ValidationErrorModel
     /// <summary>
     /// Название свойства.
     /// </summary>
-    public string PropertyName { get; set; } = null!;
+    public required string PropertyName { get; set; } = null!;
     
     /// <summary>
     /// Текст ошибки.
     /// </summary>
-    public string Message { get; set; } = null!;
+    public required string Message { get; set; } = null!;
 }
