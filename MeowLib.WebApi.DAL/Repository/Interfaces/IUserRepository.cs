@@ -48,7 +48,7 @@ public interface IUserRepository
     Task<bool> CheckForUserExistAsync(string login);
 
     /// <summary>
-    /// Метод получает пользователя по логину и паролю
+    /// Метод получает пользователя по логину и паролю.
     /// </summary>
     /// <param name="login">Логин пользователя.</param>
     /// <param name="password">Хеш пароля пользователя.</param>
@@ -60,4 +60,11 @@ public interface IUserRepository
     /// </summary>
     /// <returns>Список пользователей в формате IQueryable</returns>
     IQueryable<UserEntityModel> GetAll();
+
+    /// <summary>
+    /// Метод получает пользователя по логину.
+    /// </summary>
+    /// <param name="login">Логин пользователя.</param>
+    /// <returns>Модель пользователя или null если он не был найден.</returns>
+    Task<UserEntityModel?> GetByLoginAsync(string login);
 }

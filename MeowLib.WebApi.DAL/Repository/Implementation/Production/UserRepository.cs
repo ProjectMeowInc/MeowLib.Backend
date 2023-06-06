@@ -141,6 +141,16 @@ public class UserRepository : IUserRepository
     }
 
     /// <summary>
+    /// Метод получает пользователя по логину.
+    /// </summary>
+    /// <param name="login">Логин пользователя.</param>
+    /// <returns>Модель пользователя или null если он не был найден.</returns>
+    public async Task<UserEntityModel?> GetByLoginAsync(string login)
+    {
+        return await _applicationDbContext.Users.FirstOrDefaultAsync(u => u.Login == login);
+    }
+
+    /// <summary>
     /// Метод возвращает пользователя по его Id.
     /// </summary>
     /// <param name="id">Id для поиска.</param>
