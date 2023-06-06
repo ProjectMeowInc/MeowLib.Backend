@@ -108,4 +108,17 @@ public class BookController : BaseController
             return ServerError();
         });
     }
+
+    [HttpGet("{id:int}")]
+    public async Task<ActionResult> GetBook([FromRoute] int id)
+    {
+        var foundedBook = await _bookService.GetBookByIdAsync(id);
+        if (foundedBook is null)
+        {
+            return NotFoundError();
+        }
+
+        var getBookResponse = _mapper.Map<BookEntityModel, GetBookResponse>(foundedBook);
+        return Json(getBookResponse);
+    }
 }
