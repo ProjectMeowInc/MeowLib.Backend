@@ -42,4 +42,11 @@ public interface IBookService
     /// <returns>True - если удачно, false - если книга не была найдена.</returns>
     /// <exception cref="ApiException">Возникает в случае если произошла ошибка сохранения данных.</exception>
     Task<Result<bool>> DeleteBookByIdAsync(int bookId);
+
+    // <summary>
+    /// Метод получает информацию о книге по Id.
+    /// </summary>
+    /// <param name="bookId">Id книги.</param>
+    /// <returns>Модель книги, или null если она не была найдена.</returns>
+    Task<BookEntityModel?> GetBookByIdAsync(int bookId);
 }

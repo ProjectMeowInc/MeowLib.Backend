@@ -181,4 +181,14 @@ public class BookService : IBookService
             return new Result<bool>(apiException);
         }
     }
+
+    /// <summary>
+    /// Метод получает информацию о книге по Id.
+    /// </summary>
+    /// <param name="bookId">Id книги.</param>
+    /// <returns>Модель книги, или null если она не была найдена.</returns>
+    public async Task<BookEntityModel?> GetBookByIdAsync(int bookId)
+    {
+        return await _bookRepository.GetByIdAsync(bookId);
+    }
 }
