@@ -10,6 +10,7 @@ using MeowLib.Domain.Requests.Author;
 using MeowLib.Domain.Requests.Book;
 using MeowLib.Domain.Requests.Tag;
 using MeowLib.Domain.Requests.User;
+using MeowLib.Domain.Responses.Book;
 
 namespace MeowLib.Domain.MappingProfiles;
 
@@ -45,5 +46,6 @@ public class MappingProfile : Profile
         // Book mapping
         CreateMap<CreateBookRequest, CreateBookEntityModel>()
             .ReverseMap();
+        CreateMap<BookEntityModel, GetBookResponse>();
     }
 }
