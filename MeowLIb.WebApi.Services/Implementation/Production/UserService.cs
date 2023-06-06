@@ -162,6 +162,22 @@ public class UserService : IUserService
             return new Result<UserDto>(validationException);
         }
 
+        if (updateData.Login is not null)
+        {
+            var foundedUser = await _userRepository.GetByLoginAsync(updateData.Login);
+            if (foundedUser is not null)
+            {
+                validationErrors.Add(new ValidationErrorModel
+                {
+                    PropertyName = nameof(updateData.Login),
+                    Message = "Такой логин уже занят"
+                });
+
+                var validationException = new ValidationException(validationErrors);
+                return new Result<UserDto>(validationException);
+            }
+        }
+
         if (updateData.Password is not null)
         {
             updateData.Password = _hashService.HashString(updateData.Password);
