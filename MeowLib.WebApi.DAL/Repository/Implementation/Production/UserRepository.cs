@@ -91,6 +91,7 @@ public class UserRepository : IUserRepository
 
         foundedUser.Login = updateUserData.Login ?? foundedUser.Login;
         foundedUser.Password = updateUserData.Password ?? foundedUser.Password;
+        foundedUser.Role = updateUserData.Role ?? foundedUser.Role;
 
         _applicationDbContext.Users.Update(foundedUser);
         await _applicationDbContext.SaveChangesAsync();
