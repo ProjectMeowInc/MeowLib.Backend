@@ -23,13 +23,14 @@ public interface IUserService
     Task<Result<UserDto>> SignInAsync(string login, string password);
 
     /// <summary>
-    /// Метод создаёт JWT-токег для авторизации пользователя.
+    /// Метод генерирует JWT-токен для авторизации пользователя.
     /// </summary>
     /// <param name="login">Логин пользователя.</param>
     /// <param name="password">Пароль пользователя.</param>
-    /// <returns>JWT-токен для авторизации.</returns>
+    /// <param name="longSession">True - RefreshToken будет создан на 30 дней, False - 30 минут.</param>
+    /// <returns>Пару JWT-токенов для авторизации.</returns>
     /// <exception cref="ApiException">Возникает в случае если указан неверный логин или пароль</exception>
-    Task<Result<string>> LogIn(string login, string password);
+    Task<Result<(string accessToken, string refreshToken)>> LogIn(string login, string password, bool longSession);
 
     /// <summary>
     /// Метод получает список всех пользователей.
