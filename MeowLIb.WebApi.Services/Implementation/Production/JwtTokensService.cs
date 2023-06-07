@@ -1,8 +1,8 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Text;
 using MeowLib.Domain.Dto.User;
 using MeowLib.Domain.Enums;
+using MeowLib.Domain.Models;
 using MeowLIb.WebApi.Services.Interface;
 using Microsoft.IdentityModel.Tokens;
 
@@ -14,7 +14,8 @@ namespace MeowLIb.WebApi.Services.Implementation.Production;
 public class JwtTokensService : IJwtTokenService
 {
     private static readonly JwtSecurityTokenHandler TokenHandler = new();
-    private readonly SymmetricSecurityKey _securityKey;
+    private readonly SymmetricSecurityKey _accessTokenSecurityKey;
+    private readonly SymmetricSecurityKey _refreshTokenSecurityKey;
     private readonly string _issuer;
     private readonly string _audience;
     
@@ -24,22 +25,24 @@ public class JwtTokensService : IJwtTokenService
     public JwtTokensService()
     {
         // Init secret key
-        var secretString = "QevAyHIKuOHJwG6sdYwnfrrbUW61cu4r3vuyzSNkBw1itzJD5AMXdKqLfzv";
-        var secretKey = Encoding.UTF8.GetBytes(secretString);
-        _securityKey = new SymmetricSecurityKey(secretKey);
+        var accessTokenSecurityKey = "QevAyHIKuOHJwG6sdYwnfrrbUW61cu4r3vuyzSNkBw1itzJD5AMXdKqLfzv"u8.ToArray();
+        var refreshTokenSecurityKey = "Wv8HLBxBztPocFYSMDZn3074USr48gxw9RXZw4BCxAp290CqsPPG9frFLR2p"u8.ToArray();
+        
+        _accessTokenSecurityKey = new SymmetricSecurityKey(accessTokenSecurityKey);
+        _refreshTokenSecurityKey = new SymmetricSecurityKey(refreshTokenSecurityKey);
         
         _issuer = "MeowLib";
         _audience = "MeowLibUser";
     }
 
     /// <summary>
-    /// Токен генерирует JWT-токен для авторизации пользователя.
+    /// Метод генерирует JWT-токен доступа.
     /// </summary>
     /// <param name="userData">Данные о пользователе.</param>
     /// <returns>JWT-токен в виде строки.</returns>
-    public string GenerateToken(UserDto userData)
+    public string GenerateAccessToken(UserDto userData)
     {
-        var tokenDescription = new SecurityTokenDescriptor
+        var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(new[]
             {
@@ -47,31 +50,54 @@ public class JwtTokensService : IJwtTokenService
                 new Claim("login", userData.Login),
                 new Claim("userRole", userData.Role.ToString())
             }),
-            Expires = DateTime.UtcNow.AddHours(1),
+            Expires = DateTime.UtcNow.AddMinutes(15),
             Issuer = _issuer,
             Audience = _audience,
-            SigningCredentials = new SigningCredentials(_securityKey, SecurityAlgorithms.HmacSha256Signature),
+            SigningCredentials = new SigningCredentials(_accessTokenSecurityKey, SecurityAlgorithms.HmacSha256Signature)
         };
-
-        var token = TokenHandler.CreateToken(tokenDescription);
-        return TokenHandler.WriteToken(token);
+        
+        return WriteToken(tokenDescriptor);
     }
 
     /// <summary>
-    /// Парсит токен и возвращает информацию хранащуюся в нём.
+    /// Метод генерирует JWT-токен обновления.
+    /// </summary>
+    /// <param name="userLogin">Логин пользователя к которому привязан данный токен.</param>
+    /// <param name="expiredAt">Время истечения токена обновления.</param>
+    /// <returns></returns>
+    public string GenerateRefreshToken(string userLogin, DateTime expiredAt)
+    {
+        var tokenDescription = new SecurityTokenDescriptor
+        {
+            Subject = new ClaimsIdentity(new[]
+            {
+                new Claim("login", userLogin)
+            }),
+            Expires = expiredAt,
+            Issuer = _issuer,
+            Audience = _audience,
+            SigningCredentials = new SigningCredentials(_refreshTokenSecurityKey, SecurityAlgorithms.HmacSha256Signature)
+        };
+
+        return WriteToken(tokenDescription);
+    }
+
+    /// <summary>
+    /// Парсит JWT-токен доступа и возвращает информацию хранащуюся в нём.
     /// </summary>
     /// <param name="token">Токен.</param>
     /// <returns>Информация о пользователе в случае удачного парсинга, иначе - null</returns>
-    public async Task<UserDto?> ParseTokenAsync(string token)
+    public async Task<UserDto?> ParseAccessTokenAsync(string token)
     {
         var tokenValidationResult = await TokenHandler.ValidateTokenAsync(token, new TokenValidationParameters
         {
             ValidateIssuer = true,
             ValidateAudience = true,
             ValidateIssuerSigningKey = true,
+            ValidateLifetime = true,
             ValidIssuer = _issuer,
             ValidAudience = _audience,
-            IssuerSigningKey = _securityKey
+            IssuerSigningKey = _accessTokenSecurityKey
         });
 
         if (!tokenValidationResult.IsValid)
@@ -103,5 +129,43 @@ public class JwtTokensService : IJwtTokenService
         };
 
         return userData;
+    }
+
+    /// <summary>
+    /// Метод парсит JWT-токет обновления и возвращает информацию хранащуюся в нём.
+    /// </summary>
+    /// <param name="token">Токен обновления.</param>
+    /// <returns>Информация в токене обновления.</returns>
+    public async Task<AccessTokenDataModel?> ParseRefreshTokenAsync(string token)
+    {
+        var tokenValidationResult = await TokenHandler.ValidateTokenAsync(token, new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateIssuerSigningKey = true,
+            ValidateLifetime = true,
+            ValidIssuer = _issuer,
+            ValidAudience = _audience,
+            IssuerSigningKey = _accessTokenSecurityKey
+        });
+
+        if (!tokenValidationResult.IsValid)
+        {
+            return null;
+        }
+
+        var claims = tokenValidationResult.Claims;
+        
+        var tokenData = new AccessTokenDataModel
+        {
+            Login = (string)claims["login"],
+        };
+
+        return tokenData;
+    }
+
+    private string WriteToken(SecurityTokenDescriptor tokenDescriptor)
+    {
+        return TokenHandler.WriteToken(TokenHandler.CreateToken(tokenDescriptor));
     }
 }
