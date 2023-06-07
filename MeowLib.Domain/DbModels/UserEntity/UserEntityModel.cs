@@ -23,6 +23,11 @@ public class UserEntityModel
     public string Password { get; set; } = null!;
 
     /// <summary>
+    /// Токен текущей сессии.
+    /// </summary>
+    public string? RefreshToken { get; set; };
+    
+    /// <summary>
     /// Роль пользователя.
     /// </summary>
     public UserRolesEnum Role { get; set; } = UserRolesEnum.User;
