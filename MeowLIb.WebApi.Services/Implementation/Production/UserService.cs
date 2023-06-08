@@ -91,13 +91,15 @@ public class UserService : IUserService
     }
 
     /// <summary>
-    /// Метод генерирует JWT-токен для авторизации пользователя.
+    /// Метод генерирует пару JWT-токенов для авторизации пользователя.
     /// </summary>
     /// <param name="login">Логин пользователя.</param>
     /// <param name="password">Пароль пользователя.</param>
     /// <param name="longSession">True - RefreshToken будет создан на 30 дней, False - 30 минут.</param>
     /// <returns>Пару JWT-токенов для авторизации.</returns>
-    /// <exception cref="ApiException">Возникает в случае если указан неверный логин или пароль</exception>
+    /// <exception cref="IncorrectCreditionalException">Возникает в случае, если пользователь ввёл некорректные данные.</exception>
+    /// <exception cref="CreateTokenException">Возникает в случае, если сгенерированные токен уже кому-то принадлежит.</exception>
+    /// <exception cref="EntityNotFoundException">Возникает в случае, если пользователь не был найден.</exception>
     public async Task<Result<(string accessToken, string refreshToken)>> LogIn(string login, string password, bool longSession)
     {
         var hashedPassword = _hashService.HashString(password);
@@ -109,24 +111,34 @@ public class UserService : IUserService
             return new Result<(string accessToken, string refreshToken)>(incorrectCreditionalException);
         }
 
-        var tokenExpiredTime = longSession ? DateTime.Now.AddDays(30) : DateTime.UtcNow.AddMinutes(30);
+        var tokenExpiredTime = longSession ? DateTime.UtcNow.AddDays(30) : DateTime.UtcNow.AddMinutes(30);
         
         var accessToken = _jwtTokenService.GenerateAccessToken(userData);
-        var refreshToken = _jwtTokenService.GenerateRefreshToken(userData.Login, tokenExpiredTime);
+        var refreshToken = _jwtTokenService.GenerateRefreshToken(new RefreshTokenDataModel
+        {
+            Login = userData.Login
+        }, tokenExpiredTime);
 
         // Если каким-то образом сгенерированный токен уже занят, то обработаем это
         var foundedUser = await _userRepository.GetByRefreshTokenAsync(refreshToken);
 
         if (foundedUser is not null)
         {
-            var tokenAlreadyTakenException = new ApiException("Токен уже занят");
-            return new Result<(string accessToken, string refreshToken)>(tokenAlreadyTakenException);
+            var createTokenException = new CreateTokenException("Токен уже занят");
+            return new Result<(string accessToken, string refreshToken)>(createTokenException);
         }
 
         var updateError = await _userRepository.UpdateRefreshTokenAsync(userData.Login, refreshToken);
-        return updateError.Match<Result<(string accessToken, string refreshToken)>>(exception =>
-                new Result<(string accessToken, string refreshToken)>(exception), 
-            () => (accessToken, refreshToken));
+        return updateError.Match<Result<(string accessToken, string refreshToken)>>(exception => 
+        {
+            if (exception is EntityNotFoundException entityNotFoundException)
+            {
+                return new Result<(string accessToken, string refreshToken)>(entityNotFoundException);
+            }
+
+            // TODO: Add logs
+            return new Result<(string accessToken, string refreshToken)>(exception);
+        }, () => (accessToken, refreshToken));
     }
 
     /// <summary>
