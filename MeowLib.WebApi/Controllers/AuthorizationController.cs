@@ -1,5 +1,6 @@
 ﻿using MeowLib.Domain.Exceptions;
 using MeowLib.Domain.Exceptions.Services;
+using MeowLib.Domain.Requests.Authorization;
 using MeowLib.Domain.Requests.User;
 using MeowLib.Domain.Responses;
 using MeowLib.Domain.Responses.User;
@@ -74,9 +75,9 @@ public class AuthorizationController : BaseController
     [ProducesResponseType(200, Type = typeof(LogInResponse))]
     [ProducesResponseType(401, Type = typeof(BaseErrorResponse))]
     [ProducesResponseType(500, Type = typeof(BaseErrorResponse))]
-    public async Task<ActionResult> UpdateTokens([FromHeader(Name = "RefreshToken")] string refreshToken)
+    public async Task<ActionResult> UpdateTokens([FromBody] UpdateAuthorizationRequest input)
     {
-        var loginResult = await _userService.LogInByRefreshTokenAsync(refreshToken);
+        var loginResult = await _userService.LogInByRefreshTokenAsync(input.RefreshToken);
 
         return loginResult.Match<ActionResult>(tokens => Json(new LogInResponse
         {
