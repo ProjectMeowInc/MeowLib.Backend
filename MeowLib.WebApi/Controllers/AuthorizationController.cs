@@ -72,7 +72,7 @@ public class AuthorizationController : BaseController
     [HttpPost]
     [Route("update-auth")]
     [ProducesResponseType(200, Type = typeof(LogInResponse))]
-    [ProducesResponseType(401, Type = typeof(IncorrectCreditionalException))]
+    [ProducesResponseType(401, Type = typeof(BaseErrorResponse))]
     [ProducesResponseType(500, Type = typeof(BaseErrorResponse))]
     public async Task<ActionResult> UpdateTokens([FromHeader(Name = "RefreshToken")] string refreshToken)
     {
