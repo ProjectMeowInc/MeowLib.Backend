@@ -9,4 +9,9 @@ public class RefreshTokenDataModel
     /// Логин пользователя-владельца токена.
     /// </summary>
     public required string Login { get; set; }
+    
+    /// <summary>
+    /// Долгая ли сессия?
+    /// </summary>
+    public required bool IsLongSession { get; set; }
 }
