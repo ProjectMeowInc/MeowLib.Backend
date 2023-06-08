@@ -11,15 +11,15 @@ public class UserDto
     /// <summary>
     /// Id пользователя.
     /// </summary>
-    public int Id { get; set; }
+    public required int Id { get; set; }
     
     /// <summary>
     /// Логин пользователя.
     /// </summary>
-    public string Login { get; set; } = null!;
+    public required string Login { get; set; } = null!;
     
     /// <summary>
     /// Роль пользователя.
     /// </summary>
-    public UserRolesEnum Role { get; set; }
+    public required UserRolesEnum Role { get; set; }
 }
