@@ -3,6 +3,7 @@ using LanguageExt;
 using LanguageExt.Common;
 using MeowLib.Domain.DbModels.UserEntity;
 using MeowLib.Domain.Dto.User;
+using MeowLib.Domain.Enums;
 using MeowLib.Domain.Exceptions.DAL;
 using MeowLib.WebApi.DAL.Repository.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -172,6 +173,8 @@ public class UserRepository : IUserRepository
     /// <param name="login">Логин пользователя.</param>
     /// <param name="newRefreshToken">Новый токен обновления.</param>
     /// <returns>Ошибку, если она есть.</returns>
+    /// <exception cref="EntityNotFoundException">Возникает в случае, если пользователь не был найден.</exception>
+    /// <exception cref="DbSavingException">Возникает в случае ошибки сохранения данных.</exception>
     public async Task<Option<Exception>> UpdateRefreshTokenAsync(string login, string newRefreshToken)
     {
         var foundedUser = await _applicationDbContext.Users.FirstOrDefaultAsync(u => u.Login == login);
@@ -183,7 +186,16 @@ public class UserRepository : IUserRepository
 
         foundedUser.RefreshToken = newRefreshToken;
         _applicationDbContext.Users.Update(foundedUser);
-        await _applicationDbContext.SaveChangesAsync();
+        
+        try
+        {
+            await _applicationDbContext.SaveChangesAsync();
+        }
+        catch (DbUpdateException)
+        {
+            var dbSavingException = new DbSavingException(nameof(UserEntityModel), DbSavingTypesEnum.Update);
+            return dbSavingException;
+        }
 
         return null;
     }
