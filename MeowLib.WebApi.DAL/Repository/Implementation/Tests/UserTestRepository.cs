@@ -1,3 +1,4 @@
+using LanguageExt;
 using LanguageExt.Common;
 using MeowLib.Domain.DbModels.UserEntity;
 using MeowLib.Domain.Dto.User;
@@ -100,7 +101,17 @@ public class UserTestRepository : IUserRepository
         throw new NotImplementedException();
     }
 
-    public async Task<UserEntityModel?> GetByLoginAsync(string login)
+    public Task<UserEntityModel?> GetByLoginAsync(string login)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<UserEntityModel?> GetByRefreshTokenAsync(string refreshToken)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<Option<Exception>> UpdateRefreshTokenAsync(string login, string newRefreshToken)
     {
         throw new NotImplementedException();
     }

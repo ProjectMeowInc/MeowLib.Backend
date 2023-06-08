@@ -91,25 +91,55 @@ public class UserService : IUserService
     }
 
     /// <summary>
-    /// Метод создаёт JWT-токег для авторизации пользователя.
+    /// Метод генерирует пару JWT-токенов для авторизации пользователя.
     /// </summary>
     /// <param name="login">Логин пользователя.</param>
     /// <param name="password">Пароль пользователя.</param>
-    /// <returns>JWT-токен для авторизации.</returns>
-    /// <exception cref="ApiException">Возникает в случае если указан неверный логин или пароль</exception>
-    public async Task<Result<string>> LogIn(string login, string password)
+    /// <param name="isLongSession">True - RefreshToken будет создан на 30 дней, False - 30 минут.</param>
+    /// <returns>Пару JWT-токенов для авторизации.</returns>
+    /// <exception cref="IncorrectCreditionalException">Возникает в случае, если авторизационные данные некорректны.</exception>
+    /// <exception cref="CreateTokenException">Возникает в случае, если сгенерированные токен уже кому-то принадлежит.</exception>
+    /// <exception cref="EntityNotFoundException">Возникает в случае, если пользователь не был найден.</exception>
+    public async Task<Result<(string accessToken, string refreshToken)>> LogIn(string login, string password, bool isLongSession)
     {
         var hashedPassword = _hashService.HashString(password);
 
         var userData = await _userRepository.GetByLoginAndPasswordAsync(login, hashedPassword);
         if (userData is null)
         {
-            var apiException = new ApiException("Неверный логин или пароль");
-            return new Result<string>(apiException);
+            var incorrectCreditionalException = new IncorrectCreditionalException("Неверный логин или пароль");
+            return new Result<(string accessToken, string refreshToken)>(incorrectCreditionalException);
         }
 
-        var userToken = _jwtTokenService.GenerateToken(userData);
-        return userToken;
+        var tokenExpiredTime = isLongSession ? DateTime.UtcNow.AddDays(30) : DateTime.UtcNow.AddMinutes(30);
+        
+        var accessToken = _jwtTokenService.GenerateAccessToken(userData);
+        var refreshToken = _jwtTokenService.GenerateRefreshToken(new RefreshTokenDataModel
+        {
+            Login = userData.Login,
+            IsLongSession = isLongSession
+        }, tokenExpiredTime);
+
+        // Если каким-то образом сгенерированный токен уже занят, то обработаем это
+        var foundedUser = await _userRepository.GetByRefreshTokenAsync(refreshToken);
+
+        if (foundedUser is not null)
+        {
+            var createTokenException = new CreateTokenException("Токен уже занят");
+            return new Result<(string accessToken, string refreshToken)>(createTokenException);
+        }
+
+        var updateError = await _userRepository.UpdateRefreshTokenAsync(userData.Login, refreshToken);
+        return updateError.Match<Result<(string accessToken, string refreshToken)>>(exception => 
+        {
+            if (exception is EntityNotFoundException entityNotFoundException)
+            {
+                return new Result<(string accessToken, string refreshToken)>(entityNotFoundException);
+            }
+
+            // TODO: Add logs
+            return new Result<(string accessToken, string refreshToken)>(exception);
+        }, () => (accessToken, refreshToken));
     }
 
     /// <summary>
@@ -184,5 +214,51 @@ public class UserService : IUserService
         }
         
         return await _userRepository.UpdateAsync(id, updateData);
-    } 
+    }
+
+    /// <summary>
+    /// Метод авторизует пользователя по токену обновления.
+    /// </summary>
+    /// <param name="refreshToken">Токен обновления.</param>
+    /// <returns>Пару JWT-токенов.</returns>
+    /// <exception cref="IncorrectCreditionalException">Возникает в случае, если был введён некорректный токен обновления.</exception>
+    public async Task<Result<(string accessToken, string refreshToken)>> LogInByRefreshTokenAsync(string refreshToken)
+    {
+        var parsedRefreshToken = await _jwtTokenService.ParseRefreshTokenAsync(refreshToken);
+        if (parsedRefreshToken is null)
+        {
+            var incorrectCreditionalException = new IncorrectCreditionalException("Неверный RefreshToken");
+            return new Result<(string accessToken, string refreshToken)>(incorrectCreditionalException);
+        }
+
+        var foundedUser = await _userRepository.GetByRefreshTokenAsync(refreshToken);
+        if (foundedUser is null)
+        {
+            var sessionExpiredException = new IncorrectCreditionalException("Сессия с введёным токеном истекла");
+            return new Result<(string accessToken, string refreshToken)>(sessionExpiredException);
+        }
+
+        var tokenExpiredDate = parsedRefreshToken.IsLongSession
+            ? DateTime.UtcNow.AddDays(30)
+            : DateTime.UtcNow.AddMinutes(30);
+
+        var newRefreshToken = _jwtTokenService.GenerateRefreshToken(new RefreshTokenDataModel
+        {
+            Login = foundedUser.Login,
+            IsLongSession = parsedRefreshToken.IsLongSession
+        }, tokenExpiredDate);
+        
+        var newAccessToken = _jwtTokenService.GenerateAccessToken(new UserDto
+        {
+            Id = foundedUser.Id,
+            Login = foundedUser.Login,
+            Role = foundedUser.Role
+        });
+
+        var updateRefreshTokenError = await _userRepository.UpdateRefreshTokenAsync(foundedUser.Login, newRefreshToken);
+
+        return updateRefreshTokenError.Match<Result<(string accessToken, string refreshToken)>>(exception =>
+            new Result<(string accessToken, string refreshToken)>(exception), 
+            () => (newAccessToken, newRefreshToken));
+    }
 }

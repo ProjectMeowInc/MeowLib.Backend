@@ -42,7 +42,7 @@ public class AuthorizationAttribute : Attribute, IAsyncAuthorizationFilter
             return;
         }
         
-        var parsedTokenData = await jwtTokenService.ParseTokenAsync(authToken.ToString().Replace("Bearer ", string.Empty));
+        var parsedTokenData = await jwtTokenService.ParseAccessTokenAsync(authToken.ToString().Replace("Bearer ", string.Empty));
         if (parsedTokenData is null)
         {
             context.Result = new JsonResult(new BaseErrorResponse("Ошибка валидации токена"))

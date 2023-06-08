@@ -1,3 +1,4 @@
+using LanguageExt;
 using LanguageExt.Common;
 using MeowLib.Domain.DbModels.UserEntity;
 using MeowLib.Domain.Dto.User;
@@ -67,4 +68,21 @@ public interface IUserRepository
     /// <param name="login">Логин пользователя.</param>
     /// <returns>Модель пользователя или null если он не был найден.</returns>
     Task<UserEntityModel?> GetByLoginAsync(string login);
+
+    /// <summary>
+    /// Метод получает пользователя по токену обновления.
+    /// </summary>
+    /// <param name="refreshToken">Токен обновления.</param>
+    /// <returns>Найденного пользователя или null</returns>
+    Task<UserEntityModel?> GetByRefreshTokenAsync(string refreshToken);
+
+    /// <summary>
+    /// Метод изменяет токена обновления пользователя.
+    /// </summary>
+    /// <param name="login">Логин пользователя.</param>
+    /// <param name="newRefreshToken">Новый токен обновления.</param>
+    /// <returns>Ошибку, если она есть.</returns>
+    /// <exception cref="EntityNotFoundException">Возникает в случае, если пользователь не был найден.</exception>
+    /// <exception cref="DbSavingException">Возникает в случае ошибки сохранения данных.</exception>
+    Task<Option<Exception>> UpdateRefreshTokenAsync(string login, string newRefreshToken);
 }

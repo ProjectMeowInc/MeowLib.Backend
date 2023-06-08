@@ -32,52 +32,6 @@ public class UserController : BaseController
         _mapper = mapper;
     }
 
-    [HttpPost]
-    [Route("sign-in")]
-    [ProducesResponseType(200)]
-    [ProducesResponseType(400, Type = typeof(BaseErrorResponse))]
-    [ProducesResponseType(403, Type = typeof(ValidationErrorResponse))]
-    [ProducesResponseType(500, Type = typeof(BaseErrorResponse))]
-    public async Task<ActionResult> SignIn([FromBody] SignInRequest input)
-    {
-        var signInResult = await _userService.SignInAsync(input.Login, input.Password);
-
-        return signInResult.Match<ActionResult>(user => Json(user), exception =>
-        {
-            if (exception is ValidationException validationException)
-            {
-                return validationException.ToResponse();
-            }
-
-            if (exception is ApiException)
-            {
-                return Error("Пользователь с таким логином уже занят", 400);
-            }
-
-            return ServerError();
-        });
-    }
-
-    [HttpPost]
-    [Route("log-in")]
-    [ProducesResponseType(200, Type = typeof(LogInResponse))]
-    [ProducesResponseType(401, Type = typeof(BaseErrorResponse))]
-    [ProducesResponseType(500, Type = typeof(BaseErrorResponse))]
-    public async Task<ActionResult> LogIn([FromBody] LogInRequest input)
-    {
-        var logInResult = await _userService.LogIn(input.Login, input.Password);
-
-        return logInResult.Match<ActionResult>(jwtToken => Json(new LogInResponse(jwtToken)), exception =>
-        {
-            if (exception is ApiException)
-            {
-                return Error("Неверный логин или пароль", 401);
-            }
-
-            return ServerError();
-        });
-    }
-
     [HttpGet]
     [ProducesResponseType(200, Type = typeof(IEnumerable<UserDto>))]
     public async Task<ActionResult> GetAll()

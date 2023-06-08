@@ -17,17 +17,31 @@ public class BaseController : ControllerBase
         };
     }
 
+    /// <summary>
+    /// Метод возвращающий JSON-объект в виде <see cref="BaseErrorResponse"/>
+    /// </summary>
+    /// <param name="errorMessage">Сообщение, котороые будет отправлены в модели ошибки.</param>
+    /// <param name="statusCode">Статус код, который необходимо вернуть. Стандартное значение: 500</param>
+    /// <returns>Json-модель ответа.</returns>
     [NonAction]
     protected JsonResult Error(string errorMessage, int statusCode = 500)
     {
         return Json(new BaseErrorResponse(errorMessage), statusCode);
     }
 
+    /// <summary>
+    /// Метод озвращает стандартный формат ошибки сервера в виде <see cref="BaseErrorResponse"/>
+    /// </summary>
+    /// <returns>Json-модель ответа.</returns>
     protected JsonResult ServerError()
     {
         return Json(new BaseErrorResponse("Внутренняя ошибка сервера"), 500);
     }
 
+    /// <summary>
+    /// Метод озвращает стандартный формат ошибки 404 в виде <see cref="BaseErrorResponse"/>
+    /// </summary>
+    /// <returns>Json-модель ответа.</returns>
     protected JsonResult NotFoundError()
     {
         return Json(new BaseErrorResponse("Сущность не найдена"), 404);
