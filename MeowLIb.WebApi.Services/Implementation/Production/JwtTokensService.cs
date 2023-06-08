@@ -147,7 +147,7 @@ public class JwtTokensService : IJwtTokenService
             ValidateLifetime = true,
             ValidIssuer = _issuer,
             ValidAudience = _audience,
-            IssuerSigningKey = _accessTokenSecurityKey
+            IssuerSigningKey = _refreshTokenSecurityKey
         });
 
         if (!tokenValidationResult.IsValid)
