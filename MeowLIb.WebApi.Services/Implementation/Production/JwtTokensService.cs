@@ -62,16 +62,16 @@ public class JwtTokensService : IJwtTokenService
     /// <summary>
     /// Метод генерирует JWT-токен обновления.
     /// </summary>
-    /// <param name="userLogin">Логин пользователя к которому привязан данный токен.</param>
+    /// <param name="tokenData">Данные для записи в токен.</param>
     /// <param name="expiredAt">Время истечения токена обновления.</param>
     /// <returns></returns>
-    public string GenerateRefreshToken(string userLogin, DateTime expiredAt)
+    public string GenerateRefreshToken(RefreshTokenDataModel tokenData, DateTime expiredAt)
     {
         var tokenDescription = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(new[]
             {
-                new Claim("login", userLogin)
+                new Claim("login", tokenData.Login)
             }),
             Expires = expiredAt,
             Issuer = _issuer,
@@ -136,7 +136,7 @@ public class JwtTokensService : IJwtTokenService
     /// </summary>
     /// <param name="token">Токен обновления.</param>
     /// <returns>Информация в токене обновления.</returns>
-    public async Task<AccessTokenDataModel?> ParseRefreshTokenAsync(string token)
+    public async Task<RefreshTokenDataModel?> ParseRefreshTokenAsync(string token)
     {
         var tokenValidationResult = await TokenHandler.ValidateTokenAsync(token, new TokenValidationParameters
         {
@@ -156,7 +156,7 @@ public class JwtTokensService : IJwtTokenService
 
         var claims = tokenValidationResult.Claims;
         
-        var tokenData = new AccessTokenDataModel
+        var tokenData = new RefreshTokenDataModel
         {
             Login = (string)claims["login"],
         };
@@ -164,6 +164,11 @@ public class JwtTokensService : IJwtTokenService
         return tokenData;
     }
 
+    /// <summary>
+    /// Метод подписывает JWT-токен.
+    /// </summary>
+    /// <param name="tokenDescriptor">Токен для подписания.</param>
+    /// <returns>Строка в виде JWT-токена.</returns>
     private string WriteToken(SecurityTokenDescriptor tokenDescriptor)
     {
         return TokenHandler.WriteToken(TokenHandler.CreateToken(tokenDescriptor));
