@@ -18,10 +18,10 @@ public interface IJwtTokenService
     /// <summary>
     /// Метод генерирует JWT-токен обновления.
     /// </summary>
-    /// <param name="userLogin">Логин пользователя к которому привязан данный токен.</param>
+    /// <param name="tokenData">Данные для записи в токен.</param>
     /// <param name="expiredAt">Время истечения токена обновления.</param>
-    /// <returns></returns>
-    string GenerateRefreshToken(string userLogin, DateTime expiredAt);
+    /// <returns>Токен в виде строки.</returns>
+    string GenerateRefreshToken(RefreshTokenDataModel tokenData, DateTime expiredAt);
     
     /// <summary>
     /// Парсит JWT-токен доступа и возвращает информацию хранащуюся в нём.
@@ -35,5 +35,5 @@ public interface IJwtTokenService
     /// </summary>
     /// <param name="token">Токен обновления.</param>
     /// <returns>Информация в токене обновления.</returns>
-    Task<AccessTokenDataModel?> ParseRefreshTokenAsync(string token);
+    Task<RefreshTokenDataModel?> ParseRefreshTokenAsync(string token);
 }

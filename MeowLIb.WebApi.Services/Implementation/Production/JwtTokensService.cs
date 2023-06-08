@@ -64,7 +64,7 @@ public class JwtTokensService : IJwtTokenService
     /// </summary>
     /// <param name="tokenData">Данные для записи в токен.</param>
     /// <param name="expiredAt">Время истечения токена обновления.</param>
-    /// <returns></returns>
+    /// <returns>Токен в виде строки.</returns>
     public string GenerateRefreshToken(RefreshTokenDataModel tokenData, DateTime expiredAt)
     {
         var tokenDescription = new SecurityTokenDescriptor
