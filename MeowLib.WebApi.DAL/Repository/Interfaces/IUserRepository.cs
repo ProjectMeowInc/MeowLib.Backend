@@ -82,5 +82,7 @@ public interface IUserRepository
     /// <param name="login">Логин пользователя.</param>
     /// <param name="newRefreshToken">Новый токен обновления.</param>
     /// <returns>Ошибку, если она есть.</returns>
+    /// <exception cref="EntityNotFoundException">Возникает в случае, если пользователь не был найден.</exception>
+    /// <exception cref="DbSavingException">Возникает в случае ошибки сохранения данных.</exception>
     Task<Option<Exception>> UpdateRefreshTokenAsync(string login, string newRefreshToken);
 }
