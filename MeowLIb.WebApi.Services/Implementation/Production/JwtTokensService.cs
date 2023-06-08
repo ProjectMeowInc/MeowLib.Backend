@@ -71,7 +71,8 @@ public class JwtTokensService : IJwtTokenService
         {
             Subject = new ClaimsIdentity(new[]
             {
-                new Claim("login", tokenData.Login)
+                new Claim("login", tokenData.Login),
+                new Claim("isLongSession", tokenData.IsLongSession.ToString())
             }),
             Expires = expiredAt,
             Issuer = _issuer,
@@ -159,6 +160,7 @@ public class JwtTokensService : IJwtTokenService
         var tokenData = new RefreshTokenDataModel
         {
             Login = (string)claims["login"],
+            IsLongSession = bool.Parse((string)claims["isLongSession"])
         };
 
         return tokenData;
