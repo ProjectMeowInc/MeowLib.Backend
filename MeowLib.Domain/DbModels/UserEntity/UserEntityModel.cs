@@ -25,7 +25,7 @@ public class UserEntityModel
     /// <summary>
     /// Токен текущей сессии.
     /// </summary>
-    public string? RefreshToken { get; set; };
+    public string? RefreshToken { get; set; }
     
     /// <summary>
     /// Роль пользователя.
