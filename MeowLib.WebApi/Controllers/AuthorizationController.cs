@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MeowLib.WebApi.Controllers;
 
-[Route("authorization")]
+[Route("api/authorization")]
 public class AuthorizationController : BaseController
 {
     private readonly IUserService _userService;
