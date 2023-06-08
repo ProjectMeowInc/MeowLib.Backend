@@ -85,9 +85,9 @@ public class AuthorizationController : BaseController
             RefreshToken = tokens.refreshToken
         }), exception =>
         {
-            if (exception is IncorrectCreditionalException)
+            if (exception is IncorrectCreditionalException incorrectCreditionalException)
             {
-                return Error("Неверный токен обновления", 401);
+                return Error(incorrectCreditionalException.ErrorMessage, 401);
             }
 
             return ServerError();
