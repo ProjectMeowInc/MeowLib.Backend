@@ -52,7 +52,7 @@ public class AuthorizationController : BaseController
     [ProducesResponseType(500, Type = typeof(BaseErrorResponse))]
     public async Task<ActionResult> LogIn([FromBody] LogInRequest input)
     {
-        var logInResult = await _userService.LogIn(input.Login, input.Password, input.LongSession);
+        var logInResult = await _userService.LogIn(input.Login, input.Password, input.IsLongSession);
 
         return logInResult.Match<ActionResult>(tokens => Json(new LogInResponse
         {
@@ -63,6 +63,27 @@ public class AuthorizationController : BaseController
             if (exception is IncorrectCreditionalException)
             {
                 return Error("Неверный логин или пароль", 401);
+            }
+
+            return ServerError();
+        });
+    }
+
+    [HttpPost]
+    [Route("update-auth")]
+    public async Task<ActionResult> UpdateTokens([FromHeader(Name = "RefreshToken")] string refreshToken)
+    {
+        var loginResult = await _userService.LogInByRefreshTokenAsync(refreshToken);
+
+        return loginResult.Match<ActionResult>(tokens => Json(new LogInResponse
+        {
+            AccessToken = tokens.accessToken,
+            RefreshToken = tokens.refreshToken
+        }), exception =>
+        {
+            if (exception is IncorrectCreditionalException)
+            {
+                return Error("Неверный токен обновления", 401);
             }
 
             return ServerError();
