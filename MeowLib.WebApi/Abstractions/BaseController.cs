@@ -17,6 +17,15 @@ public class BaseController : ControllerBase
         };
     }
 
+    [NonAction]
+    protected new JsonResult Empty(int statusCode = 201)
+    {
+        return new JsonResult(null)
+        {
+            StatusCode = statusCode
+        };
+    }
+
     /// <summary>
     /// Метод возвращающий JSON-объект в виде <see cref="BaseErrorResponse"/>
     /// </summary>
