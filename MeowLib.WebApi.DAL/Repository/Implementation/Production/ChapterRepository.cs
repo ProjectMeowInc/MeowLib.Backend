@@ -9,15 +9,28 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MeowLib.WebApi.DAL.Repository.Implementation.Production;
 
+/// <summary>
+/// Репозиторий для работы с главами.
+/// </summary>
 public class ChapterRepository : IChapterRepository
 {
     private readonly ApplicationDbContext _applicationDbContext;
 
+    /// <summary>
+    /// Конструктор.
+    /// </summary>
+    /// <param name="applicationDbContext">Контекст базы данных.</param>
     public ChapterRepository(ApplicationDbContext applicationDbContext)
     {
         _applicationDbContext = applicationDbContext;
     }
 
+    /// <summary>
+    /// Метод создаёт новую главу в базе данных.
+    /// </summary>
+    /// <param name="chapter">Модель главы для создания.</param>
+    /// <returns>Модель созданной книги.</returns>
+    /// <exception cref="DbSavingException">Возникает в случае ошибки сохранения данных.</exception>
     public async Task<Result<ChapterEntityModel>> CreateAsync(ChapterEntityModel chapter)
     {
         var createdChapter = await _applicationDbContext.Chapters.AddAsync(chapter);
