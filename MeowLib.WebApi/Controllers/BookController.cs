@@ -1,8 +1,10 @@
 using AutoMapper;
 using MeowLib.Domain.DbModels.BookEntity;
 using MeowLib.Domain.Enums;
+using MeowLib.Domain.Exceptions.DAL;
 using MeowLib.Domain.Exceptions.Services;
 using MeowLib.Domain.Requests.Book;
+using MeowLib.Domain.Requests.Chapter;
 using MeowLib.Domain.Responses;
 using MeowLib.Domain.Responses.Book;
 using MeowLib.WebApi.Abstractions;
@@ -20,12 +22,14 @@ public class BookController : BaseController
     private readonly IBookService _bookService;
     private readonly IBookRepository _bookRepository;
     private readonly IMapper _mapper;
+    private readonly IChapterService _chapterService;
     
-    public BookController(IBookService bookService, IBookRepository bookRepository, IMapper mapper)
+    public BookController(IBookService bookService, IBookRepository bookRepository, IMapper mapper, IChapterService chapterService)
     {
         _bookService = bookService;
         _bookRepository = bookRepository;
         _mapper = mapper;
+        _chapterService = chapterService;
     }
 
     [HttpGet]
@@ -120,5 +124,23 @@ public class BookController : BaseController
 
         var getBookResponse = _mapper.Map<BookEntityModel, GetBookResponse>(foundedBook);
         return Json(getBookResponse);
+    }
+
+    [HttpPost("{bookId:int}/chapters"), Authorization(RequiredRoles = new [] { UserRolesEnum.Admin, UserRolesEnum.Editor })]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(400, Type = typeof(BaseErrorResponse))]
+    [ProducesResponseType(500, Type = typeof(BaseErrorResponse))]
+    public async Task<ActionResult> CreateChapter([FromRoute] int bookId, [FromBody] CreateChapterRequest input)
+    {
+        var createChapterResult = await _chapterService.CreateChapterAsync(name: input.Name, text: input.Text, bookId: bookId);
+        return createChapterResult.Match<ActionResult>(_ => Empty(), exception =>
+        {
+            if (exception is EntityNotFoundException)
+            {
+                return Error($"Книга с Id = {bookId} не найдена", 400);
+            }
+
+            return ServerError();
+        });
     }
 }
