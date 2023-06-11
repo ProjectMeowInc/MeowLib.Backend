@@ -89,11 +89,11 @@ public class BookController : BaseController
     [ProducesResponseType(403, Type = typeof(ValidationErrorResponse))]
     [ProducesResponseType(404, Type = typeof(BaseErrorResponse))]
     [ProducesResponseType(500, Type = typeof(BaseErrorResponse))]
-    public async Task<ActionResult> UpdateBookInfo([FromRoute] int id, [FromBody] UpdateBookInfoRequest input)
+    public async Task<ActionResult> UpdateBookInfo([FromRoute] int bookId, [FromBody] UpdateBookInfoRequest input)
     {
         var updateBookEntityModel = _mapper.Map<UpdateBookInfoRequest, UpdateBookEntityModel>(input);
         
-        var updateBookResult = await _bookService.UpdateBookInfoByIdAsync(id, updateBookEntityModel);
+        var updateBookResult = await _bookService.UpdateBookInfoByIdAsync(bookId, updateBookEntityModel);
         return updateBookResult.Match<ActionResult>(updatedBook =>
         {
             if (updatedBook is null)
