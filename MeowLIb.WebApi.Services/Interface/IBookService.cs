@@ -43,7 +43,7 @@ public interface IBookService
     /// <exception cref="ApiException">Возникает в случае если произошла ошибка сохранения данных.</exception>
     Task<Result<bool>> DeleteBookByIdAsync(int bookId);
 
-    // <summary>
+    /// <summary>
     /// Метод получает информацию о книге по Id.
     /// </summary>
     /// <param name="bookId">Id книги.</param>
