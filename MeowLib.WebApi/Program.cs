@@ -75,7 +75,10 @@ builder.Services.AddDbContext<ApplicationDbContext>(dbOptions =>
         throw new Exception("Connection string is null or empty");
     }
 
-    dbOptions.UseSqlite(connectionString);
+    dbOptions.UseSqlite(connectionString, optionsBuilder =>
+    {
+        optionsBuilder.MigrationsAssembly("MeowLib.WebApi");
+    });
 });
 
 var app = builder.Build();
