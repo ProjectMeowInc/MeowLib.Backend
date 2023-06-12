@@ -2,6 +2,8 @@
 using MeowLib.Domain.DbModels.BookEntity;
 using MeowLib.Domain.DbModels.ChapterEntity;
 using MeowLib.Domain.Exceptions.DAL;
+using MeowLib.Domain.Exceptions.Services;
+using MeowLib.Domain.Models;
 using MeowLib.WebApi.DAL.Repository.Interfaces;
 using MeowLIb.WebApi.Services.Interface;
 
@@ -29,6 +31,32 @@ public class ChapterService : IChapterService
     /// <exception cref="DbSavingException">Возникает в случае ошибки БД.</exception>
     public async Task<Result<ChapterEntityModel>> CreateChapterAsync(string name, string text, int bookId)
     {
+        var validationErrors = new List<ValidationErrorModel>();
+        
+        if (name.Length < 1 || name.Length > 50)
+        {
+            validationErrors.Add(new ValidationErrorModel
+            {
+                PropertyName = "Name",
+                Message = "Имя не может быть меньше 1 или больше 50 символов"
+            });
+        }
+
+        if (text.Length > 10000)
+        {
+            validationErrors.Add(new ValidationErrorModel
+            {
+                PropertyName = "Text",
+                Message = "Текст главы не может быть больше 10000 символов"
+            });
+        }
+
+        if (validationErrors.Any())
+        {
+            var validationException = new ValidationException(validationErrors);
+            return new Result<ChapterEntityModel>(validationException);
+        }
+        
         var foundedBook = await _bookService.GetBookByIdAsync(bookId);
         if (foundedBook is null)
         {
