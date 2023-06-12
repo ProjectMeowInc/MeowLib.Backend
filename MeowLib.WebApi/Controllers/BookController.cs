@@ -135,9 +135,25 @@ public class BookController : BaseController
         var createChapterResult = await _chapterService.CreateChapterAsync(name: input.Name, text: input.Text, bookId: bookId);
         return createChapterResult.Match<ActionResult>(_ => Empty(), exception =>
         {
-            if (exception is EntityNotFoundException)
+            if (exception is EntityNotFoundException entityNotFoundException)
             {
                 return Error($"Книга с Id = {bookId} не найдена", 400);
+            }
+
+            return ServerError();
+        });
+    }
+
+    [HttpPut("{bookId:int}/{chapterId:int}/text")]
+    public async Task<ActionResult> UpdateChapterText([FromRoute] int chapterId, 
+        [FromBody] UpdateChapterRequest input)
+    {
+        var updateChapterTextResult = await _chapterService.UpdateChapterTextAsync(chapterId, input.Text);
+        return updateChapterTextResult.Match<ActionResult>(updatedChapter => Json(updatedChapter), exception =>
+        {
+            if (exception is EntityNotFoundException)
+            {
+                return Error($"Глава с Id = {chapterId} не найдена");
             }
 
             return ServerError();
