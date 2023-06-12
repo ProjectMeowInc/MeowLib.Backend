@@ -80,21 +80,21 @@ public class BookController : BaseController
         }, _ => ServerError());
     }
 
-    [HttpPut("{bookId:int}/info")]
+    [HttpPut("{bookId:int}/info"), Authorization(RequiredRoles = new [] { UserRolesEnum.Admin, UserRolesEnum.Editor })]
     [ProducesResponseType(200, Type = typeof(BookEntityModel))]
     [ProducesResponseType(403, Type = typeof(ValidationErrorResponse))]
     [ProducesResponseType(404, Type = typeof(BaseErrorResponse))]
     [ProducesResponseType(500, Type = typeof(BaseErrorResponse))]
-    public async Task<ActionResult> UpdateBookInfo([FromRoute] int id, [FromBody] UpdateBookInfoRequest input)
+    public async Task<ActionResult> UpdateBookInfo([FromRoute] int bookId, [FromBody] UpdateBookInfoRequest input)
     {
         var updateBookEntityModel = _mapper.Map<UpdateBookInfoRequest, UpdateBookEntityModel>(input);
         
-        var updateBookResult = await _bookService.UpdateBookInfoByIdAsync(id, updateBookEntityModel);
+        var updateBookResult = await _bookService.UpdateBookInfoByIdAsync(bookId, updateBookEntityModel);
         return updateBookResult.Match<ActionResult>(updatedBook =>
         {
             if (updatedBook is null)
             {
-                return NotFoundError();
+                return Error($"Книга с Id = {bookId} не найдена");
             }
 
             return Json(updatedBook);
