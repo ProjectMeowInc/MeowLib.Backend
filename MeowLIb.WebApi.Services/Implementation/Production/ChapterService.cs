@@ -85,6 +85,19 @@ public class ChapterService : IChapterService
             return new Result<ChapterEntityModel>(exception); 
         });
     }
-    
-    
+
+    /// <summary>
+    /// Метод обновляет текст главы.
+    /// </summary>
+    /// <param name="chapterId">Id главы.</param>
+    /// <param name="newText">Новый текст главы.</param>
+    /// <returns>Модель обновлённой главы.</returns>
+    /// <exception cref="EntityNotFoundException">Возникает в случае, если глава не была найдена.</exception>
+    /// <exception cref="DbSavingException">Возникает в случае ошибки сохранения данных.</exception>
+    public async Task<Result<ChapterEntityModel>> UpdateChapterTextAsync(int chapterId, string newText)
+    {
+        var updateResult = await _chapterRepository.UpdateTextAsync(chapterId, newText);
+
+        return updateResult.Match(updatedChapter => updatedChapter, exception => new Result<ChapterEntityModel>(exception));
+    }
 }

@@ -18,4 +18,14 @@ public interface IChapterService
     /// <exception cref="EntityNotFoundException">Возникает в случае, если книга не была найдена.</exception>
     /// <exception cref="DbSavingException">Возникает в случае ошибки БД.</exception>
     Task<Result<ChapterEntityModel>> CreateChapterAsync(string name, string text, int bookId);
+
+    /// <summary>
+    /// Метод обновляет текст главы.
+    /// </summary>
+    /// <param name="chapterId">Id главы.</param>
+    /// <param name="newText">Новый текст главы.</param>
+    /// <returns>Модель обновлённой главы.</returns>
+    /// <exception cref="EntityNotFoundException">Возникает в случае, если глава не была найдена.</exception>
+    /// <exception cref="DbSavingException">Возникает в случае ошибки сохранения данных.</exception>
+    Task<Result<ChapterEntityModel>> UpdateChapterTextAsync(int chapterId, string newText);
 }
