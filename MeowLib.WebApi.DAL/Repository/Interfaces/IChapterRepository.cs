@@ -23,6 +23,15 @@ public interface IChapterRepository
     public Task<Option<Exception>> DeleteAsync(ChapterEntityModel chapter);
     public Task<Option<Exception>> DeleteByIdAsync(int chapterId);
     public Task<Result<ChapterEntityModel>> UpdateAsync(ChapterEntityModel chapter);
-    public Result<ChapterEntityModel> UpdateBookAsync(int chapterId, BookEntityModel book);
-    public Result<ChapterEntityModel> UpdateTextAsync(int chapterId, string newText);
+    public Task<Result<ChapterEntityModel>> UpdateBookAsync(int chapterId, BookEntityModel book);
+    
+    /// <summary>
+    /// Метод обновляет текст главы.
+    /// </summary>
+    /// <param name="chapterId">Id главы.</param>
+    /// <param name="newText">Текст для обновления.</param>
+    /// <returns>Модель главы.</returns>
+    /// <exception cref="EntityNotFoundException">Возникает в случае, если сущность не была найдена.</exception>
+    /// <exception cref="DbSavingException">Возникает в случае ошибки сохранения данных.</exception>
+    public Task<Result<ChapterEntityModel>> UpdateTextAsync(int chapterId, string newText);
 }
