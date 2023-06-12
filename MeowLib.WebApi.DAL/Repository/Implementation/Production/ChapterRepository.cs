@@ -97,13 +97,42 @@ public class ChapterRepository : IChapterRepository
         }
     }
 
-    public Result<ChapterEntityModel> UpdateBookAsync(int chapterId, BookEntityModel book)
+    public Task<Result<ChapterEntityModel>> UpdateBookAsync(int chapterId, BookEntityModel book)
     {
         throw new NotImplementedException();
     }
 
-    public Result<ChapterEntityModel> UpdateTextAsync(int chapterId, string newText)
+    /// <summary>
+    /// Метод обновляет текст главы.
+    /// </summary>
+    /// <param name="chapterId">Id главы.</param>
+    /// <param name="newText">Текст для обновления.</param>
+    /// <returns>Модель главы.</returns>
+    /// <exception cref="EntityNotFoundException">Возникает в случае, если сущность не была найдена.</exception>
+    /// <exception cref="DbSavingException">Возникает в случае ошибки сохранения данных.</exception>
+    public async Task<Result<ChapterEntityModel>> UpdateTextAsync(int chapterId, string newText)
     {
-        throw new NotImplementedException();
+        var foundedChapter = await GetByIdAsync(chapterId);
+        if (foundedChapter is null)
+        {
+            var entityNotFoundException = new EntityNotFoundException(nameof(ChapterEntityModel), $"Id={chapterId}");
+            return new Result<ChapterEntityModel>(entityNotFoundException);
+        }
+
+        foundedChapter.Text = newText;
+        
+        var updateResult = _applicationDbContext.Chapters.Update(foundedChapter);
+
+        try
+        {
+            await _applicationDbContext.SaveChangesAsync();
+        }
+        catch (DbUpdateException)
+        {
+            var dbSavingException = new DbSavingException(nameof(ChapterEntityModel), DbSavingTypesEnum.Update);
+            return new Result<ChapterEntityModel>(dbSavingException);
+        }
+
+        return updateResult.Entity;
     }
 }
