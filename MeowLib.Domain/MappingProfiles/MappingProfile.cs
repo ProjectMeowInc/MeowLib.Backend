@@ -47,5 +47,6 @@ public class MappingProfile : Profile
         CreateMap<CreateBookRequest, CreateBookEntityModel>()
             .ReverseMap();
         CreateMap<BookEntityModel, GetBookResponse>();
+        CreateMap<UpdateBookInfoRequest, UpdateBookEntityModel>();
     }
 }
