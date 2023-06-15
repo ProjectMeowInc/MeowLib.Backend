@@ -1,5 +1,6 @@
 using AutoMapper;
 using MeowLib.Domain.DbModels.BookEntity;
+using MeowLib.Domain.Dto.Book;
 using MeowLib.Domain.Enums;
 using MeowLib.Domain.Exceptions.DAL;
 using MeowLib.Domain.Exceptions.Services;
@@ -7,6 +8,7 @@ using MeowLib.Domain.Requests.Book;
 using MeowLib.Domain.Requests.Chapter;
 using MeowLib.Domain.Responses;
 using MeowLib.Domain.Responses.Book;
+using MeowLib.Domain.Responses.Chapter;
 using MeowLib.WebApi.Abstractions;
 using MeowLib.WebApi.DAL.Repository.Interfaces;
 using MeowLib.WebApi.Filters;
@@ -38,7 +40,12 @@ public class BookController : BaseController
     {
         var response = new GetAllBooksResponse
         {
-            Items = await _bookRepository.GetAll().Select(book => book).ToListAsync(),
+            Items = await _bookRepository.GetAll().Select(book => new BookDto
+            {
+                Id = book.Id,
+                Name = book.Name,
+                Description = book.Description
+            }).ToListAsync(),
         };
 
         return Json(response);
@@ -144,7 +151,7 @@ public class BookController : BaseController
         });
     }
 
-    [HttpPut("{bookId:int}/{chapterId:int}/text")]
+    [HttpPut("{bookId:int}/chapters/{chapterId:int}/text")]
     public async Task<ActionResult> UpdateChapterText([FromRoute] int chapterId, 
         [FromBody] UpdateChapterRequest input)
     {
@@ -154,6 +161,28 @@ public class BookController : BaseController
             if (exception is EntityNotFoundException)
             {
                 return Error($"Глава с Id = {chapterId} не найдена");
+            }
+
+            return ServerError();
+        });
+    }
+
+    [HttpGet("{bookId:int}/chapters")]
+    [ProducesResponseType(200, Type = typeof(GetAllBookChaptersResponse))]
+    [ProducesResponseType(400, Type = typeof(BaseErrorResponse))]
+    [ProducesResponseType(500, Type = typeof(BaseErrorResponse))]
+    public async Task<ActionResult> GetBookChapterList([FromRoute] int bookId)
+    {
+        var getChaptersResult = await _chapterService.GetAllBookChapters(bookId);
+
+        return getChaptersResult.Match<ActionResult>(chapters => Json(new GetAllBookChaptersResponse
+        {
+            Items = chapters
+        }), exception =>
+        {
+            if (exception is EntityNotFoundException)
+            {
+                return Error($"Книга с Id = {bookId} не найдена", 400);
             }
 
             return ServerError();
