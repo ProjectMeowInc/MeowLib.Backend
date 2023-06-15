@@ -1,11 +1,14 @@
-﻿using LanguageExt.Common;
+﻿using AutoMapper;
+using LanguageExt.Common;
 using MeowLib.Domain.DbModels.BookEntity;
 using MeowLib.Domain.DbModels.ChapterEntity;
+using MeowLib.Domain.Dto.Chapter;
 using MeowLib.Domain.Exceptions.DAL;
 using MeowLib.Domain.Exceptions.Services;
 using MeowLib.Domain.Models;
 using MeowLib.WebApi.DAL.Repository.Interfaces;
 using MeowLIb.WebApi.Services.Interface;
+using Microsoft.EntityFrameworkCore;
 
 namespace MeowLIb.WebApi.Services.Implementation.Production;
 
@@ -14,7 +17,7 @@ public class ChapterService : IChapterService
     private readonly IChapterRepository _chapterRepository;
     private readonly IBookService _bookService;
     
-    public ChapterService(IChapterRepository chapterRepository, IBookService bookService)
+    public ChapterService(IChapterRepository chapterRepository, IBookService bookService, IMapper mapper)
     {
         _chapterRepository = chapterRepository;
         _bookService = bookService;
@@ -99,5 +102,34 @@ public class ChapterService : IChapterService
         var updateResult = await _chapterRepository.UpdateTextAsync(chapterId, newText);
 
         return updateResult.Match(updatedChapter => updatedChapter, exception => new Result<ChapterEntityModel>(exception));
+    }
+
+    /// <summary>
+    /// Метод возвращает главы книги в виде <see cref="ChapterDto"/>
+    /// </summary>
+    /// <param name="bookId">Id книги.</param>
+    /// <returns>Модель главы в виде <see cref="ChapterDto"/></returns>
+    /// <exception cref="EntityNotFoundException">Возникает в случае, если книга с заданым Id не была найдена.</exception>
+    public async Task<Result<IEnumerable<ChapterDto>>> GetAllBookChapters(int bookId)
+    {
+        var foundedBook = await _bookService.GetBookByIdAsync(bookId);
+
+        if (foundedBook is null)
+        {
+            var entityNotFoundException = new EntityNotFoundException(nameof(BookEntityModel), $"Id={bookId}");
+            return new Result<IEnumerable<ChapterDto>>(entityNotFoundException);
+        }
+
+        var bookChapters = await _chapterRepository.GetAll()
+            .Where(chapter => chapter.Book == foundedBook)
+            .OrderBy(chapter => chapter.ReleaseDate)
+            .Select(chapter => new ChapterDto
+            {
+                Id = chapter.Id,
+                Name = chapter.Name,
+                ReleaseDate = chapter.ReleaseDate
+            }).ToListAsync();
+
+        return bookChapters;
     }
 }

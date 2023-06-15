@@ -1,5 +1,6 @@
 ﻿using LanguageExt.Common;
 using MeowLib.Domain.DbModels.ChapterEntity;
+using MeowLib.Domain.Dto.Chapter;
 using MeowLib.Domain.Exceptions.DAL;
 using MeowLib.Domain.Exceptions.Services;
 
@@ -28,4 +29,12 @@ public interface IChapterService
     /// <exception cref="EntityNotFoundException">Возникает в случае, если глава не была найдена.</exception>
     /// <exception cref="DbSavingException">Возникает в случае ошибки сохранения данных.</exception>
     Task<Result<ChapterEntityModel>> UpdateChapterTextAsync(int chapterId, string newText);
+
+    /// <summary>
+    /// Метод возвращает главы книги в виде <see cref="ChapterDto"/>
+    /// </summary>
+    /// <param name="bookId">Id книги.</param>
+    /// <returns>Модель главы в виде <see cref="ChapterDto"/></returns>
+    /// <exception cref="EntityNotFoundException">Возникает в случае, если книга с заданым Id не была найдена.</exception>
+    Task<Result<IEnumerable<ChapterDto>>> GetAllBookChapters(int bookId);
 }
