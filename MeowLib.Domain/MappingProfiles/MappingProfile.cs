@@ -1,9 +1,11 @@
 using AutoMapper;
 using MeowLib.Domain.DbModels.AuthorEntity;
 using MeowLib.Domain.DbModels.BookEntity;
+using MeowLib.Domain.DbModels.ChapterEntity;
 using MeowLib.Domain.DbModels.TagEntity;
 using MeowLib.Domain.DbModels.UserEntity;
 using MeowLib.Domain.Dto.Author;
+using MeowLib.Domain.Dto.Chapter;
 using MeowLib.Domain.Dto.Tag;
 using MeowLib.Domain.Dto.User;
 using MeowLib.Domain.Requests.Author;
@@ -47,5 +49,8 @@ public class MappingProfile : Profile
         CreateMap<CreateBookRequest, CreateBookEntityModel>()
             .ReverseMap();
         CreateMap<BookEntityModel, GetBookResponse>();
+        
+        // Chapter mapping
+        CreateMap<ChapterEntityModel, ChapterDto>();
     }
 }
