@@ -34,4 +34,6 @@ public interface IChapterRepository
     /// <exception cref="EntityNotFoundException">Возникает в случае, если сущность не была найдена.</exception>
     /// <exception cref="DbSavingException">Возникает в случае ошибки сохранения данных.</exception>
     public Task<Result<ChapterEntityModel>> UpdateTextAsync(int chapterId, string newText);
+
+    public IQueryable<ChapterEntityModel> GetAll();
 }

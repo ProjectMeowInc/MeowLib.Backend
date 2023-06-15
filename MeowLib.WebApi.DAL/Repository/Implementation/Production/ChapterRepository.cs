@@ -135,4 +135,6 @@ public class ChapterRepository : IChapterRepository
 
         return updateResult.Entity;
     }
+
+    public IQueryable<ChapterEntityModel> GetAll() => _applicationDbContext.Chapters.AsQueryable();
 }
