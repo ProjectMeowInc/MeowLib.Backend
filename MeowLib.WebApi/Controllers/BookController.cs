@@ -1,5 +1,6 @@
 using AutoMapper;
 using MeowLib.Domain.DbModels.BookEntity;
+using MeowLib.Domain.DbModels.ChapterEntity;
 using MeowLib.Domain.Dto.Book;
 using MeowLib.Domain.Enums;
 using MeowLib.Domain.Exceptions.DAL;
@@ -152,6 +153,9 @@ public class BookController : BaseController
     }
 
     [HttpPut("{bookId:int}/chapters/{chapterId:int}/text")]
+    [ProducesResponseType(200, Type = typeof(ChapterEntityModel))]
+    [ProducesResponseType(400, Type = typeof(BaseErrorResponse))]
+    [ProducesResponseType(500, Type = typeof(BaseErrorResponse))]
     public async Task<ActionResult> UpdateChapterText([FromRoute] int chapterId, 
         [FromBody] UpdateChapterRequest input)
     {
@@ -160,7 +164,7 @@ public class BookController : BaseController
         {
             if (exception is EntityNotFoundException)
             {
-                return Error($"Глава с Id = {chapterId} не найдена");
+                return Error($"Глава с Id = {chapterId} не найдена", 400);
             }
 
             return ServerError();
