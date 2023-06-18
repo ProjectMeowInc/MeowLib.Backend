@@ -20,7 +20,21 @@ public interface IChapterRepository
     /// <exception cref="DbSavingException">Возникает в случае ошибки сохранения данных.</exception>
     public Task<Result<ChapterEntityModel>> CreateAsync(ChapterEntityModel chapter);
     public Task<ChapterEntityModel?> GetByIdAsync(int chapterId);
+    
+    /// <summary>
+    /// Метод удаляет главу.
+    /// </summary>
+    /// <param name="chapter">Глава для удаления.</param>
+    /// <returns>Ошибку, если она есть.</returns>
+    /// <exception cref="DbSavingException">Возникает в случае ошибки сохранения данных.</exception>
     public Task<Option<Exception>> DeleteAsync(ChapterEntityModel chapter);
+    
+    /// <summary>
+    /// Метод удаляет главу по её Id.
+    /// </summary>
+    /// <param name="chapterId">Id главы.</param>
+    /// <returns>Ошибку, если она есть. Так же возращает ошибки метода <see cref="DeleteAsync"/>.</returns>
+    /// <exception cref="EntityNotFoundException">Возникает в случае, если глава не была найдена.</exception>
     public Task<Option<Exception>> DeleteByIdAsync(int chapterId);
     public Task<Result<ChapterEntityModel>> UpdateAsync(ChapterEntityModel chapter);
     public Task<Result<ChapterEntityModel>> UpdateBookAsync(int chapterId, BookEntityModel book);

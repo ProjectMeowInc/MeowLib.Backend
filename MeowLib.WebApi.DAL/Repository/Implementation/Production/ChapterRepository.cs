@@ -53,6 +53,12 @@ public class ChapterRepository : IChapterRepository
         return await _applicationDbContext.Chapters.FirstOrDefaultAsync(c => c.Id == chapterId);
     }
 
+    /// <summary>
+    /// Метод удаляет главу.
+    /// </summary>
+    /// <param name="chapter">Глава для удаления.</param>
+    /// <returns>Ошибку, если она есть.</returns>
+    /// <exception cref="DbSavingException">Возникает в случае ошибки сохранения данных.</exception>
     public async Task<Option<Exception>> DeleteAsync(ChapterEntityModel chapter)
     {
         try
@@ -69,6 +75,12 @@ public class ChapterRepository : IChapterRepository
         return Option<Exception>.None;
     }
 
+    /// <summary>
+    /// Метод удаляет главу по её Id.
+    /// </summary>
+    /// <param name="chapterId">Id главы.</param>
+    /// <returns>Ошибку, если она есть. Так же возращает ошибки метода <see cref="DeleteAsync"/>.</returns>
+    /// <exception cref="EntityNotFoundException">Возникает в случае, если глава не была найдена.</exception>
     public async Task<Option<Exception>> DeleteByIdAsync(int chapterId)
     {
         var foundedChapter = await GetByIdAsync(chapterId);
