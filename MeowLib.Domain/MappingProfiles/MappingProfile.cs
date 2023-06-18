@@ -13,6 +13,7 @@ using MeowLib.Domain.Requests.Book;
 using MeowLib.Domain.Requests.Tag;
 using MeowLib.Domain.Requests.User;
 using MeowLib.Domain.Responses.Book;
+using MeowLib.Domain.Responses.Chapter;
 
 namespace MeowLib.Domain.MappingProfiles;
 
@@ -22,7 +23,7 @@ namespace MeowLib.Domain.MappingProfiles;
 public class MappingProfile : Profile
 {
     /// <summary>
-    /// Конструктор. sueta
+    /// Конструктор.
     /// </summary>
     public MappingProfile()
     {
@@ -52,5 +53,6 @@ public class MappingProfile : Profile
         
         // Chapter mapping
         CreateMap<ChapterEntityModel, ChapterDto>();
+        CreateMap<ChapterEntityModel, GetBookChapterResponse>();
     }
 }
