@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using LanguageExt;
 using LanguageExt.Common;
 using MeowLib.Domain.DbModels.BookEntity;
 using MeowLib.Domain.DbModels.ChapterEntity;
@@ -131,5 +132,27 @@ public class ChapterService : IChapterService
             }).ToListAsync();
 
         return bookChapters;
+    }
+
+    /// <summary>
+    /// Метод удаляет главу по её Id.
+    /// </summary>
+    /// <param name="chapterId">Id главы.</param>
+    /// <returns>Ошибку, если она есть.</returns>
+    /// <exception cref="EntityNotFoundException">Возникает в случае, если глава не была найдена.</exception>
+    /// <exception cref="DbSavingException">Возникает в случае ошибки сохранения данных.</exception>
+    public async Task<Option<Exception>> DeleteChapterAsync(int chapterId)
+    {
+        return await _chapterRepository.DeleteByIdAsync(chapterId);
+    }
+
+    /// <summary>
+    /// Метод возвращает главу по её Id.
+    /// </summary>
+    /// <param name="chapterId">Id главы.</param>
+    /// <returns>Модель главы, если была найдена.</returns>
+    public async Task<ChapterEntityModel?> GetChapterByIdAsync(int chapterId)
+    {
+        return await _chapterRepository.GetByIdAsync(chapterId);
     }
 }
