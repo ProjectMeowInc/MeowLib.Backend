@@ -192,4 +192,38 @@ public class BookController : BaseController
             return ServerError();
         });
     }
+
+    [HttpDelete("{bookId:int}/chapters/{chapterId:int}"), Authorization(RequiredRoles = new [] { UserRolesEnum.Admin, UserRolesEnum.Editor })]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(400, Type = typeof(BaseErrorResponse))]
+    [ProducesResponseType(500, Type = typeof(BaseErrorResponse))]
+    public async Task<ActionResult> DeleteBookChapter([FromRoute] int chapterId)
+    {
+        var deleteChapterResult = await _chapterService.DeleteChapterAsync(chapterId);
+
+        return deleteChapterResult.Match<ActionResult>(exception =>
+        {
+            if (exception is EntityNotFoundException)
+            {
+                return Error($"Глава с Id = {chapterId} не найдена", 400);
+            }
+
+            return ServerError();
+        }, () => Empty());
+    }
+
+    [HttpGet("{bookId:int}/chapters/{chapterId:int}")]
+    [ProducesResponseType(200, Type = typeof(GetBookChapterResponse))]
+    [ProducesResponseType(404, Type = typeof(BaseErrorResponse))]
+    public async Task<ActionResult> GetBookChapter([FromRoute] int chapterId)
+    {
+        var foundedChapter = await _chapterService.GetChapterByIdAsync(chapterId);
+        if (foundedChapter is null)
+        {
+            return NotFoundError();
+        }
+
+        var mappedResponse = _mapper.Map<ChapterEntityModel, GetBookChapterResponse>(foundedChapter);
+        return Json(mappedResponse);
+    }
 }
