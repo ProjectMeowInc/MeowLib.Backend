@@ -13,6 +13,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MeowLIb.WebApi.Services.Implementation.Production;
 
+/// <summary>
+/// Сервис для работы с главами.
+/// </summary>
 public class ChapterService : IChapterService
 {
     private readonly IChapterRepository _chapterRepository;

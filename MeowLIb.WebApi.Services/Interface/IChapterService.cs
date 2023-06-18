@@ -7,6 +7,9 @@ using MeowLib.Domain.Exceptions.Services;
 
 namespace MeowLIb.WebApi.Services.Interface;
 
+/// <summary>
+/// Абстракция сервиса для работы с главами.
+/// </summary>
 public interface IChapterService
 {
     /// <summary>
