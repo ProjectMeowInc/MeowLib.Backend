@@ -197,7 +197,7 @@ public class UserRepository : IUserRepository
             return dbSavingException;
         }
 
-        return null;
+        return Option<Exception>.None;
     }
 
     /// <summary>

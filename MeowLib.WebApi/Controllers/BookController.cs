@@ -92,7 +92,7 @@ public class BookController : BaseController
         }, _ => ServerError());
     }
 
-    [HttpPut("{bookId:int}/info")]
+    [HttpPut("{bookId:int}/info"), Authorization(RequiredRoles = new [] { UserRolesEnum.Admin, UserRolesEnum.Editor })]
     [ProducesResponseType(200, Type = typeof(BookEntityModel))]
     [ProducesResponseType(403, Type = typeof(ValidationErrorResponse))]
     [ProducesResponseType(404, Type = typeof(BaseErrorResponse))]
@@ -106,7 +106,7 @@ public class BookController : BaseController
         {
             if (updatedBook is null)
             {
-                return NotFoundError();
+                return Error($"Книга с Id = {bookId} не найдена");
             }
 
             return Json(updatedBook);
