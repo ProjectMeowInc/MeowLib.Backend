@@ -56,6 +56,7 @@ services.AddScoped<IUserRepository, UserRepository>();
 services.AddScoped<IAuthorRepository, AuthorRepository>();
 services.AddScoped<ITagRepository, TagRepository>();
 services.AddScoped<IBookRepository, BookRepository>();
+services.AddScoped<IChapterRepository, ChapterRepository>();
 
 // Init services
 services.AddSingleton<IHashService, HashService>();
@@ -66,6 +67,7 @@ services.AddScoped<IUserService, UserService>();
 services.AddScoped<IAuthorService, AuthorService>();
 services.AddScoped<ITagService, TagService>();
 services.AddScoped<IBookService, BookService>();
+services.AddScoped<IChapterService, ChapterService>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(dbOptions =>
 {
@@ -75,7 +77,10 @@ builder.Services.AddDbContext<ApplicationDbContext>(dbOptions =>
         throw new Exception("Connection string is null or empty");
     }
 
-    dbOptions.UseSqlite(connectionString);
+    dbOptions.UseSqlite(connectionString, optionsBuilder =>
+    {
+        optionsBuilder.MigrationsAssembly("MeowLib.WebApi");
+    });
 });
 
 var app = builder.Build();
