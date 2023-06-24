@@ -1,4 +1,5 @@
 using LanguageExt.Common;
+using MeowLib.Domain.DbModels.AuthorEntity;
 using MeowLib.Domain.DbModels.BookEntity;
 using MeowLib.Domain.Exceptions;
 using MeowLib.Domain.Exceptions.DAL;
@@ -6,6 +7,7 @@ using MeowLib.Domain.Exceptions.Services;
 using MeowLib.Domain.Models;
 using MeowLib.WebApi.DAL.Repository.Interfaces;
 using MeowLIb.WebApi.Services.Interface;
+using Microsoft.EntityFrameworkCore;
 
 namespace MeowLIb.WebApi.Services.Implementation.Production;
 
@@ -16,16 +18,19 @@ public class BookService : IBookService
 {
     private readonly IBookRepository _bookRepository;
     private readonly IAuthorRepository _authorRepository;
+    private readonly ITagRepository _tagRepository;
 
     /// <summary>
     /// Конструктор.
     /// </summary>
     /// <param name="bookRepository">Репозиторий книг.</param>
     /// <param name="authorRepository">Репозиторий авторов.</param>
-    public BookService(IBookRepository bookRepository, IAuthorRepository authorRepository)
+    /// <param name="tagRepository">Репозиторий тегов.</param>
+    public BookService(IBookRepository bookRepository, IAuthorRepository authorRepository, ITagRepository tagRepository)
     {
         _bookRepository = bookRepository;
         _authorRepository = authorRepository;
+        _tagRepository = tagRepository;
     }
 
     /// <summary>
@@ -81,7 +86,7 @@ public class BookService : IBookService
     /// <param name="updateBookEntityModel">Информация для обновления.</param>
     /// <returns>Обновлённая модель книги или null если книга не найдена.</returns>
     /// <exception cref="ValidationException">Возникает в случае ошибки валидации.</exception>
-    /// <exception cref="ApiException">Возникает в случае ошибки сохранения данных.</exception>
+    /// <exception cref="DbSavingException">Возникает в случае ошибки сохранения данных.</exception>
     public async Task<Result<BookEntityModel?>> UpdateBookInfoByIdAsync(int bookId, UpdateBookEntityModel updateBookEntityModel)
     {
         var inputName = updateBookEntityModel.Name?.Trim() ?? null;
@@ -112,18 +117,10 @@ public class BookService : IBookService
 
         foundedBook.Name = inputName ?? foundedBook.Name;
         foundedBook.Description = inputDescription ?? foundedBook.Description;
-
-        try
-        {
-            var updatedBook = await _bookRepository.UpdateAsync(foundedBook);
-            return updatedBook;
-        }
-        catch (DbSavingException)
-        {
-            // TODO: Add logs
-            var apiException = new ApiException("Внутреняя ошибка сервера.");
-            return new Result<BookEntityModel?>(apiException);
-        }
+        
+        var updatedBookResult = await _bookRepository.UpdateAsync(foundedBook);
+        return updatedBookResult.Match<Result<BookEntityModel?>>(updatedBook => updatedBook,
+            exception => new Result<BookEntityModel?>(exception));
     }
     
     /// <summary>
@@ -132,7 +129,8 @@ public class BookService : IBookService
     /// <param name="bookId">Id книги для обновления.</param>
     /// <param name="authorId">Id автора для обновления.</param>
     /// <returns>Обновлённую модель книги при удачном обновления, null - если книга не была найдена.</returns>
-    /// <exception cref="ApiException">Возникает в случае если автор не был найден или при ошибке сохранения данных.</exception>
+    /// <exception cref="EntityNotFoundException">Возникает в случае, если автор не был найден.</exception>
+    /// <exception cref="DbSavingException">Возникает в случае ошибки сохранения данных.</exception>
     public async Task<Result<BookEntityModel?>> UpdateBookAuthorAsync(int bookId, int authorId)
     {
         var foundedBook = await _bookRepository.GetByIdAsync(bookId);
@@ -144,22 +142,15 @@ public class BookService : IBookService
         var foundedAuthor = await _authorRepository.GetByIdAsync(authorId);
         if (foundedAuthor is null)
         {
-            var apiException = new ApiException($"Автор с Id = {authorId} не найден");
+            var apiException = new EntityNotFoundException(nameof(AuthorEntityModel), $"Id={authorId}");
             return new Result<BookEntityModel?>(apiException);
         }
 
         foundedBook.Author = foundedAuthor;
 
-        try
-        {
-            var updatedBook = await _bookRepository.UpdateAsync(foundedBook);
-            return updatedBook;
-        }
-        catch (DbSavingException)
-        {
-            var apiException = new ApiException("Внутренняя ошибка сервера");
-            return new Result<BookEntityModel?>(apiException);
-        }
+        var updateBookResult = await _bookRepository.UpdateAsync(foundedBook);
+        return updateBookResult.Match<Result<BookEntityModel?>>(updatedBook => updatedBook, 
+            exception => new Result<BookEntityModel?>(exception));
     }
 
     /// <summary>
@@ -190,5 +181,32 @@ public class BookService : IBookService
     public async Task<BookEntityModel?> GetBookByIdAsync(int bookId)
     {
         return await _bookRepository.GetByIdAsync(bookId);
+    }
+
+    /// <summary>
+    /// Метод обновляет список тегов книги.
+    /// </summary>
+    /// <param name="bookId">Id книги.</param>
+    /// <param name="tags">Список Id тегов.</param>
+    /// <returns>Модель книги или null, если она не была найдена.</returns>
+    /// <exception cref="DbSavingException">Возникает в случае ошибки сохранения данных.</exception>
+    public async Task<Result<BookEntityModel?>> UpdateBookTags(int bookId, IEnumerable<int> tags)
+    {
+        var foundedBook = await _bookRepository.GetByIdAsync(bookId);
+        if (foundedBook is null)
+        {
+            return null;
+        }
+
+        var foundedTags = await _tagRepository
+            .GetAll()
+            .Where(tag => tags.Any(t => t == tag.Id))
+            .ToListAsync();
+        
+
+        foundedBook.Tags = foundedTags;
+        var updateResult = await _bookRepository.UpdateAsync(foundedBook);
+        return updateResult.Match<Result<BookEntityModel?>>(updatedBook => updatedBook,
+            exception => new Result<BookEntityModel?>(exception));
     }
 }
