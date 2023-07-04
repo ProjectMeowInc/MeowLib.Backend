@@ -1,3 +1,4 @@
+using LanguageExt.Common;
 using MeowLib.Domain.DbModels.AuthorEntity;
 using MeowLib.Domain.DbModels.BookEntity;
 using MeowLib.Domain.DbModels.TagEntity;
@@ -45,7 +46,7 @@ public interface IBookRepository
     /// <param name="entity">Модель книги.</param>
     /// <returns>Обновлённую модель книги.</returns>
     /// <exception cref="DbSavingException">Возникает в случае ошибки сохранения данных.</exception>
-    Task<BookEntityModel> UpdateAsync(BookEntityModel entity);
+    Task<Result<BookEntityModel>> UpdateAsync(BookEntityModel entity);
     
     /// <summary>
     /// Метод обновляет основную информацию о книге по её Id.

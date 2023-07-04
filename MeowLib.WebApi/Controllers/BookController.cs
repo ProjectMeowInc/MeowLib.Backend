@@ -93,7 +93,7 @@ public class BookController : BaseController
     }
 
     [HttpPut("{bookId:int}/info"), Authorization(RequiredRoles = new [] { UserRolesEnum.Admin, UserRolesEnum.Editor })]
-    [ProducesResponseType(200, Type = typeof(BookEntityModel))]
+    [ProducesResponseType(200)]
     [ProducesResponseType(403, Type = typeof(ValidationErrorResponse))]
     [ProducesResponseType(404, Type = typeof(BaseErrorResponse))]
     [ProducesResponseType(500, Type = typeof(BaseErrorResponse))]
@@ -108,8 +108,8 @@ public class BookController : BaseController
             {
                 return Error($"Книга с Id = {bookId} не найдена");
             }
-
-            return Json(updatedBook);
+            
+            return Empty();
         }, exception =>
         {
             if (exception is ValidationException validationException)
@@ -225,5 +225,47 @@ public class BookController : BaseController
 
         var mappedResponse = _mapper.Map<ChapterEntityModel, GetBookChapterResponse>(foundedChapter);
         return Json(mappedResponse);
+    }
+
+    [HttpPut("{bookId:int}/author/{authorId:int}"), Authorization(RequiredRoles = new [] { UserRolesEnum.Editor, UserRolesEnum.Admin })]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(400, Type = typeof(BaseErrorResponse))]
+    [ProducesResponseType(404, Type = typeof(BaseErrorResponse))]
+    [ProducesResponseType(500, Type = typeof(BaseErrorResponse))]
+    public async Task<ActionResult> UpdateBookAuthor([FromRoute] int bookId, [FromRoute] int authorId)
+    {
+        var updateBookResult = await _bookService.UpdateBookAuthorAsync(bookId, authorId);
+        return updateBookResult.Match<ActionResult>(updatedBook =>
+        {
+            if (updatedBook is null)
+            {
+                return NotFoundError();
+            }
+
+            return Empty(200);
+        }, exception =>
+        {
+            if (exception is EntityNotFoundException)
+            {
+                return Error($"Автор с Id = {authorId} не найден", 400);
+            }
+
+            return ServerError();
+        });
+    }
+
+    [HttpPut("{bookId:int}/tags"), Authorization(RequiredRoles = new [] { UserRolesEnum.Editor, UserRolesEnum.Admin })]
+    public async Task<ActionResult> UpdateBookTags([FromRoute] int bookId, [FromBody] UpdateBookTagsRequest input)
+    {
+        var updateBookResult = await _bookService.UpdateBookTags(bookId, input.Tags);
+        return updateBookResult.Match<ActionResult>(updatedBook =>
+        {
+            if (updatedBook is null)
+            {
+                return NotFoundError();
+            }
+
+            return Empty();
+        }, _ => ServerError());
     }
 }

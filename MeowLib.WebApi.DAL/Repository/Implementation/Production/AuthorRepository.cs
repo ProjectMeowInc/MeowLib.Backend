@@ -47,7 +47,7 @@ public class AuthorRepository : IAuthorRepository
     /// Метод получает модель автора по его Id.
     /// </summary>
     /// <param name="id">Id автора</param>
-    /// <returns>DTO-модель автора</returns>
+    /// <returns>Модель автора</returns>
     public async Task<AuthorEntityModel?> GetByIdAsync(int id)
     {
         return await GetAuthorById(id);

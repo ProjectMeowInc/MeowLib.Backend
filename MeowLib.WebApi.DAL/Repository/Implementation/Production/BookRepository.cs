@@ -1,3 +1,4 @@
+using LanguageExt.Common;
 using MeowLib.Domain.DbModels.AuthorEntity;
 using MeowLib.Domain.DbModels.BookEntity;
 using MeowLib.Domain.DbModels.TagEntity;
@@ -100,7 +101,7 @@ public class BookRepository : IBookRepository
     /// <param name="entity">Модель книги.</param>
     /// <returns>Обновлённую модель книги.</returns>
     /// <exception cref="DbSavingException">Возникает в случае ошибки сохранения данных.</exception>
-    public async Task<BookEntityModel> UpdateAsync(BookEntityModel entity)
+    public async Task<Result<BookEntityModel>> UpdateAsync(BookEntityModel entity)
     {
         try
         {
@@ -111,7 +112,8 @@ public class BookRepository : IBookRepository
         }
         catch (DbUpdateException)
         {
-            throw new DbSavingException(nameof(BookEntityModel), DbSavingTypesEnum.Update);
+            var dbSavingException = new DbSavingException(nameof(BookEntityModel), DbSavingTypesEnum.Update);
+            return new Result<BookEntityModel>(dbSavingException);
         }
     }
 

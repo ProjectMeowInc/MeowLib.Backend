@@ -32,10 +32,10 @@ public class BookEntityModel
     /// <summary>
     /// Список глав книги.
     /// </summary>
-    public IEnumerable<ChapterEntityModel> Chapters { get; set; } = null!;
+    public IEnumerable<ChapterEntityModel> Chapters { get; set; } = new List<ChapterEntityModel>();
     
     /// <summary>
     /// Список тегов книги.
     /// </summary>
-    public IEnumerable<TagEntityModel> Tags { get; set; } = null!;
+    public IEnumerable<TagEntityModel> Tags { get; set; } = new List<TagEntityModel>();
 }
