@@ -27,16 +27,14 @@ public class BookController : BaseController
     private readonly IBookRepository _bookRepository;
     private readonly IMapper _mapper;
     private readonly IChapterService _chapterService;
-    private readonly IFileService _fileService;
     
     public BookController(IBookService bookService, IBookRepository bookRepository, IMapper mapper,
-        IChapterService chapterService, IFileService fileService)
+        IChapterService chapterService)
     {
         _bookService = bookService;
         _bookRepository = bookRepository;
         _mapper = mapper;
         _chapterService = chapterService;
-        _fileService = fileService;
     }
 
     [HttpGet]
@@ -261,7 +259,7 @@ public class BookController : BaseController
     [HttpPut("{bookId:int}/tags"), Authorization(RequiredRoles = new [] { UserRolesEnum.Editor, UserRolesEnum.Admin })]
     public async Task<ActionResult> UpdateBookTags([FromRoute] int bookId, [FromBody] UpdateBookTagsRequest input)
     {
-        var updateBookResult = await _bookService.UpdateBookTags(bookId, input.Tags);
+        var updateBookResult = await _bookService.UpdateBookTagsAsync(bookId, input.Tags);
         return updateBookResult.Match<ActionResult>(updatedBook =>
         {
             if (updatedBook is null)
@@ -274,10 +272,19 @@ public class BookController : BaseController
     }
     
     [HttpPut("{bookId:int}/image"), Authorization(RequiredRoles = new [] { UserRolesEnum.Editor, UserRolesEnum.Admin })]
-    public async Task<ActionResult> UpdateBookImage(IFormFile image)
+    public async Task<ActionResult> UpdateBookImage([FromRoute] int bookId, IFormFile image)
     {
-        var uploadImageResult = await _fileService.UploadBookImageAsync(image);
-        return uploadImageResult.Match<ActionResult>(Ok, exception =>
+        var uploadImageResult = await _bookService.UpdateBookImageAsync(bookId, image);
+        
+        return uploadImageResult.Match<ActionResult>(updatedBook =>
+        {
+            if (updatedBook is null)
+            {
+                return NotFoundError($"Книга с Id = {bookId} не найдена");
+            }
+
+            return Empty();
+        }, exception =>
         {
             if (exception is FileHasIncorrectExtensionException fileHasIncorrectExtensionException)
             {
