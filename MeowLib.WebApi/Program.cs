@@ -57,6 +57,7 @@ services.AddScoped<IAuthorRepository, AuthorRepository>();
 services.AddScoped<ITagRepository, TagRepository>();
 services.AddScoped<IBookRepository, BookRepository>();
 services.AddScoped<IChapterRepository, ChapterRepository>();
+services.AddScoped<IUserFavoriteRepository, UserFavoriteRepository>();
 
 // Init services
 services.AddSingleton<IHashService, HashService>();
