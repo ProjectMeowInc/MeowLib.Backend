@@ -1,5 +1,5 @@
 ﻿using LanguageExt.Common;
-using MeowLib.Domain.Exceptions.Services;
+using MeowLib.Domain.Exceptions;
 using MeowLIb.WebApi.Services.Interface;
 using Microsoft.AspNetCore.Http;
 
