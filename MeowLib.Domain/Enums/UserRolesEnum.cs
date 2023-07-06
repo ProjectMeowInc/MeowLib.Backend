@@ -10,9 +10,9 @@ namespace MeowLib.Domain.Enums;
 public enum UserRolesEnum
 {
     [Description("Обычный пользователь")]
-    User,
+    User = 1,
     [Description("Редактор")]
-    Editor,
+    Editor = 10,
     [Description("Модератор")]
     Moderator = 50,
     [Description("Администратор")]
