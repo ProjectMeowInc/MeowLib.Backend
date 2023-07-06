@@ -55,6 +55,11 @@ public class BaseController : ControllerBase
     {
         return Json(new BaseErrorResponse("Сущность не найдена"), 404);
     }
+
+    protected JsonResult NotFoundError(string message)
+    {
+        return Json(new BaseErrorResponse(message), 404);
+    }
     
     [NonAction]
     protected async Task<UserDto> GetUserDataAsync()
