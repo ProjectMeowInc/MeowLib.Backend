@@ -279,17 +279,12 @@ public class BookController : BaseController
         var uploadImageResult = await _fileService.UploadBookImageAsync(image);
         return uploadImageResult.Match<ActionResult>(Ok, exception =>
         {
-            if (exception is ApiException apiException)
+            if (exception is FileHasIncorrectExtensionException fileHasIncorrectExtensionException)
             {
-                if (apiException is FileHasIncorrectExtensionException fileHasIncorrectExtensionException)
-                {
-                    return Error(
-                        $"Файл имеет некорректное расширение: {fileHasIncorrectExtensionException.CurrentException}");
-                }
-                
-                return Error(apiException.ErrorMessage);
+                return Error(
+                    $"Файл имеет некорректное расширение: {fileHasIncorrectExtensionException.CurrentException}");
             }
-
+            
             return ServerError();
         });
     }
