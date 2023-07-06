@@ -3,6 +3,7 @@ using MeowLib.Domain.DbModels.BookEntity;
 using MeowLib.Domain.Exceptions;
 using MeowLib.Domain.Exceptions.DAL;
 using MeowLib.Domain.Exceptions.Services;
+using Microsoft.AspNetCore.Http;
 
 namespace MeowLIb.WebApi.Services.Interface;
 
@@ -59,5 +60,15 @@ public interface IBookService
     /// <param name="tags">Список Id тегов.</param>
     /// <returns>Модель книги или null, если она не была найдена.</returns>
     /// <exception cref="DbSavingException">Возникает в случае ошибки сохранения данных.</exception>
-    Task<Result<BookEntityModel?>> UpdateBookTags(int bookId, IEnumerable<int> tags);
+    Task<Result<BookEntityModel?>> UpdateBookTagsAsync(int bookId, IEnumerable<int> tags);
+
+    /// <summary>
+    /// Метод обновляет обложку книги.
+    /// </summary>
+    /// <param name="bookId">Id книги.</param>
+    /// <param name="file">Картинка для обновления.</param>
+    /// <returns>Обновлённую модель книги, или null, если книга не была найдена.</returns>
+    /// <exception cref="UploadingFileException">Возникает в случае ошибки загрузки файла.</exception>
+    /// <exception cref="DbSavingException">Возникает в случае ошибки сохранения данных.</exception>
+    Task<Result<BookEntityModel?>> UpdateBookImageAsync(int bookId, IFormFile file);
 }
