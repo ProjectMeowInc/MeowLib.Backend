@@ -69,7 +69,7 @@ if (string.IsNullOrEmpty(uploadFileDirectory))
     throw new Exception("Не указан токен для сервиса загрузки изображений");
 }
 
-services.AddScoped<IUploadFileService>(_ => new UploadFileService(uploadFileDirectory));
+services.AddScoped<IFileService>(_ => new FileService(uploadFileDirectory));
 
 services.AddScoped<IUserService, UserService>();
 services.AddScoped<IAuthorService, AuthorService>();

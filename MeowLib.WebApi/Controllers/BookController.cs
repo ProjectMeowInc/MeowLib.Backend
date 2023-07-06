@@ -27,16 +27,16 @@ public class BookController : BaseController
     private readonly IBookRepository _bookRepository;
     private readonly IMapper _mapper;
     private readonly IChapterService _chapterService;
-    private readonly IUploadFileService _uploadFileService;
+    private readonly IFileService _fileService;
     
     public BookController(IBookService bookService, IBookRepository bookRepository, IMapper mapper,
-        IChapterService chapterService, IUploadFileService uploadFileService)
+        IChapterService chapterService, IFileService fileService)
     {
         _bookService = bookService;
         _bookRepository = bookRepository;
         _mapper = mapper;
         _chapterService = chapterService;
-        _uploadFileService = uploadFileService;
+        _fileService = fileService;
     }
 
     [HttpGet]
@@ -276,7 +276,7 @@ public class BookController : BaseController
     [HttpPut("{bookId:int}/image"), Authorization(RequiredRoles = new [] { UserRolesEnum.Editor, UserRolesEnum.Admin })]
     public async Task<ActionResult> UpdateBookImage(IFormFile image)
     {
-        var uploadImageResult = await _uploadFileService.UploadBookImageAsync(image);
+        var uploadImageResult = await _fileService.UploadBookImageAsync(image);
         return uploadImageResult.Match<ActionResult>(Ok, exception =>
         {
             if (exception is ApiException apiException)

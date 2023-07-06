@@ -8,17 +8,17 @@ namespace MeowLib.WebApi.Controllers;
 [Route("api/images")]
 public class FileController : BaseController
 {
-    private readonly IUploadFileService _uploadFileService;
+    private readonly IFileService _fileService;
     
-    public FileController(IUploadFileService uploadFileService)
+    public FileController(IFileService fileService)
     {
-        _uploadFileService = uploadFileService;
+        _fileService = fileService;
     }
 
     [HttpGet("book/{imageName}")]
     public async Task<ActionResult> GetBookImage([FromRoute] string imageName)
     {
-        var getBookImageResult = await _uploadFileService.GetBookImageAsync(imageName);
+        var getBookImageResult = await _fileService.GetBookImageAsync(imageName);
         if (getBookImageResult.content is null)
         {
             return NotFoundError("Изображение не найдено");
