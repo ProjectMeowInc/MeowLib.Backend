@@ -4,7 +4,7 @@ using MeowLib.Domain.Enums;
 
 namespace MeowLib.Domain.DbModels.UserFavoriteEntity;
 
-public class UserFavoriteEntity
+public class UserFavoriteEntityModel
 {
     /// <summary>
     /// Id.

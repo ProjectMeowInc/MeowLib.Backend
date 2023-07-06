@@ -19,9 +19,9 @@ public class UserFavoriteRepository : IUserFavoriteRepository
         _applicationDbContext = applicationDbContext;
     }
 
-    public async Task<Result<UserFavoriteEntity>> CreateAsync(UserFavoriteEntity entity)
+    public async Task<Result<UserFavoriteEntityModel>> CreateAsync(UserFavoriteEntityModel entityModel)
     {
-        var createdUserFavoritesEntry = await _applicationDbContext.UsersFavorite.AddAsync(entity);
+        var createdUserFavoritesEntry = await _applicationDbContext.UsersFavorite.AddAsync(entityModel);
 
         try
         {
@@ -29,26 +29,26 @@ public class UserFavoriteRepository : IUserFavoriteRepository
         }
         catch (DbUpdateException)
         {
-            var dbSavingException = new DbSavingException(nameof(UserFavoriteEntity), DbSavingTypesEnum.Create);
-            return new Result<UserFavoriteEntity>(dbSavingException);
+            var dbSavingException = new DbSavingException(nameof(UserFavoriteEntityModel), DbSavingTypesEnum.Create);
+            return new Result<UserFavoriteEntityModel>(dbSavingException);
         }
 
         return createdUserFavoritesEntry.Entity;
     }
 
-    public async Task<UserFavoriteEntity?> GetByIdAsync(int id)
+    public async Task<UserFavoriteEntityModel?> GetByIdAsync(int id)
     {
         return await _applicationDbContext.UsersFavorite.FirstOrDefaultAsync(uf => uf.Id == id);
     }
 
-    public async Task<UserFavoriteEntity?> GetByBookAndUserAsync(BookEntityModel book, UserEntityModel user)
+    public async Task<UserFavoriteEntityModel?> GetByBookAndUserAsync(BookEntityModel book, UserEntityModel user)
     {
         return await _applicationDbContext.UsersFavorite.FirstOrDefaultAsync(uf => uf.Book == book && uf.User == user);
     }
 
-    public async Task<bool> DeleteAsync(UserFavoriteEntity entity)
+    public async Task<bool> DeleteAsync(UserFavoriteEntityModel entityModel)
     {
-        _applicationDbContext.UsersFavorite.Remove(entity);
+        _applicationDbContext.UsersFavorite.Remove(entityModel);
 
         try
         {
@@ -62,9 +62,9 @@ public class UserFavoriteRepository : IUserFavoriteRepository
         return true;
     }
 
-    public async Task<Option<Exception>> UpdateAsync(UserFavoriteEntity entity)
+    public async Task<Result<UserFavoriteEntityModel>> UpdateAsync(UserFavoriteEntityModel entityModel)
     {
-        _applicationDbContext.UsersFavorite.Update(entity);
+        var updateUserFavoriteEntry = _applicationDbContext.UsersFavorite.Update(entityModel);
 
         try
         {
@@ -72,12 +72,12 @@ public class UserFavoriteRepository : IUserFavoriteRepository
         }
         catch (DbUpdateException)
         {
-            var dbSavingException = new DbSavingException(nameof(UserFavoriteEntity), DbSavingTypesEnum.Update);
-            return Option<Exception>.Some(dbSavingException);
+            var dbSavingException = new DbSavingException(nameof(UserFavoriteEntityModel), DbSavingTypesEnum.Update);
+            return new Result<UserFavoriteEntityModel>(dbSavingException);
         }
 
-        return Option<Exception>.None;
+        return updateUserFavoriteEntry.Entity;
     }
 
-    public IQueryable<UserFavoriteEntity> GetAll() => _applicationDbContext.UsersFavorite.AsQueryable();
+    public IQueryable<UserFavoriteEntityModel> GetAll() => _applicationDbContext.UsersFavorite.AsQueryable();
 }

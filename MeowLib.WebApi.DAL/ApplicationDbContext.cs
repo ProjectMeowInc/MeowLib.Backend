@@ -63,5 +63,5 @@ public class ApplicationDbContext : DbContext
     /// <summary>
     /// Таблица избранных книг пользователя.
     /// </summary>
-    public DbSet<UserFavoriteEntity> UsersFavorite { get; set; } = null!;
+    public DbSet<UserFavoriteEntityModel> UsersFavorite { get; set; } = null!;
 }

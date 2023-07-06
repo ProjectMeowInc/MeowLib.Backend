@@ -8,15 +8,15 @@ namespace MeowLib.WebApi.DAL.Repository.Interfaces;
 
 public interface IUserFavoriteRepository
 {
-    Task<Result<UserFavoriteEntity>> CreateAsync(UserFavoriteEntity entity);
+    Task<Result<UserFavoriteEntityModel>> CreateAsync(UserFavoriteEntityModel entityModel);
 
-    Task<UserFavoriteEntity?> GetByIdAsync(int id);
+    Task<UserFavoriteEntityModel?> GetByIdAsync(int id);
 
-    Task<UserFavoriteEntity?> GetByBookAndUserAsync(BookEntityModel book, UserEntityModel user);
+    Task<UserFavoriteEntityModel?> GetByBookAndUserAsync(BookEntityModel book, UserEntityModel user);
 
-    Task<bool> DeleteAsync(UserFavoriteEntity entity);
+    Task<bool> DeleteAsync(UserFavoriteEntityModel entityModel);
 
-    Task<Option<Exception>> UpdateAsync(UserFavoriteEntity entity);
+    Task<Result<UserFavoriteEntityModel>> UpdateAsync(UserFavoriteEntityModel entityModel);
 
-    public IQueryable<UserFavoriteEntity> GetAll();
+    public IQueryable<UserFavoriteEntityModel> GetAll();
 }
