@@ -8,10 +8,10 @@ public class FileHasIncorrectExtensionException : ApiException
     /// <summary>
     /// Расширение, которое имел файл.
     /// </summary>
-    public string CurrentException { get; protected set; }
+    public string CurrentExtension { get; protected set; }
     
     public FileHasIncorrectExtensionException(string errorMessage, string currentExtension) : base(errorMessage)
     {
-        CurrentException = currentExtension;
+        CurrentExtension = currentExtension;
     }
 }

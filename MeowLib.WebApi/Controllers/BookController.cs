@@ -282,7 +282,7 @@ public class BookController : BaseController
             if (exception is FileHasIncorrectExtensionException fileHasIncorrectExtensionException)
             {
                 return Error(
-                    $"Файл имеет некорректное расширение: {fileHasIncorrectExtensionException.CurrentException}");
+                    $"Файл имеет некорректное расширение: {fileHasIncorrectExtensionException.CurrentExtension}");
             }
             
             return ServerError();
