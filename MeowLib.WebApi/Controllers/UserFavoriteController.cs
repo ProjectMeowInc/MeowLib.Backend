@@ -1,4 +1,6 @@
-﻿using MeowLib.Domain.Exceptions.DAL;
+﻿using MeowLib.Domain.Dto.UserFavorite;
+using MeowLib.Domain.Enums;
+using MeowLib.Domain.Exceptions.DAL;
 using MeowLib.Domain.Requests.UserFavorite;
 using MeowLib.WebApi.Abstractions;
 using MeowLib.WebApi.Filters;
@@ -21,9 +23,9 @@ public class UserFavoriteController : BaseController
     public async Task<ActionResult> UpdateUserList([FromBody] UpdateUserListRequest input)
     {
         var userData = await GetUserDataAsync();
-        var updateUserListResult = await _userFavoriteService.AddOrUpdateUserListAsync(input.BookId, userData.Id, input.Status);
+        var updatedUserListResult = await _userFavoriteService.AddOrUpdateUserListAsync(input.BookId, userData.Id, input.Status);
 
-        return updateUserListResult.Match<ActionResult>(_ => Empty(), exception =>
+        return updatedUserListResult.Match<ActionResult>(_ => Empty(), exception =>
         {
             if (exception is EntityNotFoundException)
             {
@@ -32,5 +34,15 @@ public class UserFavoriteController : BaseController
 
             return ServerError();
         });
+    }
+
+    [HttpGet, Authorization]
+    [ProducesResponseType(200, Type = typeof(List<UserFavoriteDto>))]
+    public async Task<ActionResult> GetUserBookList()
+    {
+        
+        var userData = await GetUserDataAsync();
+        var userFavorites = await _userFavoriteService.GetUserFavorites(userData.Id);
+        return Json(userFavorites);
     }
 }

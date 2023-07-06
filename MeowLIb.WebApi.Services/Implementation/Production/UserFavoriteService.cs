@@ -2,10 +2,13 @@
 using MeowLib.Domain.DbModels.BookEntity;
 using MeowLib.Domain.DbModels.UserEntity;
 using MeowLib.Domain.DbModels.UserFavoriteEntity;
+using MeowLib.Domain.Dto.Book;
+using MeowLib.Domain.Dto.UserFavorite;
 using MeowLib.Domain.Enums;
 using MeowLib.Domain.Exceptions.DAL;
 using MeowLib.WebApi.DAL.Repository.Interfaces;
 using MeowLIb.WebApi.Services.Interface;
+using Microsoft.EntityFrameworkCore;
 
 namespace MeowLIb.WebApi.Services.Implementation.Production;
 
@@ -55,6 +58,24 @@ public class UserFavoriteService : IUserFavoriteService
         }
 
         return await UpdateOldAsync(existedUserFavorites, status);
+    }
+
+    public async Task<List<UserFavoriteDto>> GetUserFavorites(int userId)
+    {
+
+        return await _userFavoriteRepository.GetAll()
+            .Where(uf => uf.User.Id == userId)
+            .Select(uf => new UserFavoriteDto
+            {
+                Status = uf.Status,
+                Book = new BookDto
+                {
+                    Id = uf.Book.Id,
+                    Name = uf.Book.Name,
+                    Description = uf.Book.Description
+                }
+            })
+            .ToListAsync();
     }
 
     
