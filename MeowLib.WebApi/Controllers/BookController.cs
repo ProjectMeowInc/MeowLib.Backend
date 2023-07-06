@@ -3,6 +3,7 @@ using MeowLib.Domain.DbModels.BookEntity;
 using MeowLib.Domain.DbModels.ChapterEntity;
 using MeowLib.Domain.Dto.Book;
 using MeowLib.Domain.Enums;
+using MeowLib.Domain.Exceptions;
 using MeowLib.Domain.Exceptions.DAL;
 using MeowLib.Domain.Exceptions.Services;
 using MeowLib.Domain.Requests.Book;
@@ -27,7 +28,8 @@ public class BookController : BaseController
     private readonly IMapper _mapper;
     private readonly IChapterService _chapterService;
     
-    public BookController(IBookService bookService, IBookRepository bookRepository, IMapper mapper, IChapterService chapterService)
+    public BookController(IBookService bookService, IBookRepository bookRepository, IMapper mapper,
+        IChapterService chapterService)
     {
         _bookService = bookService;
         _bookRepository = bookRepository;
@@ -143,7 +145,7 @@ public class BookController : BaseController
         var createChapterResult = await _chapterService.CreateChapterAsync(name: input.Name, text: input.Text, bookId: bookId);
         return createChapterResult.Match<ActionResult>(_ => Empty(), exception =>
         {
-            if (exception is EntityNotFoundException entityNotFoundException)
+            if (exception is EntityNotFoundException)
             {
                 return Error($"Книга с Id = {bookId} не найдена", 400);
             }
@@ -257,12 +259,28 @@ public class BookController : BaseController
     [HttpPut("{bookId:int}/tags"), Authorization(RequiredRoles = new [] { UserRolesEnum.Editor, UserRolesEnum.Admin })]
     public async Task<ActionResult> UpdateBookTags([FromRoute] int bookId, [FromBody] UpdateBookTagsRequest input)
     {
-        var updateBookResult = await _bookService.UpdateBookTags(bookId, input.Tags);
+        var updateBookResult = await _bookService.UpdateBookTagsAsync(bookId, input.Tags);
         return updateBookResult.Match<ActionResult>(updatedBook =>
         {
             if (updatedBook is null)
             {
                 return NotFoundError();
+            }
+
+            return Empty();
+        }, _ => ServerError());
+    }
+    
+    [HttpPut("{bookId:int}/image"), Authorization(RequiredRoles = new [] { UserRolesEnum.Editor, UserRolesEnum.Admin })]
+    public async Task<ActionResult> UpdateBookImage([FromRoute] int bookId, IFormFile image)
+    {
+        var uploadImageResult = await _bookService.UpdateBookImageAsync(bookId, image);
+        
+        return uploadImageResult.Match<ActionResult>(updatedBook =>
+        {
+            if (updatedBook is null)
+            {
+                return NotFoundError($"Книга с Id = {bookId} не найдена");
             }
 
             return Empty();

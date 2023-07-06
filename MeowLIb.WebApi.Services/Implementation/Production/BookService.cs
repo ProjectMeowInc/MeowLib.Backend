@@ -7,6 +7,7 @@ using MeowLib.Domain.Exceptions.Services;
 using MeowLib.Domain.Models;
 using MeowLib.WebApi.DAL.Repository.Interfaces;
 using MeowLIb.WebApi.Services.Interface;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace MeowLIb.WebApi.Services.Implementation.Production;
@@ -19,6 +20,7 @@ public class BookService : IBookService
     private readonly IBookRepository _bookRepository;
     private readonly IAuthorRepository _authorRepository;
     private readonly ITagRepository _tagRepository;
+    private readonly IFileService _fileService;
 
     /// <summary>
     /// Конструктор.
@@ -26,11 +28,14 @@ public class BookService : IBookService
     /// <param name="bookRepository">Репозиторий книг.</param>
     /// <param name="authorRepository">Репозиторий авторов.</param>
     /// <param name="tagRepository">Репозиторий тегов.</param>
-    public BookService(IBookRepository bookRepository, IAuthorRepository authorRepository, ITagRepository tagRepository)
+    /// <param name="fileService">Сервис для работы с файлами.</param>
+    public BookService(IBookRepository bookRepository, IAuthorRepository authorRepository, ITagRepository tagRepository, 
+        IFileService fileService)
     {
         _bookRepository = bookRepository;
         _authorRepository = authorRepository;
         _tagRepository = tagRepository;
+        _fileService = fileService;
     }
 
     /// <summary>
@@ -190,7 +195,7 @@ public class BookService : IBookService
     /// <param name="tags">Список Id тегов.</param>
     /// <returns>Модель книги или null, если она не была найдена.</returns>
     /// <exception cref="DbSavingException">Возникает в случае ошибки сохранения данных.</exception>
-    public async Task<Result<BookEntityModel?>> UpdateBookTags(int bookId, IEnumerable<int> tags)
+    public async Task<Result<BookEntityModel?>> UpdateBookTagsAsync(int bookId, IEnumerable<int> tags)
     {
         var foundedBook = await _bookRepository.GetByIdAsync(bookId);
         if (foundedBook is null)
@@ -208,5 +213,44 @@ public class BookService : IBookService
         var updateResult = await _bookRepository.UpdateAsync(foundedBook);
         return updateResult.Match<Result<BookEntityModel?>>(updatedBook => updatedBook,
             exception => new Result<BookEntityModel?>(exception));
+    }
+
+    /// <summary>
+    /// Метод обновляет обложку книги.
+    /// </summary>
+    /// <param name="bookId">Id книги.</param>
+    /// <param name="file">Картинка для обновления.</param>
+    /// <returns>Обновлённую модель книги, или null, если книга не была найдена.</returns>
+    /// <exception cref="UploadingFileException">Возникает в случае ошибки загрузки файла.</exception>
+    /// <exception cref="DbSavingException">Возникает в случае ошибки сохранения данных.</exception>
+    public async Task<Result<BookEntityModel?>> UpdateBookImageAsync(int bookId, IFormFile file)
+    {
+        // TODO: REFACTORING!!
+        var foundedBook = await _bookRepository.GetByIdAsync(bookId);
+        if (foundedBook is null)
+        {
+            return null;
+        }
+
+        var uploadBookImageResult = await _fileService.UploadBookImageAsync(file);
+        if (uploadBookImageResult.IsFaulted)
+        {
+            var uploadingFileException = new UploadingFileException();
+            return new Result<BookEntityModel?>(uploadingFileException);
+        }
+
+        var updateBookResult = await uploadBookImageResult.MapAsync<Result<BookEntityModel>>(async fileName=>
+        {
+            foundedBook.ImageUrl = fileName;
+            var updateBookResult = await _bookRepository.UpdateAsync(foundedBook);
+
+            return updateBookResult.Match<Result<BookEntityModel>>(updatedBook => updatedBook, 
+                exception => new Result<BookEntityModel>(exception));
+        });
+
+        return updateBookResult.Match<Result<BookEntityModel?>>(ok =>
+        {
+            return ok.Match<BookEntityModel?>(updatedBook => updatedBook, _ => null);
+        }, exception => new Result<BookEntityModel?>(exception));
     }
 }

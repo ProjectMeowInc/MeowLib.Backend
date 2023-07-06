@@ -63,6 +63,14 @@ services.AddSingleton<IHashService, HashService>();
 services.AddSingleton<IJwtTokenService, JwtTokensService>();
 services.AddSingleton<IFrontEndLogService, FrontEndLogService>();
 
+var uploadFileDirectory = builder.Configuration.GetValue<string>("UploadFileDirectory");
+if (string.IsNullOrEmpty(uploadFileDirectory))
+{
+    throw new Exception("Не указан токен для сервиса загрузки изображений");
+}
+
+services.AddScoped<IFileService>(_ => new FileService(uploadFileDirectory));
+
 services.AddScoped<IUserService, UserService>();
 services.AddScoped<IAuthorService, AuthorService>();
 services.AddScoped<ITagService, TagService>();

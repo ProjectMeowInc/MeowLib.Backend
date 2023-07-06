@@ -25,6 +25,11 @@ public class BookEntityModel
     public string Description { get; set; } = null!;
     
     /// <summary>
+    /// Название файла обложки книги.
+    /// </summary>
+    public string? ImageUrl { get; set; }
+    
+    /// <summary>
     /// Автор книги. FK.
     /// </summary>
     public AuthorEntityModel? Author { get; set; }
