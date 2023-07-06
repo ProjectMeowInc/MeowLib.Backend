@@ -27,10 +27,10 @@ public class BaseController : ControllerBase
     }
 
     /// <summary>
-    /// Метод возвращающий JSON-объект в виде <see cref="BaseErrorResponse"/>
+    /// Метод возвращающий JSON-объект в виде <see cref="BaseErrorResponse"/>.
     /// </summary>
     /// <param name="errorMessage">Сообщение, котороые будет отправлены в модели ошибки.</param>
-    /// <param name="statusCode">Статус код, который необходимо вернуть. Стандартное значение: 500</param>
+    /// <param name="statusCode">Статус код, который необходимо вернуть. Стандартное значение: 500.</param>
     /// <returns>Json-модель ответа.</returns>
     [NonAction]
     protected JsonResult Error(string errorMessage, int statusCode = 500)
@@ -39,7 +39,7 @@ public class BaseController : ControllerBase
     }
 
     /// <summary>
-    /// Метод озвращает стандартный формат ошибки сервера в виде <see cref="BaseErrorResponse"/>
+    /// Метод возвращает стандартный формат ошибки сервера в виде <see cref="BaseErrorResponse"/>.
     /// </summary>
     /// <returns>Json-модель ответа.</returns>
     protected JsonResult ServerError()
@@ -48,7 +48,7 @@ public class BaseController : ControllerBase
     }
 
     /// <summary>
-    /// Метод озвращает стандартный формат ошибки 404 в виде <see cref="BaseErrorResponse"/>
+    /// Метод возвращает стандартный формат ошибки 404 в виде <see cref="BaseErrorResponse"/>.
     /// </summary>
     /// <returns>Json-модель ответа.</returns>
     protected JsonResult NotFoundError()
@@ -56,10 +56,16 @@ public class BaseController : ControllerBase
         return Json(new BaseErrorResponse("Сущность не найдена"), 404);
     }
 
+    /// <summary>
+    /// Метод возвращает стандартный формат ошибки 404 в виде <see cref="BaseErrorResponse"/>, с указанным сообщением.
+    /// </summary>
+    /// <param name="message">Сообщение для отправки.</param>
+    /// <returns>Json-модель ответа.</returns>
     protected JsonResult NotFoundError(string message)
     {
         return Json(new BaseErrorResponse(message), 404);
     }
+    
     
     [NonAction]
     protected async Task<UserDto> GetUserDataAsync()
