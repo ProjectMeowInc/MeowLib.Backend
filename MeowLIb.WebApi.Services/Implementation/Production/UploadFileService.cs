@@ -1,9 +1,5 @@
-﻿using System.Net.Http.Json;
-using LanguageExt.Common;
-using MeowLib.Domain.Exceptions;
+﻿using LanguageExt.Common;
 using MeowLib.Domain.Exceptions.Services;
-using MeowLib.Domain.ExternalRequests;
-using MeowLib.Domain.ExternalResponses;
 using MeowLIb.WebApi.Services.Interface;
 using Microsoft.AspNetCore.Http;
 
@@ -11,60 +7,71 @@ namespace MeowLIb.WebApi.Services.Implementation.Production;
 
 public class UploadFileService : IUploadFileService
 {
-    private readonly string _apiToken;
-    private readonly HttpClient _httpClient;
-    private static readonly string[] Validatedextension = { ".png", ".jpg" };
-
-    public UploadFileService(string apiToken)
+    private readonly string _uploadDirectoryPath;
+    private static readonly string[] ValidateExtension = { ".png", ".jpg" };
+    private static readonly Dictionary<string, string> MimeMappings = new()
     {
-        _apiToken = apiToken;
-        _httpClient = new HttpClient
+        { "png", "image/png" },
+        { "jpg", "image/jpg" }
+    };
+
+    public UploadFileService(string uploadDirectoryPath)
+    {
+        _uploadDirectoryPath = uploadDirectoryPath;
+        if (!Directory.Exists(_uploadDirectoryPath))
         {
-            BaseAddress = new Uri($"https://freeimage.host/api/1/upload"),
-        };
+            Directory.CreateDirectory(_uploadDirectoryPath);
+        }
     }
 
-    public async Task<Result<string>> UploadImageAsync(IFormFile file)
+    public async Task<Result<string>> UploadBookImageAsync(IFormFile file)
     {
         var fileExtension = Path.GetExtension(file.FileName).ToLower();
         
-        if (!Validatedextension.Contains(fileExtension))
+        if (!ValidateExtension.Contains(fileExtension))
         {
             var fileHasIncorrectExtensionException = new FileHasIncorrectExtensionException(
                 "Файл имеет некорректное расширение", fileExtension);
             return new Result<string>(fileHasIncorrectExtensionException);
         }
 
-        var base64UploadString = await ConvertToBase64Async(file);
-        
-        var uploadResult = await _httpClient.PostAsJsonAsync("", new UploadImageRequest
-        {
-            Key = _apiToken,
-            Source = base64UploadString
-        });
-        
-        var parsedContent = await uploadResult.Content.ReadFromJsonAsync<UploadImageResponse>();
-
-        if (parsedContent is null)
-        {
-            var apiException = new ApiException("Ошибка парсинга ответа");
-            return new Result<string>(apiException);
-        }
-
-        if (parsedContent.StatusCode != 200)
-        {
-            var apiException = new ApiException("Ошибка загрузки файла");
-            return new Result<string>(apiException);
-        }
-
-        return parsedContent?.Url ?? "NO-LOADED";
+        return await SaveFileWithUniqueName(file, fileExtension, "book_photo");
     }
 
-    private async Task<string> ConvertToBase64Async(IFormFile file)
+    public async Task<(byte[]? content, string mimeType)> GetBookImageAsync(string imageName)
     {
-        using var memoryStream = new MemoryStream();
-        await file.CopyToAsync(memoryStream);
-        var fileBytes = memoryStream.ToArray();
-        return Convert.ToBase64String(fileBytes);
+        var foundPath = Path.Combine(_uploadDirectoryPath, "book_photo", imageName);
+
+        if (!File.Exists(foundPath))
+        {
+            return (null, "application/unknown");
+        }
+
+        var fileExtension = Path.GetExtension(foundPath);
+
+        var fileContent = await File.ReadAllBytesAsync(foundPath);
+        var mimeType = GetMimeTypeByExtension(fileExtension);
+        return (fileContent, mimeType);
+    }
+
+    private async Task<string> SaveFileWithUniqueName(IFormFile file, string fileExtension, string filePrefix)
+    {
+        var newFileName = string.Concat(Path.GetRandomFileName().Replace(".", string.Empty), fileExtension);
+        
+        var uploadDirectory = Path.Combine(_uploadDirectoryPath, filePrefix);
+        if (!Directory.Exists(uploadDirectory))
+        {
+            Directory.CreateDirectory(uploadDirectory);
+        }
+        
+        await using var fileStream = File.Create($"{uploadDirectory}/{newFileName}");
+        await file.CopyToAsync(fileStream);
+        
+        return newFileName;
+    }
+
+    private string GetMimeTypeByExtension(string extension)
+    {
+        return MimeMappings.TryGetValue(extension, out var mime) ? mime : "application/unknown";
     }
 }

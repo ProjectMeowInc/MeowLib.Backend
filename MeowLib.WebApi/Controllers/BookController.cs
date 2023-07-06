@@ -272,11 +272,11 @@ public class BookController : BaseController
             return Empty();
         }, _ => ServerError());
     }
-
+    
     [HttpPut("{bookId:int}/image"), Authorization(RequiredRoles = new [] { UserRolesEnum.Editor, UserRolesEnum.Admin })]
     public async Task<ActionResult> UpdateBookImage(IFormFile image)
     {
-        var uploadImageResult = await _uploadFileService.UploadImageAsync(image);
+        var uploadImageResult = await _uploadFileService.UploadBookImageAsync(image);
         return uploadImageResult.Match<ActionResult>(Ok, exception =>
         {
             if (exception is ApiException apiException)
