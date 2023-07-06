@@ -3,6 +3,7 @@ using MeowLib.Domain.DbModels.BookEntity;
 using MeowLib.Domain.DbModels.ChapterEntity;
 using MeowLib.Domain.Dto.Book;
 using MeowLib.Domain.Enums;
+using MeowLib.Domain.Exceptions;
 using MeowLib.Domain.Exceptions.DAL;
 using MeowLib.Domain.Exceptions.Services;
 using MeowLib.Domain.Requests.Book;
@@ -26,13 +27,16 @@ public class BookController : BaseController
     private readonly IBookRepository _bookRepository;
     private readonly IMapper _mapper;
     private readonly IChapterService _chapterService;
+    private readonly IUploadFileService _uploadFileService;
     
-    public BookController(IBookService bookService, IBookRepository bookRepository, IMapper mapper, IChapterService chapterService)
+    public BookController(IBookService bookService, IBookRepository bookRepository, IMapper mapper,
+        IChapterService chapterService, IUploadFileService uploadFileService)
     {
         _bookService = bookService;
         _bookRepository = bookRepository;
         _mapper = mapper;
         _chapterService = chapterService;
+        _uploadFileService = uploadFileService;
     }
 
     [HttpGet]
@@ -143,7 +147,7 @@ public class BookController : BaseController
         var createChapterResult = await _chapterService.CreateChapterAsync(name: input.Name, text: input.Text, bookId: bookId);
         return createChapterResult.Match<ActionResult>(_ => Empty(), exception =>
         {
-            if (exception is EntityNotFoundException entityNotFoundException)
+            if (exception is EntityNotFoundException)
             {
                 return Error($"Книга с Id = {bookId} не найдена", 400);
             }
@@ -267,5 +271,26 @@ public class BookController : BaseController
 
             return Empty();
         }, _ => ServerError());
+    }
+
+    [HttpPut("{bookId:int}/image"), Authorization(RequiredRoles = new [] { UserRolesEnum.Editor, UserRolesEnum.Admin })]
+    public async Task<ActionResult> UpdateBookImage(IFormFile image)
+    {
+        var uploadImageResult = await _uploadFileService.UploadImageAsync(image);
+        return uploadImageResult.Match<ActionResult>(Ok, exception =>
+        {
+            if (exception is ApiException apiException)
+            {
+                if (apiException is FileHasIncorrectExtensionException fileHasIncorrectExtensionException)
+                {
+                    return Error(
+                        $"Файл имеет некорректное расширение: {fileHasIncorrectExtensionException.CurrentException}");
+                }
+                
+                return Error(apiException.ErrorMessage);
+            }
+
+            return ServerError();
+        });
     }
 }
