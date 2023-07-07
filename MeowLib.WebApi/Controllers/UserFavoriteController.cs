@@ -1,7 +1,6 @@
-﻿using MeowLib.Domain.Dto.UserFavorite;
-using MeowLib.Domain.Enums;
-using MeowLib.Domain.Exceptions.DAL;
+﻿using MeowLib.Domain.Exceptions.DAL;
 using MeowLib.Domain.Requests.UserFavorite;
+using MeowLib.Domain.Responses.UserFavorite;
 using MeowLib.WebApi.Abstractions;
 using MeowLib.WebApi.Filters;
 using MeowLIb.WebApi.Services.Interface;
@@ -37,12 +36,23 @@ public class UserFavoriteController : BaseController
     }
 
     [HttpGet, Authorization]
-    [ProducesResponseType(200, Type = typeof(List<UserFavoriteDto>))]
+    [ProducesResponseType(200, Type = typeof(GetUserBookListResponse))]
     public async Task<ActionResult> GetUserBookList()
     {
-        
         var userData = await GetUserDataAsync();
         var userFavorites = await _userFavoriteService.GetUserFavorites(userData.Id);
-        return Json(userFavorites);
+
+        var response = new GetUserBookListResponse
+        {
+            Items = userFavorites
+                .GroupBy(uf => uf.Status)
+                .Select(d => new UserFavoriteCategory
+                {
+                    Status = d.Key,
+                    Books = d.Select(b => b.Book)
+                })
+        };
+        
+        return Json(response);
     }
 }
