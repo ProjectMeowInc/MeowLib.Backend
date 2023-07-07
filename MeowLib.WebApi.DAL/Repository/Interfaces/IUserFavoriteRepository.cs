@@ -18,5 +18,5 @@ public interface IUserFavoriteRepository
 
     Task<Result<UserFavoriteEntityModel>> UpdateAsync(UserFavoriteEntityModel entityModel);
 
-    public IQueryable<UserFavoriteEntityModel> GetAll();
+    IQueryable<UserFavoriteEntityModel> GetAll();
 }
