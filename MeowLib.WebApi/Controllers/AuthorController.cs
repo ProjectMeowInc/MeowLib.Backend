@@ -6,9 +6,9 @@ using MeowLib.Domain.Exceptions;
 using MeowLib.Domain.Exceptions.DAL;
 using MeowLib.Domain.Exceptions.Services;
 using MeowLib.Domain.Requests.Author;
-using MeowLib.Domain.Responses;
 using MeowLib.WebApi.Abstractions;
 using MeowLib.WebApi.Filters;
+using MeowLib.WebApi.ProducesResponseTypes;
 using MeowLIb.WebApi.Services.Interface;
 using Microsoft.AspNetCore.Mvc;
 using ValidationException = MeowLib.Domain.Exceptions.Services.ValidationException;
@@ -28,7 +28,7 @@ public class AuthorController : BaseController
     }
 
     [HttpGet]
-    [ProducesResponseType(200, Type = typeof(IEnumerable<AuthorDto>))]
+    [ProducesOkResponseType(typeof(IEnumerable<AuthorDto>))]
     public async Task<ActionResult> GetAllAuthors()
     {
         var authors = await _authorService.GetAllAuthorsAsync();
@@ -36,9 +36,8 @@ public class AuthorController : BaseController
     }
 
     [HttpPost, Authorization(RequiredRoles = new [] { UserRolesEnum.Editor, UserRolesEnum.Admin })]
-    [ProducesResponseType(200, Type = typeof(AuthorDto))]
-    [ProducesResponseType(403, Type = typeof(ValidationErrorResponse))]
-    [ProducesResponseType(500, Type = typeof(BaseErrorResponse))]
+    [ProducesOkResponseType(typeof(AuthorDto))]
+    [ProducesForbiddenResponseType]
     public async Task<ActionResult> CreateAuthor([FromBody] CreateAuthorRequest input)
     {
         var createResult = await _authorService.CreateAuthorAsync(input.Name);
@@ -54,10 +53,9 @@ public class AuthorController : BaseController
     }
 
     [HttpPut("{authorId:int}"), Authorization(RequiredRoles = new [] { UserRolesEnum.Editor, UserRolesEnum.Admin })]
-    [ProducesResponseType(200, Type = typeof(AuthorDto))]
-    [ProducesResponseType(403, Type = typeof(ValidationErrorResponse))]
-    [ProducesResponseType(404, Type = typeof(BaseErrorResponse))]
-    [ProducesResponseType(500, Type = typeof(BaseErrorResponse))]
+    [ProducesOkResponseType(typeof(AuthorDto))]
+    [ProducesForbiddenResponseType]
+    [ProducesNotFoundResponseType]
     public async Task<ActionResult> UpdateAuthor([FromRoute] int id, [FromBody] UpdateAuthorRequest input)
     {
         var updateAuthorModel = _mapper.Map<UpdateAuthorRequest, UpdateAuthorEntityModel>(input);
@@ -80,9 +78,8 @@ public class AuthorController : BaseController
     }
 
     [HttpDelete("{authorId:int}"), Authorization(RequiredRoles = new [] { UserRolesEnum.Editor, UserRolesEnum.Admin })]
-    [ProducesResponseType(200)]
-    [ProducesResponseType(404, Type = typeof(BaseErrorResponse))]
-    [ProducesResponseType(500, Type = typeof(BaseErrorResponse))]
+    [ProducesOkResponseType]
+    [ProducesNotFoundResponseType]
     public async Task<ActionResult> DeleteAuthor([FromRoute] int id)
     {
         var result = await _authorService.DeleteAuthorAsync(id);
@@ -98,9 +95,8 @@ public class AuthorController : BaseController
     }
 
     [HttpGet("{authorId:int}")]
-    [ProducesResponseType(200, Type = typeof(AuthorDto))]
-    [ProducesResponseType(404,  Type = typeof(BaseErrorResponse))]
-    [ProducesResponseType(500,  Type = typeof(BaseErrorResponse))]
+    [ProducesOkResponseType(typeof(AuthorDto))]
+    [ProducesNotFoundResponseType]
     public async Task<ActionResult> GetAuthorById([FromRoute] int authorId)
     {
         var result = await _authorService.GetAuthorByIdAsync(authorId);
@@ -117,9 +113,8 @@ public class AuthorController : BaseController
 
     [HttpPost]
     [Route("get-with-params")]
-    [ProducesResponseType(200, Type = typeof(IEnumerable<AuthorDto>))]
-    [ProducesResponseType(404, Type = typeof(BaseErrorResponse))]
-    [ProducesResponseType(500, Type = typeof(BaseErrorResponse))]
+    [ProducesOkResponseType(typeof(IEnumerable<AuthorDto>))]
+    [ProducesNotFoundResponseType]
     public async Task<ActionResult> GetAuthorWithParams([FromBody] GetAuthorWithParamsRequest input)
     {
         var getAuthorWithParamsResult = await _authorService.GetAuthorWithParams(input);

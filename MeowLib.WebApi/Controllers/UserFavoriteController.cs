@@ -1,8 +1,10 @@
 ﻿using MeowLib.Domain.Exceptions.DAL;
 using MeowLib.Domain.Requests.UserFavorite;
+using MeowLib.Domain.Responses;
 using MeowLib.Domain.Responses.UserFavorite;
 using MeowLib.WebApi.Abstractions;
 using MeowLib.WebApi.Filters;
+using MeowLib.WebApi.ProducesResponseTypes;
 using MeowLIb.WebApi.Services.Interface;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,6 +21,8 @@ public class UserFavoriteController : BaseController
     }
 
     [HttpPost, Authorization]
+    [ProducesOkResponseType]
+    [ProducesResponseType(400, Type = typeof(BaseErrorResponse))]
     public async Task<ActionResult> UpdateUserList([FromBody] UpdateUserListRequest input)
     {
         var userData = await GetUserDataAsync();
@@ -36,7 +40,7 @@ public class UserFavoriteController : BaseController
     }
 
     [HttpGet, Authorization]
-    [ProducesResponseType(200, Type = typeof(GetUserBookListResponse))]
+    [ProducesOkResponseType(typeof(GetUserBookListResponse))]
     public async Task<ActionResult> GetUserBookList()
     {
         var userData = await GetUserDataAsync();

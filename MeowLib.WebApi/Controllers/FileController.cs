@@ -1,4 +1,5 @@
 ﻿using MeowLib.WebApi.Abstractions;
+using MeowLib.WebApi.ProducesResponseTypes;
 using MeowLIb.WebApi.Services.Interface;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,6 +17,7 @@ public class FileController : BaseController
     }
 
     [HttpGet("book/{imageName}")]
+    [ProducesNotFoundResponseType]
     public async Task<ActionResult> GetBookImage([FromRoute] string imageName)
     {
         var getBookImageResult = await _fileService.GetBookImageAsync(imageName);

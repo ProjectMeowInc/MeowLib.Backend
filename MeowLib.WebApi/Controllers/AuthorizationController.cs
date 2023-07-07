@@ -5,6 +5,7 @@ using MeowLib.Domain.Requests.User;
 using MeowLib.Domain.Responses;
 using MeowLib.Domain.Responses.User;
 using MeowLib.WebApi.Abstractions;
+using MeowLib.WebApi.ProducesResponseTypes;
 using MeowLIb.WebApi.Services.Interface;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,10 +23,9 @@ public class AuthorizationController : BaseController
 
     [HttpPost]
     [Route("sign-in")]
-    [ProducesResponseType(200)]
+    [ProducesOkResponseType]
     [ProducesResponseType(400, Type = typeof(BaseErrorResponse))]
-    [ProducesResponseType(403, Type = typeof(ValidationErrorResponse))]
-    [ProducesResponseType(500, Type = typeof(BaseErrorResponse))]
+    [ProducesForbiddenResponseType]
     public async Task<ActionResult> SignIn([FromBody] SignInRequest input)
     {
         var signInResult = await _userService.SignInAsync(input.Login, input.Password);
@@ -48,9 +48,9 @@ public class AuthorizationController : BaseController
 
     [HttpPost]
     [Route("log-in")]
-    [ProducesResponseType(200, Type = typeof(LogInResponse))]
+    [ProducesOkResponseType(typeof(LogInResponse))]
+    [ProducesForbiddenResponseType]
     [ProducesResponseType(401, Type = typeof(BaseErrorResponse))]
-    [ProducesResponseType(500, Type = typeof(BaseErrorResponse))]
     public async Task<ActionResult> LogIn([FromBody] LogInRequest input)
     {
         var logInResult = await _userService.LogIn(input.Login, input.Password, input.IsLongSession);
@@ -61,9 +61,9 @@ public class AuthorizationController : BaseController
             RefreshToken = tokens.refreshToken
         }), exception =>
         {
-            if (exception is IncorrectCreditionalException)
+            if (exception is IncorrectCreditionalException incorrectCreditionalException)
             {
-                return Error("Неверный логин или пароль", 401);
+                return Error(incorrectCreditionalException.ErrorMessage, 401);
             }
 
             return ServerError();
@@ -72,9 +72,8 @@ public class AuthorizationController : BaseController
 
     [HttpPost]
     [Route("update-auth")]
-    [ProducesResponseType(200, Type = typeof(LogInResponse))]
+    [ProducesOkResponseType(typeof(LogInResponse))]
     [ProducesResponseType(401, Type = typeof(BaseErrorResponse))]
-    [ProducesResponseType(500, Type = typeof(BaseErrorResponse))]
     public async Task<ActionResult> UpdateTokens([FromBody] UpdateAuthorizationRequest input)
     {
         var loginResult = await _userService.LogInByRefreshTokenAsync(input.RefreshToken);

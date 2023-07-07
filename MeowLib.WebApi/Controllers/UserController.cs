@@ -8,6 +8,7 @@ using MeowLib.Domain.Requests.User;
 using MeowLib.Domain.Responses;
 using MeowLib.WebApi.Abstractions;
 using MeowLib.WebApi.Filters;
+using MeowLib.WebApi.ProducesResponseTypes;
 using MeowLIb.WebApi.Services.Interface;
 using Microsoft.AspNetCore.Mvc;
 
@@ -31,7 +32,7 @@ public class UserController : BaseController
     }
 
     [HttpGet]
-    [ProducesResponseType(200, Type = typeof(IEnumerable<UserDto>))]
+    [ProducesOkResponseType(typeof(IEnumerable<UserDto>))]
     public async Task<ActionResult> GetAll()
     {
         var users = await _userService.GetAllAsync();
@@ -39,10 +40,9 @@ public class UserController : BaseController
     }
 
     [HttpPut("{id:int}"), Authorization(RequiredRoles = new [] { UserRolesEnum.Admin })]
-    [ProducesResponseType(200, Type = typeof(UserDto))]
-    [ProducesResponseType(400, Type = typeof(ValidationErrorResponse))]
-    [ProducesResponseType(404, Type = typeof(BaseErrorResponse))]
-    [ProducesResponseType(500, Type = typeof(BaseErrorResponse))]
+    [ProducesOkResponseType(typeof(UserDto))]
+    [ProducesForbiddenResponseType]
+    [ProducesNotFoundResponseType]
     public async Task<ActionResult> UpdateUser([FromRoute] int id, [FromBody] UpdateUserRequest input)
     {
         var mappedRequest = _mapper.Map<UpdateUserRequest, UpdateUserEntityModel>(input);
