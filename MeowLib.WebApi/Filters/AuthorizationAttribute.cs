@@ -7,7 +7,7 @@ using Microsoft.Extensions.Primitives;
 
 namespace MeowLib.WebApi.Filters;
 
-public class AuthorizationAttribute : Attribute, IAsyncAuthorizationFilter
+public class AuthorizationAttribute : ProducesResponseTypeAttribute, IAsyncAuthorizationFilter
 {
     public UserRolesEnum[] RequiredRoles { get; set; } = Array.Empty<UserRolesEnum>();
     
@@ -65,5 +65,13 @@ public class AuthorizationAttribute : Attribute, IAsyncAuthorizationFilter
         }
         
         context.HttpContext.Items.Add("UserData", parsedTokenData);
+    }
+    
+    public AuthorizationAttribute() : base(typeof(BaseErrorResponse), 401)
+    {
+    }
+
+    public AuthorizationAttribute(Type type, int statusCode, string contentType, params string[] additionalContentTypes) : base(type, statusCode, contentType, additionalContentTypes)
+    {
     }
 }
