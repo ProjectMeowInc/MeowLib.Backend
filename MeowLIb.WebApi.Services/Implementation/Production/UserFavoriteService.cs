@@ -60,6 +60,11 @@ public class UserFavoriteService : IUserFavoriteService
         return await UpdateOldAsync(existedUserFavorites, status);
     }
 
+    /// <summary>
+    /// Метод получает список избранных книг пользователя.
+    /// </summary>
+    /// <param name="userId">Id пользователя</param>
+    /// <returns>Список избранныъ книг пользователя.</returns>
     public async Task<List<UserFavoriteDto>> GetUserFavorites(int userId)
     {
 

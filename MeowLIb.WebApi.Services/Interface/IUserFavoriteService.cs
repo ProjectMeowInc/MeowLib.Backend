@@ -19,5 +19,10 @@ public interface IUserFavoriteService
     Task<Result<UserFavoriteEntityModel>> AddOrUpdateUserListAsync(int bookId, int userId,
         UserFavoritesStatusEnum status);
 
+    /// <summary>
+    /// Метод получает список избранных книг пользователя.
+    /// </summary>
+    /// <param name="userId">Id пользователя</param>
+    /// <returns>Список избранныъ книг пользователя.</returns>
     Task<List<UserFavoriteDto>> GetUserFavorites(int userId);
 }
