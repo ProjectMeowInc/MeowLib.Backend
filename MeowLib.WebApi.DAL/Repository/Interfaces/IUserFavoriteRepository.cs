@@ -9,7 +9,7 @@ namespace MeowLib.WebApi.DAL.Repository.Interfaces;
 /// <summary>
 /// Абстракция репозитория для работы с книгами пользователей.
 /// </summary>
-interface IUserFavoriteRepository
+public interface IUserFavoriteRepository
 {
     /// <summary>
     /// Метод создаёт новую книгу в списке пользователя.
