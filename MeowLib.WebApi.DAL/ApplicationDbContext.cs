@@ -32,6 +32,11 @@ public class ApplicationDbContext : DbContext
             .HasMany(b => b.Chapters)
             .WithOne(c => c.Book);
 
+        modelBuilder.Entity<BookEntityModel>()
+            .HasOne(b => b.Author)
+            .WithMany()
+            .OnDelete(DeleteBehavior.SetNull);
+        
         base.OnModelCreating(modelBuilder);
     }
 
