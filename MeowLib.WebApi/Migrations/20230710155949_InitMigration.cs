@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace MeowLib.WebApi.Migrations
 {
     /// <inheritdoc />
-    public partial class CreateChapters : Migration
+    public partial class InitMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -62,6 +62,7 @@ namespace MeowLib.WebApi.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     Name = table.Column<string>(type: "TEXT", nullable: false),
                     Description = table.Column<string>(type: "TEXT", nullable: false),
+                    ImageUrl = table.Column<string>(type: "TEXT", nullable: true),
                     AuthorId = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
@@ -71,7 +72,8 @@ namespace MeowLib.WebApi.Migrations
                         name: "FK_Books_Authors_AuthorId",
                         column: x => x.AuthorId,
                         principalTable: "Authors",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
                 });
 
             migrationBuilder.CreateTable(
@@ -120,6 +122,33 @@ namespace MeowLib.WebApi.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "UsersFavorite",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    BookId = table.Column<int>(type: "INTEGER", nullable: false),
+                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Status = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UsersFavorite", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UsersFavorite_Books_BookId",
+                        column: x => x.BookId,
+                        principalTable: "Books",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UsersFavorite_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_BookEntityModelTagEntityModel_TagsId",
                 table: "BookEntityModelTagEntityModel",
@@ -134,6 +163,16 @@ namespace MeowLib.WebApi.Migrations
                 name: "IX_Chapters_BookId",
                 table: "Chapters",
                 column: "BookId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UsersFavorite_BookId",
+                table: "UsersFavorite",
+                column: "BookId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UsersFavorite_UserId",
+                table: "UsersFavorite",
+                column: "UserId");
         }
 
         /// <inheritdoc />
@@ -146,13 +185,16 @@ namespace MeowLib.WebApi.Migrations
                 name: "Chapters");
 
             migrationBuilder.DropTable(
-                name: "Users");
+                name: "UsersFavorite");
 
             migrationBuilder.DropTable(
                 name: "Tags");
 
             migrationBuilder.DropTable(
                 name: "Books");
+
+            migrationBuilder.DropTable(
+                name: "Users");
 
             migrationBuilder.DropTable(
                 name: "Authors");
