@@ -56,10 +56,10 @@ public class AuthorController : BaseController
     [ProducesOkResponseType(typeof(AuthorDto))]
     [ProducesForbiddenResponseType]
     [ProducesNotFoundResponseType]
-    public async Task<ActionResult> UpdateAuthor([FromRoute] int id, [FromBody] UpdateAuthorRequest input)
+    public async Task<ActionResult> UpdateAuthor([FromRoute] int authorId, [FromBody] UpdateAuthorRequest input)
     {
         var updateAuthorModel = _mapper.Map<UpdateAuthorRequest, UpdateAuthorEntityModel>(input);
-        var updateResult = await _authorService.UpdateAuthorAsync(id, updateAuthorModel);
+        var updateResult = await _authorService.UpdateAuthorAsync(authorId, updateAuthorModel);
         
         return updateResult.Match<ActionResult>(updatedAuthor => Json(updatedAuthor), exception =>
         {
@@ -80,9 +80,9 @@ public class AuthorController : BaseController
     [HttpDelete("{authorId:int}"), Authorization(RequiredRoles = new [] { UserRolesEnum.Editor, UserRolesEnum.Admin })]
     [ProducesOkResponseType]
     [ProducesNotFoundResponseType]
-    public async Task<ActionResult> DeleteAuthor([FromRoute] int id)
+    public async Task<ActionResult> DeleteAuthor([FromRoute] int authorId)
     {
-        var result = await _authorService.DeleteAuthorAsync(id);
+        var result = await _authorService.DeleteAuthorAsync(authorId);
         return result.Match<ActionResult>(ok =>
         {
             if (!ok)
