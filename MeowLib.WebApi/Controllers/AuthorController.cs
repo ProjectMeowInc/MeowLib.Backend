@@ -68,7 +68,7 @@ public class AuthorController : BaseController
                 return validationException.ToResponse();
             }
 
-            if (exception is ApiException)
+            if (exception is EntityNotFoundException)
             {
                 return NotFoundError();
             }
