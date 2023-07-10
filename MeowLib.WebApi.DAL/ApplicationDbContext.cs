@@ -3,6 +3,7 @@ using MeowLib.Domain.DbModels.BookEntity;
 using MeowLib.Domain.DbModels.ChapterEntity;
 using MeowLib.Domain.DbModels.TagEntity;
 using MeowLib.Domain.DbModels.UserEntity;
+using MeowLib.Domain.DbModels.UserFavoriteEntity;
 using Microsoft.EntityFrameworkCore;
 
 namespace MeowLib.WebApi.DAL;
@@ -18,7 +19,7 @@ public class ApplicationDbContext : DbContext
     /// <param name="options">Настройки БД.</param>
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
     {
-        Database.EnsureCreated();
+        
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -30,7 +31,12 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<BookEntityModel>()
             .HasMany(b => b.Chapters)
             .WithOne(c => c.Book);
-            
+
+        modelBuilder.Entity<BookEntityModel>()
+            .HasOne(b => b.Author)
+            .WithMany()
+            .OnDelete(DeleteBehavior.SetNull);
+        
         base.OnModelCreating(modelBuilder);
     }
 
@@ -58,4 +64,9 @@ public class ApplicationDbContext : DbContext
     /// Таблица глав книг.
     /// </summary>
     public DbSet<ChapterEntityModel> Chapters { get; set; } = null!;
+
+    /// <summary>
+    /// Таблица избранных книг пользователя.
+    /// </summary>
+    public DbSet<UserFavoriteEntityModel> UsersFavorite { get; set; } = null!;
 }

@@ -60,6 +60,9 @@ namespace MeowLib.WebApi.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -142,6 +145,30 @@ namespace MeowLib.WebApi.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("MeowLib.Domain.DbModels.UserFavoriteEntity.UserFavoriteEntityModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("BookId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BookId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UsersFavorite");
+                });
+
             modelBuilder.Entity("BookEntityModelTagEntityModel", b =>
                 {
                     b.HasOne("MeowLib.Domain.DbModels.BookEntity.BookEntityModel", null)
@@ -161,7 +188,8 @@ namespace MeowLib.WebApi.Migrations
                 {
                     b.HasOne("MeowLib.Domain.DbModels.AuthorEntity.AuthorEntityModel", "Author")
                         .WithMany()
-                        .HasForeignKey("AuthorId");
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Author");
                 });
@@ -175,6 +203,25 @@ namespace MeowLib.WebApi.Migrations
                         .IsRequired();
 
                     b.Navigation("Book");
+                });
+
+            modelBuilder.Entity("MeowLib.Domain.DbModels.UserFavoriteEntity.UserFavoriteEntityModel", b =>
+                {
+                    b.HasOne("MeowLib.Domain.DbModels.BookEntity.BookEntityModel", "Book")
+                        .WithMany()
+                        .HasForeignKey("BookId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MeowLib.Domain.DbModels.UserEntity.UserEntityModel", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Book");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("MeowLib.Domain.DbModels.BookEntity.BookEntityModel", b =>

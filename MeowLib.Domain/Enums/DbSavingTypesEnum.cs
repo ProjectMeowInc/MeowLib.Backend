@@ -2,7 +2,7 @@ namespace MeowLib.Domain.Enums;
 
 public enum DbSavingTypesEnum
 {
-    Create,
-    Delete,
-    Update
+    Create = 1,
+    Delete = 2,
+    Update = 3
 }

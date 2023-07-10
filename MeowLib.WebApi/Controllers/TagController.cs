@@ -7,6 +7,7 @@ using MeowLib.Domain.Requests.Tag;
 using MeowLib.Domain.Responses;
 using MeowLib.WebApi.Abstractions;
 using MeowLib.WebApi.Filters;
+using MeowLib.WebApi.ProducesResponseTypes;
 using MeowLIb.WebApi.Services.Interface;
 using Microsoft.AspNetCore.Mvc;
 
@@ -30,9 +31,8 @@ public class TagController : BaseController
     }
 
     [HttpPost, Authorization(RequiredRoles = new [] { UserRolesEnum.Admin })]
-    [ProducesResponseType(200, Type = typeof(TagEntityModel))]
-    [ProducesResponseType(403, Type = typeof(ValidationErrorResponse))]
-    [ProducesResponseType(500, Type = typeof(BaseErrorResponse))]
+    [ProducesOkResponseType(typeof(TagEntityModel))]
+    [ProducesForbiddenResponseType]
     public async Task<ActionResult> CreateTag([FromBody] CreateTagRequest input)
     {
         var createModel = _mapper.Map<CreateTagRequest, CreateTagEntityModel>(input);
@@ -50,9 +50,8 @@ public class TagController : BaseController
     }
 
     [HttpDelete("{id:int}")]
-    [ProducesResponseType(200)]
-    [ProducesResponseType(404, Type = typeof(BaseErrorResponse))]
-    [ProducesResponseType(500, Type = typeof(BaseErrorResponse))]
+    [ProducesOkResponseType]
+    [ProducesNotFoundResponseType]
     public async Task<ActionResult> DeleteTag([FromRoute] int id)
     {
         var deleteTagResult = await _tagService.DeleteTagByIdAsync(id);
@@ -64,15 +63,14 @@ public class TagController : BaseController
                 return NotFoundError();
             }
 
-            return Ok();
+            return Empty();
         }, _ => ServerError());
     }
 
     [HttpPut("{id:int}"), Authorization(RequiredRoles = new [] { UserRolesEnum.Admin })]
-    [ProducesResponseType(200)]
-    [ProducesResponseType(403, Type = typeof(ValidationErrorResponse))]
-    [ProducesResponseType(404, Type = typeof(BaseErrorResponse))]
-    [ProducesResponseType(500, Type = typeof(BaseErrorResponse))]
+    [ProducesOkResponseType(typeof(TagEntityModel))]
+    [ProducesForbiddenResponseType]
+    [ProducesNotFoundResponseType]
     public async Task<ActionResult> UpdateTag([FromRoute] int id, [FromBody] UpdateTagRequest input)
     {
         var updateModel = _mapper.Map<UpdateTagRequest, UpdateTagEntityModel>(input);
@@ -98,7 +96,7 @@ public class TagController : BaseController
     }
 
     [HttpGet]
-    [ProducesResponseType(200, Type = typeof(IEnumerable<TagDto>))]
+    [ProducesOkResponseType(typeof(IEnumerable<TagDto>))]
     public async Task<ActionResult> GetAllTags()
     {
         var tags = await _tagService.GetAllTagsAsync();
@@ -106,8 +104,8 @@ public class TagController : BaseController
     }
 
     [HttpGet("{id:int}")]
-    [ProducesResponseType(200, Type = typeof(TagEntityModel))]
-    [ProducesResponseType(404, Type = typeof(BaseErrorResponse))]
+    [ProducesOkResponseType(typeof(TagEntityModel))]
+    [ProducesNotFoundResponseType]
     public async Task<ActionResult> GetTagById([FromRoute] int id)
     {
         var foundedTag = await _tagService.GetTagByIdAsync(id);

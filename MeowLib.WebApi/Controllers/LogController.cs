@@ -1,6 +1,7 @@
 using MeowLib.Domain.Requests.Log;
 using MeowLib.WebApi.Abstractions;
 using MeowLib.WebApi.Filters;
+using MeowLib.WebApi.ProducesResponseTypes;
 using MeowLIb.WebApi.Services.Interface;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,11 +18,11 @@ public class LogController : BaseController
     }
 
     [HttpPost, Authorization]
-    [ProducesResponseType(200)]
+    [ProducesOkResponseType]
     public async Task<ActionResult> SendLog([FromBody] LogRequest input)
     {
         var userInfo = await GetUserDataAsync();
         await _frontEndLogService.LogAsync(userInfo.Login, input.ErrorLog);
-        return Ok();
+        return Empty();
     }
 }

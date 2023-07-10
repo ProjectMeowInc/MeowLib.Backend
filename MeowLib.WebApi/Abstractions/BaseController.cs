@@ -1,11 +1,13 @@
 using MeowLib.Domain.Dto.User;
 using MeowLib.Domain.Exceptions;
 using MeowLib.Domain.Responses;
+using MeowLib.WebApi.ProducesResponseTypes;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MeowLib.WebApi.Abstractions;
 
 [ApiController]
+[ProducesServerErrorResponseType]
 public class BaseController : ControllerBase
 {
     [NonAction]
@@ -18,7 +20,7 @@ public class BaseController : ControllerBase
     }
 
     [NonAction]
-    protected new JsonResult Empty(int statusCode = 201)
+    protected new JsonResult Empty(int statusCode = 200)
     {
         return new JsonResult(null)
         {

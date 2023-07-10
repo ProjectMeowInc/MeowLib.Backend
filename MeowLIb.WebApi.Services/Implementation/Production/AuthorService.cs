@@ -111,10 +111,9 @@ public class AuthorService : IAuthorService
         {
             return await _authorRepository.UpdateByIdAsync(id, updateAuthorEntityModel);
         }
-        catch (EntityNotFoundException)
+        catch (EntityNotFoundException entityNotFoundException)
         {
-            var apiException = new ApiException($"Автор с Id {id} не найден");
-            return new Result<AuthorDto>(apiException);
+            return new Result<AuthorDto>(entityNotFoundException);
         }
     }
 
