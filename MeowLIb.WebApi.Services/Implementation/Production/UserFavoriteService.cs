@@ -77,7 +77,8 @@ public class UserFavoriteService : IUserFavoriteService
                 {
                     Id = uf.Book.Id,
                     Name = uf.Book.Name,
-                    Description = uf.Book.Description
+                    Description = uf.Book.Description,
+                    ImageName = uf.Book.ImageUrl
                 }
             })
             .ToListAsync();

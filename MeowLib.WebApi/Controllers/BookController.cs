@@ -47,7 +47,8 @@ public class BookController : BaseController
             {
                 Id = book.Id,
                 Name = book.Name,
-                Description = book.Description
+                Description = book.Description,
+                ImageName = book.ImageUrl
             }).ToListAsync(),
         };
 
@@ -238,7 +239,7 @@ public class BookController : BaseController
                 return NotFoundError();
             }
 
-            return Empty(200);
+            return Empty();
         }, exception =>
         {
             if (exception is EntityNotFoundException)
