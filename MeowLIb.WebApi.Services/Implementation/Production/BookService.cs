@@ -95,7 +95,7 @@ public class BookService : IBookService
     public async Task<Result<BookEntityModel?>> UpdateBookInfoByIdAsync(int bookId, UpdateBookEntityModel updateBookEntityModel)
     {
         var inputName = updateBookEntityModel.Name?.Trim() ?? null;
-        var inputDescription = updateBookEntityModel.Name?.Trim() ?? null;
+        var inputDescription = updateBookEntityModel.Description?.Trim() ?? null;
 
         var validationErrors = new List<ValidationErrorModel>();
             
