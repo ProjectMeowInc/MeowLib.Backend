@@ -10,6 +10,7 @@ using MeowLib.Domain.Exceptions.DAL;
 using MeowLib.Domain.Exceptions.User;
 using MeowLib.WebApi.DAL.Repository.Interfaces;
 using MeowLIb.WebApi.Services.Interface;
+using Microsoft.EntityFrameworkCore;
 
 namespace MeowLIb.WebApi.Services.Implementation.Production;
 
@@ -69,6 +70,19 @@ public class BookmarkService : IBookmarkService
         return createBookmarkResult.Match<Result<BookmarkDto>>(createdBookmark => 
             _mapper.Map<BookmarkEntityModel, BookmarkDto>(createdBookmark), 
             exception => new Result<BookmarkDto>(exception));
+    }
+
+    public async Task<BookmarkDto?> GetBookmarkByUserAndBook(int userId, int bookId)
+    {
+        return  await _bookmarkRepository
+            .GetAll()
+            .Where(bookmark => bookmark.User.Id == userId && bookmark.Chapter.Book.Id == bookId)
+            .Select(bookmark => new BookmarkDto
+            {
+                Id = bookmark.Id,
+                ChapterId = bookmark.Chapter.Id
+            })
+            .FirstOrDefaultAsync();
     }
 
     private async Task<BookmarkEntityModel?> GetBookmarkByUserAndChapter(UserEntityModel user, ChapterEntityModel chapter)

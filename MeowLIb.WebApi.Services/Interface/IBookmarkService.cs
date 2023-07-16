@@ -18,4 +18,6 @@ public interface IBookmarkService
     /// <exception cref="UserNotFoundException">Возникает в случае, если не был найден пользователь.</exception>
     /// <exception cref="InnerException">Возникает в случае внутренних проблем.</exception>
     Task<Result<BookmarkDto>> CreateBookmarkAsync(int userId, int chapterId);
+
+    Task<BookmarkDto?> GetBookmarkByUserAndBook(int userId, int bookId);
 }
