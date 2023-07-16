@@ -58,6 +58,7 @@ services.AddScoped<ITagRepository, TagRepository>();
 services.AddScoped<IBookRepository, BookRepository>();
 services.AddScoped<IChapterRepository, ChapterRepository>();
 services.AddScoped<IUserFavoriteRepository, UserFavoriteRepository>();
+services.AddScoped<IBookmarkRepository, BookmarkRepository>();
 
 // Init services
 services.AddSingleton<IHashService, HashService>();
@@ -78,6 +79,7 @@ services.AddScoped<ITagService, TagService>();
 services.AddScoped<IBookService, BookService>();
 services.AddScoped<IChapterService, ChapterService>();
 services.AddScoped<IUserFavoriteService, UserFavoriteService>();
+services.AddScoped<IBookmarkService, BookmarkService>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(dbOptions =>
 {
