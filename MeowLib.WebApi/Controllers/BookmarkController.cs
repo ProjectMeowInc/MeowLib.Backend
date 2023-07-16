@@ -44,4 +44,18 @@ public class BookmarkController : BaseController
             return ServerError();
         });
     }
+
+    [HttpGet("book/{bookId}"), Authorization]
+    public async Task<ActionResult> GetBookmarkByBook([FromRoute] int bookId)
+    {
+        var userData = await GetUserDataAsync();
+        var foundedBookmark = await _bookmarkService.GetBookmarkByUserAndBook(userData.Id, bookId);
+
+        if (foundedBookmark is null)
+        {
+            return NotFound($"Закладка для книги с Id = {bookId} не найдена");
+        }
+
+        return Json(foundedBookmark);
+    }
 }
