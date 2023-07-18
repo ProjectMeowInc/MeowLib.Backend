@@ -2,7 +2,9 @@
 using MeowLib.Domain.DbModels.UserFavoriteEntity;
 using MeowLib.Domain.Dto.UserFavorite;
 using MeowLib.Domain.Enums;
+using MeowLib.Domain.Exceptions.Book;
 using MeowLib.Domain.Exceptions.DAL;
+using MeowLib.Domain.Exceptions.User;
 
 namespace MeowLIb.WebApi.Services.Interface;
 
@@ -24,5 +26,15 @@ public interface IUserFavoriteService
     /// </summary>
     /// <param name="userId">Id пользователя</param>
     /// <returns>Список избранныъ книг пользователя.</returns>
-    Task<List<UserFavoriteDto>> GetUserFavorites(int userId);
+    Task<List<UserFavoriteDto>> GetUserFavoritesAsync(int userId);
+
+    /// <summary>
+    /// Метод получает книгу в списке пользователя по её Id.
+    /// </summary>
+    /// <param name="userId">Id пользователя.</param>
+    /// <param name="bookId">Id книги.</param>
+    /// <returns>Информацию о книге, если она была найдена. Иначе - null</returns>
+    /// <exception cref="BookNotFoundException">Возникает в случае, если книга не была найдена.</exception>
+    /// <exception cref="UserNotFoundException">Возникает в случае, если пользователь не был найден.</exception>
+    Task<Result<UserFavoriteDto?>> GetUserFavoriteByBookAsync(int userId, int bookId);
 }
