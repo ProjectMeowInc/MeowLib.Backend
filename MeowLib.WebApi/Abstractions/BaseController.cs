@@ -40,6 +40,12 @@ public class BaseController : ControllerBase
         return Json(new BaseErrorResponse(errorMessage), statusCode);
     }
 
+    [NonAction]
+    protected JsonResult UpdateAuthorizeResult()
+    {
+        return Json(new BaseErrorResponse("Произошла неизвестная ошибка. Попробуйте авторизоваться снова!"), 401);
+    }
+
     /// <summary>
     /// Метод возвращает стандартный формат ошибки сервера в виде <see cref="BaseErrorResponse"/>.
     /// </summary>
