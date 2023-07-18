@@ -1,4 +1,5 @@
-﻿using MeowLib.Domain.Exceptions.Chapter;
+﻿using MeowLib.Domain.Dto.Bookmark;
+using MeowLib.Domain.Exceptions.Chapter;
 using MeowLib.Domain.Exceptions.User;
 using MeowLib.Domain.Requests.Bookmark;
 using MeowLib.Domain.Responses;
@@ -22,7 +23,7 @@ public class BookmarkController : BaseController
     }
 
     [HttpPost, Authorization]
-    [ProducesOkResponseType]
+    [ProducesOkResponseType(typeof(BookmarkDto))]
     [ProducesResponseType(400, Type = typeof(BaseErrorResponse))]
     public async Task<ActionResult> CreateOrUpdateBookmark([FromBody] CreateOrUpdateBookmarkRequest input)
     {
@@ -46,6 +47,7 @@ public class BookmarkController : BaseController
     }
 
     [HttpGet("book/{bookId}"), Authorization]
+    [ProducesOkResponseType(typeof(BookmarkDto))]
     public async Task<ActionResult> GetBookmarkByBook([FromRoute] int bookId)
     {
         var userData = await GetUserDataAsync();
