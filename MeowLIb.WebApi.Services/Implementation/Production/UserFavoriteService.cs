@@ -5,7 +5,9 @@ using MeowLib.Domain.DbModels.UserFavoriteEntity;
 using MeowLib.Domain.Dto.Book;
 using MeowLib.Domain.Dto.UserFavorite;
 using MeowLib.Domain.Enums;
+using MeowLib.Domain.Exceptions.Book;
 using MeowLib.Domain.Exceptions.DAL;
+using MeowLib.Domain.Exceptions.User;
 using MeowLib.WebApi.DAL.Repository.Interfaces;
 using MeowLIb.WebApi.Services.Interface;
 using Microsoft.EntityFrameworkCore;
@@ -65,9 +67,8 @@ public class UserFavoriteService : IUserFavoriteService
     /// </summary>
     /// <param name="userId">Id пользователя</param>
     /// <returns>Список избранныъ книг пользователя.</returns>
-    public async Task<List<UserFavoriteDto>> GetUserFavorites(int userId)
+    public async Task<List<UserFavoriteDto>> GetUserFavoritesAsync(int userId)
     {
-
         return await _userFavoriteRepository.GetAll()
             .Where(uf => uf.User.Id == userId)
             .Select(uf => new UserFavoriteDto
@@ -84,7 +85,50 @@ public class UserFavoriteService : IUserFavoriteService
             .ToListAsync();
     }
 
-    
+    /// <summary>
+    /// Метод получает книгу в списке пользователя по её Id.
+    /// </summary>
+    /// <param name="userId">Id пользователя.</param>
+    /// <param name="bookId">Id книги.</param>
+    /// <returns>Информацию о книге, если она была найдена. Иначе - null</returns>
+    /// <exception cref="BookNotFoundException">Возникает в случае, если книга не была найдена.</exception>
+    /// <exception cref="UserNotFoundException">Возникает в случае, если пользователь не был найден.</exception>
+    public async Task<Result<UserFavoriteDto?>> GetUserFavoriteByBookAsync(int userId, int bookId)
+    {
+        var foundedBook = await _bookRepository.GetByIdAsync(bookId);
+        if (foundedBook is null)
+        {
+            var bookNotFoundException = new BookNotFoundException(bookId);
+            return new Result<UserFavoriteDto?>(bookNotFoundException);
+        }
+
+        var foundedUser = await _userRepository.GetByIdAsync(userId);
+        if (foundedUser is null)
+        {
+            var userNotFoundException = new UserNotFoundException(userId);
+            return new Result<UserFavoriteDto?>(userNotFoundException);
+        }
+
+        var foundedUserFavorite = await _userFavoriteRepository.GetByBookAndUserAsync(foundedBook, foundedUser);
+        if (foundedUserFavorite is null)
+        {
+            return null;
+        }
+
+        return new UserFavoriteDto
+        {
+            Book = new BookDto
+            {
+                Id = foundedBook.Id,
+                Name = foundedBook.Name,
+                Description = foundedBook.Description,
+                ImageName = foundedBook.ImageUrl
+            },
+            Status = foundedUserFavorite.Status
+        };
+    }
+
+
     private async Task<Result<UserFavoriteEntityModel>> AddNewAsync(BookEntityModel book, UserEntityModel user,
         UserFavoritesStatusEnum status)
     {
