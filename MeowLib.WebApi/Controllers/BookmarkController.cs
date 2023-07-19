@@ -48,6 +48,7 @@ public class BookmarkController : BaseController
 
     [HttpGet("book/{bookId}"), Authorization]
     [ProducesOkResponseType(typeof(BookmarkDto))]
+    [ProducesNotFoundResponseType]
     public async Task<ActionResult> GetBookmarkByBook([FromRoute] int bookId)
     {
         var userData = await GetUserDataAsync();
@@ -55,7 +56,7 @@ public class BookmarkController : BaseController
 
         if (foundedBookmark is null)
         {
-            return NotFound($"Закладка для книги с Id = {bookId} не найдена");
+            return NotFoundError($"Закладка для книги с Id = {bookId} не найдена");
         }
 
         return Json(foundedBookmark);
