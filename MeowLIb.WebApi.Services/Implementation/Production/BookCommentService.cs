@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Text.RegularExpressions;
+using AutoMapper;
 using LanguageExt.Common;
 using MeowLib.Domain.DbModels.BookCommentEntity;
 using MeowLib.Domain.Dto.BookComment;
@@ -17,6 +18,8 @@ namespace MeowLIb.WebApi.Services.Implementation.Production;
 /// </summary>
 public class BookCommentService : IBookCommentService
 {
+    private static Regex _htmlRegex = new Regex("<[^>]*>", RegexOptions.Compiled);
+    
     private readonly IBookCommentRepository _bookCommentRepository;
     private readonly IBookRepository _bookRepository;
     private readonly IUserRepository _userRepository;
@@ -66,7 +69,7 @@ public class BookCommentService : IBookCommentService
 
         var newComment = new BookCommentEntityModel
         {
-            Text = commentText,
+            Text = RemoveHtml(commentText),
             PostedAt = DateTime.UtcNow,
             Author = foundedUser,
             Book = foundedBook
@@ -117,5 +120,10 @@ public class BookCommentService : IBookCommentService
             .ToListAsync();
 
         return foundedComments;
-    } 
+    }
+
+    private static string RemoveHtml(string str)
+    {
+        return _htmlRegex.Replace(str, String.Empty);
+    }
 }
