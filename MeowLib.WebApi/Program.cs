@@ -59,6 +59,7 @@ services.AddScoped<IBookRepository, BookRepository>();
 services.AddScoped<IChapterRepository, ChapterRepository>();
 services.AddScoped<IUserFavoriteRepository, UserFavoriteRepository>();
 services.AddScoped<IBookmarkRepository, BookmarkRepository>();
+services.AddScoped<IBookCommentRepository, BookCommentRepository>();
 
 // Init services
 services.AddSingleton<IHashService, HashService>();
@@ -68,7 +69,7 @@ services.AddSingleton<IFrontEndLogService, FrontEndLogService>();
 var uploadFileDirectory = builder.Configuration.GetValue<string>("UploadFileDirectory");
 if (string.IsNullOrEmpty(uploadFileDirectory))
 {
-    throw new Exception("Не указан токен для сервиса загрузки изображений");
+    throw new Exception("Не указана директория для сервиса загрузки изображений");
 }
 
 services.AddScoped<IFileService>(_ => new FileService(uploadFileDirectory));
