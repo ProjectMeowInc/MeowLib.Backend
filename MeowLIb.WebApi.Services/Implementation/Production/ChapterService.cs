@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using LanguageExt;
+﻿using LanguageExt;
 using LanguageExt.Common;
 using MeowLib.Domain.DbModels.BookEntity;
 using MeowLib.Domain.DbModels.ChapterEntity;
@@ -21,7 +20,7 @@ public class ChapterService : IChapterService
     private readonly IChapterRepository _chapterRepository;
     private readonly IBookService _bookService;
     
-    public ChapterService(IChapterRepository chapterRepository, IBookService bookService, IMapper mapper)
+    public ChapterService(IChapterRepository chapterRepository, IBookService bookService)
     {
         _chapterRepository = chapterRepository;
         _bookService = bookService;

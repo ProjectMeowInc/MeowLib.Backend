@@ -1,4 +1,3 @@
-using AutoMapper;
 using LanguageExt.Common;
 using MeowLib.Domain.DbModels.TagEntity;
 using MeowLib.Domain.Dto.Tag;
@@ -18,17 +17,14 @@ namespace MeowLIb.WebApi.Services.Implementation.Production;
 public class TagService : ITagService
 {
     private readonly ITagRepository _tagRepository;
-    private readonly IMapper _mapper;
 
     /// <summary>
     /// Конструктор.
     /// </summary>
     /// <param name="tagRepository">Репозиторий тегов.</param>
-    /// <param name="mapper">Автомаппер.</param>
-    public TagService(ITagRepository tagRepository, IMapper mapper)
+    public TagService(ITagRepository tagRepository)
     {
         _tagRepository = tagRepository;
-        _mapper = mapper;
     }
 
     /// <summary>

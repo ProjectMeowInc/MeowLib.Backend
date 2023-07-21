@@ -1,5 +1,4 @@
 ﻿using LanguageExt.Common;
-using MeowLib.Domain.DbModels.BookEntity;
 using MeowLib.Domain.DbModels.BookmarkEntity;
 using MeowLib.Domain.DbModels.ChapterEntity;
 using MeowLib.Domain.DbModels.UserEntity;
