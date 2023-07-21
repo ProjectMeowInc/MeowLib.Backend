@@ -1,11 +1,13 @@
 using AutoMapper;
 using MeowLib.Domain.DbModels.AuthorEntity;
+using MeowLib.Domain.DbModels.BookCommentEntity;
 using MeowLib.Domain.DbModels.BookEntity;
 using MeowLib.Domain.DbModels.BookmarkEntity;
 using MeowLib.Domain.DbModels.ChapterEntity;
 using MeowLib.Domain.DbModels.TagEntity;
 using MeowLib.Domain.DbModels.UserEntity;
 using MeowLib.Domain.Dto.Author;
+using MeowLib.Domain.Dto.BookComment;
 using MeowLib.Domain.Dto.Bookmark;
 using MeowLib.Domain.Dto.Chapter;
 using MeowLib.Domain.Dto.Tag;
@@ -63,5 +65,8 @@ public class MappingProfile : Profile
             .ForMember(b => b.ChapterId,
                 opt 
                     => opt.MapFrom(b => b.Chapter.Id));
+        
+        // BookComments mapping
+        CreateMap<BookCommentEntityModel, BookCommentDto>();
     }
 }

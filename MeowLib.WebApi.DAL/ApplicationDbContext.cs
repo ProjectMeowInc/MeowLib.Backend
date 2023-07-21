@@ -1,4 +1,5 @@
 using MeowLib.Domain.DbModels.AuthorEntity;
+using MeowLib.Domain.DbModels.BookCommentEntity;
 using MeowLib.Domain.DbModels.BookEntity;
 using MeowLib.Domain.DbModels.BookmarkEntity;
 using MeowLib.Domain.DbModels.ChapterEntity;
@@ -43,6 +44,11 @@ public class ApplicationDbContext : DbContext
             .WithOne()
             .OnDelete(DeleteBehavior.Cascade);
 
+        modelBuilder.Entity<BookEntityModel>()
+            .HasMany<BookCommentEntityModel>()
+            .WithOne()
+            .OnDelete(DeleteBehavior.Cascade);
+
         base.OnModelCreating(modelBuilder);
     }
 
@@ -80,4 +86,9 @@ public class ApplicationDbContext : DbContext
     /// Таблица закладок пользователей.
     /// </summary>
     public DbSet<BookmarkEntityModel> Bookmarks { get; set; } = null!;
+
+    /// <summary>
+    /// Таблциа комментариев к книге.
+    /// </summary>
+    public DbSet<BookCommentEntityModel> BookComments { get; set; } = null!;
 }

@@ -20,12 +20,9 @@ public class BaseController : ControllerBase
     }
 
     [NonAction]
-    protected new JsonResult Empty(int statusCode = 200)
+    protected EmptyResult EmptyResult(int statusCode = 200)
     {
-        return new JsonResult(null)
-        {
-            StatusCode = statusCode
-        };
+        return Empty;
     }
 
     /// <summary>
@@ -40,6 +37,10 @@ public class BaseController : ControllerBase
         return Json(new BaseErrorResponse(errorMessage), statusCode);
     }
 
+    /// <summary>
+    /// Метод возвращает ответ с кодом 401 с просьбой обновить авторизацию.
+    /// </summary>
+    /// <returns>Json-модель ответа.</returns>
     [NonAction]
     protected JsonResult UpdateAuthorizeResult()
     {

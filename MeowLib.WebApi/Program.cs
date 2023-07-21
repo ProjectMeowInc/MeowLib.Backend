@@ -12,13 +12,16 @@ using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+
 var services = builder.Services;
 services.AddControllers()
     .AddJsonOptions(jsonOptions =>
     {
         jsonOptions.JsonSerializerOptions.Encoder = JavaScriptEncoder.Create(UnicodeRanges.All);
     });
-    
+
 services.AddEndpointsApiExplorer();
 
 services.AddSwaggerGen(options =>
@@ -59,6 +62,7 @@ services.AddScoped<IBookRepository, BookRepository>();
 services.AddScoped<IChapterRepository, ChapterRepository>();
 services.AddScoped<IUserFavoriteRepository, UserFavoriteRepository>();
 services.AddScoped<IBookmarkRepository, BookmarkRepository>();
+services.AddScoped<IBookCommentRepository, BookCommentRepository>();
 
 // Init services
 services.AddSingleton<IHashService, HashService>();
@@ -68,7 +72,7 @@ services.AddSingleton<IFrontEndLogService, FrontEndLogService>();
 var uploadFileDirectory = builder.Configuration.GetValue<string>("UploadFileDirectory");
 if (string.IsNullOrEmpty(uploadFileDirectory))
 {
-    throw new Exception("Не указан токен для сервиса загрузки изображений");
+    throw new Exception("Не указана директория для сервиса загрузки изображений");
 }
 
 services.AddScoped<IFileService>(_ => new FileService(uploadFileDirectory));
@@ -80,6 +84,7 @@ services.AddScoped<IBookService, BookService>();
 services.AddScoped<IChapterService, ChapterService>();
 services.AddScoped<IUserFavoriteService, UserFavoriteService>();
 services.AddScoped<IBookmarkService, BookmarkService>();
+services.AddScoped<IBookCommentService, BookCommentService>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(dbOptions =>
 {
@@ -97,6 +102,14 @@ builder.Services.AddDbContext<ApplicationDbContext>(dbOptions =>
 
 var app = builder.Build();
 
+var logger = app.Services.GetService<ILogger<Program>>();
+if (logger is null)
+{
+    throw new Exception("Логгер не инициализирован");
+}
+
+logger.LogInformation("[{@DateTime}] Начато добавление Middleware", DateTime.UtcNow);
+
 app.UseCors(corsBuilder =>
 {
     corsBuilder.AllowAnyHeader();
@@ -108,10 +121,13 @@ app.UseMiddleware<ExceptionHandlerMiddleware>();
 
 if (app.Environment.IsDevelopment())
 {
+    logger.LogInformation("[{@DateTime}] Используется DEV окружение", DateTime.UtcNow);
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
 app.MapControllers();
+
+logger.LogInformation("[{@DateTime}] Приложение готово к запуску", DateTime.UtcNow);
 
 app.Run();
