@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace MeowLib.WebApi.Controllers;
 
 [ApiController]
-[Route("book")]
+[Route("api/books")]
 public class BookCommentController : BaseController
 {
     private readonly IBookCommentService _bookCommentService;
