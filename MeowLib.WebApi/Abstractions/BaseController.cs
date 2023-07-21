@@ -40,6 +40,10 @@ public class BaseController : ControllerBase
         return Json(new BaseErrorResponse(errorMessage), statusCode);
     }
 
+    /// <summary>
+    /// Метод возвращает ответ с кодом 401 с просьбой обновить авторизацию.
+    /// </summary>
+    /// <returns>Json-модель ответа.</returns>
     [NonAction]
     protected JsonResult UpdateAuthorizeResult()
     {
