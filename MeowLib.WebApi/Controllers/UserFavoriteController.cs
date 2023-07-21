@@ -31,7 +31,7 @@ public class UserFavoriteController : BaseController
         var userData = await GetUserDataAsync();
         var updatedUserListResult = await _userFavoriteService.AddOrUpdateUserListAsync(input.BookId, userData.Id, input.Status);
 
-        return updatedUserListResult.Match<ActionResult>(_ => Empty(), exception =>
+        return updatedUserListResult.Match<ActionResult>(_ => EmptyResult(), exception =>
         {
             if (exception is EntityNotFoundException)
             {

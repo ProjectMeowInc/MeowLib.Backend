@@ -62,7 +62,7 @@ public class TagController : BaseController
                 return NotFoundError();
             }
 
-            return Empty();
+            return EmptyResult();
         }, _ => ServerError());
     }
 

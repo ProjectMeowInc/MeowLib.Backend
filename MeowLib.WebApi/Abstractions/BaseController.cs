@@ -20,12 +20,9 @@ public class BaseController : ControllerBase
     }
 
     [NonAction]
-    protected new JsonResult Empty(int statusCode = 200)
+    protected EmptyResult EmptyResult(int statusCode = 200)
     {
-        return new JsonResult(null)
-        {
-            StatusCode = statusCode
-        };
+        return Empty;
     }
 
     /// <summary>

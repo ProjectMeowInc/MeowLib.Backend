@@ -109,7 +109,7 @@ public class BookController : BaseController
                 return Error($"Книга с Id = {bookId} не найдена");
             }
             
-            return Empty();
+            return EmptyResult();
         }, exception =>
         {
             if (exception is ValidationException validationException)
@@ -142,7 +142,7 @@ public class BookController : BaseController
     public async Task<ActionResult> CreateChapter([FromRoute] int bookId, [FromBody] CreateChapterRequest input)
     {
         var createChapterResult = await _chapterService.CreateChapterAsync(name: input.Name, text: input.Text, bookId: bookId);
-        return createChapterResult.Match<ActionResult>(_ => Empty(), exception =>
+        return createChapterResult.Match<ActionResult>(_ => EmptyResult(), exception =>
         {
             if (exception is EntityNotFoundException)
             {
@@ -207,7 +207,7 @@ public class BookController : BaseController
             }
 
             return ServerError();
-        }, () => Empty());
+        }, () => EmptyResult());
     }
 
     [HttpGet("{bookId:int}/chapters/{chapterId:int}")]
@@ -239,7 +239,7 @@ public class BookController : BaseController
                 return NotFoundError();
             }
 
-            return Empty();
+            return EmptyResult();
         }, exception =>
         {
             if (exception is EntityNotFoundException)
@@ -264,7 +264,7 @@ public class BookController : BaseController
                 return NotFoundError();
             }
 
-            return Empty();
+            return EmptyResult();
         }, _ => ServerError());
     }
     
@@ -282,7 +282,7 @@ public class BookController : BaseController
                 return NotFoundError($"Книга с Id = {bookId} не найдена");
             }
 
-            return Empty();
+            return EmptyResult();
         }, _ => ServerError());
     }
 }

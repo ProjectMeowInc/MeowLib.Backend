@@ -23,6 +23,6 @@ public class LogController : BaseController
     {
         var userInfo = await GetUserDataAsync();
         await _frontEndLogService.LogAsync(userInfo.Login, input.ErrorLog);
-        return Empty();
+        return EmptyResult();
     }
 }
