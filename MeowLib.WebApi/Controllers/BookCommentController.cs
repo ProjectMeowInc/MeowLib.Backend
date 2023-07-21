@@ -49,7 +49,7 @@ public class BookCommentController : BaseController
     [HttpPost("{bookId:int}/comments"), Authorization]
     [ProducesOkResponseType(typeof(BookCommentDto))]
     [ProducesResponseType(400,  Type = typeof(BaseErrorResponse))]
-    public async Task<ActionResult> PostComment([FromRoute] int bookId, [FromRoute] PostCommentRequest input)
+    public async Task<ActionResult> PostComment([FromRoute] int bookId, [FromBody] PostCommentRequest input)
     {
         var userData = await GetUserDataAsync();
 
