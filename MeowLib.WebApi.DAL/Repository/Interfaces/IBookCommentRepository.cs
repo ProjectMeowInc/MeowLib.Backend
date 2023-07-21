@@ -3,6 +3,9 @@ using MeowLib.Domain.DbModels.BookCommentEntity;
 
 namespace MeowLib.WebApi.DAL.Repository.Interfaces;
 
+/// <summary>
+/// Абстракция репозитория комментариев
+/// </summary>
 public interface IBookCommentRepository
 {
     /// <summary>
