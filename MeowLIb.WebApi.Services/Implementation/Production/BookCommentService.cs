@@ -104,7 +104,7 @@ public class BookCommentService : IBookCommentService
         var foundedComments = await _bookCommentRepository
             .GetAll()
             .Where(comment => comment.Book == foundedBook)
-            .OrderBy(comment => comment.PostedAt)
+            .OrderByDescending(comment => comment.PostedAt)
             .Select(comment => new BookCommentDto
             {
                 Id = comment.Id,
