@@ -1,6 +1,8 @@
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
+using MeowLib.Domain.Exceptions.Services;
 using MeowLib.Domain.MappingProfiles;
+using MeowLib.Domain.Models;
 using MeowLib.WebApi.DAL;
 using MeowLib.WebApi.DAL.Repository.Implementation.Production;
 using MeowLib.WebApi.DAL.Repository.Interfaces;
@@ -20,6 +22,29 @@ services.AddControllers()
     .AddJsonOptions(jsonOptions =>
     {
         jsonOptions.JsonSerializerOptions.Encoder = JavaScriptEncoder.Create(UnicodeRanges.All);
+    })
+    .ConfigureApiBehaviorOptions(options =>
+    {
+        options.InvalidModelStateResponseFactory = actionContext =>
+        {
+            var validationErrors = new List<ValidationErrorModel>();
+            
+            foreach (var modelStateValue in actionContext.ModelState.Values)
+            {
+                foreach (var modelError in modelStateValue.Errors)
+                {
+                    validationErrors.Add(new ValidationErrorModel
+                    {
+                        PropertyName = modelStateValue.RawValue?.ToString() ?? "NULL",
+                        Message = modelError.ErrorMessage
+                    });
+                }
+            }
+
+            var validationException = new ValidationException(validationErrors);
+
+            return validationException.ToResponse();
+        };
     });
 
 services.AddEndpointsApiExplorer();
