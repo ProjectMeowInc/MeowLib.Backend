@@ -9,6 +9,7 @@ using MeowLib.WebApi.DAL.Repository.Interfaces;
 using MeowLIb.WebApi.Services.Interface;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace MeowLIb.WebApi.Services.Implementation.Production;
 
@@ -21,6 +22,7 @@ public class BookService : IBookService
     private readonly IAuthorRepository _authorRepository;
     private readonly ITagRepository _tagRepository;
     private readonly IFileService _fileService;
+    private readonly ILogger<BookService> _logger;
 
     /// <summary>
     /// Конструктор.
@@ -29,13 +31,15 @@ public class BookService : IBookService
     /// <param name="authorRepository">Репозиторий авторов.</param>
     /// <param name="tagRepository">Репозиторий тегов.</param>
     /// <param name="fileService">Сервис для работы с файлами.</param>
+    /// <param name="logger">Логгер.</param>
     public BookService(IBookRepository bookRepository, IAuthorRepository authorRepository, ITagRepository tagRepository, 
-        IFileService fileService)
+        IFileService fileService, ILogger<BookService> logger)
     {
         _bookRepository = bookRepository;
         _authorRepository = authorRepository;
         _tagRepository = tagRepository;
         _fileService = fileService;
+        _logger = logger;
     }
 
     /// <summary>
@@ -78,7 +82,7 @@ public class BookService : IBookService
         }
         catch (DbSavingException)
         {
-            // TODO: Add logs
+            _logger.LogError("[{@DateTime}] Ошибка сохранения книги в БД", DateTime.UtcNow);
             var apiException = new ApiException("Внутреяя ошибка сервера");
             return new Result<BookEntityModel>(apiException);
         }
@@ -141,12 +145,14 @@ public class BookService : IBookService
         var foundedBook = await _bookRepository.GetByIdAsync(bookId);
         if (foundedBook is null)
         {
+            _logger.LogInformation("[{@DateTime}] Книга не найдена", DateTime.UtcNow);
             return null;
         }
 
         var foundedAuthor = await _authorRepository.GetByIdAsync(authorId);
         if (foundedAuthor is null)
         {
+            _logger.LogInformation("[{@DateTime}] Автор не найден", DateTime.UtcNow);
             var apiException = new EntityNotFoundException(nameof(AuthorEntityModel), $"Id={authorId}");
             return new Result<BookEntityModel?>(apiException);
         }
@@ -172,7 +178,7 @@ public class BookService : IBookService
         }
         catch (DbSavingException)
         {
-            // TODO: Add logs
+            _logger.LogError("[{@DateTime}] Ошибка удаления книги в базе данных", DateTime.UtcNow);
             var apiException = new ApiException("Внутренняя ошибка сервера");
             return new Result<bool>(apiException);
         }
@@ -200,6 +206,7 @@ public class BookService : IBookService
         var foundedBook = await _bookRepository.GetByIdAsync(bookId);
         if (foundedBook is null)
         {
+            _logger.LogInformation("[{@DateTime}] Книга не найдена", DateTime.UtcNow);
             return null;
         }
 
@@ -229,12 +236,14 @@ public class BookService : IBookService
         var foundedBook = await _bookRepository.GetByIdAsync(bookId);
         if (foundedBook is null)
         {
+            _logger.LogInformation("[{@DateTime}] Книга не найдена", DateTime.UtcNow);
             return null;
         }
 
         var uploadBookImageResult = await _fileService.UploadBookImageAsync(file);
         if (uploadBookImageResult.IsFaulted)
         {
+            _logger.LogError("[{@DateTime}] Ошибка загрузки файла", DateTime.UtcNow);
             var uploadingFileException = new UploadingFileException();
             return new Result<BookEntityModel?>(uploadingFileException);
         }
