@@ -79,8 +79,6 @@ public class BookCommentService : IBookCommentService
         return createCommentResult.Match<Result<BookCommentDto>>(createdComment => 
             _mapper.Map<BookCommentEntityModel, BookCommentDto>(createdComment), _ =>
         {
-            // TODO: ADD LOGS
-            
             var innerException = new InnerException("Ошибка в БД");
             return new Result<BookCommentDto>(innerException);
         });

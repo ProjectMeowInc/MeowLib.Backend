@@ -8,6 +8,7 @@ using MeowLib.Domain.Models;
 using MeowLib.WebApi.DAL.Repository.Interfaces;
 using MeowLIb.WebApi.Services.Interface;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace MeowLIb.WebApi.Services.Implementation.Production;
 
@@ -19,18 +20,22 @@ public class UserService : IUserService
     private readonly IHashService _hashService;
     private readonly IUserRepository _userRepository;
     private readonly IJwtTokenService _jwtTokenService;
-    
+    private readonly ILogger<UserService> _logger;
+
     /// <summary>
     /// Конструктор.
     /// </summary>
     /// <param name="hashService">Сервис для хеширования.</param>
     /// <param name="userRepository">Репозиторий пользователей.</param>
     /// <param name="jwtTokenService">Сервис JWT-токенов.</param>
-    public UserService(IHashService hashService, IUserRepository userRepository, IJwtTokenService jwtTokenService)
+    /// <param name="logger">Логгер</param>
+    public UserService(IHashService hashService, IUserRepository userRepository, IJwtTokenService jwtTokenService, 
+        ILogger<UserService> logger)
     {
         _hashService = hashService;
         _userRepository = userRepository;
         _jwtTokenService = jwtTokenService;
+        _logger = logger;
     }
 
     /// <summary>
@@ -132,12 +137,13 @@ public class UserService : IUserService
         var updateError = await _userRepository.UpdateRefreshTokenAsync(userData.Login, refreshToken);
         return updateError.Match<Result<(string accessToken, string refreshToken)>>(exception => 
         {
+            _logger.LogError("Ошибка обновления Refresh-токена: {}", exception.Message);
+            
             if (exception is EntityNotFoundException entityNotFoundException)
             {
                 return new Result<(string accessToken, string refreshToken)>(entityNotFoundException);
             }
-
-            // TODO: Add logs
+            
             return new Result<(string accessToken, string refreshToken)>(exception);
         }, () => (accessToken, refreshToken));
     }

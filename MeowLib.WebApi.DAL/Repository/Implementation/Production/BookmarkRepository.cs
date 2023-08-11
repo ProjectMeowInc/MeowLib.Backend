@@ -71,6 +71,10 @@ public class BookmarkRepository : IBookmarkRepository
 
     public async Task<BookmarkEntityModel?> GetByUserAndChapterAsync(UserEntityModel user, ChapterEntityModel chapter)
     {
+         await _applicationDbContext.Chapters
+             .Entry(chapter)
+             .Reference(c => c.Book).LoadAsync();
+        
         return await _applicationDbContext.Bookmarks
             .Include(bookmark => bookmark.Chapter)
             .FirstOrDefaultAsync(bookMark =>

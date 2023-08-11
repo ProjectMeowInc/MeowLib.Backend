@@ -4,6 +4,7 @@ using MeowLib.Domain.Dto.User;
 using MeowLib.Domain.Enums;
 using MeowLib.Domain.Models;
 using MeowLIb.WebApi.Services.Interface;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 
 namespace MeowLIb.WebApi.Services.Implementation.Production;
@@ -18,12 +19,14 @@ public class JwtTokensService : IJwtTokenService
     private readonly SymmetricSecurityKey _refreshTokenSecurityKey;
     private readonly string _issuer;
     private readonly string _audience;
+    private readonly ILogger<JwtTokensService> _logger;
     
     /// <summary>
     /// Конструктор.
     /// </summary>
-    public JwtTokensService()
+    public JwtTokensService(ILogger<JwtTokensService> logger)
     {
+        _logger = logger;
         // Init secret key
         var accessTokenSecurityKey = "QevAyHIKuOHJwG6sdYwnfrrbUW61cu4r3vuyzSNkBw1itzJD5AMXdKqLfzv"u8.ToArray();
         var refreshTokenSecurityKey = "Wv8HLBxBztPocFYSMDZn3074USr48gxw9RXZw4BCxAp290CqsPPG9frFLR2p"u8.ToArray();
@@ -111,7 +114,7 @@ public class JwtTokensService : IJwtTokenService
         var expiredAtObject = claims["exp"];
         if (expiredAtObject is not int expiredAtInt)
         {
-            // TODO: ADD LOG
+            _logger.LogError("Ошибка получения даты истечения из токена");
             return null;
         }
         
