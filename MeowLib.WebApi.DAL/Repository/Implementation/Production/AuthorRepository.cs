@@ -5,6 +5,7 @@ using MeowLib.Domain.Enums;
 using MeowLib.Domain.Exceptions.DAL;
 using MeowLib.WebApi.DAL.Repository.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace MeowLib.WebApi.DAL.Repository.Implementation.Production;
 
@@ -15,16 +16,19 @@ public class AuthorRepository : IAuthorRepository
 {
     private readonly ApplicationDbContext _applicationDbContext;
     private readonly IMapper _mapper;
-    
+    private readonly ILogger<AuthorRepository> _logger;
+
     /// <summary>
     /// Конструктор.
     /// </summary>
     /// <param name="applicationDbContext">Контекст база данных.</param>
     /// <param name="mapper">Автомаппер.</param>
-    public AuthorRepository(ApplicationDbContext applicationDbContext, IMapper mapper)
+    /// <param name="logger">Логгер.</param>
+    public AuthorRepository(ApplicationDbContext applicationDbContext, IMapper mapper, ILogger<AuthorRepository> logger)
     {
         _applicationDbContext = applicationDbContext;
         _mapper = mapper;
+        _logger = logger;
     }
 
     /// <summary>
@@ -72,9 +76,9 @@ public class AuthorRepository : IAuthorRepository
             _applicationDbContext.Authors.Remove(foundedAuthor);
             await _applicationDbContext.SaveChangesAsync();
         }
-        catch (DbUpdateException)
+        catch (DbUpdateException dbUpdateException)
         {
-            // TODO: Add log
+            _logger.LogError("Ошибка удаления автора: {}", dbUpdateException.Message);
             throw new DbSavingException(nameof(AuthorEntityModel), DbSavingTypesEnum.Delete);
         }
 

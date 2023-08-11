@@ -6,11 +6,11 @@ using MeowLib.Domain.DbModels.UserEntity;
 using MeowLib.Domain.Dto.Bookmark;
 using MeowLib.Domain.Exceptions;
 using MeowLib.Domain.Exceptions.Chapter;
-using MeowLib.Domain.Exceptions.DAL;
 using MeowLib.Domain.Exceptions.User;
 using MeowLib.WebApi.DAL.Repository.Interfaces;
 using MeowLIb.WebApi.Services.Interface;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace MeowLIb.WebApi.Services.Implementation.Production;
 
@@ -20,14 +20,16 @@ public class BookmarkService : IBookmarkService
     private readonly IChapterRepository _chapterRepository;
     private readonly IUserRepository _userRepository;
     private readonly IMapper _mapper;
+    private readonly ILogger<BookmarkService> _logger;
 
     public BookmarkService(IBookmarkRepository bookmarkRepository, IChapterRepository chapterRepository, 
-        IUserRepository userRepository, IMapper mapper)
+        IUserRepository userRepository, IMapper mapper, ILogger<BookmarkService> logger)
     {
         _bookmarkRepository = bookmarkRepository;
         _chapterRepository = chapterRepository;
         _userRepository = userRepository;
         _mapper = mapper;
+        _logger = logger;
     }
 
     /// <summary>
@@ -74,7 +76,7 @@ public class BookmarkService : IBookmarkService
 
     public async Task<BookmarkDto?> GetBookmarkByUserAndBook(int userId, int bookId)
     {
-        return  await _bookmarkRepository
+        return await _bookmarkRepository
             .GetAll()
             .Where(bookmark => bookmark.User.Id == userId && bookmark.Chapter.Book.Id == bookId)
             .Select(bookmark => new BookmarkDto
@@ -100,12 +102,7 @@ public class BookmarkService : IBookmarkService
 
         return createBookmarkResult.Match<Result<BookmarkEntityModel>>(createdBookmark => createdBookmark, exception =>
         {
-            if (exception is DbSavingException)
-            {
-                // TODO: ADD LOGS
-            }
-            
-            // TODO: ADD LOGS FOR THIS
+            _logger.LogError("Ошибка создания закладки: {}", exception.Message);
             var innerException = new InnerException(exception.Message);
             return new Result<BookmarkEntityModel>(innerException);
         });
@@ -117,12 +114,7 @@ public class BookmarkService : IBookmarkService
         var updateBookmarkResult = await _bookmarkRepository.UpdateAsync(bookmark);
         return updateBookmarkResult.Match<Result<BookmarkEntityModel>>(updatedBookmark => updatedBookmark, exception =>
         {
-            if (exception is DbSavingException)
-            {
-                // TODO: ADD LOGS
-            }
-            
-            // TODO: ADD LOGS FOR THIS
+            _logger.LogError("Ошибка обновления закладки: {}", exception.Message);
             var innerException = new InnerException(exception.Message);
             return new Result<BookmarkEntityModel>(innerException);
         });

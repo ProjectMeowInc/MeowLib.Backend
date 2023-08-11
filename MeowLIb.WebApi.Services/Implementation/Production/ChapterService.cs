@@ -9,6 +9,7 @@ using MeowLib.Domain.Models;
 using MeowLib.WebApi.DAL.Repository.Interfaces;
 using MeowLIb.WebApi.Services.Interface;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace MeowLIb.WebApi.Services.Implementation.Production;
 
@@ -19,11 +20,13 @@ public class ChapterService : IChapterService
 {
     private readonly IChapterRepository _chapterRepository;
     private readonly IBookService _bookService;
+    private readonly ILogger<ChapterService> _logger;
     
-    public ChapterService(IChapterRepository chapterRepository, IBookService bookService)
+    public ChapterService(IChapterRepository chapterRepository, IBookService bookService, ILogger<ChapterService> logger)
     {
         _chapterRepository = chapterRepository;
         _bookService = bookService;
+        _logger = logger;
     }
     
     /// <summary>
@@ -82,12 +85,12 @@ public class ChapterService : IChapterService
         var createChapterResult = await _chapterRepository.CreateAsync(newChapter);
         return createChapterResult.Match<Result<ChapterEntityModel>>(createdChapter => createdChapter, exception =>
         {
+            _logger.LogError("Ошибка создания главы: {}", exception.Message);
             if (exception is DbSavingException dbSavingException)
             {
                 return new Result<ChapterEntityModel>(dbSavingException);
             }
 
-            // TODO: Add logs
             return new Result<ChapterEntityModel>(exception); 
         });
     }
