@@ -1,9 +1,8 @@
-﻿using LanguageExt;
-using LanguageExt.Common;
-using MeowLib.Domain.DbModels.BookEntity;
+﻿using MeowLib.Domain.DbModels.BookEntity;
 using MeowLib.Domain.DbModels.ChapterEntity;
 using MeowLib.Domain.Enums;
 using MeowLib.Domain.Exceptions.DAL;
+using MeowLib.Domain.Result;
 using MeowLib.WebApi.DAL.Repository.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -42,7 +41,7 @@ public class ChapterRepository : IChapterRepository
         catch (DbUpdateException)
         {
             var dbSavingException = new DbSavingException(nameof(ChapterEntityModel), DbSavingTypesEnum.Create);
-            return new Result<ChapterEntityModel>(dbSavingException);
+            return Result<ChapterEntityModel>.Fail(dbSavingException);
         }
 
         return createdChapter.Entity;
@@ -59,7 +58,7 @@ public class ChapterRepository : IChapterRepository
     /// <param name="chapter">Глава для удаления.</param>
     /// <returns>Ошибку, если она есть.</returns>
     /// <exception cref="DbSavingException">Возникает в случае ошибки сохранения данных.</exception>
-    public async Task<Option<Exception>> DeleteAsync(ChapterEntityModel chapter)
+    public async Task<Result> DeleteAsync(ChapterEntityModel chapter)
     {
         try
         {
@@ -69,10 +68,10 @@ public class ChapterRepository : IChapterRepository
         catch (DbUpdateException)
         {
             var dbSavingException = new DbSavingException(nameof(ChapterEntityModel), DbSavingTypesEnum.Delete);
-            return Option<Exception>.Some(dbSavingException);
+            return Result.Fail(dbSavingException);
         }
         
-        return Option<Exception>.None;
+        return Result.Ok();
     }
 
     /// <summary>
@@ -81,13 +80,13 @@ public class ChapterRepository : IChapterRepository
     /// <param name="chapterId">Id главы.</param>
     /// <returns>Ошибку, если она есть. Так же возращает ошибки метода <see cref="DeleteAsync"/>.</returns>
     /// <exception cref="EntityNotFoundException">Возникает в случае, если глава не была найдена.</exception>
-    public async Task<Option<Exception>> DeleteByIdAsync(int chapterId)
+    public async Task<Result> DeleteByIdAsync(int chapterId)
     {
         var foundedChapter = await GetByIdAsync(chapterId);
         if (foundedChapter is null)
         {
             var entityNotFoundException = new EntityNotFoundException(nameof(ChapterEntityModel), $"Id={chapterId}");
-            return Option<Exception>.Some(entityNotFoundException);
+            return Result.Fail(entityNotFoundException);
         }
 
         return await DeleteAsync(foundedChapter);
@@ -105,7 +104,7 @@ public class ChapterRepository : IChapterRepository
         catch (DbUpdateException)
         {
             var dbSavingException = new DbSavingException(nameof(ChapterEntityModel), DbSavingTypesEnum.Update);
-            return new Result<ChapterEntityModel>(dbSavingException);
+            return Result<ChapterEntityModel>.Fail(dbSavingException);
         }
     }
 
@@ -128,7 +127,7 @@ public class ChapterRepository : IChapterRepository
         if (foundedChapter is null)
         {
             var entityNotFoundException = new EntityNotFoundException(nameof(ChapterEntityModel), $"Id={chapterId}");
-            return new Result<ChapterEntityModel>(entityNotFoundException);
+            return Result<ChapterEntityModel>.Fail(entityNotFoundException);
         }
 
         foundedChapter.Text = newText;
@@ -142,7 +141,7 @@ public class ChapterRepository : IChapterRepository
         catch (DbUpdateException)
         {
             var dbSavingException = new DbSavingException(nameof(ChapterEntityModel), DbSavingTypesEnum.Update);
-            return new Result<ChapterEntityModel>(dbSavingException);
+            return Result<ChapterEntityModel>.Fail(dbSavingException);
         }
 
         return updateResult.Entity;

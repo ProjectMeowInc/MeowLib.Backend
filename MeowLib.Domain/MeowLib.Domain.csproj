@@ -14,6 +14,7 @@
 
     <ItemGroup>
       <Folder Include="Responses\Authorization\" />
+      <Folder Include="Result\Errors\" />
     </ItemGroup>
 
 </Project>

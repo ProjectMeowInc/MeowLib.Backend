@@ -29,20 +29,22 @@ public class BookCommentController : BaseController
     public async Task<ActionResult> GetBookComments([FromRoute] int bookId)
     {
         var getBookCommentsResult = await _bookCommentService.GetBookCommentsAsync(bookId);
-        
-        return getBookCommentsResult.Match<ActionResult>(bookComments 
-            => Json(new GetBookCommentsResponse
+        if (getBookCommentsResult.IsFailure)
         {
-            BookId = bookId,
-            Items = bookComments
-        }), exception =>
-        {
+            var exception = getBookCommentsResult.GetError();
             if (exception is BookNotFoundException)
             {
                 return NotFoundError($"Книга с Id = {bookId} не найдена");
             }
 
             return ServerError();
+        }
+
+        var bookComments = getBookCommentsResult.GetResult();
+        return Json(new GetBookCommentsResponse
+        {
+            BookId = bookId,
+            Items = bookComments
         });
     }
 
@@ -52,11 +54,11 @@ public class BookCommentController : BaseController
     public async Task<ActionResult> PostComment([FromRoute] int bookId, [FromBody] PostCommentRequest input)
     {
         var userData = await GetUserDataAsync();
-
+        
         var createNewCommentResult = await _bookCommentService.CreateNewCommentAsync(userData.Id, bookId, input.Text);
-        return createNewCommentResult.Match<ActionResult>(createdComment => Json(createdComment),
-            exception =>
+        if (createNewCommentResult.IsFailure)
         {
+            var exception = createNewCommentResult.GetError();
             if (exception is BookNotFoundException)
             {
                 return Error($"Книга с Id = {bookId} не найдена", 400);
@@ -68,6 +70,9 @@ public class BookCommentController : BaseController
             }
 
             return ServerError();
-        });
+        }
+
+        var createdComment = createNewCommentResult.GetResult();
+        return Json(createdComment);
     }
 }

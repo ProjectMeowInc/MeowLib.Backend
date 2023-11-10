@@ -1,9 +1,8 @@
-using LanguageExt;
-using LanguageExt.Common;
 using MeowLib.Domain.DbModels.UserEntity;
 using MeowLib.Domain.Dto.User;
 using MeowLib.Domain.Enums;
 using MeowLib.Domain.Exceptions.DAL;
+using MeowLib.Domain.Result;
 using MeowLib.WebApi.DAL.Repository.Interfaces;
 
 namespace MeowLib.WebApi.DAL.Repository.Implementation.Tests;
@@ -77,7 +76,7 @@ public class UserTestRepository : IUserRepository
             foundedUser.Login = updateUserData.Login;
         }
 
-        return Task.FromResult(new Result<UserDto>(new UserDto
+        return Task.FromResult(Result<UserDto>.Ok(new UserDto
         {
             Id = foundedUser.Id,
             Login = foundedUser.Login,
@@ -111,7 +110,7 @@ public class UserTestRepository : IUserRepository
         throw new NotImplementedException();
     }
 
-    public Task<Option<Exception>> UpdateRefreshTokenAsync(string login, string newRefreshToken)
+    public Task<Result> UpdateRefreshTokenAsync(string login, string newRefreshToken)
     {
         throw new NotImplementedException();
     }

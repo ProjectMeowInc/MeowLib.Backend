@@ -47,8 +47,9 @@ public class UserController : BaseController
         var mappedRequest = _mapper.Map<UpdateUserRequest, UpdateUserEntityModel>(input);
         
         var updateUserResult = await _userService.UpdateUser(id, mappedRequest);
-        return updateUserResult.Match<ActionResult>(updatedUser => Json(updatedUser), exception =>
+        if (updateUserResult.IsFailure)
         {
+            var exception = updateUserResult.GetError();
             if (exception is ValidationException validationException)
             {
                 return validationException.ToResponse();
@@ -60,6 +61,9 @@ public class UserController : BaseController
             }
 
             return ServerError();
-        });
+        }
+
+        var updatedUser = updateUserResult.GetResult();
+        return Json(updatedUser);
     }
 }

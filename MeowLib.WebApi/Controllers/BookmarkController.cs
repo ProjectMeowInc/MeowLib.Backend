@@ -29,9 +29,9 @@ public class BookmarkController : BaseController
     {
         var user = await GetUserDataAsync();
         var createBookmarkResult = await _bookmarkService.CreateBookmarkAsync(user.Id, input.ChapterId);
-
-        return createBookmarkResult.Match<ActionResult>(createdBookmark => Json(createdBookmark), exception =>
+        if (createBookmarkResult.IsFailure)
         {
+            var exception = createBookmarkResult.GetError();
             if (exception is ChapterNotFoundException)
             {
                 return Error($"Глава с Id = {input.ChapterId} не существует", 400);
@@ -43,7 +43,10 @@ public class BookmarkController : BaseController
             }
 
             return ServerError();
-        });
+        }
+
+        var createdBookmark = createBookmarkResult.GetResult();
+        return Json(createdBookmark);
     }
 
     [HttpGet("book/{bookId}"), Authorization]

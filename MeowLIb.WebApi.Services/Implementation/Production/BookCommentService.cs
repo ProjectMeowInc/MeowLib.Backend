@@ -1,12 +1,12 @@
 ﻿using System.Text.RegularExpressions;
 using AutoMapper;
-using LanguageExt.Common;
 using MeowLib.Domain.DbModels.BookCommentEntity;
 using MeowLib.Domain.Dto.BookComment;
 using MeowLib.Domain.Dto.User;
 using MeowLib.Domain.Exceptions;
 using MeowLib.Domain.Exceptions.Book;
 using MeowLib.Domain.Exceptions.User;
+using MeowLib.Domain.Result;
 using MeowLib.WebApi.DAL.Repository.Interfaces;
 using MeowLIb.WebApi.Services.Interface;
 using Microsoft.EntityFrameworkCore;
@@ -56,15 +56,13 @@ public class BookCommentService : IBookCommentService
         var foundedBook = await _bookRepository.GetByIdAsync(bookId);
         if (foundedBook is null)
         {
-            var bookNotFoundException = new BookNotFoundException(bookId);
-            return new Result<BookCommentDto>(bookNotFoundException);
+            return Result<BookCommentDto>.Fail(new BookNotFoundException(bookId));
         }
 
         var foundedUser = await _userRepository.GetByIdAsync(userId);
         if (foundedUser is null)
         {
-            var userNotFoundException = new UserNotFoundException(userId);
-            return new Result<BookCommentDto>(userNotFoundException);
+            return Result<BookCommentDto>.Fail(new UserNotFoundException(userId));
         }
 
         var newComment = new BookCommentEntityModel
@@ -76,12 +74,13 @@ public class BookCommentService : IBookCommentService
         };
 
         var createCommentResult = await _bookCommentRepository.CreateAsync(newComment);
-        return createCommentResult.Match<Result<BookCommentDto>>(createdComment => 
-            _mapper.Map<BookCommentEntityModel, BookCommentDto>(createdComment), _ =>
+        if (createCommentResult.IsFailure)
         {
-            var innerException = new InnerException("Ошибка в БД");
-            return new Result<BookCommentDto>(innerException);
-        });
+            return Result<BookCommentDto>.Fail(createCommentResult.GetError());
+        }
+
+        var bookCommentDto = _mapper.Map<BookCommentEntityModel, BookCommentDto>(createCommentResult.GetResult());
+        return bookCommentDto;
     }
 
     /// <summary>
@@ -95,8 +94,7 @@ public class BookCommentService : IBookCommentService
         var foundedBook = await _bookRepository.GetByIdAsync(bookId);
         if (foundedBook is null)
         {
-            var bookNotFoundException = new BookNotFoundException(bookId);
-            return new Result<IEnumerable<BookCommentDto>>(bookNotFoundException);
+            return Result<IEnumerable<BookCommentDto>>.Fail(new BookNotFoundException(bookId));
         }
 
         var foundedComments = await _bookCommentRepository

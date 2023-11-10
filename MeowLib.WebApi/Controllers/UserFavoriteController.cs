@@ -30,16 +30,18 @@ public class UserFavoriteController : BaseController
     {
         var userData = await GetUserDataAsync();
         var updatedUserListResult = await _userFavoriteService.AddOrUpdateUserListAsync(input.BookId, userData.Id, input.Status);
-
-        return updatedUserListResult.Match<ActionResult>(_ => EmptyResult(), exception =>
+        if (updatedUserListResult.IsFailure)
         {
+            var exception = updatedUserListResult.GetError();
             if (exception is EntityNotFoundException)
             {
                 return Error("Неверно указана книга или пользователь", 400);
             }
 
             return ServerError();
-        });
+        }
+
+        return EmptyResult();
     }
 
     [HttpGet, Authorization]
@@ -71,16 +73,9 @@ public class UserFavoriteController : BaseController
     {
         var userData = await GetUserDataAsync();
         var getUserFavoriteResult = await _userFavoriteService.GetUserFavoriteByBookAsync(userData.Id, bookId);
-        return getUserFavoriteResult.Match<ActionResult>(foundedFavorite =>
+        if (getUserFavoriteResult.IsFailure)
         {
-            if (foundedFavorite is null)
-            {
-                return NotFoundError("Книга отсутствует в списке пользователя");
-            }
-
-            return Json(foundedFavorite);
-        }, exception =>
-        {
+            var exception = getUserFavoriteResult.GetError();
             if (exception is BookNotFoundException)
             {
                 return Error($"Книга с Id = {bookId} не найдена", 400);
@@ -91,7 +86,15 @@ public class UserFavoriteController : BaseController
                 return UpdateAuthorizeResult();
             }
             
-            return ServerError();
-        });
+            return ServerError(); 
+        }
+
+        var foundedFavorite = getUserFavoriteResult.GetResult();
+        if (foundedFavorite is null)
+        {
+            return NotFoundError("Книга отсутствует в списке пользователя");
+        }
+
+        return Json(foundedFavorite);
     }
 }

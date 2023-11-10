@@ -1,8 +1,7 @@
-using LanguageExt;
-using LanguageExt.Common;
 using MeowLib.Domain.DbModels.UserEntity;
 using MeowLib.Domain.Dto.User;
 using MeowLib.Domain.Exceptions.DAL;
+using MeowLib.Domain.Result;
 
 namespace MeowLib.WebApi.DAL.Repository.Interfaces;
 
@@ -84,5 +83,5 @@ public interface IUserRepository
     /// <returns>Ошибку, если она есть.</returns>
     /// <exception cref="EntityNotFoundException">Возникает в случае, если пользователь не был найден.</exception>
     /// <exception cref="DbSavingException">Возникает в случае ошибки сохранения данных.</exception>
-    Task<Option<Exception>> UpdateRefreshTokenAsync(string login, string newRefreshToken);
+    Task<Result> UpdateRefreshTokenAsync(string login, string newRefreshToken);
 }

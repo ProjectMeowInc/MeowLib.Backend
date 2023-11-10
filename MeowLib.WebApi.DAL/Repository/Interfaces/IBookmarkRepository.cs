@@ -1,7 +1,7 @@
-﻿using LanguageExt.Common;
-using MeowLib.Domain.DbModels.BookmarkEntity;
+﻿using MeowLib.Domain.DbModels.BookmarkEntity;
 using MeowLib.Domain.DbModels.ChapterEntity;
 using MeowLib.Domain.DbModels.UserEntity;
+using MeowLib.Domain.Result;
 
 namespace MeowLib.WebApi.DAL.Repository.Interfaces;
 

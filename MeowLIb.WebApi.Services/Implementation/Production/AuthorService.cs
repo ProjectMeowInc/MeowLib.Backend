@@ -1,5 +1,4 @@
 using AutoMapper;
-using LanguageExt.Common;
 using MeowLib.Domain.DbModels.AuthorEntity;
 using MeowLib.Domain.Dto.Author;
 using MeowLib.Domain.Exceptions;
@@ -7,6 +6,7 @@ using MeowLib.Domain.Exceptions.DAL;
 using MeowLib.Domain.Exceptions.Services;
 using MeowLib.Domain.Models;
 using MeowLib.Domain.Requests.Author;
+using MeowLib.Domain.Result;
 using MeowLib.WebApi.DAL.Repository.Interfaces;
 using MeowLIb.WebApi.Services.Interface;
 using Microsoft.EntityFrameworkCore;
@@ -53,8 +53,7 @@ public class AuthorService : IAuthorService
 
         if (validationErrors.Any())
         {
-            var validationException = new ValidationException(validationErrors);
-            return new Result<AuthorDto>(validationException);
+            return Result<AuthorDto>.Fail(new ValidationException(validationErrors));
         }
 
         var authorData = new CreateAuthorEntityModel
@@ -103,8 +102,7 @@ public class AuthorService : IAuthorService
 
         if (validationErrors.Any())
         {
-            var validationException = new ValidationException(validationErrors);
-            return new Result<AuthorDto>(validationException);
+            return Result<AuthorDto>.Fail(new ValidationException(validationErrors));
         }
 
         try
@@ -113,7 +111,7 @@ public class AuthorService : IAuthorService
         }
         catch (EntityNotFoundException entityNotFoundException)
         {
-            return new Result<AuthorDto>(entityNotFoundException);
+            return Result<AuthorDto>.Fail(entityNotFoundException);
         }
     }
 
@@ -131,8 +129,7 @@ public class AuthorService : IAuthorService
         }
         catch (DbSavingException)
         {
-            var apiException = new ApiException("Внутреняя ошибка сервера");
-            return new Result<bool>(apiException);
+            return Result<bool>.Fail(new ApiException("Внутреняя ошибка сервера"));
         }
     }
 
@@ -146,8 +143,7 @@ public class AuthorService : IAuthorService
         var foundedAuthor = await _authorRepository.GetByIdAsync(authorId);
         if (foundedAuthor is null)
         {
-            var notFoundException = new EntityNotFoundException(nameof(AuthorEntityModel), $"Id = {authorId}");
-            return new Result<AuthorDto>(notFoundException);
+            return Result<AuthorDto>.Fail(new EntityNotFoundException(nameof(AuthorEntityModel), $"Id = {authorId}"));
         }
 
         return _mapper.Map<AuthorEntityModel, AuthorDto>(foundedAuthor);
@@ -170,8 +166,7 @@ public class AuthorService : IAuthorService
 
         if (!filteredAuthors.Any())
         {
-            var notFoundException = new SearchNotFoundException(nameof(AuthorService));
-            return new Result<IEnumerable<AuthorDto>>(notFoundException);
+            return Result<IEnumerable<AuthorDto>>.Fail(new SearchNotFoundException(nameof(AuthorService)));
         }
 
         return await filteredAuthors.Select(a => new AuthorDto

@@ -1,5 +1,5 @@
-﻿using LanguageExt.Common;
-using MeowLib.Domain.Exceptions;
+﻿using MeowLib.Domain.Exceptions;
+using MeowLib.Domain.Result;
 using MeowLIb.WebApi.Services.Interface;
 using Microsoft.AspNetCore.Http;
 
@@ -45,7 +45,7 @@ public class FileService : IFileService
         {
             var fileHasIncorrectExtensionException = new FileHasIncorrectExtensionException(
                 "Файл имеет некорректное расширение", fileExtension);
-            return new Result<string>(fileHasIncorrectExtensionException);
+            return Result<string>.Fail(fileHasIncorrectExtensionException);
         }
 
         return await SaveFileWithUniqueName(file, fileExtension, "book_photo");

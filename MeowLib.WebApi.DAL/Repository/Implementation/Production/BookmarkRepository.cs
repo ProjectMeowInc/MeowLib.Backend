@@ -1,9 +1,9 @@
-﻿using LanguageExt.Common;
-using MeowLib.Domain.DbModels.BookmarkEntity;
+﻿using MeowLib.Domain.DbModels.BookmarkEntity;
 using MeowLib.Domain.DbModels.ChapterEntity;
 using MeowLib.Domain.DbModels.UserEntity;
 using MeowLib.Domain.Enums;
 using MeowLib.Domain.Exceptions.DAL;
+using MeowLib.Domain.Result;
 using MeowLib.WebApi.DAL.Repository.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -30,7 +30,7 @@ public class BookmarkRepository : IBookmarkRepository
         catch (DbUpdateException)
         {
             var dbSavingException = new DbSavingException(nameof(BookmarkEntityModel), DbSavingTypesEnum.Create);
-            return new Result<BookmarkEntityModel>(dbSavingException);
+            return Result<BookmarkEntityModel>.Fail(dbSavingException);
         }
     }
     
@@ -63,7 +63,7 @@ public class BookmarkRepository : IBookmarkRepository
         catch (DbUpdateException)
         {
             var dbSavingException = new DbSavingException(nameof(BookmarkEntityModel), DbSavingTypesEnum.Delete);
-            return new Result<bool>(dbSavingException);
+            return Result<bool>.Fail(dbSavingException);
         }
         
         return true;
@@ -93,7 +93,7 @@ public class BookmarkRepository : IBookmarkRepository
         catch (DbUpdateException)
         {
             var dbSavingException = new DbSavingException(nameof(BookmarkEntityModel), DbSavingTypesEnum.Update);
-            return new Result<BookmarkEntityModel>(dbSavingException);
+            return Result<BookmarkEntityModel>.Fail(dbSavingException);
         }
     }
 }

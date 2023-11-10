@@ -1,15 +1,13 @@
-﻿using LanguageExt;
-using LanguageExt.Common;
-using MeowLib.Domain.DbModels.BookEntity;
+﻿using MeowLib.Domain.DbModels.BookEntity;
 using MeowLib.Domain.DbModels.ChapterEntity;
 using MeowLib.Domain.Dto.Chapter;
 using MeowLib.Domain.Exceptions.DAL;
 using MeowLib.Domain.Exceptions.Services;
 using MeowLib.Domain.Models;
+using MeowLib.Domain.Result;
 using MeowLib.WebApi.DAL.Repository.Interfaces;
 using MeowLIb.WebApi.Services.Interface;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace MeowLIb.WebApi.Services.Implementation.Production;
 
@@ -20,13 +18,11 @@ public class ChapterService : IChapterService
 {
     private readonly IChapterRepository _chapterRepository;
     private readonly IBookService _bookService;
-    private readonly ILogger<ChapterService> _logger;
-    
-    public ChapterService(IChapterRepository chapterRepository, IBookService bookService, ILogger<ChapterService> logger)
+
+    public ChapterService(IChapterRepository chapterRepository, IBookService bookService)
     {
         _chapterRepository = chapterRepository;
         _bookService = bookService;
-        _logger = logger;
     }
     
     /// <summary>
@@ -64,14 +60,14 @@ public class ChapterService : IChapterService
         if (validationErrors.Any())
         {
             var validationException = new ValidationException(validationErrors);
-            return new Result<ChapterEntityModel>(validationException);
+            return Result<ChapterEntityModel>.Fail(validationException);
         }
         
         var foundedBook = await _bookService.GetBookByIdAsync(bookId);
         if (foundedBook is null)
         {
             var entityNotFoundException = new EntityNotFoundException(nameof(BookEntityModel), $"Id={bookId}");
-            return new Result<ChapterEntityModel>(entityNotFoundException);
+            return Result<ChapterEntityModel>.Fail(entityNotFoundException);
         }
 
         var newChapter = new ChapterEntityModel
@@ -83,16 +79,12 @@ public class ChapterService : IChapterService
         };
 
         var createChapterResult = await _chapterRepository.CreateAsync(newChapter);
-        return createChapterResult.Match<Result<ChapterEntityModel>>(createdChapter => createdChapter, exception =>
+        if (createChapterResult.IsFailure)
         {
-            _logger.LogError("Ошибка создания главы: {}", exception.Message);
-            if (exception is DbSavingException dbSavingException)
-            {
-                return new Result<ChapterEntityModel>(dbSavingException);
-            }
+            return Result<ChapterEntityModel>.Fail(createChapterResult.GetError());
+        }
 
-            return new Result<ChapterEntityModel>(exception); 
-        });
+        return createChapterResult.GetResult();
     }
 
     /// <summary>
@@ -106,8 +98,12 @@ public class ChapterService : IChapterService
     public async Task<Result<ChapterEntityModel>> UpdateChapterTextAsync(int chapterId, string newText)
     {
         var updateResult = await _chapterRepository.UpdateTextAsync(chapterId, newText);
+        if (updateResult.IsFailure)
+        {
+            return Result<ChapterEntityModel>.Fail(updateResult.GetError());
+        }
 
-        return updateResult.Match(updatedChapter => updatedChapter, exception => new Result<ChapterEntityModel>(exception));
+        return updateResult.GetResult();
     }
 
     /// <summary>
@@ -123,7 +119,7 @@ public class ChapterService : IChapterService
         if (foundedBook is null)
         {
             var entityNotFoundException = new EntityNotFoundException(nameof(BookEntityModel), $"Id={bookId}");
-            return new Result<IEnumerable<ChapterDto>>(entityNotFoundException);
+            return Result<IEnumerable<ChapterDto>>.Fail(entityNotFoundException);
         }
 
         var bookChapters = await _chapterRepository.GetAll()
@@ -146,9 +142,15 @@ public class ChapterService : IChapterService
     /// <returns>Ошибку, если она есть.</returns>
     /// <exception cref="EntityNotFoundException">Возникает в случае, если глава не была найдена.</exception>
     /// <exception cref="DbSavingException">Возникает в случае ошибки сохранения данных.</exception>
-    public async Task<Option<Exception>> DeleteChapterAsync(int chapterId)
+    public async Task<Result> DeleteChapterAsync(int chapterId)
     {
-        return await _chapterRepository.DeleteByIdAsync(chapterId);
+        var deleteResult = await _chapterRepository.DeleteByIdAsync(chapterId);
+        if (deleteResult.IsFailure)
+        {
+            return Result.Fail(deleteResult.GetError());
+        }
+        
+        return Result.Ok(); 
     }
 
     /// <summary>

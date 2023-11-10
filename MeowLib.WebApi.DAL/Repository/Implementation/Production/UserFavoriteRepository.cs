@@ -1,9 +1,9 @@
-﻿using LanguageExt.Common;
-using MeowLib.Domain.DbModels.BookEntity;
+﻿using MeowLib.Domain.DbModels.BookEntity;
 using MeowLib.Domain.DbModels.UserEntity;
 using MeowLib.Domain.DbModels.UserFavoriteEntity;
 using MeowLib.Domain.Enums;
 using MeowLib.Domain.Exceptions.DAL;
+using MeowLib.Domain.Result;
 using MeowLib.WebApi.DAL.Repository.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -42,7 +42,7 @@ public class UserFavoriteRepository : IUserFavoriteRepository
         catch (DbUpdateException)
         {
             var dbSavingException = new DbSavingException(nameof(UserFavoriteEntityModel), DbSavingTypesEnum.Create);
-            return new Result<UserFavoriteEntityModel>(dbSavingException);
+            return Result<UserFavoriteEntityModel>.Fail(dbSavingException);
         }
 
         return createdUserFavoritesEntry.Entity;
@@ -107,7 +107,7 @@ public class UserFavoriteRepository : IUserFavoriteRepository
         catch (DbUpdateException)
         {
             var dbSavingException = new DbSavingException(nameof(UserFavoriteEntityModel), DbSavingTypesEnum.Update);
-            return new Result<UserFavoriteEntityModel>(dbSavingException);
+            return Result<UserFavoriteEntityModel>.Fail(dbSavingException);
         }
 
         return updateUserFavoriteEntry.Entity;

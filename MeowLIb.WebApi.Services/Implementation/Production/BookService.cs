@@ -1,10 +1,10 @@
-using LanguageExt.Common;
 using MeowLib.Domain.DbModels.AuthorEntity;
 using MeowLib.Domain.DbModels.BookEntity;
 using MeowLib.Domain.Exceptions;
 using MeowLib.Domain.Exceptions.DAL;
 using MeowLib.Domain.Exceptions.Services;
 using MeowLib.Domain.Models;
+using MeowLib.Domain.Result;
 using MeowLib.WebApi.DAL.Repository.Interfaces;
 using MeowLIb.WebApi.Services.Interface;
 using Microsoft.AspNetCore.Http;
@@ -67,8 +67,7 @@ public class BookService : IBookService
 
         if (validationErrors.Any())
         {
-            var validationException = new ValidationException(nameof(BookService), validationErrors);
-            return new Result<BookEntityModel>(validationException);
+            return Result<BookEntityModel>.Fail(new ValidationException(nameof(BookService), validationErrors));
         }
 
         try
@@ -84,7 +83,7 @@ public class BookService : IBookService
         {
             _logger.LogError("[{@DateTime}] Ошибка сохранения книги в БД", DateTime.UtcNow);
             var apiException = new ApiException("Внутреяя ошибка сервера");
-            return new Result<BookEntityModel>(apiException);
+            return Result<BookEntityModel>.Fail(apiException);
         }
     }
 
@@ -115,21 +114,25 @@ public class BookService : IBookService
         if (validationErrors.Any())
         {
             var validationException = new ValidationException(nameof(BookService), validationErrors);
-            return new Result<BookEntityModel?>(validationException);
+            return Result<BookEntityModel?>.Fail(validationException);
         }
 
         var foundedBook = await _bookRepository.GetByIdAsync(bookId);
         if (foundedBook is null)
         {
-            return null;
+            return Result<BookEntityModel?>.Ok(null);
         }
 
         foundedBook.Name = inputName ?? foundedBook.Name;
         foundedBook.Description = inputDescription ?? foundedBook.Description;
         
         var updatedBookResult = await _bookRepository.UpdateAsync(foundedBook);
-        return updatedBookResult.Match<Result<BookEntityModel?>>(updatedBook => updatedBook,
-            exception => new Result<BookEntityModel?>(exception));
+        if (updatedBookResult.IsFailure)
+        {
+            return Result<BookEntityModel?>.Fail(updatedBookResult.GetError());
+        }
+
+        return updatedBookResult.GetResult();
     }
     
     /// <summary>
@@ -146,22 +149,25 @@ public class BookService : IBookService
         if (foundedBook is null)
         {
             _logger.LogInformation("[{@DateTime}] Книга не найдена", DateTime.UtcNow);
-            return null;
+            return Result<BookEntityModel?>.Ok(null);
         }
 
         var foundedAuthor = await _authorRepository.GetByIdAsync(authorId);
         if (foundedAuthor is null)
         {
             _logger.LogInformation("[{@DateTime}] Автор не найден", DateTime.UtcNow);
-            var apiException = new EntityNotFoundException(nameof(AuthorEntityModel), $"Id={authorId}");
-            return new Result<BookEntityModel?>(apiException);
+            return Result<BookEntityModel?>.Fail(new EntityNotFoundException(nameof(AuthorEntityModel), $"Id={authorId}"));
         }
 
         foundedBook.Author = foundedAuthor;
 
         var updateBookResult = await _bookRepository.UpdateAsync(foundedBook);
-        return updateBookResult.Match<Result<BookEntityModel?>>(updatedBook => updatedBook, 
-            exception => new Result<BookEntityModel?>(exception));
+        if (updateBookResult.IsFailure)
+        {
+            updateBookResult.GetError();
+        }
+
+        return updateBookResult.GetResult();
     }
 
     /// <summary>
@@ -179,8 +185,7 @@ public class BookService : IBookService
         catch (DbSavingException)
         {
             _logger.LogError("[{@DateTime}] Ошибка удаления книги в базе данных", DateTime.UtcNow);
-            var apiException = new ApiException("Внутренняя ошибка сервера");
-            return new Result<bool>(apiException);
+            return Result<bool>.Fail(new ApiException("Внутренняя ошибка сервера"));
         }
     }
 
@@ -207,19 +212,22 @@ public class BookService : IBookService
         if (foundedBook is null)
         {
             _logger.LogInformation("[{@DateTime}] Книга не найдена", DateTime.UtcNow);
-            return null;
+            return Result<BookEntityModel?>.Ok(null);
         }
 
         var foundedTags = await _tagRepository
             .GetAll()
             .Where(tag => tags.Any(t => t == tag.Id))
             .ToListAsync();
-        
 
         foundedBook.Tags = foundedTags;
         var updateResult = await _bookRepository.UpdateAsync(foundedBook);
-        return updateResult.Match<Result<BookEntityModel?>>(updatedBook => updatedBook,
-            exception => new Result<BookEntityModel?>(exception));
+        if (updateResult.IsFailure)
+        {
+            return Result<BookEntityModel?>.Fail( updateResult.GetError());
+        }
+
+        return updateResult.GetResult();
     }
 
     /// <summary>
@@ -237,29 +245,26 @@ public class BookService : IBookService
         if (foundedBook is null)
         {
             _logger.LogInformation("[{@DateTime}] Книга не найдена", DateTime.UtcNow);
-            return null;
+            return Result<BookEntityModel?>.Ok(null);
         }
 
         var uploadBookImageResult = await _fileService.UploadBookImageAsync(file);
-        if (uploadBookImageResult.IsFaulted)
+        if (uploadBookImageResult.IsFailure)
         {
             _logger.LogError("[{@DateTime}] Ошибка загрузки файла", DateTime.UtcNow);
             var uploadingFileException = new UploadingFileException();
-            return new Result<BookEntityModel?>(uploadingFileException);
+            return Result<BookEntityModel?>.Fail(uploadingFileException);
         }
 
-        var updateBookResult = await uploadBookImageResult.MapAsync<Result<BookEntityModel>>(async fileName=>
-        {
-            foundedBook.ImageUrl = fileName;
-            var updateBookResult = await _bookRepository.UpdateAsync(foundedBook);
+        var uploadedFile = uploadBookImageResult.GetResult();
+        foundedBook.ImageUrl = uploadedFile;
 
-            return updateBookResult.Match<Result<BookEntityModel>>(updatedBook => updatedBook, 
-                exception => new Result<BookEntityModel>(exception));
-        });
-
-        return updateBookResult.Match<Result<BookEntityModel?>>(ok =>
+        var updateBookResult = await _bookRepository.UpdateAsync(foundedBook);
+        if (updateBookResult.IsFailure)
         {
-            return ok.Match<BookEntityModel?>(updatedBook => updatedBook, _ => null);
-        }, exception => new Result<BookEntityModel?>(exception));
+            return Result<BookEntityModel?>.Fail(uploadBookImageResult.GetError());
+        }
+
+        return updateBookResult.GetResult();
     }
 }
