@@ -38,15 +38,19 @@ public class TagController : BaseController
         var createModel = _mapper.Map<CreateTagRequest, CreateTagEntityModel>(input);
         var createTagResult = await _tagService.CreateTagAsync(createModel);
 
-        return createTagResult.Match<ActionResult>(createdTag => Json(createdTag), exception =>
+        if (createTagResult.IsFailure)
         {
+            var exception = createTagResult.GetError();
             if (exception is ValidationException validationException)
             {
                 return validationException.ToResponse();
             }
 
             return ServerError();
-        });
+        }
+
+        var createdTag = createTagResult.GetResult();
+        return Json(createdTag);
     }
 
     [HttpDelete("{id:int}")]
@@ -56,15 +60,18 @@ public class TagController : BaseController
     {
         var deleteTagResult = await _tagService.DeleteTagByIdAsync(id);
 
-        return deleteTagResult.Match<ActionResult>(ok =>
+        if (deleteTagResult.IsFailure)
         {
-            if (!ok)
-            {
-                return NotFoundError();
-            }
+            return ServerError();
+        }
 
-            return EmptyResult();
-        }, _ => ServerError());
+        var tagFoundedAndDeleted = deleteTagResult.GetResult();
+        if (!tagFoundedAndDeleted)
+        {
+            return NotFoundError();
+        }
+
+        return EmptyResult();
     }
 
     [HttpPut("{id:int}")]
@@ -77,23 +84,24 @@ public class TagController : BaseController
         var updateModel = _mapper.Map<UpdateTagRequest, UpdateTagEntityModel>(input);
         var updateTagResult = await _tagService.UpdateTagByIdAsync(id, updateModel);
 
-        return updateTagResult.Match<ActionResult>(updatedTag =>
+        if (updateTagResult.IsFailure)
         {
-            if (updatedTag is null)
-            {
-                return NotFoundError();
-            }
-
-            return Json(updatedTag);
-        }, exception =>
-        {
+            var exception = updateTagResult.GetError();
             if (exception is ValidationException validationException)
             {
                 return validationException.ToResponse();
             }
 
             return ServerError();
-        });
+        }
+
+        var updatedTag = updateTagResult.GetResult();
+        if (updatedTag is null)
+        {
+            return NotFoundError();
+        }
+
+        return Json(updatedTag);
     }
 
     [HttpGet]

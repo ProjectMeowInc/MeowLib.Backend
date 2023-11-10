@@ -1,10 +1,10 @@
-using LanguageExt.Common;
 using MeowLib.Domain.DbModels.TagEntity;
 using MeowLib.Domain.Dto.Tag;
 using MeowLib.Domain.Exceptions;
 using MeowLib.Domain.Exceptions.DAL;
 using MeowLib.Domain.Exceptions.Services;
 using MeowLib.Domain.Models;
+using MeowLib.Domain.Result;
 using MeowLib.WebApi.DAL.Repository.Interfaces;
 using MeowLIb.WebApi.Services.Interface;
 using Microsoft.EntityFrameworkCore;
@@ -80,7 +80,7 @@ public class TagService : ITagService
         if (validationErrors.Any())
         {
             var validationException = new ValidationException(nameof(TagService), validationErrors);
-            return new Result<TagEntityModel>(validationException);
+            return Result<TagEntityModel>.Fail(validationException);
         }
 
         var createModel = new CreateTagEntityModel
@@ -96,7 +96,7 @@ public class TagService : ITagService
         catch (DbUpdateException)
         {
             var apiException = new ApiException("Внутренняя ошибка сервера.");
-            return new Result<TagEntityModel>(apiException);
+            return Result<TagEntityModel>.Fail(apiException);
         }
     }
 
@@ -141,7 +141,7 @@ public class TagService : ITagService
         catch (DbUpdateException)
         {
             var apiException = new ApiException("Внутренняя ошибка сервера");
-            return new Result<bool>(apiException);
+            return Result<bool>.Fail(apiException);
         }
     }
 
@@ -202,7 +202,7 @@ public class TagService : ITagService
         if (validationErrors.Any())
         {
             var validationException = new ValidationException(nameof(TagService), validationErrors);
-            return new Result<TagEntityModel?>(validationException);
+            return Result<TagEntityModel?>.Fail(validationException);
         }
 
         try
@@ -211,12 +211,12 @@ public class TagService : ITagService
         }
         catch (EntityNotFoundException)
         {
-            return null;
+            return Result<TagEntityModel?>.Ok(null);
         }
         catch (DbUpdateException)
         {
             var apiException = new ApiException("Внутренняя ошибка сервера");
-            return new Result<TagEntityModel?>(apiException);
+            return Result<TagEntityModel?>.Fail(apiException);
         }
     }
 }
