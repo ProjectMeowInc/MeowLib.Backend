@@ -16,13 +16,14 @@ namespace MeowLib.WebApi.Controllers;
 public class BookmarkController : BaseController
 {
     private readonly IBookmarkService _bookmarkService;
-    
+
     public BookmarkController(IBookmarkService bookmarkService)
     {
         _bookmarkService = bookmarkService;
     }
 
-    [HttpPost, Authorization]
+    [HttpPost]
+    [Authorization]
     [ProducesOkResponseType(typeof(BookmarkDto))]
     [ProducesResponseType(400, Type = typeof(BaseErrorResponse))]
     public async Task<ActionResult> CreateOrUpdateBookmark([FromBody] CreateOrUpdateBookmarkRequest input)
@@ -49,7 +50,8 @@ public class BookmarkController : BaseController
         return Json(createdBookmark);
     }
 
-    [HttpGet("book/{bookId}"), Authorization]
+    [HttpGet("book/{bookId}")]
+    [Authorization]
     [ProducesOkResponseType(typeof(BookmarkDto))]
     [ProducesNotFoundResponseType]
     public async Task<ActionResult> GetBookmarkByBook([FromRoute] int bookId)

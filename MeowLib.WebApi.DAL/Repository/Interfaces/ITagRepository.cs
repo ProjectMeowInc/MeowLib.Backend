@@ -13,7 +13,7 @@ public interface ITagRepository
     /// </summary>
     /// <returns>IQuerable всех тегов.</returns>
     IQueryable<TagEntityModel> GetAll();
-    
+
     /// <summary>
     /// Метод создаёт новый тег.
     /// </summary>
@@ -21,7 +21,7 @@ public interface ITagRepository
     /// <returns>Созданные тег.</returns>
     /// <exception cref="DbSavingException">Возникает в случае, если произошла ошибка сохранения данных.</exception>
     Task<TagEntityModel> CreateAsync(CreateTagEntityModel createTagData);
-    
+
     /// <summary>
     /// Метод удаляет тег по его Id.
     /// </summary>
@@ -29,7 +29,7 @@ public interface ITagRepository
     /// <returns>True - в случае удачного удаления, false - если тег не был найден.</returns>
     /// <exception cref="DbSavingException">Возникает в случае, если произошла ошибка сохранения данных.</exception>
     Task<bool> DeleteByIdAsync(int id);
-    
+
     /// <summary>
     /// Метод обновляет информацию о теге.
     /// </summary>

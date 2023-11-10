@@ -22,7 +22,7 @@ public interface IJwtTokenService
     /// <param name="expiredAt">Время истечения токена обновления.</param>
     /// <returns>Токен в виде строки.</returns>
     string GenerateRefreshToken(RefreshTokenDataModel tokenData, DateTime expiredAt);
-    
+
     /// <summary>
     /// Парсит JWT-токен доступа и возвращает информацию хранащуюся в нём.
     /// </summary>

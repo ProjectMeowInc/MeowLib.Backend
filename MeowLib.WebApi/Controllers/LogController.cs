@@ -11,13 +11,14 @@ namespace MeowLib.WebApi.Controllers;
 public class LogController : BaseController
 {
     private readonly IFrontEndLogService _frontEndLogService;
-    
+
     public LogController(IFrontEndLogService frontEndLogService)
     {
         _frontEndLogService = frontEndLogService;
     }
 
-    [HttpPost, Authorization]
+    [HttpPost]
+    [Authorization]
     [ProducesOkResponseType]
     public async Task<ActionResult> SendLog([FromBody] LogRequest input)
     {

@@ -28,18 +28,14 @@ services.AddControllers()
         options.InvalidModelStateResponseFactory = actionContext =>
         {
             var validationErrors = new List<ValidationErrorModel>();
-            
+
             foreach (var modelStateValue in actionContext.ModelState.Values)
-            {
-                foreach (var modelError in modelStateValue.Errors)
+            foreach (var modelError in modelStateValue.Errors)
+                validationErrors.Add(new ValidationErrorModel
                 {
-                    validationErrors.Add(new ValidationErrorModel
-                    {
-                        PropertyName = modelStateValue.RawValue?.ToString() ?? "NULL",
-                        Message = modelError.ErrorMessage
-                    });
-                }
-            }
+                    PropertyName = modelStateValue.RawValue?.ToString() ?? "NULL",
+                    Message = modelError.ErrorMessage
+                });
 
             var validationException = new ValidationException(validationErrors);
 
@@ -51,7 +47,7 @@ services.AddEndpointsApiExplorer();
 
 services.AddSwaggerGen(options =>
 {
-    options.SwaggerDoc("v1", new OpenApiInfo { Title = "BEST READER API", Version = "v1"});
+    options.SwaggerDoc("v1", new OpenApiInfo { Title = "BEST READER API", Version = "v1" });
     options.AddSecurityDefinition("AuthToken", new OpenApiSecurityScheme
     {
         In = ParameterLocation.Header,
@@ -69,7 +65,7 @@ services.AddSwaggerGen(options =>
                 Reference = new OpenApiReference
                 {
                     Id = "AuthToken",
-                    Type = ReferenceType.SecurityScheme,
+                    Type = ReferenceType.SecurityScheme
                 }
             },
             new List<string>()
@@ -119,10 +115,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(dbOptions =>
         throw new Exception("Connection string is null or empty");
     }
 
-    dbOptions.UseSqlite(connectionString, optionsBuilder =>
-    {
-        optionsBuilder.MigrationsAssembly("MeowLib.WebApi");
-    });
+    dbOptions.UseSqlite(connectionString, optionsBuilder => { optionsBuilder.MigrationsAssembly("MeowLib.WebApi"); });
 });
 
 var app = builder.Build();

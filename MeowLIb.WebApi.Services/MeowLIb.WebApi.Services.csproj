@@ -8,24 +8,24 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Implementation\Tests\" />
+        <Folder Include="Implementation\Tests\"/>
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
-      <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.30.0" />
-      <PackageReference Include="Telegram.Bot" Version="19.0.0" />
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0"/>
+        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.30.0"/>
+        <PackageReference Include="Telegram.Bot" Version="19.0.0"/>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\MeowLib.Domain\MeowLib.Domain.csproj" />
-      <ProjectReference Include="..\MeowLib.WebApi.DAL\MeowLib.WebApi.DAL.csproj" />
+        <ProjectReference Include="..\MeowLib.Domain\MeowLib.Domain.csproj"/>
+        <ProjectReference Include="..\MeowLib.WebApi.DAL\MeowLib.WebApi.DAL.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-      <Reference Include="LanguageExt.Core">
-        <HintPath>..\..\..\.nuget\packages\languageext.core\4.4.3\lib\netstandard2.0\LanguageExt.Core.dll</HintPath>
-      </Reference>
+        <Reference Include="LanguageExt.Core">
+            <HintPath>..\..\..\.nuget\packages\languageext.core\4.4.3\lib\netstandard2.0\LanguageExt.Core.dll</HintPath>
+        </Reference>
     </ItemGroup>
 
 </Project>

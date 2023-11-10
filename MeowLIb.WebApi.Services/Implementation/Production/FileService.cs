@@ -12,6 +12,7 @@ public class FileService : IFileService
 {
     private readonly string _uploadDirectoryPath;
     private static readonly string[] ValidateExtension = { ".png", ".jpg" };
+
     private static readonly Dictionary<string, string> MimeMappings = new()
     {
         { "png", "image/png" },
@@ -40,7 +41,7 @@ public class FileService : IFileService
     public async Task<Result<string>> UploadBookImageAsync(IFormFile file)
     {
         var fileExtension = Path.GetExtension(file.FileName).ToLower();
-        
+
         if (!ValidateExtension.Contains(fileExtension))
         {
             var fileHasIncorrectExtensionException = new FileHasIncorrectExtensionException(
@@ -75,16 +76,16 @@ public class FileService : IFileService
     private async Task<string> SaveFileWithUniqueName(IFormFile file, string fileExtension, string filePrefix)
     {
         var newFileName = string.Concat(Path.GetRandomFileName().Replace(".", string.Empty), fileExtension);
-        
+
         var uploadDirectory = Path.Combine(_uploadDirectoryPath, filePrefix);
         if (!Directory.Exists(uploadDirectory))
         {
             Directory.CreateDirectory(uploadDirectory);
         }
-        
+
         await using var fileStream = File.Create($"{uploadDirectory}/{newFileName}");
         await file.CopyToAsync(fileStream);
-        
+
         return newFileName;
     }
 

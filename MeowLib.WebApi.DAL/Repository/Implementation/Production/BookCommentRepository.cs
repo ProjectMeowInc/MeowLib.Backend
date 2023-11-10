@@ -68,7 +68,7 @@ public class BookCommentRepository : IBookCommentRepository
         entryEntity.State = EntityState.Modified;
 
         try
-        { 
+        {
             await _applicationDbContext.SaveChangesAsync();
         }
         catch (DbUpdateException)

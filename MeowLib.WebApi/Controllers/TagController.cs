@@ -17,7 +17,7 @@ public class TagController : BaseController
 {
     private readonly ITagService _tagService;
     private readonly IMapper _mapper;
-    
+
     /// <summary>
     /// Конструктор.
     /// </summary>
@@ -29,7 +29,8 @@ public class TagController : BaseController
         _mapper = mapper;
     }
 
-    [HttpPost, Authorization(RequiredRoles = new [] { UserRolesEnum.Admin })]
+    [HttpPost]
+    [Authorization(RequiredRoles = new[] { UserRolesEnum.Admin })]
     [ProducesOkResponseType(typeof(TagEntityModel))]
     [ProducesForbiddenResponseType]
     public async Task<ActionResult> CreateTag([FromBody] CreateTagRequest input)
@@ -54,7 +55,7 @@ public class TagController : BaseController
     public async Task<ActionResult> DeleteTag([FromRoute] int id)
     {
         var deleteTagResult = await _tagService.DeleteTagByIdAsync(id);
-        
+
         return deleteTagResult.Match<ActionResult>(ok =>
         {
             if (!ok)
@@ -66,7 +67,8 @@ public class TagController : BaseController
         }, _ => ServerError());
     }
 
-    [HttpPut("{id:int}"), Authorization(RequiredRoles = new [] { UserRolesEnum.Admin })]
+    [HttpPut("{id:int}")]
+    [Authorization(RequiredRoles = new[] { UserRolesEnum.Admin })]
     [ProducesOkResponseType(typeof(TagEntityModel))]
     [ProducesForbiddenResponseType]
     [ProducesNotFoundResponseType]

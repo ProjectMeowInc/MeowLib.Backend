@@ -19,7 +19,7 @@ public class AuthorController : BaseController
 {
     private readonly IAuthorService _authorService;
     private readonly IMapper _mapper;
-    
+
     public AuthorController(IAuthorService authorService, IMapper mapper)
     {
         _authorService = authorService;
@@ -34,7 +34,8 @@ public class AuthorController : BaseController
         return Json(authors);
     }
 
-    [HttpPost, Authorization(RequiredRoles = new [] { UserRolesEnum.Editor, UserRolesEnum.Admin })]
+    [HttpPost]
+    [Authorization(RequiredRoles = new[] { UserRolesEnum.Editor, UserRolesEnum.Admin })]
     [ProducesOkResponseType(typeof(AuthorDto))]
     [ProducesForbiddenResponseType]
     public async Task<ActionResult> CreateAuthor([FromBody] CreateAuthorRequest input)
@@ -55,7 +56,8 @@ public class AuthorController : BaseController
         return Json(author);
     }
 
-    [HttpPut("{authorId:int}"), Authorization(RequiredRoles = new [] { UserRolesEnum.Editor, UserRolesEnum.Admin })]
+    [HttpPut("{authorId:int}")]
+    [Authorization(RequiredRoles = new[] { UserRolesEnum.Editor, UserRolesEnum.Admin })]
     [ProducesOkResponseType(typeof(AuthorDto))]
     [ProducesForbiddenResponseType]
     [ProducesNotFoundResponseType]
@@ -67,7 +69,7 @@ public class AuthorController : BaseController
         if (updateResult.IsFailure)
         {
             var exception = updateResult.GetError();
-            
+
             if (exception is ValidationException validationException)
             {
                 return validationException.ToResponse();
@@ -85,7 +87,8 @@ public class AuthorController : BaseController
         return Json(updatedAuthor);
     }
 
-    [HttpDelete("{authorId:int}"), Authorization(RequiredRoles = new [] { UserRolesEnum.Editor, UserRolesEnum.Admin })]
+    [HttpDelete("{authorId:int}")]
+    [Authorization(RequiredRoles = new[] { UserRolesEnum.Editor, UserRolesEnum.Admin })]
     [ProducesOkResponseType]
     [ProducesNotFoundResponseType]
     public async Task<ActionResult> DeleteAuthor([FromRoute] int authorId)

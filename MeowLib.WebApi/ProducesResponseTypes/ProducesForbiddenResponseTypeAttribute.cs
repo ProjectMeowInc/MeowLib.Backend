@@ -12,7 +12,8 @@ public class ProducesForbiddenResponseTypeAttribute : ProducesResponseTypeAttrib
     {
     }
 
-    public ProducesForbiddenResponseTypeAttribute(Type type, int statusCode, string contentType, params string[] additionalContentTypes) : base(type, statusCode, contentType, additionalContentTypes)
+    public ProducesForbiddenResponseTypeAttribute(Type type, int statusCode, string contentType,
+        params string[] additionalContentTypes) : base(type, statusCode, contentType, additionalContentTypes)
     {
     }
 }

@@ -17,7 +17,7 @@ namespace MeowLib.WebApi.Controllers;
 public class BookCommentController : BaseController
 {
     private readonly IBookCommentService _bookCommentService;
-    
+
     public BookCommentController(IBookCommentService bookCommentService)
     {
         _bookCommentService = bookCommentService;
@@ -48,13 +48,14 @@ public class BookCommentController : BaseController
         });
     }
 
-    [HttpPost("{bookId:int}/comments"), Authorization]
+    [HttpPost("{bookId:int}/comments")]
+    [Authorization]
     [ProducesOkResponseType(typeof(BookCommentDto))]
-    [ProducesResponseType(400,  Type = typeof(BaseErrorResponse))]
+    [ProducesResponseType(400, Type = typeof(BaseErrorResponse))]
     public async Task<ActionResult> PostComment([FromRoute] int bookId, [FromBody] PostCommentRequest input)
     {
         var userData = await GetUserDataAsync();
-        
+
         var createNewCommentResult = await _bookCommentService.CreateNewCommentAsync(userData.Id, bookId, input.Text);
         if (createNewCommentResult.IsFailure)
         {

@@ -26,13 +26,13 @@ public class UserServiceTests
         // Логин пользователя, который уже занят.
         var login = "tester";
         var password = "testPassword";
-        
+
         var signInResult = await _userService.SignInAsync(login, password);
         if (!signInResult.IsFailure)
         {
             Assert.Fail($"Исключение не было вызвано");
         }
-        
+
         var exception = signInResult.GetError();
         if (exception is not ApiException)
         {

@@ -70,7 +70,7 @@ public class ChapterRepository : IChapterRepository
             var dbSavingException = new DbSavingException(nameof(ChapterEntityModel), DbSavingTypesEnum.Delete);
             return Result.Fail(dbSavingException);
         }
-        
+
         return Result.Ok();
     }
 
@@ -131,7 +131,7 @@ public class ChapterRepository : IChapterRepository
         }
 
         foundedChapter.Text = newText;
-        
+
         var updateResult = _applicationDbContext.Chapters.Update(foundedChapter);
 
         try
@@ -147,5 +147,8 @@ public class ChapterRepository : IChapterRepository
         return updateResult.Entity;
     }
 
-    public IQueryable<ChapterEntityModel> GetAll() => _applicationDbContext.Chapters.AsQueryable();
+    public IQueryable<ChapterEntityModel> GetAll()
+    {
+        return _applicationDbContext.Chapters.AsQueryable();
+    }
 }

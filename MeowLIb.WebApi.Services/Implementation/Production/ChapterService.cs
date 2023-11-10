@@ -24,7 +24,7 @@ public class ChapterService : IChapterService
         _chapterRepository = chapterRepository;
         _bookService = bookService;
     }
-    
+
     /// <summary>
     /// Метод создаёт новую главу.
     /// </summary>
@@ -38,7 +38,7 @@ public class ChapterService : IChapterService
     public async Task<Result<ChapterEntityModel>> CreateChapterAsync(string name, string text, int bookId)
     {
         var validationErrors = new List<ValidationErrorModel>();
-        
+
         if (name.Length < 1 || name.Length > 50)
         {
             validationErrors.Add(new ValidationErrorModel
@@ -62,7 +62,7 @@ public class ChapterService : IChapterService
             var validationException = new ValidationException(validationErrors);
             return Result<ChapterEntityModel>.Fail(validationException);
         }
-        
+
         var foundedBook = await _bookService.GetBookByIdAsync(bookId);
         if (foundedBook is null)
         {
@@ -149,8 +149,8 @@ public class ChapterService : IChapterService
         {
             return Result.Fail(deleteResult.GetError());
         }
-        
-        return Result.Ok(); 
+
+        return Result.Ok();
     }
 
     /// <summary>

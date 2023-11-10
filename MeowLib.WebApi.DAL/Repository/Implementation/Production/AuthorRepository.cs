@@ -40,9 +40,9 @@ public class AuthorRepository : IAuthorRepository
     {
         var newAuthor = _mapper.Map<CreateAuthorEntityModel, AuthorEntityModel>(createAuthorData);
         var dbResult = await _applicationDbContext.Authors.AddAsync(newAuthor);
-        
+
         await _applicationDbContext.SaveChangesAsync();
-        
+
         var authorDto = _mapper.Map<AuthorEntityModel, AuthorDto>(dbResult.Entity);
         return authorDto;
     }
@@ -121,7 +121,7 @@ public class AuthorRepository : IAuthorRepository
     }
 
     #region Приватные методы
-    
+
     /// <summary>
     /// Метод получает автора по его Id.  
     /// </summary>

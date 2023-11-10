@@ -55,8 +55,8 @@ public class TagRepository : ITagRepository
         {
             throw new DbSavingException(nameof(TagEntityModel), DbSavingTypesEnum.Create);
         }
-        
-        
+
+
         return dbResult.Entity;
     }
 
@@ -83,7 +83,7 @@ public class TagRepository : ITagRepository
         {
             throw new DbSavingException(nameof(TagEntityModel), DbSavingTypesEnum.Delete);
         }
-        
+
 
         return true;
     }
@@ -108,7 +108,7 @@ public class TagRepository : ITagRepository
         {
             foundedTag.Name = updateTagData.Name;
         }
-        
+
         if (updateTagData.Description is not null)
         {
             foundedTag.Description = updateTagData.Description;

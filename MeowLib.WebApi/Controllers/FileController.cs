@@ -10,7 +10,7 @@ namespace MeowLib.WebApi.Controllers;
 public class FileController : BaseController
 {
     private readonly IFileService _fileService;
-    
+
     public FileController(IFileService fileService)
     {
         _fileService = fileService;
@@ -25,7 +25,7 @@ public class FileController : BaseController
         {
             return NotFoundError("Изображение не найдено");
         }
-        
+
         return File(getBookImageResult.content, getBookImageResult.mimeType);
     }
 }

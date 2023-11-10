@@ -21,7 +21,7 @@ public class BookmarkRepository : IBookmarkRepository
     public async Task<Result<BookmarkEntityModel>> CreateAsync(BookmarkEntityModel entity)
     {
         var result = await _applicationDbContext.Bookmarks.AddAsync(entity);
-        
+
         try
         {
             await _applicationDbContext.SaveChangesAsync();
@@ -33,7 +33,7 @@ public class BookmarkRepository : IBookmarkRepository
             return Result<BookmarkEntityModel>.Fail(dbSavingException);
         }
     }
-    
+
     public async Task<BookmarkEntityModel?> GetByIdAsync(int id)
     {
         return await _applicationDbContext.Bookmarks
@@ -41,12 +41,12 @@ public class BookmarkRepository : IBookmarkRepository
             .Include(b => b.User)
             .FirstOrDefaultAsync(b => b.Id == id);
     }
-        
+
     public IQueryable<BookmarkEntityModel> GetAll()
     {
         return _applicationDbContext.Bookmarks.AsQueryable();
     }
-        
+
     public async Task<Result<bool>> DeleteByIdAsync(int id)
     {
         var foundedBookmark = await GetByIdAsync(id);
@@ -65,22 +65,22 @@ public class BookmarkRepository : IBookmarkRepository
             var dbSavingException = new DbSavingException(nameof(BookmarkEntityModel), DbSavingTypesEnum.Delete);
             return Result<bool>.Fail(dbSavingException);
         }
-        
+
         return true;
     }
 
     public async Task<BookmarkEntityModel?> GetByUserAndChapterAsync(UserEntityModel user, ChapterEntityModel chapter)
     {
-         await _applicationDbContext.Chapters
-             .Entry(chapter)
-             .Reference(c => c.Book).LoadAsync();
-        
+        await _applicationDbContext.Chapters
+            .Entry(chapter)
+            .Reference(c => c.Book).LoadAsync();
+
         return await _applicationDbContext.Bookmarks
             .Include(bookmark => bookmark.Chapter)
             .FirstOrDefaultAsync(bookMark =>
                 bookMark.User == user && bookMark.Chapter.Book == chapter.Book);
     }
-    
+
     public async Task<Result<BookmarkEntityModel>> UpdateAsync(BookmarkEntityModel entity)
     {
         try

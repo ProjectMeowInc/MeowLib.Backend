@@ -12,7 +12,7 @@ public interface IAuthorRepository
     /// <param name="createAuthorData">Данный для создания автора.</param>
     /// <returns>DTO-модель автора</returns>
     Task<AuthorDto> CreateAsync(CreateAuthorEntityModel createAuthorData);
-    
+
     /// <summary>
     /// Метод получает модель автора по его Id.
     /// </summary>

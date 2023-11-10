@@ -18,13 +18,13 @@ namespace MeowLIb.WebApi.Services.Implementation.Production;
 /// </summary>
 public class BookCommentService : IBookCommentService
 {
-    private static Regex _htmlRegex = new Regex("<[^>]*>", RegexOptions.Compiled);
-    
+    private static Regex _htmlRegex = new("<[^>]*>", RegexOptions.Compiled);
+
     private readonly IBookCommentRepository _bookCommentRepository;
     private readonly IBookRepository _bookRepository;
     private readonly IUserRepository _userRepository;
     private readonly IMapper _mapper;
-    
+
     /// <summary>
     /// Конструктор.
     /// </summary>
@@ -32,7 +32,7 @@ public class BookCommentService : IBookCommentService
     /// <param name="bookRepository">Репозиторий книг.</param>
     /// <param name="userRepository">Репозиторий пользователя.</param>
     /// <param name="mapper">Автомаппер.</param>
-    public BookCommentService(IBookCommentRepository bookCommentRepository, IBookRepository bookRepository, 
+    public BookCommentService(IBookCommentRepository bookCommentRepository, IBookRepository bookRepository,
         IUserRepository userRepository, IMapper mapper)
     {
         _bookCommentRepository = bookCommentRepository;
@@ -120,6 +120,6 @@ public class BookCommentService : IBookCommentService
 
     private static string RemoveHtml(string str)
     {
-        return _htmlRegex.Replace(str, String.Empty);
+        return _htmlRegex.Replace(str, string.Empty);
     }
 }

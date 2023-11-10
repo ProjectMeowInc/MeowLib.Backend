@@ -16,7 +16,7 @@ public class UserTestRepository : IUserRepository
             Id = 1,
             Login = "tester",
             Role = UserRolesEnum.Admin,
-            Password = "test",
+            Password = "test"
         },
         new UserEntityModel
         {
@@ -36,7 +36,7 @@ public class UserTestRepository : IUserRepository
             Password = createUserData.Password,
             Role = UserRolesEnum.User
         };
-        
+
         _userData.Add(userModel);
         return Task.FromResult(new UserDto
         {

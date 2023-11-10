@@ -38,14 +38,15 @@ public class UserController : BaseController
         return Json(users);
     }
 
-    [HttpPut("{id:int}"), Authorization(RequiredRoles = new [] { UserRolesEnum.Admin })]
+    [HttpPut("{id:int}")]
+    [Authorization(RequiredRoles = new[] { UserRolesEnum.Admin })]
     [ProducesOkResponseType(typeof(UserDto))]
     [ProducesForbiddenResponseType]
     [ProducesNotFoundResponseType]
     public async Task<ActionResult> UpdateUser([FromRoute] int id, [FromBody] UpdateUserRequest input)
     {
         var mappedRequest = _mapper.Map<UpdateUserRequest, UpdateUserEntityModel>(input);
-        
+
         var updateUserResult = await _userService.UpdateUser(id, mappedRequest);
         if (updateUserResult.IsFailure)
         {

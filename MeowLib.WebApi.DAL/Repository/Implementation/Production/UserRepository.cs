@@ -16,7 +16,7 @@ public class UserRepository : IUserRepository
 {
     private readonly ApplicationDbContext _applicationDbContext;
     private readonly IMapper _mapper;
-    
+
     public UserRepository(ApplicationDbContext applicationDbContext, IMapper mapper)
     {
         _applicationDbContext = applicationDbContext;
@@ -32,9 +32,9 @@ public class UserRepository : IUserRepository
     {
         var newUser = _mapper.Map<CreateUserEntityModel, UserEntityModel>(createUserData);
         var dbResult = await _applicationDbContext.Users.AddAsync(newUser);
-        
+
         var userDto = _mapper.Map<UserEntityModel, UserDto>(dbResult.Entity);
-        
+
         await _applicationDbContext.SaveChangesAsync();
         return userDto;
     }
@@ -71,7 +71,7 @@ public class UserRepository : IUserRepository
         {
             return false;
         }
-        
+
         return true;
     }
 
@@ -162,7 +162,7 @@ public class UserRepository : IUserRepository
     {
         var foundedUser = await _applicationDbContext.Users.AsNoTracking()
             .FirstOrDefaultAsync(u => u.RefreshToken == refreshToken);
-        
+
         return foundedUser;
     }
 
@@ -185,7 +185,7 @@ public class UserRepository : IUserRepository
 
         foundedUser.RefreshToken = newRefreshToken;
         _applicationDbContext.Users.Update(foundedUser);
-        
+
         try
         {
             await _applicationDbContext.SaveChangesAsync();

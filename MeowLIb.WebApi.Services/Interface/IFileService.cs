@@ -16,7 +16,7 @@ public interface IFileService
     /// <returns>Название созданного файла</returns>
     /// <exception cref="FileHasIncorrectExtensionException">Возникает в случае, если файл имеет некорретное расширение.</exception>
     Task<Result<string>> UploadBookImageAsync(IFormFile file);
-    
+
     /// <summary>
     /// Метод возвращает загруженное ранее изображение книги. 
     /// </summary>

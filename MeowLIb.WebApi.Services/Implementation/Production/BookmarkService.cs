@@ -20,7 +20,7 @@ public class BookmarkService : IBookmarkService
     private readonly IUserRepository _userRepository;
     private readonly IMapper _mapper;
 
-    public BookmarkService(IBookmarkRepository bookmarkRepository, IChapterRepository chapterRepository, 
+    public BookmarkService(IBookmarkRepository bookmarkRepository, IChapterRepository chapterRepository,
         IUserRepository userRepository, IMapper mapper)
     {
         _bookmarkRepository = bookmarkRepository;
@@ -45,7 +45,7 @@ public class BookmarkService : IBookmarkService
         {
             return Result<BookmarkDto>.Fail(new ChapterNotFoundException(chapterId));
         }
-        
+
         var foundedUser = await _userRepository.GetByIdAsync(userId);
         if (foundedUser is null)
         {
@@ -87,12 +87,14 @@ public class BookmarkService : IBookmarkService
             .FirstOrDefaultAsync();
     }
 
-    private async Task<BookmarkEntityModel?> GetBookmarkByUserAndChapter(UserEntityModel user, ChapterEntityModel chapter)
+    private async Task<BookmarkEntityModel?> GetBookmarkByUserAndChapter(UserEntityModel user,
+        ChapterEntityModel chapter)
     {
-       return await _bookmarkRepository.GetByUserAndChapterAsync(user, chapter);
+        return await _bookmarkRepository.GetByUserAndChapterAsync(user, chapter);
     }
 
-    private async Task<Result<BookmarkEntityModel>> CreateNewBookmarkAsync(UserEntityModel user, ChapterEntityModel chapter)
+    private async Task<Result<BookmarkEntityModel>> CreateNewBookmarkAsync(UserEntityModel user,
+        ChapterEntityModel chapter)
     {
         var createBookmarkResult = await _bookmarkRepository.CreateAsync(new BookmarkEntityModel
         {
@@ -107,8 +109,9 @@ public class BookmarkService : IBookmarkService
 
         return createBookmarkResult.GetResult();
     }
-    
-    private async Task<Result<BookmarkEntityModel>> UpdateBookmarkAsync(BookmarkEntityModel bookmark, ChapterEntityModel newChapter)
+
+    private async Task<Result<BookmarkEntityModel>> UpdateBookmarkAsync(BookmarkEntityModel bookmark,
+        ChapterEntityModel newChapter)
     {
         bookmark.Chapter = newChapter;
         var updateBookmarkResult = await _bookmarkRepository.UpdateAsync(bookmark);

@@ -32,7 +32,7 @@ public class BookService : IBookService
     /// <param name="tagRepository">Репозиторий тегов.</param>
     /// <param name="fileService">Сервис для работы с файлами.</param>
     /// <param name="logger">Логгер.</param>
-    public BookService(IBookRepository bookRepository, IAuthorRepository authorRepository, ITagRepository tagRepository, 
+    public BookService(IBookRepository bookRepository, IAuthorRepository authorRepository, ITagRepository tagRepository,
         IFileService fileService, ILogger<BookService> logger)
     {
         _bookRepository = bookRepository;
@@ -95,13 +95,14 @@ public class BookService : IBookService
     /// <returns>Обновлённая модель книги или null если книга не найдена.</returns>
     /// <exception cref="ValidationException">Возникает в случае ошибки валидации.</exception>
     /// <exception cref="DbSavingException">Возникает в случае ошибки сохранения данных.</exception>
-    public async Task<Result<BookEntityModel?>> UpdateBookInfoByIdAsync(int bookId, UpdateBookEntityModel updateBookEntityModel)
+    public async Task<Result<BookEntityModel?>> UpdateBookInfoByIdAsync(int bookId,
+        UpdateBookEntityModel updateBookEntityModel)
     {
         var inputName = updateBookEntityModel.Name?.Trim() ?? null;
         var inputDescription = updateBookEntityModel.Description?.Trim() ?? null;
 
         var validationErrors = new List<ValidationErrorModel>();
-            
+
         if (inputName is not null && inputName.Length < 5)
         {
             validationErrors.Add(new ValidationErrorModel
@@ -125,7 +126,7 @@ public class BookService : IBookService
 
         foundedBook.Name = inputName ?? foundedBook.Name;
         foundedBook.Description = inputDescription ?? foundedBook.Description;
-        
+
         var updatedBookResult = await _bookRepository.UpdateAsync(foundedBook);
         if (updatedBookResult.IsFailure)
         {
@@ -134,7 +135,7 @@ public class BookService : IBookService
 
         return updatedBookResult.GetResult();
     }
-    
+
     /// <summary>
     /// Метод обновляет автора книги по её Id.
     /// </summary>
@@ -156,7 +157,8 @@ public class BookService : IBookService
         if (foundedAuthor is null)
         {
             _logger.LogInformation("[{@DateTime}] Автор не найден", DateTime.UtcNow);
-            return Result<BookEntityModel?>.Fail(new EntityNotFoundException(nameof(AuthorEntityModel), $"Id={authorId}"));
+            return Result<BookEntityModel?>.Fail(new EntityNotFoundException(nameof(AuthorEntityModel),
+                $"Id={authorId}"));
         }
 
         foundedBook.Author = foundedAuthor;
@@ -224,7 +226,7 @@ public class BookService : IBookService
         var updateResult = await _bookRepository.UpdateAsync(foundedBook);
         if (updateResult.IsFailure)
         {
-            return Result<BookEntityModel?>.Fail( updateResult.GetError());
+            return Result<BookEntityModel?>.Fail(updateResult.GetError());
         }
 
         return updateResult.GetResult();

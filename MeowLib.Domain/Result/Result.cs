@@ -8,14 +8,14 @@ public class Result
     {
         _error = default;
     }
-    
+
     protected Result(Exception error)
     {
         _error = error;
     }
 
     public bool IsFailure => _error is not null;
-    
+
     public Exception GetError()
     {
         if (!IsFailure)
@@ -30,7 +30,7 @@ public class Result
     {
         return new Result();
     }
-    
+
     public static Result Fail(Exception error)
     {
         return new Result(error);
@@ -65,7 +65,7 @@ public class Result<TResult>
 
         return _result ?? throw new NullReferenceException();
     }
-    
+
     public Exception GetError()
     {
         if (!IsFailure)
@@ -75,7 +75,7 @@ public class Result<TResult>
 
         return _error ?? throw new NullReferenceException();
     }
-    
+
     public static Result<TResult> Ok(TResult result)
     {
         return new Result<TResult>(result);

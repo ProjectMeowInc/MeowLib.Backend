@@ -52,7 +52,7 @@ public class UserService : IUserService
         }
 
         var validationErrors = new List<ValidationErrorModel>();
-        
+
         if (login.Length < 6)
         {
             validationErrors.Add(new ValidationErrorModel
@@ -63,7 +63,7 @@ public class UserService : IUserService
         }
 
         password = password.Trim();
-        
+
         if (password.Length < 6)
         {
             validationErrors.Add(new ValidationErrorModel
@@ -78,7 +78,7 @@ public class UserService : IUserService
             var validationException = new ValidationException(validationErrors);
             return Result<UserDto>.Fail(validationException);
         }
-        
+
         var hashedPassword = _hashService.HashString(password);
         var userData = new CreateUserEntityModel
         {
@@ -100,7 +100,8 @@ public class UserService : IUserService
     /// <exception cref="IncorrectCreditionalException">Возникает в случае, если авторизационные данные некорректны.</exception>
     /// <exception cref="CreateTokenException">Возникает в случае, если сгенерированные токен уже кому-то принадлежит.</exception>
     /// <exception cref="EntityNotFoundException">Возникает в случае, если пользователь не был найден.</exception>
-    public async Task<Result<(string accessToken, string refreshToken)>> LogIn(string login, string password, bool isLongSession)
+    public async Task<Result<(string accessToken, string refreshToken)>> LogIn(string login, string password,
+        bool isLongSession)
     {
         var hashedPassword = _hashService.HashString(password);
 
@@ -112,7 +113,7 @@ public class UserService : IUserService
         }
 
         var tokenExpiredTime = isLongSession ? DateTime.UtcNow.AddDays(30) : DateTime.UtcNow.AddMinutes(30);
-        
+
         var accessToken = _jwtTokenService.GenerateAccessToken(userData);
         var refreshToken = _jwtTokenService.GenerateRefreshToken(new RefreshTokenDataModel
         {
@@ -151,7 +152,7 @@ public class UserService : IUserService
             Role = u.Role
         }).ToListAsync();
     }
-    
+
     /// <summary>
     /// Метод обновляет информацию о пользователе и возвращает его Dto-модель.
     /// </summary>
@@ -163,7 +164,7 @@ public class UserService : IUserService
     public async Task<Result<UserDto>> UpdateUser(int id, UpdateUserEntityModel updateData)
     {
         var validationErrors = new List<ValidationErrorModel>();
-        
+
         if (updateData.Login is not null && updateData.Login.Length < 6)
         {
             validationErrors.Add(new ValidationErrorModel
@@ -208,7 +209,7 @@ public class UserService : IUserService
         {
             updateData.Password = _hashService.HashString(updateData.Password);
         }
-        
+
         return await _userRepository.UpdateAsync(id, updateData);
     }
 
@@ -243,7 +244,7 @@ public class UserService : IUserService
             Login = foundedUser.Login,
             IsLongSession = parsedRefreshToken.IsLongSession
         }, tokenExpiredDate);
-        
+
         var newAccessToken = _jwtTokenService.GenerateAccessToken(new UserDto
         {
             Id = foundedUser.Id,
@@ -251,7 +252,8 @@ public class UserService : IUserService
             Role = foundedUser.Role
         });
 
-        var updateRefreshTokenResult = await _userRepository.UpdateRefreshTokenAsync(foundedUser.Login, newRefreshToken);
+        var updateRefreshTokenResult =
+            await _userRepository.UpdateRefreshTokenAsync(foundedUser.Login, newRefreshToken);
         if (updateRefreshTokenResult.IsFailure)
         {
             return Result<(string accessToken, string refreshToken)>.Fail(updateRefreshTokenResult.GetError());

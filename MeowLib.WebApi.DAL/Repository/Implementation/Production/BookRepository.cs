@@ -91,7 +91,7 @@ public class BookRepository : IBookRepository
         {
             throw new DbSavingException(nameof(BookEntityModel), DbSavingTypesEnum.Delete);
         }
-        
+
         return true;
     }
 
@@ -151,7 +151,7 @@ public class BookRepository : IBookRepository
         {
             throw new DbSavingException(nameof(BookEntityModel), DbSavingTypesEnum.Update);
         }
-        
+
         return foundedBook;
     }
 

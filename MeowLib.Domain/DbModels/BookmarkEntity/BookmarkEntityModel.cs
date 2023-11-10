@@ -12,12 +12,12 @@ public class BookmarkEntityModel
     /// Id закладки.
     /// </summary>
     public int Id { get; set; }
-    
+
     /// <summary>
     /// Владелец закладки.
     /// </summary>
     public required UserEntityModel User { get; set; }
-    
+
     /// <summary>
     /// Глава к которой привязана закладка.
     /// </summary>

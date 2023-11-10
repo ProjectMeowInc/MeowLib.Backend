@@ -20,7 +20,7 @@ public class AuthorService : IAuthorService
 {
     private readonly IAuthorRepository _authorRepository;
     private readonly IMapper _mapper;
-    
+
     /// <summary>
     /// Конструктор.
     /// </summary>
@@ -41,7 +41,7 @@ public class AuthorService : IAuthorService
     public async Task<Result<AuthorDto>> CreateAuthorAsync(string name)
     {
         var validationErrors = new List<ValidationErrorModel>();
-        
+
         if (string.IsNullOrEmpty(name))
         {
             validationErrors.Add(new ValidationErrorModel
@@ -90,7 +90,7 @@ public class AuthorService : IAuthorService
     public async Task<Result<AuthorDto>> UpdateAuthorAsync(int id, UpdateAuthorEntityModel updateAuthorEntityModel)
     {
         var validationErrors = new List<ValidationErrorModel>();
-        
+
         if (string.IsNullOrEmpty(updateAuthorEntityModel.Name) || updateAuthorEntityModel.Name.Length < 6)
         {
             validationErrors.Add(new ValidationErrorModel

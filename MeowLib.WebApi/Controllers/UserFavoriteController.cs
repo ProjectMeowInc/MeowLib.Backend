@@ -23,13 +23,15 @@ public class UserFavoriteController : BaseController
         _userFavoriteService = userFavoriteService;
     }
 
-    [HttpPost, Authorization]
+    [HttpPost]
+    [Authorization]
     [ProducesOkResponseType]
     [ProducesResponseType(400, Type = typeof(BaseErrorResponse))]
     public async Task<ActionResult> UpdateUserList([FromBody] UpdateUserListRequest input)
     {
         var userData = await GetUserDataAsync();
-        var updatedUserListResult = await _userFavoriteService.AddOrUpdateUserListAsync(input.BookId, userData.Id, input.Status);
+        var updatedUserListResult =
+            await _userFavoriteService.AddOrUpdateUserListAsync(input.BookId, userData.Id, input.Status);
         if (updatedUserListResult.IsFailure)
         {
             var exception = updatedUserListResult.GetError();
@@ -44,7 +46,8 @@ public class UserFavoriteController : BaseController
         return EmptyResult();
     }
 
-    [HttpGet, Authorization]
+    [HttpGet]
+    [Authorization]
     [ProducesOkResponseType(typeof(GetUserBookListResponse))]
     public async Task<ActionResult> GetUserBookList()
     {
@@ -61,11 +64,12 @@ public class UserFavoriteController : BaseController
                     Books = d.Select(b => b.Book)
                 })
         };
-        
+
         return Json(response);
     }
 
-    [HttpGet("book/{bookId:int}"), Authorization]
+    [HttpGet("book/{bookId:int}")]
+    [Authorization]
     [ProducesOkResponseType(typeof(UserFavoriteDto))]
     [ProducesNotFoundResponseType]
     [ProducesResponseType(400, Type = typeof(BaseErrorResponse))]
@@ -85,8 +89,8 @@ public class UserFavoriteController : BaseController
             {
                 return UpdateAuthorizeResult();
             }
-            
-            return ServerError(); 
+
+            return ServerError();
         }
 
         var foundedFavorite = getUserFavoriteResult.GetResult();

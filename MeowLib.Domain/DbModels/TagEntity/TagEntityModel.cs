@@ -11,12 +11,12 @@ public class TagEntityModel
     /// Id тега.
     /// </summary>
     public int Id { get; set; }
-    
+
     /// <summary>
     /// Название тега.
     /// </summary>
     public string Name { get; set; } = null!;
-    
+
     /// <summary>
     /// Описание тега.
     /// </summary>

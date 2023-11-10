@@ -10,10 +10,10 @@ public class ProducesOkResponseTypeAttribute : ProducesResponseTypeAttribute
 
     public ProducesOkResponseTypeAttribute(Type type) : base(type, 200)
     {
-        
     }
 
-    public ProducesOkResponseTypeAttribute(Type type, int statusCode, string contentType, params string[] additionalContentTypes) : base(type, statusCode, contentType, additionalContentTypes)
+    public ProducesOkResponseTypeAttribute(Type type, int statusCode, string contentType,
+        params string[] additionalContentTypes) : base(type, statusCode, contentType, additionalContentTypes)
     {
     }
 }

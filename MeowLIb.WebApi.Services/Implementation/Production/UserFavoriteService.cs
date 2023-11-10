@@ -19,8 +19,8 @@ public class UserFavoriteService : IUserFavoriteService
     private readonly IUserFavoriteRepository _userFavoriteRepository;
     private readonly IUserRepository _userRepository;
     private readonly IBookRepository _bookRepository;
-    
-    public UserFavoriteService(IUserFavoriteRepository userFavoriteRepository, IUserRepository userRepository, 
+
+    public UserFavoriteService(IUserFavoriteRepository userFavoriteRepository, IUserRepository userRepository,
         IBookRepository bookRepository)
     {
         _userFavoriteRepository = userFavoriteRepository;
@@ -36,7 +36,7 @@ public class UserFavoriteService : IUserFavoriteService
     /// <param name="status">Статус для обновления</param>
     /// <returns>Обновлённую книгу в списке пользователя.</returns>
     /// <exception cref="EntityNotFoundException">Возникает в случае, если книга или пользователь не были найдены.</exception>
-    public async Task<Result<UserFavoriteEntityModel>> AddOrUpdateUserListAsync(int bookId, int userId, 
+    public async Task<Result<UserFavoriteEntityModel>> AddOrUpdateUserListAsync(int bookId, int userId,
         UserFavoritesStatusEnum status)
     {
         var foundedBook = await _bookRepository.GetByIdAsync(bookId);
@@ -45,7 +45,7 @@ public class UserFavoriteService : IUserFavoriteService
             var entityNotFoundException = new EntityNotFoundException(nameof(BookEntityModel), $"Id={bookId}");
             return Result<UserFavoriteEntityModel>.Fail(entityNotFoundException);
         }
-        
+
         var foundedUser = await _userRepository.GetByIdAsync(userId);
         if (foundedUser is null)
         {
@@ -140,7 +140,7 @@ public class UserFavoriteService : IUserFavoriteService
         });
     }
 
-    private async Task<Result<UserFavoriteEntityModel>> UpdateOldAsync(UserFavoriteEntityModel userFavoriteEntity, 
+    private async Task<Result<UserFavoriteEntityModel>> UpdateOldAsync(UserFavoriteEntityModel userFavoriteEntity,
         UserFavoritesStatusEnum status)
     {
         userFavoriteEntity.Status = status;

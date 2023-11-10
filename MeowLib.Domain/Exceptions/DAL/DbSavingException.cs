@@ -11,7 +11,7 @@ public class DbSavingException : DalLevelException
     /// Тип действия при котором произошла ошибка.
     /// </summary>
     public DbSavingTypesEnum Action { get; protected set; }
-    
+
     public DbSavingException(string entityName, DbSavingTypesEnum action) : base(entityName)
     {
         Action = action;

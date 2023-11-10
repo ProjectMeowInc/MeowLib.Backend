@@ -74,12 +74,12 @@ public class BaseController : ControllerBase
     {
         return Json(new BaseErrorResponse(message), 404);
     }
-    
-    
+
+
     [NonAction]
     protected async Task<UserDto> GetUserDataAsync()
     {
-        if (HttpContext.Items.TryGetValue("UserData", out object? authData))
+        if (HttpContext.Items.TryGetValue("UserData", out var authData))
         {
             if (authData is null)
             {
@@ -103,7 +103,7 @@ public class BaseController : ControllerBase
 
             return parsedData;
         }
-        
+
         Response.StatusCode = 500;
         await Response.WriteAsJsonAsync(new
         {

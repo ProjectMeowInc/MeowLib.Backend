@@ -10,7 +10,6 @@ namespace MeowLib.WebApi.DAL.Repository.Interfaces;
 /// </summary>
 public interface IChapterRepository
 {
-    
     /// <summary>
     /// Метод создаёт новую главу в базе данных.
     /// </summary>
@@ -18,8 +17,9 @@ public interface IChapterRepository
     /// <returns>Модель созданной книги.</returns>
     /// <exception cref="DbSavingException">Возникает в случае ошибки сохранения данных.</exception>
     public Task<Result<ChapterEntityModel>> CreateAsync(ChapterEntityModel chapter);
+
     public Task<ChapterEntityModel?> GetByIdAsync(int chapterId);
-    
+
     /// <summary>
     /// Метод удаляет главу.
     /// </summary>
@@ -27,7 +27,7 @@ public interface IChapterRepository
     /// <returns>Ошибку, если она есть.</returns>
     /// <exception cref="DbSavingException">Возникает в случае ошибки сохранения данных.</exception>
     public Task<Result> DeleteAsync(ChapterEntityModel chapter);
-    
+
     /// <summary>
     /// Метод удаляет главу по её Id.
     /// </summary>
@@ -35,9 +35,10 @@ public interface IChapterRepository
     /// <returns>Ошибку, если она есть. Так же возращает ошибки метода <see cref="DeleteAsync"/>.</returns>
     /// <exception cref="EntityNotFoundException">Возникает в случае, если глава не была найдена.</exception>
     public Task<Result> DeleteByIdAsync(int chapterId);
+
     public Task<Result<ChapterEntityModel>> UpdateAsync(ChapterEntityModel chapter);
     public Task<Result<ChapterEntityModel>> UpdateBookAsync(int chapterId, BookEntityModel book);
-    
+
     /// <summary>
     /// Метод обновляет текст главы.
     /// </summary>

@@ -31,6 +31,7 @@ public interface IBookCommentRepository
     /// <returns>Обновлённый комментарий.</returns>
     /// <exception cref="DbSavingException">Возникает в случае ошибки сохранения данных.</exception>
     Task<Result<BookCommentEntityModel>> UpdateAsync(BookCommentEntityModel entity);
+
     /// <summary>
     /// Метод удаляет комментарий.
     /// </summary>

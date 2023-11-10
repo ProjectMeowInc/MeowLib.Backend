@@ -27,7 +27,7 @@ public class BookController : BaseController
     private readonly IBookRepository _bookRepository;
     private readonly IMapper _mapper;
     private readonly IChapterService _chapterService;
-    
+
     public BookController(IBookService bookService, IBookRepository bookRepository, IMapper mapper,
         IChapterService chapterService)
     {
@@ -49,19 +49,20 @@ public class BookController : BaseController
                 Name = book.Name,
                 Description = book.Description,
                 ImageName = book.ImageUrl
-            }).ToListAsync(),
+            }).ToListAsync()
         };
 
         return Json(response);
     }
 
-    [HttpPost, Authorization(RequiredRoles = new [] { UserRolesEnum.Admin, UserRolesEnum.Editor })]
+    [HttpPost]
+    [Authorization(RequiredRoles = new[] { UserRolesEnum.Admin, UserRolesEnum.Editor })]
     [ProducesOkResponseType(typeof(BookEntityModel))]
     [ProducesForbiddenResponseType]
     public async Task<ActionResult> CreateBook([FromBody] CreateBookRequest input)
     {
         var createBookEntityModel = _mapper.Map<CreateBookRequest, CreateBookEntityModel>(input);
-        
+
         var createBookResult = await _bookService.CreateBookAsync(createBookEntityModel);
         if (createBookResult.IsFailure)
         {
@@ -78,7 +79,8 @@ public class BookController : BaseController
         return Json(createdBook);
     }
 
-    [HttpDelete("{id:int}"), Authorization(RequiredRoles = new [] { UserRolesEnum.Admin, UserRolesEnum.Editor })]
+    [HttpDelete("{id:int}")]
+    [Authorization(RequiredRoles = new[] { UserRolesEnum.Admin, UserRolesEnum.Editor })]
     [ProducesOkResponseType]
     [ProducesNotFoundResponseType]
     public async Task<ActionResult> DeleteBook([FromRoute] int id)
@@ -98,14 +100,15 @@ public class BookController : BaseController
         return Ok();
     }
 
-    [HttpPut("{bookId:int}/info"), Authorization(RequiredRoles = new [] { UserRolesEnum.Admin, UserRolesEnum.Editor })]
+    [HttpPut("{bookId:int}/info")]
+    [Authorization(RequiredRoles = new[] { UserRolesEnum.Admin, UserRolesEnum.Editor })]
     [ProducesOkResponseType]
     [ProducesForbiddenResponseType]
     [ProducesNotFoundResponseType]
     public async Task<ActionResult> UpdateBookInfo([FromRoute] int bookId, [FromBody] UpdateBookInfoRequest input)
     {
         var updateBookEntityModel = _mapper.Map<UpdateBookInfoRequest, UpdateBookEntityModel>(input);
-        
+
         var updateBookResult = await _bookService.UpdateBookInfoByIdAsync(bookId, updateBookEntityModel);
         if (updateBookResult.IsFailure)
         {
@@ -119,12 +122,12 @@ public class BookController : BaseController
         }
 
         var updatedBook = updateBookResult.GetResult();
-        
+
         if (updatedBook is null)
         {
             return Error($"Книга с Id = {bookId} не найдена");
         }
-        
+
         return EmptyResult();
     }
 
@@ -143,12 +146,13 @@ public class BookController : BaseController
         return Json(getBookResponse);
     }
 
-    [HttpPost("{bookId:int}/chapters"), Authorization(RequiredRoles = new [] { UserRolesEnum.Admin, UserRolesEnum.Editor })]
+    [HttpPost("{bookId:int}/chapters")]
+    [Authorization(RequiredRoles = new[] { UserRolesEnum.Admin, UserRolesEnum.Editor })]
     [ProducesOkResponseType]
     [ProducesResponseType(400, Type = typeof(BaseErrorResponse))]
     public async Task<ActionResult> CreateChapter([FromRoute] int bookId, [FromBody] CreateChapterRequest input)
     {
-        var createChapterResult = await _chapterService.CreateChapterAsync(name: input.Name, text: input.Text, bookId: bookId);
+        var createChapterResult = await _chapterService.CreateChapterAsync(input.Name, input.Text, bookId);
         if (createChapterResult.IsFailure)
         {
             var exception = createChapterResult.GetError();
@@ -166,7 +170,7 @@ public class BookController : BaseController
     [HttpPut("{bookId:int}/chapters/{chapterId:int}/text")]
     [ProducesOkResponseType(typeof(ChapterEntityModel))]
     [ProducesResponseType(400, Type = typeof(BaseErrorResponse))]
-    public async Task<ActionResult> UpdateChapterText([FromRoute] int chapterId, 
+    public async Task<ActionResult> UpdateChapterText([FromRoute] int chapterId,
         [FromBody] UpdateChapterRequest input)
     {
         var updateChapterTextResult = await _chapterService.UpdateChapterTextAsync(chapterId, input.Text);
@@ -208,7 +212,8 @@ public class BookController : BaseController
         });
     }
 
-    [HttpDelete("{bookId:int}/chapters/{chapterId:int}"), Authorization(RequiredRoles = new [] { UserRolesEnum.Admin, UserRolesEnum.Editor })]
+    [HttpDelete("{bookId:int}/chapters/{chapterId:int}")]
+    [Authorization(RequiredRoles = new[] { UserRolesEnum.Admin, UserRolesEnum.Editor })]
     [ProducesOkResponseType]
     [ProducesResponseType(400, Type = typeof(BaseErrorResponse))]
     public async Task<ActionResult> DeleteBookChapter([FromRoute] int chapterId)
@@ -243,7 +248,8 @@ public class BookController : BaseController
         return Json(mappedResponse);
     }
 
-    [HttpPut("{bookId:int}/author/{authorId:int}"), Authorization(RequiredRoles = new [] { UserRolesEnum.Editor, UserRolesEnum.Admin })]
+    [HttpPut("{bookId:int}/author/{authorId:int}")]
+    [Authorization(RequiredRoles = new[] { UserRolesEnum.Editor, UserRolesEnum.Admin })]
     [ProducesOkResponseType]
     [ProducesResponseType(400, Type = typeof(BaseErrorResponse))]
     [ProducesNotFoundResponseType]
@@ -270,7 +276,8 @@ public class BookController : BaseController
         return Json(updatedBook);
     }
 
-    [HttpPut("{bookId:int}/tags"), Authorization(RequiredRoles = new [] { UserRolesEnum.Editor, UserRolesEnum.Admin })]
+    [HttpPut("{bookId:int}/tags")]
+    [Authorization(RequiredRoles = new[] { UserRolesEnum.Editor, UserRolesEnum.Admin })]
     [ProducesOkResponseType]
     [ProducesNotFoundResponseType]
     public async Task<ActionResult> UpdateBookTags([FromRoute] int bookId, [FromBody] UpdateBookTagsRequest input)
@@ -289,8 +296,9 @@ public class BookController : BaseController
 
         return EmptyResult();
     }
-    
-    [HttpPut("{bookId:int}/image"), Authorization(RequiredRoles = new [] { UserRolesEnum.Editor, UserRolesEnum.Admin })]
+
+    [HttpPut("{bookId:int}/image")]
+    [Authorization(RequiredRoles = new[] { UserRolesEnum.Editor, UserRolesEnum.Admin })]
     [ProducesOkResponseType]
     [ProducesNotFoundResponseType]
     public async Task<ActionResult> UpdateBookImage([FromRoute] int bookId, IFormFile image)
