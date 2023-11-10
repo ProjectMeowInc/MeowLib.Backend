@@ -1,10 +1,9 @@
 using AutoMapper;
-using LanguageExt;
-using LanguageExt.Common;
 using MeowLib.Domain.DbModels.UserEntity;
 using MeowLib.Domain.Dto.User;
 using MeowLib.Domain.Enums;
 using MeowLib.Domain.Exceptions.DAL;
+using MeowLib.Domain.Result;
 using MeowLib.WebApi.DAL.Repository.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,7 +16,7 @@ public class UserRepository : IUserRepository
 {
     private readonly ApplicationDbContext _applicationDbContext;
     private readonly IMapper _mapper;
-    
+
     public UserRepository(ApplicationDbContext applicationDbContext, IMapper mapper)
     {
         _applicationDbContext = applicationDbContext;
@@ -33,9 +32,9 @@ public class UserRepository : IUserRepository
     {
         var newUser = _mapper.Map<CreateUserEntityModel, UserEntityModel>(createUserData);
         var dbResult = await _applicationDbContext.Users.AddAsync(newUser);
-        
+
         var userDto = _mapper.Map<UserEntityModel, UserDto>(dbResult.Entity);
-        
+
         await _applicationDbContext.SaveChangesAsync();
         return userDto;
     }
@@ -72,7 +71,7 @@ public class UserRepository : IUserRepository
         {
             return false;
         }
-        
+
         return true;
     }
 
@@ -163,7 +162,7 @@ public class UserRepository : IUserRepository
     {
         var foundedUser = await _applicationDbContext.Users.AsNoTracking()
             .FirstOrDefaultAsync(u => u.RefreshToken == refreshToken);
-        
+
         return foundedUser;
     }
 
@@ -175,18 +174,18 @@ public class UserRepository : IUserRepository
     /// <returns>Ошибку, если она есть.</returns>
     /// <exception cref="EntityNotFoundException">Возникает в случае, если пользователь не был найден.</exception>
     /// <exception cref="DbSavingException">Возникает в случае ошибки сохранения данных.</exception>
-    public async Task<Option<Exception>> UpdateRefreshTokenAsync(string login, string newRefreshToken)
+    public async Task<Result> UpdateRefreshTokenAsync(string login, string newRefreshToken)
     {
         var foundedUser = await _applicationDbContext.Users.FirstOrDefaultAsync(u => u.Login == login);
         if (foundedUser is null)
         {
             var entityNotFoundException = new EntityNotFoundException(nameof(UserEntityModel), $"login={login}");
-            return entityNotFoundException;
+            return Result.Fail(entityNotFoundException);
         }
 
         foundedUser.RefreshToken = newRefreshToken;
         _applicationDbContext.Users.Update(foundedUser);
-        
+
         try
         {
             await _applicationDbContext.SaveChangesAsync();
@@ -194,10 +193,10 @@ public class UserRepository : IUserRepository
         catch (DbUpdateException)
         {
             var dbSavingException = new DbSavingException(nameof(UserEntityModel), DbSavingTypesEnum.Update);
-            return dbSavingException;
+            return Result.Fail(dbSavingException);
         }
 
-        return Option<Exception>.None;
+        return Result.Ok();
     }
 
     /// <summary>

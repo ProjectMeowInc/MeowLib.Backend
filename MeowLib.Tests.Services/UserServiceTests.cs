@@ -9,7 +9,7 @@ namespace MeowLib.Tests.Services;
 [TestFixture]
 public class UserServiceTests
 {
-    private static IUserService _userService;
+    private static IUserService _userService = null!;
 
     [SetUp]
     public void SetUp()
@@ -17,7 +17,7 @@ public class UserServiceTests
         var hashService = new HashService();
         var userRepository = new UserTestRepository();
         var jwtTokenService = new JwtTokensService(null!);
-        _userService = new UserService(hashService, userRepository, jwtTokenService, null);
+        _userService = new UserService(hashService, userRepository, jwtTokenService);
     }
 
     [Test]
@@ -26,22 +26,18 @@ public class UserServiceTests
         // Логин пользователя, который уже занят.
         var login = "tester";
         var password = "testPassword";
-        
-        var signInResult = await _userService.SignInAsync(login, password);
-        var _ = signInResult.Match(_ =>
-        {
-            Assert.Fail($"Исключение {nameof(ApiException)} не было вызвано");
-            return 1;
-        }, exception =>
-        {
-            if (exception is ApiException)
-            {
-                return 0;
-            }
 
+        var signInResult = await _userService.SignInAsync(login, password);
+        if (!signInResult.IsFailure)
+        {
+            Assert.Fail($"Исключение не было вызвано");
+        }
+
+        var exception = signInResult.GetError();
+        if (exception is not ApiException)
+        {
             Assert.Fail($"Было вызвано исключение {exception.GetType().Name}, а ожидалось {nameof(ApiException)}");
-            return 1;
-        });
+        }
     }
 
     [Test]
@@ -51,14 +47,13 @@ public class UserServiceTests
         var password = "testerov";
 
         var createUserResult = await _userService.SignInAsync(login, password);
-        var _ = createUserResult.Match(user =>
+        if (createUserResult.IsFailure)
         {
-            Assert.AreEqual(login, user.Login);
-            return 0;
-        }, exception =>
-        {
+            var exception = createUserResult.GetError();
             Assert.Fail($"Неожиданное исключение: {exception.Message}");
-            return 1;
-        });
+        }
+
+        var user = createUserResult.GetResult();
+        Assert.AreEqual(login, user.Login);
     }
 }

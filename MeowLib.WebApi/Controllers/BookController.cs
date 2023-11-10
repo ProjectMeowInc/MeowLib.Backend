@@ -27,7 +27,7 @@ public class BookController : BaseController
     private readonly IBookRepository _bookRepository;
     private readonly IMapper _mapper;
     private readonly IChapterService _chapterService;
-    
+
     public BookController(IBookService bookService, IBookRepository bookRepository, IMapper mapper,
         IChapterService chapterService)
     {
@@ -49,76 +49,86 @@ public class BookController : BaseController
                 Name = book.Name,
                 Description = book.Description,
                 ImageName = book.ImageUrl
-            }).ToListAsync(),
+            }).ToListAsync()
         };
 
         return Json(response);
     }
 
-    [HttpPost, Authorization(RequiredRoles = new [] { UserRolesEnum.Admin, UserRolesEnum.Editor })]
+    [HttpPost]
+    [Authorization(RequiredRoles = new[] { UserRolesEnum.Admin, UserRolesEnum.Editor })]
     [ProducesOkResponseType(typeof(BookEntityModel))]
     [ProducesForbiddenResponseType]
     public async Task<ActionResult> CreateBook([FromBody] CreateBookRequest input)
     {
         var createBookEntityModel = _mapper.Map<CreateBookRequest, CreateBookEntityModel>(input);
-        
-        var createBookResult = await _bookService.CreateBookAsync(createBookEntityModel);
 
-        return createBookResult.Match<ActionResult>(createdBook => Json(createdBook), exception =>
+        var createBookResult = await _bookService.CreateBookAsync(createBookEntityModel);
+        if (createBookResult.IsFailure)
         {
+            var exception = createBookResult.GetError();
             if (exception is ValidationException validationException)
             {
                 return validationException.ToResponse();
             }
 
             return ServerError();
-        });
+        }
+
+        var createdBook = createBookResult.GetResult();
+        return Json(createdBook);
     }
 
-    [HttpDelete("{id:int}"), Authorization(RequiredRoles = new [] { UserRolesEnum.Admin, UserRolesEnum.Editor })]
+    [HttpDelete("{id:int}")]
+    [Authorization(RequiredRoles = new[] { UserRolesEnum.Admin, UserRolesEnum.Editor })]
     [ProducesOkResponseType]
     [ProducesNotFoundResponseType]
     public async Task<ActionResult> DeleteBook([FromRoute] int id)
     {
         var deleteBookResult = await _bookService.DeleteBookByIdAsync(id);
-
-        return deleteBookResult.Match<ActionResult>(ok =>
+        if (deleteBookResult.IsFailure)
         {
-            if (!ok)
-            {
-                return NotFoundError();
-            }
+            return ServerError();
+        }
 
-            return Ok();
-        }, _ => ServerError());
+        var bookFounded = deleteBookResult.GetResult();
+        if (!bookFounded)
+        {
+            return NotFoundError();
+        }
+
+        return Ok();
     }
 
-    [HttpPut("{bookId:int}/info"), Authorization(RequiredRoles = new [] { UserRolesEnum.Admin, UserRolesEnum.Editor })]
+    [HttpPut("{bookId:int}/info")]
+    [Authorization(RequiredRoles = new[] { UserRolesEnum.Admin, UserRolesEnum.Editor })]
     [ProducesOkResponseType]
     [ProducesForbiddenResponseType]
     [ProducesNotFoundResponseType]
     public async Task<ActionResult> UpdateBookInfo([FromRoute] int bookId, [FromBody] UpdateBookInfoRequest input)
     {
         var updateBookEntityModel = _mapper.Map<UpdateBookInfoRequest, UpdateBookEntityModel>(input);
-        
+
         var updateBookResult = await _bookService.UpdateBookInfoByIdAsync(bookId, updateBookEntityModel);
-        return updateBookResult.Match<ActionResult>(updatedBook =>
+        if (updateBookResult.IsFailure)
         {
-            if (updatedBook is null)
-            {
-                return Error($"Книга с Id = {bookId} не найдена");
-            }
-            
-            return EmptyResult();
-        }, exception =>
-        {
+            var exception = updateBookResult.GetError();
             if (exception is ValidationException validationException)
             {
                 return validationException.ToResponse();
             }
 
             return ServerError();
-        });
+        }
+
+        var updatedBook = updateBookResult.GetResult();
+
+        if (updatedBook is null)
+        {
+            return Error($"Книга с Id = {bookId} не найдена");
+        }
+
+        return EmptyResult();
     }
 
     [HttpGet("{id:int}")]
@@ -136,39 +146,47 @@ public class BookController : BaseController
         return Json(getBookResponse);
     }
 
-    [HttpPost("{bookId:int}/chapters"), Authorization(RequiredRoles = new [] { UserRolesEnum.Admin, UserRolesEnum.Editor })]
+    [HttpPost("{bookId:int}/chapters")]
+    [Authorization(RequiredRoles = new[] { UserRolesEnum.Admin, UserRolesEnum.Editor })]
     [ProducesOkResponseType]
     [ProducesResponseType(400, Type = typeof(BaseErrorResponse))]
     public async Task<ActionResult> CreateChapter([FromRoute] int bookId, [FromBody] CreateChapterRequest input)
     {
-        var createChapterResult = await _chapterService.CreateChapterAsync(name: input.Name, text: input.Text, bookId: bookId);
-        return createChapterResult.Match<ActionResult>(_ => EmptyResult(), exception =>
+        var createChapterResult = await _chapterService.CreateChapterAsync(input.Name, input.Text, bookId);
+        if (createChapterResult.IsFailure)
         {
+            var exception = createChapterResult.GetError();
             if (exception is EntityNotFoundException)
             {
                 return Error($"Книга с Id = {bookId} не найдена", 400);
             }
 
             return ServerError();
-        });
+        }
+
+        return EmptyResult();
     }
 
     [HttpPut("{bookId:int}/chapters/{chapterId:int}/text")]
     [ProducesOkResponseType(typeof(ChapterEntityModel))]
     [ProducesResponseType(400, Type = typeof(BaseErrorResponse))]
-    public async Task<ActionResult> UpdateChapterText([FromRoute] int chapterId, 
+    public async Task<ActionResult> UpdateChapterText([FromRoute] int chapterId,
         [FromBody] UpdateChapterRequest input)
     {
         var updateChapterTextResult = await _chapterService.UpdateChapterTextAsync(chapterId, input.Text);
-        return updateChapterTextResult.Match<ActionResult>(updatedChapter => Json(updatedChapter), exception =>
+        if (updateChapterTextResult.IsFailure)
         {
+            var exception = updateChapterTextResult.GetError();
             if (exception is EntityNotFoundException)
             {
                 return Error($"Глава с Id = {chapterId} не найдена", 400);
             }
 
             return ServerError();
-        });
+        }
+
+        var updatedChapter = updateChapterTextResult.GetResult();
+        return Json(updatedChapter);
     }
 
     [HttpGet("{bookId:int}/chapters")]
@@ -177,37 +195,42 @@ public class BookController : BaseController
     public async Task<ActionResult> GetBookChapterList([FromRoute] int bookId)
     {
         var getChaptersResult = await _chapterService.GetAllBookChapters(bookId);
-
-        return getChaptersResult.Match<ActionResult>(chapters => Json(new GetAllBookChaptersResponse
+        if (getChaptersResult.IsFailure)
         {
-            Items = chapters
-        }), exception =>
-        {
+            var exception = getChaptersResult.GetError();
             if (exception is EntityNotFoundException)
             {
                 return Error($"Книга с Id = {bookId} не найдена", 400);
             }
 
             return ServerError();
+        }
+
+        return Json(new GetAllBookChaptersResponse
+        {
+            Items = getChaptersResult.GetResult()
         });
     }
 
-    [HttpDelete("{bookId:int}/chapters/{chapterId:int}"), Authorization(RequiredRoles = new [] { UserRolesEnum.Admin, UserRolesEnum.Editor })]
+    [HttpDelete("{bookId:int}/chapters/{chapterId:int}")]
+    [Authorization(RequiredRoles = new[] { UserRolesEnum.Admin, UserRolesEnum.Editor })]
     [ProducesOkResponseType]
     [ProducesResponseType(400, Type = typeof(BaseErrorResponse))]
     public async Task<ActionResult> DeleteBookChapter([FromRoute] int chapterId)
     {
         var deleteChapterResult = await _chapterService.DeleteChapterAsync(chapterId);
-
-        return deleteChapterResult.Match<ActionResult>(exception =>
+        if (deleteChapterResult.IsFailure)
         {
+            var exception = deleteChapterResult.GetError();
             if (exception is EntityNotFoundException)
             {
                 return Error($"Глава с Id = {chapterId} не найдена", 400);
             }
 
             return ServerError();
-        }, () => EmptyResult());
+        }
+
+        return EmptyResult();
     }
 
     [HttpGet("{bookId:int}/chapters/{chapterId:int}")]
@@ -225,64 +248,73 @@ public class BookController : BaseController
         return Json(mappedResponse);
     }
 
-    [HttpPut("{bookId:int}/author/{authorId:int}"), Authorization(RequiredRoles = new [] { UserRolesEnum.Editor, UserRolesEnum.Admin })]
+    [HttpPut("{bookId:int}/author/{authorId:int}")]
+    [Authorization(RequiredRoles = new[] { UserRolesEnum.Editor, UserRolesEnum.Admin })]
     [ProducesOkResponseType]
     [ProducesResponseType(400, Type = typeof(BaseErrorResponse))]
     [ProducesNotFoundResponseType]
     public async Task<ActionResult> UpdateBookAuthor([FromRoute] int bookId, [FromRoute] int authorId)
     {
         var updateBookResult = await _bookService.UpdateBookAuthorAsync(bookId, authorId);
-        return updateBookResult.Match<ActionResult>(updatedBook =>
+        if (updateBookResult.IsFailure)
         {
-            if (updatedBook is null)
-            {
-                return NotFoundError();
-            }
-
-            return EmptyResult();
-        }, exception =>
-        {
+            var exception = updateBookResult.GetError();
             if (exception is EntityNotFoundException)
             {
                 return Error($"Автор с Id = {authorId} не найден", 400);
             }
 
             return ServerError();
-        });
+        }
+
+        var updatedBook = updateBookResult.GetResult();
+        if (updatedBook is null)
+        {
+            return NotFoundError();
+        }
+
+        return Json(updatedBook);
     }
 
-    [HttpPut("{bookId:int}/tags"), Authorization(RequiredRoles = new [] { UserRolesEnum.Editor, UserRolesEnum.Admin })]
+    [HttpPut("{bookId:int}/tags")]
+    [Authorization(RequiredRoles = new[] { UserRolesEnum.Editor, UserRolesEnum.Admin })]
     [ProducesOkResponseType]
     [ProducesNotFoundResponseType]
     public async Task<ActionResult> UpdateBookTags([FromRoute] int bookId, [FromBody] UpdateBookTagsRequest input)
     {
         var updateBookResult = await _bookService.UpdateBookTagsAsync(bookId, input.Tags);
-        return updateBookResult.Match<ActionResult>(updatedBook =>
+        if (updateBookResult.IsFailure)
         {
-            if (updatedBook is null)
-            {
-                return NotFoundError();
-            }
+            return ServerError();
+        }
 
-            return EmptyResult();
-        }, _ => ServerError());
+        var updatedBook = updateBookResult.GetResult();
+        if (updatedBook is null)
+        {
+            return NotFoundError();
+        }
+
+        return EmptyResult();
     }
-    
-    [HttpPut("{bookId:int}/image"), Authorization(RequiredRoles = new [] { UserRolesEnum.Editor, UserRolesEnum.Admin })]
+
+    [HttpPut("{bookId:int}/image")]
+    [Authorization(RequiredRoles = new[] { UserRolesEnum.Editor, UserRolesEnum.Admin })]
     [ProducesOkResponseType]
     [ProducesNotFoundResponseType]
     public async Task<ActionResult> UpdateBookImage([FromRoute] int bookId, IFormFile image)
     {
         var uploadImageResult = await _bookService.UpdateBookImageAsync(bookId, image);
-        
-        return uploadImageResult.Match<ActionResult>(updatedBook =>
+        if (uploadImageResult.IsFailure)
         {
-            if (updatedBook is null)
-            {
-                return NotFoundError($"Книга с Id = {bookId} не найдена");
-            }
+            return ServerError();
+        }
 
-            return EmptyResult();
-        }, _ => ServerError());
+        var updatedBook = uploadImageResult.GetResult();
+        if (updatedBook is null)
+        {
+            return NotFoundError($"Книга с Id = {bookId} не найдена");
+        }
+
+        return EmptyResult();
     }
 }

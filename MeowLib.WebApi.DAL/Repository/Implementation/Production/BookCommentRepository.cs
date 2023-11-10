@@ -1,7 +1,7 @@
-﻿using LanguageExt.Common;
-using MeowLib.Domain.DbModels.BookCommentEntity;
+﻿using MeowLib.Domain.DbModels.BookCommentEntity;
 using MeowLib.Domain.Enums;
 using MeowLib.Domain.Exceptions.DAL;
+using MeowLib.Domain.Result;
 using MeowLib.WebApi.DAL.Repository.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -40,7 +40,7 @@ public class BookCommentRepository : IBookCommentRepository
         catch (DbUpdateException)
         {
             var dbSavingException = new DbSavingException(nameof(BookCommentEntityModel), DbSavingTypesEnum.Create);
-            return new Result<BookCommentEntityModel>(dbSavingException);
+            return Result<BookCommentEntityModel>.Fail(dbSavingException);
         }
 
         return entryEntity.Entity;
@@ -68,13 +68,13 @@ public class BookCommentRepository : IBookCommentRepository
         entryEntity.State = EntityState.Modified;
 
         try
-        { 
+        {
             await _applicationDbContext.SaveChangesAsync();
         }
         catch (DbUpdateException)
         {
             var dbSavingException = new DbSavingException(nameof(BookCommentEntityModel), DbSavingTypesEnum.Update);
-            return new Result<BookCommentEntityModel>(dbSavingException);
+            return Result<BookCommentEntityModel>.Fail(dbSavingException);
         }
 
         return entryEntity.Entity;
@@ -97,7 +97,7 @@ public class BookCommentRepository : IBookCommentRepository
         catch (DbUpdateException)
         {
             var dbSavingException = new DbSavingException(nameof(BookCommentEntityModel), DbSavingTypesEnum.Delete);
-            return new Result<bool>(dbSavingException);
+            return Result<bool>.Fail(dbSavingException);
         }
 
         return true;

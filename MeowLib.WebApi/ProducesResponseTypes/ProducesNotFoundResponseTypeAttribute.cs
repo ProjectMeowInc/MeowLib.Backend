@@ -9,7 +9,8 @@ public class ProducesNotFoundResponseTypeAttribute : ProducesResponseTypeAttribu
     {
     }
 
-    public ProducesNotFoundResponseTypeAttribute(Type type, int statusCode, string contentType, params string[] additionalContentTypes) : base(type, statusCode, contentType, additionalContentTypes)
+    public ProducesNotFoundResponseTypeAttribute(Type type, int statusCode, string contentType,
+        params string[] additionalContentTypes) : base(type, statusCode, contentType, additionalContentTypes)
     {
     }
 }

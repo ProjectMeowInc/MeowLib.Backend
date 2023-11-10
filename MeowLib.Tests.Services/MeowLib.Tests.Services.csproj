@@ -8,13 +8,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="LanguageExt.Core" Version="4.4.3" />
-      <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
-      <PackageReference Include="NUnit" Version="3.13.3" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0"/>
+        <PackageReference Include="NUnit" Version="3.13.3"/>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\MeowLIb.WebApi.Services\MeowLIb.WebApi.Services.csproj" />
+        <ProjectReference Include="..\MeowLIb.WebApi.Services\MeowLIb.WebApi.Services.csproj"/>
     </ItemGroup>
 
 </Project>

@@ -11,12 +11,12 @@ public class UserEntityModel
     /// Id пользователя. PK.
     /// </summary>
     public int Id { get; set; }
-    
+
     /// <summary>
     /// Логин пользователя.
     /// </summary>
     public string Login { get; set; } = null!;
-    
+
     /// <summary>
     /// Пароль пользователя.
     /// </summary>
@@ -26,7 +26,7 @@ public class UserEntityModel
     /// Токен текущей сессии.
     /// </summary>
     public string? RefreshToken { get; set; }
-    
+
     /// <summary>
     /// Роль пользователя.
     /// </summary>

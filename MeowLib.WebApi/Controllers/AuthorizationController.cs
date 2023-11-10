@@ -29,9 +29,9 @@ public class AuthorizationController : BaseController
     public async Task<ActionResult> SignIn([FromBody] SignInRequest input)
     {
         var signInResult = await _userService.SignInAsync(input.Login, input.Password);
-
-        return signInResult.Match<ActionResult>(user => Json(user), exception =>
+        if (signInResult.IsFailure)
         {
+            var exception = signInResult.GetError();
             if (exception is ValidationException validationException)
             {
                 return validationException.ToResponse();
@@ -43,7 +43,9 @@ public class AuthorizationController : BaseController
             }
 
             return ServerError();
-        });
+        }
+
+        return Ok();
     }
 
     [HttpPost]
@@ -54,19 +56,22 @@ public class AuthorizationController : BaseController
     public async Task<ActionResult> LogIn([FromBody] LogInRequest input)
     {
         var logInResult = await _userService.LogIn(input.Login, input.Password, input.IsLongSession);
-
-        return logInResult.Match<ActionResult>(tokens => Json(new LogInResponse
+        if (logInResult.IsFailure)
         {
-            AccessToken = tokens.accessToken,
-            RefreshToken = tokens.refreshToken
-        }), exception =>
-        {
+            var exception = logInResult.GetError();
             if (exception is IncorrectCreditionalException incorrectCreditionalException)
             {
                 return Error(incorrectCreditionalException.ErrorMessage, 401);
             }
 
             return ServerError();
+        }
+
+        var tokens = logInResult.GetResult();
+        return Json(new LogInResponse
+        {
+            AccessToken = tokens.accessToken,
+            RefreshToken = tokens.refreshToken
         });
     }
 
@@ -77,19 +82,22 @@ public class AuthorizationController : BaseController
     public async Task<ActionResult> UpdateTokens([FromBody] UpdateAuthorizationRequest input)
     {
         var loginResult = await _userService.LogInByRefreshTokenAsync(input.RefreshToken);
-
-        return loginResult.Match<ActionResult>(tokens => Json(new LogInResponse
+        if (loginResult.IsFailure)
         {
-            AccessToken = tokens.accessToken,
-            RefreshToken = tokens.refreshToken
-        }), exception =>
-        {
+            var exception = loginResult.GetError();
             if (exception is IncorrectCreditionalException incorrectCreditionalException)
             {
                 return Error(incorrectCreditionalException.ErrorMessage, 401);
             }
 
             return ServerError();
+        }
+
+        var tokens = loginResult.GetResult();
+        return Json(new LogInResponse
+        {
+            AccessToken = tokens.accessToken,
+            RefreshToken = tokens.refreshToken
         });
     }
 }

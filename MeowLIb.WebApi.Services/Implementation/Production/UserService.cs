@@ -1,14 +1,13 @@
-using LanguageExt.Common;
 using MeowLib.Domain.DbModels.UserEntity;
 using MeowLib.Domain.Dto.User;
 using MeowLib.Domain.Exceptions;
 using MeowLib.Domain.Exceptions.DAL;
 using MeowLib.Domain.Exceptions.Services;
 using MeowLib.Domain.Models;
+using MeowLib.Domain.Result;
 using MeowLib.WebApi.DAL.Repository.Interfaces;
 using MeowLIb.WebApi.Services.Interface;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace MeowLIb.WebApi.Services.Implementation.Production;
 
@@ -20,7 +19,6 @@ public class UserService : IUserService
     private readonly IHashService _hashService;
     private readonly IUserRepository _userRepository;
     private readonly IJwtTokenService _jwtTokenService;
-    private readonly ILogger<UserService> _logger;
 
     /// <summary>
     /// Конструктор.
@@ -28,14 +26,11 @@ public class UserService : IUserService
     /// <param name="hashService">Сервис для хеширования.</param>
     /// <param name="userRepository">Репозиторий пользователей.</param>
     /// <param name="jwtTokenService">Сервис JWT-токенов.</param>
-    /// <param name="logger">Логгер</param>
-    public UserService(IHashService hashService, IUserRepository userRepository, IJwtTokenService jwtTokenService, 
-        ILogger<UserService> logger)
+    public UserService(IHashService hashService, IUserRepository userRepository, IJwtTokenService jwtTokenService)
     {
         _hashService = hashService;
         _userRepository = userRepository;
         _jwtTokenService = jwtTokenService;
-        _logger = logger;
     }
 
     /// <summary>
@@ -53,11 +48,11 @@ public class UserService : IUserService
         if (loginAlreadyExist)
         {
             var apiException = new ApiException($"Пользователь с логином {login} уже существует");
-            return new Result<UserDto>(apiException);
+            return Result<UserDto>.Fail(apiException);
         }
 
         var validationErrors = new List<ValidationErrorModel>();
-        
+
         if (login.Length < 6)
         {
             validationErrors.Add(new ValidationErrorModel
@@ -68,7 +63,7 @@ public class UserService : IUserService
         }
 
         password = password.Trim();
-        
+
         if (password.Length < 6)
         {
             validationErrors.Add(new ValidationErrorModel
@@ -81,9 +76,9 @@ public class UserService : IUserService
         if (validationErrors.Any())
         {
             var validationException = new ValidationException(validationErrors);
-            return new Result<UserDto>(validationException);
+            return Result<UserDto>.Fail(validationException);
         }
-        
+
         var hashedPassword = _hashService.HashString(password);
         var userData = new CreateUserEntityModel
         {
@@ -105,7 +100,8 @@ public class UserService : IUserService
     /// <exception cref="IncorrectCreditionalException">Возникает в случае, если авторизационные данные некорректны.</exception>
     /// <exception cref="CreateTokenException">Возникает в случае, если сгенерированные токен уже кому-то принадлежит.</exception>
     /// <exception cref="EntityNotFoundException">Возникает в случае, если пользователь не был найден.</exception>
-    public async Task<Result<(string accessToken, string refreshToken)>> LogIn(string login, string password, bool isLongSession)
+    public async Task<Result<(string accessToken, string refreshToken)>> LogIn(string login, string password,
+        bool isLongSession)
     {
         var hashedPassword = _hashService.HashString(password);
 
@@ -113,11 +109,11 @@ public class UserService : IUserService
         if (userData is null)
         {
             var incorrectCreditionalException = new IncorrectCreditionalException("Неверный логин или пароль");
-            return new Result<(string accessToken, string refreshToken)>(incorrectCreditionalException);
+            return Result<(string accessToken, string refreshToken)>.Fail(incorrectCreditionalException);
         }
 
         var tokenExpiredTime = isLongSession ? DateTime.UtcNow.AddDays(30) : DateTime.UtcNow.AddMinutes(30);
-        
+
         var accessToken = _jwtTokenService.GenerateAccessToken(userData);
         var refreshToken = _jwtTokenService.GenerateRefreshToken(new RefreshTokenDataModel
         {
@@ -131,21 +127,16 @@ public class UserService : IUserService
         if (foundedUser is not null)
         {
             var createTokenException = new CreateTokenException("Токен уже занят");
-            return new Result<(string accessToken, string refreshToken)>(createTokenException);
+            return Result<(string accessToken, string refreshToken)>.Fail(createTokenException);
         }
 
-        var updateError = await _userRepository.UpdateRefreshTokenAsync(userData.Login, refreshToken);
-        return updateError.Match<Result<(string accessToken, string refreshToken)>>(exception => 
+        var updateRefreshTokenResult = await _userRepository.UpdateRefreshTokenAsync(userData.Login, refreshToken);
+        if (updateRefreshTokenResult.IsFailure)
         {
-            _logger.LogError("Ошибка обновления Refresh-токена: {}", exception.Message);
-            
-            if (exception is EntityNotFoundException entityNotFoundException)
-            {
-                return new Result<(string accessToken, string refreshToken)>(entityNotFoundException);
-            }
-            
-            return new Result<(string accessToken, string refreshToken)>(exception);
-        }, () => (accessToken, refreshToken));
+            return Result<(string accessToken, string refreshToken)>.Fail(updateRefreshTokenResult.GetError());
+        }
+
+        return (accessToken, refreshToken);
     }
 
     /// <summary>
@@ -161,7 +152,7 @@ public class UserService : IUserService
             Role = u.Role
         }).ToListAsync();
     }
-    
+
     /// <summary>
     /// Метод обновляет информацию о пользователе и возвращает его Dto-модель.
     /// </summary>
@@ -173,7 +164,7 @@ public class UserService : IUserService
     public async Task<Result<UserDto>> UpdateUser(int id, UpdateUserEntityModel updateData)
     {
         var validationErrors = new List<ValidationErrorModel>();
-        
+
         if (updateData.Login is not null && updateData.Login.Length < 6)
         {
             validationErrors.Add(new ValidationErrorModel
@@ -195,7 +186,7 @@ public class UserService : IUserService
         if (validationErrors.Any())
         {
             var validationException = new ValidationException(validationErrors);
-            return new Result<UserDto>(validationException);
+            return Result<UserDto>.Fail(validationException);
         }
 
         if (updateData.Login is not null)
@@ -210,7 +201,7 @@ public class UserService : IUserService
                 });
 
                 var validationException = new ValidationException(validationErrors);
-                return new Result<UserDto>(validationException);
+                return Result<UserDto>.Fail(validationException);
             }
         }
 
@@ -218,7 +209,7 @@ public class UserService : IUserService
         {
             updateData.Password = _hashService.HashString(updateData.Password);
         }
-        
+
         return await _userRepository.UpdateAsync(id, updateData);
     }
 
@@ -234,14 +225,14 @@ public class UserService : IUserService
         if (parsedRefreshToken is null)
         {
             var incorrectCreditionalException = new IncorrectCreditionalException("Неверный RefreshToken");
-            return new Result<(string accessToken, string refreshToken)>(incorrectCreditionalException);
+            return Result<(string accessToken, string refreshToken)>.Fail(incorrectCreditionalException);
         }
 
         var foundedUser = await _userRepository.GetByRefreshTokenAsync(refreshToken);
         if (foundedUser is null)
         {
             var sessionExpiredException = new IncorrectCreditionalException("Сессия с введёным токеном истекла");
-            return new Result<(string accessToken, string refreshToken)>(sessionExpiredException);
+            return Result<(string accessToken, string refreshToken)>.Fail(sessionExpiredException);
         }
 
         var tokenExpiredDate = parsedRefreshToken.IsLongSession
@@ -253,7 +244,7 @@ public class UserService : IUserService
             Login = foundedUser.Login,
             IsLongSession = parsedRefreshToken.IsLongSession
         }, tokenExpiredDate);
-        
+
         var newAccessToken = _jwtTokenService.GenerateAccessToken(new UserDto
         {
             Id = foundedUser.Id,
@@ -261,10 +252,13 @@ public class UserService : IUserService
             Role = foundedUser.Role
         });
 
-        var updateRefreshTokenError = await _userRepository.UpdateRefreshTokenAsync(foundedUser.Login, newRefreshToken);
+        var updateRefreshTokenResult =
+            await _userRepository.UpdateRefreshTokenAsync(foundedUser.Login, newRefreshToken);
+        if (updateRefreshTokenResult.IsFailure)
+        {
+            return Result<(string accessToken, string refreshToken)>.Fail(updateRefreshTokenResult.GetError());
+        }
 
-        return updateRefreshTokenError.Match<Result<(string accessToken, string refreshToken)>>(exception =>
-            new Result<(string accessToken, string refreshToken)>(exception), 
-            () => (newAccessToken, newRefreshToken));
+        return (newAccessToken, newRefreshToken);
     }
 }

@@ -1,4 +1,3 @@
-
 using Microsoft.AspNetCore.Mvc;
 
 namespace MeowLib.Domain.Interfaces;
@@ -6,7 +5,7 @@ namespace MeowLib.Domain.Interfaces;
 /// <summary>
 /// Интерфейс для данных, которые можно привести к корректному виду для возвращения пользователю.
 /// </summary>
-public interface IHasResponseForm 
+public interface IHasResponseForm
 {
     /// <summary>
     /// Метод приводит к формату, пригодному для возвращения из контроллера.

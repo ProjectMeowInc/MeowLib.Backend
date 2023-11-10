@@ -1,9 +1,8 @@
-﻿using LanguageExt;
-using LanguageExt.Common;
-using MeowLib.Domain.DbModels.ChapterEntity;
+﻿using MeowLib.Domain.DbModels.ChapterEntity;
 using MeowLib.Domain.Dto.Chapter;
 using MeowLib.Domain.Exceptions.DAL;
 using MeowLib.Domain.Exceptions.Services;
+using MeowLib.Domain.Result;
 
 namespace MeowLIb.WebApi.Services.Interface;
 
@@ -49,7 +48,7 @@ public interface IChapterService
     /// <returns>Ошибку, если она есть.</returns>
     /// <exception cref="EntityNotFoundException">Возникает в случае, если глава не была найдена.</exception>
     /// <exception cref="DbSavingException">Возникает в случае ошибки сохранения данных.</exception>
-    Task<Option<Exception>> DeleteChapterAsync(int chapterId);
+    Task<Result> DeleteChapterAsync(int chapterId);
 
     /// <summary>
     /// Метод возвращает главу по её Id.

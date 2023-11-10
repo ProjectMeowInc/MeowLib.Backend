@@ -9,7 +9,7 @@ public class ServiceLevelException : ApiException
     /// Название сервиса в котором произошло исключение.
     /// </summary>
     public string ServiceName { get; protected set; }
-    
+
     /// <summary>
     /// Конструктор.
     /// </summary>

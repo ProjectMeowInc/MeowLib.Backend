@@ -36,36 +36,36 @@ public class MappingProfile : Profile
         CreateMap<UserEntityModel, UserDto>();
         CreateMap<UpdateUserRequest, UpdateUserEntityModel>()
             .ReverseMap();
-        
+
         // Authors mapping
         CreateMap<CreateAuthorEntityModel, AuthorEntityModel>();
         CreateMap<AuthorEntityModel, AuthorDto>();
         CreateMap<UpdateAuthorEntityModel, UpdateAuthorRequest>()
             .ReverseMap();
-        
+
         // Tag mapping
         CreateMap<TagEntityModel, TagDto>();
         CreateMap<CreateTagRequest, CreateTagEntityModel>()
             .ReverseMap();
         CreateMap<UpdateTagRequest, UpdateTagEntityModel>()
             .ReverseMap();
-        
+
         // Book mapping
         CreateMap<CreateBookRequest, CreateBookEntityModel>()
             .ReverseMap();
         CreateMap<BookEntityModel, GetBookResponse>();
         CreateMap<UpdateBookInfoRequest, UpdateBookEntityModel>();
-        
+
         // Chapter mapping
         CreateMap<ChapterEntityModel, ChapterDto>();
         CreateMap<ChapterEntityModel, GetBookChapterResponse>();
-        
+
         // Bookmark mapping
         CreateMap<BookmarkEntityModel, BookmarkDto>()
             .ForMember(b => b.ChapterId,
-                opt 
+                opt
                     => opt.MapFrom(b => b.Chapter.Id));
-        
+
         // BookComments mapping
         CreateMap<BookCommentEntityModel, BookCommentDto>();
     }

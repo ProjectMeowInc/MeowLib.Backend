@@ -16,22 +16,23 @@ namespace MeowLib.WebApi.Controllers;
 public class BookmarkController : BaseController
 {
     private readonly IBookmarkService _bookmarkService;
-    
+
     public BookmarkController(IBookmarkService bookmarkService)
     {
         _bookmarkService = bookmarkService;
     }
 
-    [HttpPost, Authorization]
+    [HttpPost]
+    [Authorization]
     [ProducesOkResponseType(typeof(BookmarkDto))]
     [ProducesResponseType(400, Type = typeof(BaseErrorResponse))]
     public async Task<ActionResult> CreateOrUpdateBookmark([FromBody] CreateOrUpdateBookmarkRequest input)
     {
         var user = await GetUserDataAsync();
         var createBookmarkResult = await _bookmarkService.CreateBookmarkAsync(user.Id, input.ChapterId);
-
-        return createBookmarkResult.Match<ActionResult>(createdBookmark => Json(createdBookmark), exception =>
+        if (createBookmarkResult.IsFailure)
         {
+            var exception = createBookmarkResult.GetError();
             if (exception is ChapterNotFoundException)
             {
                 return Error($"Глава с Id = {input.ChapterId} не существует", 400);
@@ -43,10 +44,14 @@ public class BookmarkController : BaseController
             }
 
             return ServerError();
-        });
+        }
+
+        var createdBookmark = createBookmarkResult.GetResult();
+        return Json(createdBookmark);
     }
 
-    [HttpGet("book/{bookId}"), Authorization]
+    [HttpGet("book/{bookId}")]
+    [Authorization]
     [ProducesOkResponseType(typeof(BookmarkDto))]
     [ProducesNotFoundResponseType]
     public async Task<ActionResult> GetBookmarkByBook([FromRoute] int bookId)

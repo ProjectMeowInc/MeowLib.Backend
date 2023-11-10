@@ -20,7 +20,7 @@ public class JwtTokensService : IJwtTokenService
     private readonly string _issuer;
     private readonly string _audience;
     private readonly ILogger<JwtTokensService> _logger;
-    
+
     /// <summary>
     /// Конструктор.
     /// </summary>
@@ -30,10 +30,10 @@ public class JwtTokensService : IJwtTokenService
         // Init secret key
         var accessTokenSecurityKey = "QevAyHIKuOHJwG6sdYwnfrrbUW61cu4r3vuyzSNkBw1itzJD5AMXdKqLfzv"u8.ToArray();
         var refreshTokenSecurityKey = "Wv8HLBxBztPocFYSMDZn3074USr48gxw9RXZw4BCxAp290CqsPPG9frFLR2p"u8.ToArray();
-        
+
         _accessTokenSecurityKey = new SymmetricSecurityKey(accessTokenSecurityKey);
         _refreshTokenSecurityKey = new SymmetricSecurityKey(refreshTokenSecurityKey);
-        
+
         _issuer = "MeowLib";
         _audience = "MeowLibUser";
     }
@@ -58,7 +58,7 @@ public class JwtTokensService : IJwtTokenService
             Audience = _audience,
             SigningCredentials = new SigningCredentials(_accessTokenSecurityKey, SecurityAlgorithms.HmacSha256Signature)
         };
-        
+
         return WriteToken(tokenDescriptor);
     }
 
@@ -80,7 +80,8 @@ public class JwtTokensService : IJwtTokenService
             Expires = expiredAt,
             Issuer = _issuer,
             Audience = _audience,
-            SigningCredentials = new SigningCredentials(_refreshTokenSecurityKey, SecurityAlgorithms.HmacSha256Signature)
+            SigningCredentials =
+                new SigningCredentials(_refreshTokenSecurityKey, SecurityAlgorithms.HmacSha256Signature)
         };
 
         return WriteToken(tokenDescription);
@@ -117,14 +118,14 @@ public class JwtTokensService : IJwtTokenService
             _logger.LogError("Ошибка получения даты истечения из токена");
             return null;
         }
-        
+
         var expirationTime = DateTimeOffset.FromUnixTimeSeconds(expiredAtInt).UtcDateTime;
 
         if (expirationTime < DateTime.UtcNow)
         {
             return null;
         }
-        
+
         var userData = new UserDto
         {
             Id = int.Parse((string)claims["id"]),
@@ -159,7 +160,7 @@ public class JwtTokensService : IJwtTokenService
         }
 
         var claims = tokenValidationResult.Claims;
-        
+
         var tokenData = new RefreshTokenDataModel
         {
             Login = (string)claims["login"],

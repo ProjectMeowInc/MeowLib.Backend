@@ -19,7 +19,7 @@ public class AuthorController : BaseController
 {
     private readonly IAuthorService _authorService;
     private readonly IMapper _mapper;
-    
+
     public AuthorController(IAuthorService authorService, IMapper mapper)
     {
         _authorService = authorService;
@@ -34,24 +34,30 @@ public class AuthorController : BaseController
         return Json(authors);
     }
 
-    [HttpPost, Authorization(RequiredRoles = new [] { UserRolesEnum.Editor, UserRolesEnum.Admin })]
+    [HttpPost]
+    [Authorization(RequiredRoles = new[] { UserRolesEnum.Editor, UserRolesEnum.Admin })]
     [ProducesOkResponseType(typeof(AuthorDto))]
     [ProducesForbiddenResponseType]
     public async Task<ActionResult> CreateAuthor([FromBody] CreateAuthorRequest input)
     {
         var createResult = await _authorService.CreateAuthorAsync(input.Name);
-        return createResult.Match<ActionResult>(author => Json(author), exception =>
+        if (createResult.IsFailure)
         {
+            var exception = createResult.GetError();
             if (exception is ValidationException validationException)
             {
                 return validationException.ToResponse();
             }
 
             return ServerError();
-        });
+        }
+
+        var author = createResult.GetResult();
+        return Json(author);
     }
 
-    [HttpPut("{authorId:int}"), Authorization(RequiredRoles = new [] { UserRolesEnum.Editor, UserRolesEnum.Admin })]
+    [HttpPut("{authorId:int}")]
+    [Authorization(RequiredRoles = new[] { UserRolesEnum.Editor, UserRolesEnum.Admin })]
     [ProducesOkResponseType(typeof(AuthorDto))]
     [ProducesForbiddenResponseType]
     [ProducesNotFoundResponseType]
@@ -59,9 +65,11 @@ public class AuthorController : BaseController
     {
         var updateAuthorModel = _mapper.Map<UpdateAuthorRequest, UpdateAuthorEntityModel>(input);
         var updateResult = await _authorService.UpdateAuthorAsync(authorId, updateAuthorModel);
-        
-        return updateResult.Match<ActionResult>(updatedAuthor => Json(updatedAuthor), exception =>
+
+        if (updateResult.IsFailure)
         {
+            var exception = updateResult.GetError();
+
             if (exception is ValidationException validationException)
             {
                 return validationException.ToResponse();
@@ -73,24 +81,31 @@ public class AuthorController : BaseController
             }
 
             return ServerError();
-        });
+        }
+
+        var updatedAuthor = updateResult.GetResult();
+        return Json(updatedAuthor);
     }
 
-    [HttpDelete("{authorId:int}"), Authorization(RequiredRoles = new [] { UserRolesEnum.Editor, UserRolesEnum.Admin })]
+    [HttpDelete("{authorId:int}")]
+    [Authorization(RequiredRoles = new[] { UserRolesEnum.Editor, UserRolesEnum.Admin })]
     [ProducesOkResponseType]
     [ProducesNotFoundResponseType]
     public async Task<ActionResult> DeleteAuthor([FromRoute] int authorId)
     {
-        var result = await _authorService.DeleteAuthorAsync(authorId);
-        return result.Match<ActionResult>(ok =>
+        var deleteAuthorResult = await _authorService.DeleteAuthorAsync(authorId);
+        if (deleteAuthorResult.IsFailure)
         {
-            if (!ok)
-            {
-                return NotFoundError();
-            }
-            
-            return Ok();
-        }, _ => ServerError());
+            return ServerError();
+        }
+
+        var isFounded = deleteAuthorResult.GetResult();
+        if (!isFounded)
+        {
+            return NotFoundError();
+        }
+
+        return Ok();
     }
 
     [HttpGet("{authorId:int}")]
@@ -99,15 +114,19 @@ public class AuthorController : BaseController
     public async Task<ActionResult> GetAuthorById([FromRoute] int authorId)
     {
         var result = await _authorService.GetAuthorByIdAsync(authorId);
-        return result.Match<ActionResult>(author => Json(author), exception =>
+        if (result.IsFailure)
         {
+            var exception = result.GetError();
             if (exception is EntityNotFoundException)
             {
                 return NotFoundError();
             }
 
             return ServerError();
-        });
+        }
+
+        var author = result.GetResult();
+        return Json(author);
     }
 
     [HttpPost]
@@ -117,14 +136,18 @@ public class AuthorController : BaseController
     public async Task<ActionResult> GetAuthorWithParams([FromBody] GetAuthorWithParamsRequest input)
     {
         var getAuthorWithParamsResult = await _authorService.GetAuthorWithParams(input);
-        return getAuthorWithParamsResult.Match<ActionResult>(authors => Json(authors), exception =>
+        if (getAuthorWithParamsResult.IsFailure)
         {
+            var exception = getAuthorWithParamsResult.GetError();
             if (exception is SearchNotFoundException)
             {
                 return Error("Авторы с заданным параметрами не найдены", 404);
             }
 
             return ServerError();
-        });
+        }
+
+        var author = getAuthorWithParamsResult.GetResult();
+        return Json(author);
     }
 }

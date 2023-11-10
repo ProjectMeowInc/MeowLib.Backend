@@ -9,12 +9,8 @@ namespace MeowLib.Domain.Enums;
 [JsonConverter(typeof(JsonStringEnumConverter))]
 public enum UserRolesEnum
 {
-    [Description("Обычный пользователь")]
-    User = 1,
-    [Description("Редактор")]
-    Editor = 10,
-    [Description("Модератор")]
-    Moderator = 50,
-    [Description("Администратор")]
-    Admin = 999
+    [Description("Обычный пользователь")] User = 1,
+    [Description("Редактор")] Editor = 10,
+    [Description("Модератор")] Moderator = 50,
+    [Description("Администратор")] Admin = 999
 }

@@ -23,26 +23,31 @@ public class UserFavoriteController : BaseController
         _userFavoriteService = userFavoriteService;
     }
 
-    [HttpPost, Authorization]
+    [HttpPost]
+    [Authorization]
     [ProducesOkResponseType]
     [ProducesResponseType(400, Type = typeof(BaseErrorResponse))]
     public async Task<ActionResult> UpdateUserList([FromBody] UpdateUserListRequest input)
     {
         var userData = await GetUserDataAsync();
-        var updatedUserListResult = await _userFavoriteService.AddOrUpdateUserListAsync(input.BookId, userData.Id, input.Status);
-
-        return updatedUserListResult.Match<ActionResult>(_ => EmptyResult(), exception =>
+        var updatedUserListResult =
+            await _userFavoriteService.AddOrUpdateUserListAsync(input.BookId, userData.Id, input.Status);
+        if (updatedUserListResult.IsFailure)
         {
+            var exception = updatedUserListResult.GetError();
             if (exception is EntityNotFoundException)
             {
                 return Error("Неверно указана книга или пользователь", 400);
             }
 
             return ServerError();
-        });
+        }
+
+        return EmptyResult();
     }
 
-    [HttpGet, Authorization]
+    [HttpGet]
+    [Authorization]
     [ProducesOkResponseType(typeof(GetUserBookListResponse))]
     public async Task<ActionResult> GetUserBookList()
     {
@@ -59,11 +64,12 @@ public class UserFavoriteController : BaseController
                     Books = d.Select(b => b.Book)
                 })
         };
-        
+
         return Json(response);
     }
 
-    [HttpGet("book/{bookId:int}"), Authorization]
+    [HttpGet("book/{bookId:int}")]
+    [Authorization]
     [ProducesOkResponseType(typeof(UserFavoriteDto))]
     [ProducesNotFoundResponseType]
     [ProducesResponseType(400, Type = typeof(BaseErrorResponse))]
@@ -71,16 +77,9 @@ public class UserFavoriteController : BaseController
     {
         var userData = await GetUserDataAsync();
         var getUserFavoriteResult = await _userFavoriteService.GetUserFavoriteByBookAsync(userData.Id, bookId);
-        return getUserFavoriteResult.Match<ActionResult>(foundedFavorite =>
+        if (getUserFavoriteResult.IsFailure)
         {
-            if (foundedFavorite is null)
-            {
-                return NotFoundError("Книга отсутствует в списке пользователя");
-            }
-
-            return Json(foundedFavorite);
-        }, exception =>
-        {
+            var exception = getUserFavoriteResult.GetError();
             if (exception is BookNotFoundException)
             {
                 return Error($"Книга с Id = {bookId} не найдена", 400);
@@ -90,8 +89,16 @@ public class UserFavoriteController : BaseController
             {
                 return UpdateAuthorizeResult();
             }
-            
+
             return ServerError();
-        });
+        }
+
+        var foundedFavorite = getUserFavoriteResult.GetResult();
+        if (foundedFavorite is null)
+        {
+            return NotFoundError("Книга отсутствует в списке пользователя");
+        }
+
+        return Json(foundedFavorite);
     }
 }

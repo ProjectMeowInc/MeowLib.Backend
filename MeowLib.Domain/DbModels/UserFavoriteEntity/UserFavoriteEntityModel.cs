@@ -10,17 +10,17 @@ public class UserFavoriteEntityModel
     /// Id.
     /// </summary>
     public int Id { get; set; }
-    
+
     /// <summary>
     /// Ссылка на книгу.
     /// </summary>
     public required BookEntityModel Book { get; set; }
-    
+
     /// <summary>
     /// Ссылка на пользователя.
     /// </summary>
     public required UserEntityModel User { get; set; }
-    
+
     /// <summary>
     /// Статус.
     /// </summary>

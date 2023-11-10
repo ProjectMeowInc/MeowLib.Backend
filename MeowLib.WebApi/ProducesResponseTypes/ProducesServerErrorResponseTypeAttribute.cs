@@ -9,7 +9,8 @@ public class ProducesServerErrorResponseTypeAttribute : ProducesResponseTypeAttr
     {
     }
 
-    public ProducesServerErrorResponseTypeAttribute(Type type, int statusCode, string contentType, params string[] additionalContentTypes) : base(type, statusCode, contentType, additionalContentTypes)
+    public ProducesServerErrorResponseTypeAttribute(Type type, int statusCode, string contentType,
+        params string[] additionalContentTypes) : base(type, statusCode, contentType, additionalContentTypes)
     {
     }
 }

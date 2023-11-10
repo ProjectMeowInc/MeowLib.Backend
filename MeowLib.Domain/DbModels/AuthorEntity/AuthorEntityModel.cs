@@ -9,7 +9,7 @@ public class AuthorEntityModel
     /// Id автора.
     /// </summary>
     public int Id { get; set; }
-    
+
     /// <summary>
     /// Имя автора.
     /// </summary>

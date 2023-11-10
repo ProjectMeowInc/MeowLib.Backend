@@ -1,5 +1,5 @@
-﻿using LanguageExt.Common;
-using MeowLib.Domain.Exceptions;
+﻿using MeowLib.Domain.Exceptions;
+using MeowLib.Domain.Result;
 using Microsoft.AspNetCore.Http;
 
 namespace MeowLIb.WebApi.Services.Interface;
@@ -16,7 +16,7 @@ public interface IFileService
     /// <returns>Название созданного файла</returns>
     /// <exception cref="FileHasIncorrectExtensionException">Возникает в случае, если файл имеет некорретное расширение.</exception>
     Task<Result<string>> UploadBookImageAsync(IFormFile file);
-    
+
     /// <summary>
     /// Метод возвращает загруженное ранее изображение книги. 
     /// </summary>

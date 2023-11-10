@@ -13,32 +13,32 @@ public class BookEntityModel
     /// Id книги.
     /// </summary>
     public int Id { get; set; }
-    
+
     /// <summary>
     /// Имя книги.
     /// </summary>
     public string Name { get; set; } = null!;
-    
+
     /// <summary>
     /// Описание книги.
     /// </summary>
     public string Description { get; set; } = null!;
-    
+
     /// <summary>
     /// Название файла обложки книги.
     /// </summary>
     public string? ImageUrl { get; set; }
-    
+
     /// <summary>
     /// Автор книги. FK.
     /// </summary>
     public AuthorEntityModel? Author { get; set; }
-    
+
     /// <summary>
     /// Список глав книги.
     /// </summary>
     public IEnumerable<ChapterEntityModel> Chapters { get; set; } = new List<ChapterEntityModel>();
-    
+
     /// <summary>
     /// Список тегов книги.
     /// </summary>

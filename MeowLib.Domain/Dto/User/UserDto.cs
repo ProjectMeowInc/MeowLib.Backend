@@ -12,12 +12,12 @@ public class UserDto
     /// Id пользователя.
     /// </summary>
     public required int Id { get; set; }
-    
+
     /// <summary>
     /// Логин пользователя.
     /// </summary>
     public required string Login { get; set; } = null!;
-    
+
     /// <summary>
     /// Роль пользователя.
     /// </summary>

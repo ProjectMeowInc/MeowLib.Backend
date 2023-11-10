@@ -1,6 +1,6 @@
-﻿using LanguageExt.Common;
-using MeowLib.Domain.DbModels.BookCommentEntity;
+﻿using MeowLib.Domain.DbModels.BookCommentEntity;
 using MeowLib.Domain.Exceptions.DAL;
+using MeowLib.Domain.Result;
 
 namespace MeowLib.WebApi.DAL.Repository.Interfaces;
 
@@ -31,6 +31,7 @@ public interface IBookCommentRepository
     /// <returns>Обновлённый комментарий.</returns>
     /// <exception cref="DbSavingException">Возникает в случае ошибки сохранения данных.</exception>
     Task<Result<BookCommentEntityModel>> UpdateAsync(BookCommentEntityModel entity);
+
     /// <summary>
     /// Метод удаляет комментарий.
     /// </summary>

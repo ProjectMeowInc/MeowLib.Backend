@@ -21,7 +21,6 @@ public class ApplicationDbContext : DbContext
     /// <param name="options">Настройки БД.</param>
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
     {
-        
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -56,12 +55,12 @@ public class ApplicationDbContext : DbContext
     /// Таблица пользователей.
     /// </summary>
     public DbSet<UserEntityModel> Users { get; set; } = null!;
-    
+
     /// <summary>
     /// Таблица авторов.
     /// </summary>
     public DbSet<AuthorEntityModel> Authors { get; set; } = null!;
-    
+
     /// <summary>
     /// Таблица тегов.
     /// </summary>

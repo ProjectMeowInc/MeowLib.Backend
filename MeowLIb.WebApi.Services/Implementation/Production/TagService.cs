@@ -66,7 +66,7 @@ public class TagService : ITagService
                     Message = "Описание не может быть пустой строкой"
                 });
             }
-            
+
             if (createTagEntityModel.Description.Length > 100)
             {
                 validationErrors.Add(new ValidationErrorModel
@@ -156,12 +156,12 @@ public class TagService : ITagService
     public async Task<Result<TagEntityModel?>> UpdateTagByIdAsync(int id, UpdateTagEntityModel updateTagEntityModel)
     {
         var validationErrors = new List<ValidationErrorModel>();
-        
+
         if (updateTagEntityModel.Name is not null)
         {
             if (string.IsNullOrEmpty(updateTagEntityModel.Name))
             {
-                validationErrors.Add(new()
+                validationErrors.Add(new ValidationErrorModel
                 {
                     PropertyName = nameof(updateTagEntityModel.Name),
                     Message = "Имя тега не может быть пустой строкой"
@@ -188,7 +188,7 @@ public class TagService : ITagService
                     Message = "Описание не может быть пустой строкой"
                 });
             }
-            
+
             if (updateTagEntityModel.Description.Length > 256)
             {
                 validationErrors.Add(new ValidationErrorModel
@@ -204,7 +204,7 @@ public class TagService : ITagService
             var validationException = new ValidationException(nameof(TagService), validationErrors);
             return new Result<TagEntityModel?>(validationException);
         }
-        
+
         try
         {
             return await _tagRepository.UpdateAsync(id, updateTagEntityModel);

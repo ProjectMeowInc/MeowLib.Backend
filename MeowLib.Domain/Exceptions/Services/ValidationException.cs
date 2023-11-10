@@ -14,7 +14,7 @@ public class ValidationException : ServiceLevelException, IHasResponseForm
     /// Список ошибок валидации.
     /// </summary>
     public IEnumerable<ValidationErrorModel> ValidationErrors { get; protected set; }
-    
+
     /// <summary>
     /// Конструктор.
     /// </summary>
@@ -29,7 +29,8 @@ public class ValidationException : ServiceLevelException, IHasResponseForm
     /// </summary>
     /// <param name="serviceName">Название сервиса.</param>
     /// <param name="validationErrors">Список ошибок валидации.</param>
-    public ValidationException(string serviceName, IEnumerable<ValidationErrorModel> validationErrors) : base(serviceName)
+    public ValidationException(string serviceName, IEnumerable<ValidationErrorModel> validationErrors) :
+        base(serviceName)
     {
         ValidationErrors = validationErrors;
     }

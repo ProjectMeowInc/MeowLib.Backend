@@ -1,9 +1,9 @@
-using LanguageExt.Common;
 using MeowLib.Domain.DbModels.AuthorEntity;
 using MeowLib.Domain.DbModels.BookEntity;
 using MeowLib.Domain.DbModels.TagEntity;
 using MeowLib.Domain.Enums;
 using MeowLib.Domain.Exceptions.DAL;
+using MeowLib.Domain.Result;
 using MeowLib.WebApi.DAL.Repository.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -91,7 +91,7 @@ public class BookRepository : IBookRepository
         {
             throw new DbSavingException(nameof(BookEntityModel), DbSavingTypesEnum.Delete);
         }
-        
+
         return true;
     }
 
@@ -113,7 +113,7 @@ public class BookRepository : IBookRepository
         catch (DbUpdateException)
         {
             var dbSavingException = new DbSavingException(nameof(BookEntityModel), DbSavingTypesEnum.Update);
-            return new Result<BookEntityModel>(dbSavingException);
+            return Result<BookEntityModel>.Fail(dbSavingException);
         }
     }
 
@@ -151,7 +151,7 @@ public class BookRepository : IBookRepository
         {
             throw new DbSavingException(nameof(BookEntityModel), DbSavingTypesEnum.Update);
         }
-        
+
         return foundedBook;
     }
 

@@ -17,7 +17,7 @@ namespace MeowLib.WebApi.Controllers;
 public class BookCommentController : BaseController
 {
     private readonly IBookCommentService _bookCommentService;
-    
+
     public BookCommentController(IBookCommentService bookCommentService)
     {
         _bookCommentService = bookCommentService;
@@ -29,34 +29,37 @@ public class BookCommentController : BaseController
     public async Task<ActionResult> GetBookComments([FromRoute] int bookId)
     {
         var getBookCommentsResult = await _bookCommentService.GetBookCommentsAsync(bookId);
-        
-        return getBookCommentsResult.Match<ActionResult>(bookComments 
-            => Json(new GetBookCommentsResponse
+        if (getBookCommentsResult.IsFailure)
         {
-            BookId = bookId,
-            Items = bookComments
-        }), exception =>
-        {
+            var exception = getBookCommentsResult.GetError();
             if (exception is BookNotFoundException)
             {
                 return NotFoundError($"Книга с Id = {bookId} не найдена");
             }
 
             return ServerError();
+        }
+
+        var bookComments = getBookCommentsResult.GetResult();
+        return Json(new GetBookCommentsResponse
+        {
+            BookId = bookId,
+            Items = bookComments
         });
     }
 
-    [HttpPost("{bookId:int}/comments"), Authorization]
+    [HttpPost("{bookId:int}/comments")]
+    [Authorization]
     [ProducesOkResponseType(typeof(BookCommentDto))]
-    [ProducesResponseType(400,  Type = typeof(BaseErrorResponse))]
+    [ProducesResponseType(400, Type = typeof(BaseErrorResponse))]
     public async Task<ActionResult> PostComment([FromRoute] int bookId, [FromBody] PostCommentRequest input)
     {
         var userData = await GetUserDataAsync();
 
         var createNewCommentResult = await _bookCommentService.CreateNewCommentAsync(userData.Id, bookId, input.Text);
-        return createNewCommentResult.Match<ActionResult>(createdComment => Json(createdComment),
-            exception =>
+        if (createNewCommentResult.IsFailure)
         {
+            var exception = createNewCommentResult.GetError();
             if (exception is BookNotFoundException)
             {
                 return Error($"Книга с Id = {bookId} не найдена", 400);
@@ -68,6 +71,9 @@ public class BookCommentController : BaseController
             }
 
             return ServerError();
-        });
+        }
+
+        var createdComment = createNewCommentResult.GetResult();
+        return Json(createdComment);
     }
 }

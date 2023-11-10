@@ -20,7 +20,7 @@ public class ExceptionHandlerMiddleware
     public async Task InvokeAsync(HttpContext context)
     {
         var logger = context.RequestServices.GetRequiredService<ILogger<ExceptionHandlerMiddleware>>();
-        
+
         try
         {
             logger.LogInformation("[{@DateTime}] Начало обработки запроса", DateTime.UtcNow);
@@ -29,7 +29,7 @@ public class ExceptionHandlerMiddleware
         }
         catch (ValidationException validationException)
         {
-            logger.LogError("[{@DateTime}] Произошла ошибка валидации: {@ValidationsError}", 
+            logger.LogError("[{@DateTime}] Произошла ошибка валидации: {@ValidationsError}",
                 DateTime.UtcNow, validationException.ValidationErrors);
 
             if (context.Response.HasStarted)
@@ -48,7 +48,7 @@ public class ExceptionHandlerMiddleware
             {
                 return;
             }
-            
+
             context.Response.StatusCode = 500;
             await context.Response.WriteAsJsonAsync(new BaseErrorResponse("Внутреняя ошибка сервера"));
         }
@@ -68,7 +68,7 @@ public class ExceptionHandlerMiddleware
             {
                 return;
             }
-            
+
             context.Response.StatusCode = 500;
             await context.Response.WriteAsJsonAsync(new BaseErrorResponse(apiException.ErrorMessage));
         }
@@ -78,10 +78,10 @@ public class ExceptionHandlerMiddleware
             {
                 return;
             }
-            
-            logger.LogError("[{DateTime}] Произошло неожиданное исключение: {@ExceptionMessage}, {@Exception}", 
+
+            logger.LogError("[{DateTime}] Произошло неожиданное исключение: {@ExceptionMessage}, {@Exception}",
                 DateTime.UtcNow, exception.Message, exception);
-            
+
             context.Response.StatusCode = 500;
             await context.Response.WriteAsJsonAsync(new
             {

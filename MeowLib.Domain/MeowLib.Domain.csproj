@@ -8,12 +8,13 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="AutoMapper" Version="12.0.1" />
-      <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
+        <PackageReference Include="AutoMapper" Version="12.0.1"/>
+        <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0"/>
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Responses\Authorization\" />
+        <Folder Include="Responses\Authorization\"/>
+        <Folder Include="Result\Errors\"/>
     </ItemGroup>
 
 </Project>

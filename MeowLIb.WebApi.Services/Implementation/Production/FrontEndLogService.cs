@@ -9,18 +9,18 @@ public class FrontEndLogService : IFrontEndLogService
 {
     private readonly TelegramBotClient _botClient;
     private readonly long _chatId;
-    
+
     public FrontEndLogService()
     {
         // change to cfg
         var botToken = "0";
         var chatId = -1001781472659;
-        
+
         _botClient = new TelegramBotClient(botToken);
 
         _chatId = chatId;
     }
-    
+
     public async Task LogAsync(string userLogin, ErrorLogInfoModel errorData)
     {
         var additionalInfoStringBuilder = new StringBuilder();
@@ -29,11 +29,9 @@ public class FrontEndLogService : IFrontEndLogService
         {
             additionalInfoStringBuilder.AppendLine("🦄 Дополнительная информация:\n");
             foreach (var (param, message) in errorData.AdditionalInfo)
-            {
                 additionalInfoStringBuilder.AppendLine($"- {param}: {message}");
-            }
         }
-        
+
         var isApiError = errorData.IsApiError ? "Да" : "Нет";
         var textToSend = "[Лог | FrontEnd]\n\n" +
                          $"📅 Дата: {DateTime.Now}\n\n" +

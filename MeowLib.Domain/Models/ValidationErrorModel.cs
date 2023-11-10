@@ -9,7 +9,7 @@ public class ValidationErrorModel
     /// Название свойства.
     /// </summary>
     public required string PropertyName { get; set; } = null!;
-    
+
     /// <summary>
     /// Текст ошибки.
     /// </summary>
