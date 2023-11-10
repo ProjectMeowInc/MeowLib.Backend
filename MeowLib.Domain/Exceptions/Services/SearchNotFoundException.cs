@@ -5,7 +5,5 @@ namespace MeowLib.Domain.Exceptions.Services;
 /// </summary>
 public class SearchNotFoundException : ServiceLevelException
 {
-    public SearchNotFoundException(string serviceName) : base(serviceName)
-    {
-    }
+    public SearchNotFoundException(string serviceName) : base(serviceName) { }
 }

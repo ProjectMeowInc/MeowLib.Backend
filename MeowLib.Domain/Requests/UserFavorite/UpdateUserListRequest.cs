@@ -5,7 +5,9 @@ namespace MeowLib.Domain.Requests.UserFavorite;
 
 public class UpdateUserListRequest
 {
-    [JsonPropertyName("bookId")] public int BookId { get; set; }
+    [JsonPropertyName("bookId")]
+    public int BookId { get; set; }
 
-    [JsonPropertyName("status")] public UserFavoritesStatusEnum Status { get; set; }
+    [JsonPropertyName("status")]
+    public UserFavoritesStatusEnum Status { get; set; }
 }

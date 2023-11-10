@@ -31,11 +31,13 @@ services.AddControllers()
 
             foreach (var modelStateValue in actionContext.ModelState.Values)
             foreach (var modelError in modelStateValue.Errors)
+            {
                 validationErrors.Add(new ValidationErrorModel
                 {
                     PropertyName = modelStateValue.RawValue?.ToString() ?? "NULL",
                     Message = modelError.ErrorMessage
                 });
+            }
 
             var validationException = new ValidationException(validationErrors);
 

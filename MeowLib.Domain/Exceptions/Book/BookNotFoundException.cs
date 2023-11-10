@@ -2,7 +2,5 @@
 
 public class BookNotFoundException : ApiException
 {
-    public BookNotFoundException(int bookId) : base($"Книга с Id = {bookId} не найдена")
-    {
-    }
+    public BookNotFoundException(int bookId) : base($"Книга с Id = {bookId} не найдена") { }
 }

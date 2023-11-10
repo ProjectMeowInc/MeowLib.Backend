@@ -5,7 +5,5 @@
 /// </summary>
 public class CreateTokenException : ApiException
 {
-    public CreateTokenException(string errorMessage) : base(errorMessage)
-    {
-    }
+    public CreateTokenException(string errorMessage) : base(errorMessage) { }
 }

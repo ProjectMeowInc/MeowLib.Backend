@@ -5,7 +5,5 @@
 /// </summary>
 public class InnerException : ApiException
 {
-    public InnerException(string errorMessage) : base(errorMessage)
-    {
-    }
+    public InnerException(string errorMessage) : base(errorMessage) { }
 }

@@ -68,12 +68,8 @@ public class AuthorizationAttribute : ProducesResponseTypeAttribute, IAsyncAutho
         context.HttpContext.Items.Add("UserData", parsedTokenData);
     }
 
-    public AuthorizationAttribute() : base(typeof(BaseErrorResponse), 401)
-    {
-    }
+    public AuthorizationAttribute() : base(typeof(BaseErrorResponse), 401) { }
 
     public AuthorizationAttribute(Type type, int statusCode, string contentType, params string[] additionalContentTypes)
-        : base(type, statusCode, contentType, additionalContentTypes)
-    {
-    }
+        : base(type, statusCode, contentType, additionalContentTypes) { }
 }

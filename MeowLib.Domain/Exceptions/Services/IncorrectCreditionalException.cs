@@ -5,7 +5,5 @@
 /// </summary>
 public class IncorrectCreditionalException : ApiException
 {
-    public IncorrectCreditionalException(string errorMessage) : base(errorMessage)
-    {
-    }
+    public IncorrectCreditionalException(string errorMessage) : base(errorMessage) { }
 }

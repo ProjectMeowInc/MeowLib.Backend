@@ -19,9 +19,7 @@ public class ApplicationDbContext : DbContext
     /// Конструктор.
     /// </summary>
     /// <param name="options">Настройки БД.</param>
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
-    {
-    }
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

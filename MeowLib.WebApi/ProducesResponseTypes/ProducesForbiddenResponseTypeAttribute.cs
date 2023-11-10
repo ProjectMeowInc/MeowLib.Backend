@@ -8,12 +8,8 @@ namespace MeowLib.WebApi.ProducesResponseTypes;
 /// </summary>
 public class ProducesForbiddenResponseTypeAttribute : ProducesResponseTypeAttribute
 {
-    public ProducesForbiddenResponseTypeAttribute() : base(typeof(ValidationErrorResponse), 403)
-    {
-    }
+    public ProducesForbiddenResponseTypeAttribute() : base(typeof(ValidationErrorResponse), 403) { }
 
     public ProducesForbiddenResponseTypeAttribute(Type type, int statusCode, string contentType,
-        params string[] additionalContentTypes) : base(type, statusCode, contentType, additionalContentTypes)
-    {
-    }
+        params string[] additionalContentTypes) : base(type, statusCode, contentType, additionalContentTypes) { }
 }

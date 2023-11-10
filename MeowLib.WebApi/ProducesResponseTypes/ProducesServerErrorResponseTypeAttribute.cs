@@ -5,12 +5,8 @@ namespace MeowLib.WebApi.ProducesResponseTypes;
 
 public class ProducesServerErrorResponseTypeAttribute : ProducesResponseTypeAttribute
 {
-    public ProducesServerErrorResponseTypeAttribute() : base(typeof(BaseErrorResponse), 500)
-    {
-    }
+    public ProducesServerErrorResponseTypeAttribute() : base(typeof(BaseErrorResponse), 500) { }
 
     public ProducesServerErrorResponseTypeAttribute(Type type, int statusCode, string contentType,
-        params string[] additionalContentTypes) : base(type, statusCode, contentType, additionalContentTypes)
-    {
-    }
+        params string[] additionalContentTypes) : base(type, statusCode, contentType, additionalContentTypes) { }
 }

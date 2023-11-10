@@ -5,7 +5,5 @@
 /// </summary>
 public class UploadingFileException : ApiException
 {
-    public UploadingFileException() : base("Ошибка загрузки файла")
-    {
-    }
+    public UploadingFileException() : base("Ошибка загрузки файла") { }
 }

@@ -29,7 +29,9 @@ public class FrontEndLogService : IFrontEndLogService
         {
             additionalInfoStringBuilder.AppendLine("🦄 Дополнительная информация:\n");
             foreach (var (param, message) in errorData.AdditionalInfo)
+            {
                 additionalInfoStringBuilder.AppendLine($"- {param}: {message}");
+            }
         }
 
         var isApiError = errorData.IsApiError ? "Да" : "Нет";
