@@ -37,6 +37,8 @@ public class TeamService : ITeamService
             Members = new List<TeamMemberEntityModel>(),
             Owner = foundedOwner
         });
+
+        await _dbContext.SaveChangesAsync();
         
         // add owner to team
         var createdTeam = createdEntry.Entity;
