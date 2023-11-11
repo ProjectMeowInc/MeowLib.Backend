@@ -42,9 +42,9 @@ public class BaseController : ControllerBase
     /// </summary>
     /// <returns>Json-модель ответа.</returns>
     [NonAction]
-    protected JsonResult UpdateAuthorizeResult()
+    protected JsonResult UpdateAuthorizeError()
     {
-        return Json(new BaseErrorResponse("Произошла неизвестная ошибка. Попробуйте авторизоваться снова!"), 401);
+        return Json(new BaseErrorResponse("Произошла неизвестная ошибка. Попробуйте авторизоваться снова"), 401);
     }
 
     /// <summary>

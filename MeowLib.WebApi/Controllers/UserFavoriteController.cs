@@ -87,7 +87,7 @@ public class UserFavoriteController : BaseController
 
             if (exception is UserNotFoundException)
             {
-                return UpdateAuthorizeResult();
+                return UpdateAuthorizeError();
             }
 
             return ServerError();

@@ -67,7 +67,7 @@ public class BookCommentController : BaseController
 
             if (exception is UserNotFoundException)
             {
-                return UpdateAuthorizeResult();
+                return UpdateAuthorizeError();
             }
 
             return ServerError();
