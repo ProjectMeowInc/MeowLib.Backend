@@ -16,14 +16,16 @@ public class UserTestRepository : IUserRepository
             Id = 1,
             Login = "tester",
             Role = UserRolesEnum.Admin,
-            Password = "test"
+            Password = "test",
+            RefreshToken = null
         },
         new UserEntityModel
         {
             Id = 2,
             Login = "sueta",
             Role = UserRolesEnum.User,
-            Password = "test"
+            Password = "test",
+            RefreshToken = null
         }
     };
 
@@ -34,7 +36,8 @@ public class UserTestRepository : IUserRepository
             Id = _userData.Count,
             Login = createUserData.Login,
             Password = createUserData.Password,
-            Role = UserRolesEnum.User
+            Role = UserRolesEnum.User,
+            RefreshToken = null
         };
 
         _userData.Add(userModel);

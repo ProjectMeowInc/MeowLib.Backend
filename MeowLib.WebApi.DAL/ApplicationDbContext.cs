@@ -52,40 +52,40 @@ public class ApplicationDbContext : DbContext
     /// <summary>
     /// Таблица пользователей.
     /// </summary>
-    public DbSet<UserEntityModel> Users { get; set; } = null!;
+    public required DbSet<UserEntityModel> Users { get; set; }
 
     /// <summary>
     /// Таблица авторов.
     /// </summary>
-    public DbSet<AuthorEntityModel> Authors { get; set; } = null!;
+    public required DbSet<AuthorEntityModel> Authors { get; set; }
 
     /// <summary>
     /// Таблица тегов.
     /// </summary>
-    public DbSet<TagEntityModel> Tags { get; set; } = null!;
+    public required DbSet<TagEntityModel> Tags { get; set; }
 
     /// <summary>
     /// Таблица книг.
     /// </summary>
-    public DbSet<BookEntityModel> Books { get; set; } = null!;
+    public required DbSet<BookEntityModel> Books { get; set; }
 
     /// <summary>
     /// Таблица глав книг.
     /// </summary>
-    public DbSet<ChapterEntityModel> Chapters { get; set; } = null!;
+    public required DbSet<ChapterEntityModel> Chapters { get; set; }
 
     /// <summary>
     /// Таблица избранных книг пользователя.
     /// </summary>
-    public DbSet<UserFavoriteEntityModel> UsersFavorite { get; set; } = null!;
+    public required DbSet<UserFavoriteEntityModel> UsersFavorite { get; set; }
 
     /// <summary>
     /// Таблица закладок пользователей.
     /// </summary>
-    public DbSet<BookmarkEntityModel> Bookmarks { get; set; } = null!;
+    public required DbSet<BookmarkEntityModel> Bookmarks { get; set; }
 
     /// <summary>
     /// Таблциа комментариев к книге.
     /// </summary>
-    public DbSet<BookCommentEntityModel> BookComments { get; set; } = null!;
+    public required DbSet<BookCommentEntityModel> BookComments { get; set; }
 }

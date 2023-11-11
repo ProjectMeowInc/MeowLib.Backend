@@ -4,5 +4,5 @@ namespace MeowLib.Domain.Requests.Log;
 
 public class LogRequest
 {
-    public ErrorLogInfoModel ErrorLog { get; set; } = null!;
+    public required ErrorLogInfoModel ErrorLog { get; set; }
 }

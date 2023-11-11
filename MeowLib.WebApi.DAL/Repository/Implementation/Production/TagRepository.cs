@@ -1,3 +1,4 @@
+using MeowLib.Domain.DbModels.BookEntity;
 using MeowLib.Domain.DbModels.TagEntity;
 using MeowLib.Domain.Enums;
 using MeowLib.Domain.Exceptions.DAL;
@@ -42,7 +43,8 @@ public class TagRepository : ITagRepository
         var newTag = new TagEntityModel
         {
             Name = createTagData.Name,
-            Description = createTagData.Description ?? string.Empty
+            Description = createTagData.Description ?? string.Empty,
+            Books = new List<BookEntityModel>()
         };
 
         var dbResult = await _applicationDbContext.Tags.AddAsync(newTag);

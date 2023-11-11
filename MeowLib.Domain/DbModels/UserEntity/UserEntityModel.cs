@@ -15,20 +15,20 @@ public class UserEntityModel
     /// <summary>
     /// Логин пользователя.
     /// </summary>
-    public string Login { get; set; } = null!;
+    public required string Login { get; set; }
 
     /// <summary>
     /// Пароль пользователя.
     /// </summary>
-    public string Password { get; set; } = null!;
+    public required string Password { get; set; }
 
     /// <summary>
     /// Токен текущей сессии.
     /// </summary>
-    public string? RefreshToken { get; set; }
+    public required string? RefreshToken { get; set; }
 
     /// <summary>
     /// Роль пользователя.
     /// </summary>
-    public UserRolesEnum Role { get; set; } = UserRolesEnum.User;
+    public required UserRolesEnum Role { get; set; } = UserRolesEnum.User;
 }
