@@ -4,6 +4,8 @@ using MeowLib.Domain.DbModels.BookEntity;
 using MeowLib.Domain.DbModels.BookmarkEntity;
 using MeowLib.Domain.DbModels.ChapterEntity;
 using MeowLib.Domain.DbModels.TagEntity;
+using MeowLib.Domain.DbModels.TeamEntity;
+using MeowLib.Domain.DbModels.TeamMemberEntity;
 using MeowLib.Domain.DbModels.UserEntity;
 using MeowLib.Domain.DbModels.UserFavoriteEntity;
 using Microsoft.EntityFrameworkCore;
@@ -88,4 +90,14 @@ public class ApplicationDbContext : DbContext
     /// Таблциа комментариев к книге.
     /// </summary>
     public required DbSet<BookCommentEntityModel> BookComments { get; set; }
+    
+    /// <summary>
+    /// Таблица команд.
+    /// </summary>
+    public required DbSet<TeamEntityModel> Teams { get; set; }
+    
+    /// <summary>
+    /// Таблица членов команд.
+    /// </summary>
+    public required DbSet<TeamMemberEntityModel> TeamMembers { get; set; }
 }
