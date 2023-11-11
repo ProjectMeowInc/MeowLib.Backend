@@ -44,7 +44,7 @@ public class TeamService : ITeamService
         {
             User = foundedOwner,
             Team = createdTeam,
-            Role = UserMemberTeamRoleEnum.Admin
+            Role = UserTeamMemberRoleEnum.Admin
         });
 
         _dbContext.Update(createdTeam);
