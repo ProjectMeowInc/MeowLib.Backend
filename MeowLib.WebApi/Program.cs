@@ -108,6 +108,7 @@ services.AddScoped<IChapterService, ChapterService>();
 services.AddScoped<IUserFavoriteService, UserFavoriteService>();
 services.AddScoped<IBookmarkService, BookmarkService>();
 services.AddScoped<IBookCommentService, BookCommentService>();
+services.AddScoped<ITeamService, TeamService>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(dbOptions =>
 {
