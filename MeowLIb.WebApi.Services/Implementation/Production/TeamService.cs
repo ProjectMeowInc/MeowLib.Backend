@@ -111,4 +111,31 @@ public class TeamService : ITeamService
 
         return foundedUser.Role == UserTeamMemberRoleEnum.Admin;
     }
+
+    public async Task<Result> RemoveFromTeamAsync(int teamId, int userId)
+    {
+        var foundedTeam = await GetTeamByIdAsync(teamId);
+        if (foundedTeam is null)
+        {
+            return Result.Fail(new TeamNotFoundException(teamId));
+        }
+
+        if (foundedTeam.Owner.Id == userId)
+        {
+            // todo: maybe change to another exception?
+            return Result.Fail(new ChangeOwnerRoleException());
+        }
+
+        var foundedUser = foundedTeam.Members.FirstOrDefault(m => m.User.Id == userId);
+        if (foundedUser is null)
+        {
+            return Result.Fail(new UserNotFoundException(userId));
+        }
+
+        // todo: add send notification
+        _dbContext.Remove(foundedUser);
+        await _dbContext.SaveChangesAsync();
+
+        return Result.Ok();
+    }
 }

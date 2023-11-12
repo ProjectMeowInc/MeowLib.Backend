@@ -44,4 +44,15 @@ public interface ITeamService
     /// <param name="userId">Id пользователя.</param>
     /// <returns>True - если имеет доступ, иначе - false</returns>
     Task<bool> CheckIsUserCanChangeTeamRoleAsync(int teamId, int userId);
+
+    /// <summary>
+    /// Метод удаляет пользователя из команды.
+    /// </summary>
+    /// <param name="teamId">Id команды.</param>
+    /// <param name="userId">Id пользователя.</param>
+    /// <returns>Результат удаления.</returns>
+    /// <exception cref="TeamNotFoundException">Возникает в случае, если команда не найдена</exception>
+    /// <exception cref="ChangeOwnerRoleException">Возникает в попытке удалить владельца команды из команды.</exception>
+    /// <exception cref="UserNotFoundException">Возникает в случае, если пользователь не состоит в заданной команде.</exception>
+    Task<Result> RemoveFromTeamAsync(int teamId, int userId);
 }
