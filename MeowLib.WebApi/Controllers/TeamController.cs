@@ -83,7 +83,7 @@ public class TeamController : BaseController
         var isCanChange = await _teamService.CheckIsUserCanChangeTeamRoleAsync(teamId, requestFromUser.Id);
         if (!isCanChange)
         {
-            return Error("У вас нет доступа к изменению ролей в данной команде.", 400);
+            return Error("У вас нет доступа к изменению ролей в данной команде", 400);
         }
 
         var setUserTeamRoleResult = await _teamService.SetUserTeamRoleAsync(teamId, userId, payload.NewRole);
