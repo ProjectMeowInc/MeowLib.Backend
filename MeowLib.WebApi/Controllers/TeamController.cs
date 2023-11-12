@@ -114,4 +114,41 @@ public class TeamController : BaseController
 
         return Ok();
     }
+
+    [HttpPost("{teamId}/leave"), Authorization]
+    [ProducesOkResponseType]
+    [ProducesUserErrorResponseType]
+    [ProducesNotFoundResponseType]
+    public async Task<IActionResult> LeaveFromTeam([FromRoute] int teamId)
+    {
+        var requestUser = await GetUserDataAsync();
+        
+        var removeUserResult = await _teamService.RemoveFromTeamAsync(teamId, requestUser.Id);
+        if (removeUserResult.IsFailure)
+        {
+            var exception = removeUserResult.GetError();
+            if (exception is TeamNotFoundException)
+            {
+                _logger.LogWarning("Команда с Id = {teamId} не найдена", teamId);
+                return NotFoundError();
+            }
+
+            if (exception is ChangeOwnerRoleException)
+            {
+                _logger.LogWarning("Попытка выйти из команды владельцем команды");
+                return Error("Невозможно покинуть команду будучи её владельцем", 400);
+            }
+
+            if (exception is UserNotFoundException)
+            {
+                _logger.LogWarning("Попытка покинуть команду в который пользователь не состоит");
+                return Error("Вы не состоите в этой команде", 400);
+            }
+
+            _logger.LogError("Неизвестная ошибка покидания команды: {exception}", exception);
+            return ServerError();
+        }
+
+        return Ok();
+    }
 }
