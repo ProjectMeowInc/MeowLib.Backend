@@ -92,19 +92,19 @@ public class TeamController : BaseController
             var exception = setUserTeamRoleResult.GetError();
             if (exception is TeamNotFoundException)
             {
-                _logger.LogInformation("Команда с Id = {teamId} не найдена", teamId);
+                _logger.LogWarning("Команда с Id = {teamId} не найдена", teamId);
                 return NotFoundError();
             }
 
             if (exception is ChangeOwnerRoleException)
             {
-                _logger.LogInformation("Попытка изменить роль владельца команды");
+                _logger.LogWarning("Попытка изменить роль владельца команды");
                 return Error("Нельзя изменить роль владельца команды", 400);
             }
 
             if (exception is UserNotFoundException)
             {
-                _logger.LogInformation("Запрашиваемый пользователь не состоит в команде");
+                _logger.LogWarning("Запрашиваемый пользователь не состоит в команде");
                 return Error("Пользователь не состоит в команде");
             }
 
