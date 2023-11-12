@@ -1,4 +1,5 @@
 ﻿using MeowLib.Domain.Exceptions.Team;
+using MeowLib.Domain.Exceptions.User;
 using MeowLib.Domain.Requests.Team;
 using MeowLib.Domain.Responses;
 using MeowLib.Domain.Responses.Team;
@@ -69,5 +70,47 @@ public class TeamController : BaseController
                 Role = m.Role
             })
         });
+    }
+
+    [HttpPost("{teamId}/members/{userId}/role"), Authorization]
+    [ProducesOkResponseType]
+    [ProducesResponseType(400, Type = typeof(BaseErrorResponse))]
+    public async Task<IActionResult> SetUserTeamRole([FromRoute] int teamId, [FromRoute] int userId, 
+        [FromBody] SetUserTeamRoleRequest payload)
+    {
+        var requestFromUser = await GetUserDataAsync();
+        var isCanChange = await _teamService.CheckIsUserCanChangeTeamRoleAsync(teamId, requestFromUser.Id);
+        if (!isCanChange)
+        {
+            return Error("У вас нет доступа к изменению ролей в данной команде.", 400);
+        }
+
+        var setUserTeamRoleResult = await _teamService.SetUserTeamRoleAsync(teamId, userId, payload.NewRole);
+        if (setUserTeamRoleResult.IsFailure)
+        {
+            var exception = setUserTeamRoleResult.GetError();
+            if (exception is TeamNotFoundException)
+            {
+                _logger.LogInformation("Команда с Id = {teamId} не найдена", teamId);
+                return NotFoundError();
+            }
+
+            if (exception is ChangeOwnerRoleException)
+            {
+                _logger.LogInformation("Попытка изменить роль владельца команды");
+                return Error("Нельзя изменить роль владельца команды", 400);
+            }
+
+            if (exception is UserNotFoundException)
+            {
+                _logger.LogInformation("Запрашиваемый пользователь не состоит в команде");
+                return Error("Пользователь не состоит в команде");
+            }
+
+            _logger.LogError("Неизвестная ошибка обновления командной роли пользователя: {exception}", exception);
+            return ServerError();
+        }
+
+        return Ok();
     }
 }
