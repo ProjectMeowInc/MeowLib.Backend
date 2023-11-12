@@ -2,6 +2,7 @@
 using MeowLib.Domain.DbModels.TeamMemberEntity;
 using MeowLib.Domain.Enums;
 using MeowLib.Domain.Exceptions.Team;
+using MeowLib.Domain.Exceptions.User;
 using MeowLib.Domain.Result;
 using MeowLib.WebApi.DAL;
 using MeowLib.WebApi.DAL.Repository.Interfaces;
@@ -62,5 +63,52 @@ public class TeamService : ITeamService
             .ThenInclude(t => t.User)
             .Include(t => t.Owner)
             .FirstOrDefaultAsync(t => t.Id == teamId);
+    }
+    
+    public async Task<Result> SetUserTeamRoleAsync(int teamId, int userId, UserTeamMemberRoleEnum role)
+    {
+        var foundedTeam = await GetTeamByIdAsync(teamId);
+        if (foundedTeam is null)
+        {
+            return Result.Fail(new TeamNotFoundException(teamId));
+        }
+
+        if (foundedTeam.Owner.Id == userId)
+        {
+            return Result.Fail(new ChangeOwnerRoleException());
+        }
+        
+        var foundedUser = foundedTeam.Members.FirstOrDefault(m => m.User.Id == userId);
+        if (foundedUser is null)
+        {
+            return Result.Fail(new UserNotFoundException(userId));
+        }
+
+        foundedUser.Role = role;
+        _dbContext.Update(foundedUser);
+        await _dbContext.SaveChangesAsync();
+        return Result.Ok();
+    }
+
+    public async Task<bool> CheckIsUserCanChangeTeamRoleAsync(int teamId, int userId)
+    {
+        var foundedTeam = await GetTeamByIdAsync(teamId);
+        if (foundedTeam is null)
+        {
+            return false;
+        }
+
+        if (foundedTeam.Owner.Id == userId)
+        {
+            return true;
+        }
+        
+        var foundedUser = foundedTeam.Members.FirstOrDefault(m => m.User.Id == userId);
+        if (foundedUser is null)
+        {
+            return false;
+        }
+
+        return foundedUser.Role == UserTeamMemberRoleEnum.Admin;
     }
 }
