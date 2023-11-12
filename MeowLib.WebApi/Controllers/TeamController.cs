@@ -75,6 +75,7 @@ public class TeamController : BaseController
     [HttpPost("{teamId}/members/{userId}/role"), Authorization]
     [ProducesOkResponseType]
     [ProducesResponseType(400, Type = typeof(BaseErrorResponse))]
+    [ProducesNotFoundResponseType]
     public async Task<IActionResult> SetUserTeamRole([FromRoute] int teamId, [FromRoute] int userId, 
         [FromBody] SetUserTeamRoleRequest payload)
     {
