@@ -90,7 +90,7 @@ public class TeamService : ITeamService
         return Result.Ok();
     }
 
-    public async Task<bool> CheckIsUserCanChangeTeamRoleAsync(int teamId, int userId)
+    public async Task<bool> CheckUserIsTeamAdminAsync(int teamId, int userId)
     {
         var foundedTeam = await GetTeamByIdAsync(teamId);
         if (foundedTeam is null)

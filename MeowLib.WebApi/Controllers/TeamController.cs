@@ -80,7 +80,7 @@ public class TeamController : BaseController
         [FromBody] SetUserTeamRoleRequest payload)
     {
         var requestFromUser = await GetUserDataAsync();
-        var isCanChange = await _teamService.CheckIsUserCanChangeTeamRoleAsync(teamId, requestFromUser.Id);
+        var isCanChange = await _teamService.CheckUserIsTeamAdminAsync(teamId, requestFromUser.Id);
         if (!isCanChange)
         {
             _logger.LogWarning(

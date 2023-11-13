@@ -38,12 +38,12 @@ public interface ITeamService
     Task<Result> SetUserTeamRoleAsync(int teamId, int userId, UserTeamMemberRoleEnum role);
 
     /// <summary>
-    /// Метод проверяет есть ли доступ у пользователя к изменению ролей в команде.
+    /// Метод проверяет есть ли у пользователя доступ админ-функциям в команде.
     /// </summary>
     /// <param name="teamId">Id команды.</param>
     /// <param name="userId">Id пользователя.</param>
     /// <returns>True - если имеет доступ, иначе - false</returns>
-    Task<bool> CheckIsUserCanChangeTeamRoleAsync(int teamId, int userId);
+    Task<bool> CheckUserIsTeamAdminAsync(int teamId, int userId);
 
     /// <summary>
     /// Метод удаляет пользователя из команды.
