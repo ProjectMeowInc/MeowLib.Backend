@@ -138,16 +138,7 @@ public class TeamService : ITeamService
 
         return Result.Ok();
     }
-
-    /// <summary>
-    /// Метод добавляет пользователя в команду.
-    /// </summary>
-    /// <param name="teamId">Id команды для добавления.</param>
-    /// <param name="userId">Id пользователя для добавления.</param>
-    /// <returns>Результат добавления пользователя в команду.</returns>
-    /// <exception cref="TeamNotFoundException">Указанная комманда не найдена.</exception>
-    /// <exception cref="UserNotFoundException">Указанный пользователь не найден.</exception>
-    /// <exception cref="UserAlreadyInTeamException">Указанный пользователь уже состоит в комманде.</exception>
+    
     public async Task<Result> InviteUserToTeamAsync(int teamId, int userId)
     {
         var foundedTeam = await GetTeamByIdAsync(teamId);
