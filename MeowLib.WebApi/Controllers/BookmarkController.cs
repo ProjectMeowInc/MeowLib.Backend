@@ -3,10 +3,10 @@ using MeowLib.Domain.Exceptions.Chapter;
 using MeowLib.Domain.Exceptions.User;
 using MeowLib.Domain.Requests.Bookmark;
 using MeowLib.Domain.Responses;
+using MeowLib.Services.Interface;
 using MeowLib.WebApi.Abstractions;
 using MeowLib.WebApi.Filters;
 using MeowLib.WebApi.ProducesResponseTypes;
-using MeowLIb.WebApi.Services.Interface;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MeowLib.WebApi.Controllers;

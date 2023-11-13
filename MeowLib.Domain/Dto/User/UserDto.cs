@@ -16,7 +16,7 @@ public class UserDto
     /// <summary>
     /// Логин пользователя.
     /// </summary>
-    public required string Login { get; set; } = null!;
+    public required string Login { get; set; }
 
     /// <summary>
     /// Роль пользователя.

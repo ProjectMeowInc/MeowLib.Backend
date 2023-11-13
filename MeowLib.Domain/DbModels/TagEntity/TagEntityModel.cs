@@ -15,15 +15,15 @@ public class TagEntityModel
     /// <summary>
     /// Название тега.
     /// </summary>
-    public string Name { get; set; } = null!;
+    public required string Name { get; set; }
 
     /// <summary>
     /// Описание тега.
     /// </summary>
-    public string Description { get; set; } = null!;
+    public required string Description { get; set; }
 
     /// <summary>
     /// Список книг с данным тегом.
     /// </summary>
-    public IEnumerable<BookEntityModel> Books { get; set; } = null!;
+    public required IEnumerable<BookEntityModel> Books { get; set; }
 }

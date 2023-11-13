@@ -3,5 +3,5 @@ namespace MeowLib.Domain.Dto.Tag;
 public class TagDto
 {
     public int Id { get; set; }
-    public string Name { get; set; } = null!;
+    public required string Name { get; set; }
 }

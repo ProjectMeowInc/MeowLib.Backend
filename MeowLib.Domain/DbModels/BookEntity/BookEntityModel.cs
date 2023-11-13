@@ -17,12 +17,12 @@ public class BookEntityModel
     /// <summary>
     /// Имя книги.
     /// </summary>
-    public string Name { get; set; } = null!;
+    public required string Name { get; set; }
 
     /// <summary>
     /// Описание книги.
     /// </summary>
-    public string Description { get; set; } = null!;
+    public required string Description { get; set; }
 
     /// <summary>
     /// Название файла обложки книги.

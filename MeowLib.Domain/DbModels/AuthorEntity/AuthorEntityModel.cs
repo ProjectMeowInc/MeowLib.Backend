@@ -13,5 +13,5 @@ public class AuthorEntityModel
     /// <summary>
     /// Имя автора.
     /// </summary>
-    public string Name { get; set; } = null!;
+    public required string Name { get; set; }
 }
