@@ -1,4 +1,5 @@
 using AutoMapper;
+using MeowLib.DAL.Repository.Interfaces;
 using MeowLib.Domain.DbModels.BookEntity;
 using MeowLib.Domain.DbModels.ChapterEntity;
 using MeowLib.Domain.Dto.Book;
@@ -10,11 +11,10 @@ using MeowLib.Domain.Requests.Chapter;
 using MeowLib.Domain.Responses;
 using MeowLib.Domain.Responses.Book;
 using MeowLib.Domain.Responses.Chapter;
+using MeowLIb.Services.Interface;
 using MeowLib.WebApi.Abstractions;
-using MeowLib.WebApi.DAL.Repository.Interfaces;
 using MeowLib.WebApi.Filters;
 using MeowLib.WebApi.ProducesResponseTypes;
-using MeowLIb.WebApi.Services.Interface;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 

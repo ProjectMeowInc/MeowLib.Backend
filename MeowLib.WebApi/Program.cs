@@ -1,14 +1,14 @@
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
+using MeowLib.DAL;
+using MeowLib.DAL.Repository.Implementation.Production;
+using MeowLib.DAL.Repository.Interfaces;
 using MeowLib.Domain.Exceptions.Services;
 using MeowLib.Domain.MappingProfiles;
 using MeowLib.Domain.Models;
-using MeowLib.WebApi.DAL;
-using MeowLib.WebApi.DAL.Repository.Implementation.Production;
-using MeowLib.WebApi.DAL.Repository.Interfaces;
+using MeowLIb.Services.Implementation.Production;
+using MeowLIb.Services.Interface;
 using MeowLib.WebApi.Middleware;
-using MeowLIb.WebApi.Services.Implementation.Production;
-using MeowLIb.WebApi.Services.Interface;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 

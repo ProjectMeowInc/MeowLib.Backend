@@ -13,7 +13,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\MeowLIb.WebApi.Services\MeowLIb.WebApi.Services.csproj"/>
+        <ProjectReference Include="..\MeowLIb.Services\MeowLIb.Services.csproj" />
     </ItemGroup>
 
 </Project>

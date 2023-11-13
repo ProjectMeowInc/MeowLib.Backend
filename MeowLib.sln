@@ -4,9 +4,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeowLib.WebApi", "MeowLib.W
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeowLib.Domain", "MeowLib.Domain\MeowLib.Domain.csproj", "{A3076A50-7530-48CF-8D32-A694BB1A35C4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeowLib.WebApi.DAL", "MeowLib.WebApi.DAL\MeowLib.WebApi.DAL.csproj", "{35324175-AD84-4ED2-9E3E-C60832C5EC67}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeowLib.DAL", "MeowLib.DAL\MeowLib.DAL.csproj", "{35324175-AD84-4ED2-9E3E-C60832C5EC67}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeowLIb.WebApi.Services", "MeowLIb.WebApi.Services\MeowLIb.WebApi.Services.csproj", "{83648EFB-49E6-4C41-B63D-4251F75AEA17}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeowLIb.Services", "MeowLIb.Services\MeowLIb.Services.csproj", "{83648EFB-49E6-4C41-B63D-4251F75AEA17}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MeowLib.Tests", "MeowLib.Tests", "{ED876681-426D-489A-859E-157A4073E983}"
 EndProject
