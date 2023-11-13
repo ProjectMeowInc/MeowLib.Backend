@@ -4,6 +4,7 @@ using MeowLib.Domain.Enums;
 using MeowLib.Domain.Exceptions.Book;
 using MeowLib.Domain.Exceptions.DAL;
 using MeowLib.Domain.Exceptions.User;
+using MeowLib.Domain.Result;
 
 namespace MeowLib.Services.Interface;
 
@@ -17,7 +18,7 @@ public interface IUserFavoriteService
     /// <param name="status">Статус для обновления</param>
     /// <returns>Обновлённую книгу в списке пользователя.</returns>
     /// <exception cref="EntityNotFoundException">Возникает в случае, если книга или пользователь не были найдены.</exception>
-    Task<MeowLib.Domain.Result.Result<UserFavoriteEntityModel>> AddOrUpdateUserListAsync(int bookId, int userId,
+    Task<Result<UserFavoriteEntityModel>> AddOrUpdateUserListAsync(int bookId, int userId,
         UserFavoritesStatusEnum status);
 
     /// <summary>
@@ -35,5 +36,5 @@ public interface IUserFavoriteService
     /// <returns>Информацию о книге, если она была найдена. Иначе - null</returns>
     /// <exception cref="BookNotFoundException">Возникает в случае, если книга не была найдена.</exception>
     /// <exception cref="UserNotFoundException">Возникает в случае, если пользователь не был найден.</exception>
-    Task<MeowLib.Domain.Result.Result<UserFavoriteDto?>> GetUserFavoriteByBookAsync(int userId, int bookId);
+    Task<Result<UserFavoriteDto?>> GetUserFavoriteByBookAsync(int userId, int bookId);
 }
