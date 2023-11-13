@@ -198,4 +198,48 @@ public class TeamController : BaseController
 
         return Ok();
     }
+
+    [HttpPost("{teamId}/members/remove/{userId}"), Authorization]
+    [ProducesOkResponseType]
+    [ProducesUserErrorResponseType]
+    [ProducesNotFoundResponseType]
+    public async Task<IActionResult> RemoveUserFromTeam([FromRoute] int teamId, [FromRoute] int userId)
+    {
+        var fromUserData = await GetUserDataAsync();
+
+        var isUserAdmin = await _teamService.CheckUserIsTeamAdminAsync(teamId, fromUserData.Id);
+        if (!isUserAdmin)
+        {
+            _logger.LogWarning(
+                "Пользователь с Id = {userId} пытался исключить участника с Id = {teamMemberId} из комманды не имея на это прав",
+                fromUserData.Id, userId);
+            return Error("У вас нет доступа к исключению участников из комманды", 400);
+        }
+
+        var removeFromTeamResult = await _teamService.RemoveFromTeamAsync(teamId, userId);
+        if (removeFromTeamResult.IsFailure)
+        {
+            var exception = removeFromTeamResult.GetError();
+
+            if (exception is TeamNotFoundException) 
+            { 
+                return NotFoundError(); 
+            }
+
+            if (exception is ChangeOwnerRoleException)
+            {
+                return Error("Невозможно исключить владельца комманды", 400);
+            }
+
+            if (exception is UserNotFoundException)
+            {
+                return Error("Пользователь не состоит в комманде", 400);
+            }
+
+            _logger.LogError("Неизвестная ошибка при исключении пользователя из комманды: {exception}", exception);
+            return ServerError();
+        }
+
+        return Ok();
+    }
 }
