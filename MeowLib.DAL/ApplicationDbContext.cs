@@ -3,6 +3,7 @@ using MeowLib.Domain.DbModels.BookCommentEntity;
 using MeowLib.Domain.DbModels.BookEntity;
 using MeowLib.Domain.DbModels.BookmarkEntity;
 using MeowLib.Domain.DbModels.ChapterEntity;
+using MeowLib.Domain.DbModels.NotificationEntity;
 using MeowLib.Domain.DbModels.TagEntity;
 using MeowLib.Domain.DbModels.TeamEntity;
 using MeowLib.Domain.DbModels.TeamMemberEntity;
@@ -49,6 +50,9 @@ public class ApplicationDbContext : DbContext
             .HasMany<BookCommentEntityModel>()
             .WithOne()
             .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<NotificationEntityModel>()
+            .OwnsOne(n => n.Payload, payloadBuilder => payloadBuilder.ToJson());
 
         base.OnModelCreating(modelBuilder);
     }
@@ -102,4 +106,9 @@ public class ApplicationDbContext : DbContext
     /// Таблица членов команд.
     /// </summary>
     public required DbSet<TeamMemberEntityModel> TeamMembers { get; set; }
+    
+    /// <summary>
+    /// Таблица уведомлений пользователей.
+    /// </summary>
+    public required DbSet<NotificationEntityModel> Notifications { get; set; }
 }
