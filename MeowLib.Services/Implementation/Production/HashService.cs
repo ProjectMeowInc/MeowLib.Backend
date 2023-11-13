@@ -1,8 +1,8 @@
 using System.Security.Cryptography;
 using System.Text;
-using MeowLIb.Services.Interface;
+using MeowLib.Services.Interface;
 
-namespace MeowLIb.Services.Implementation.Production;
+namespace MeowLib.Services.Implementation.Production;
 
 /// <summary>
 /// Сервис для хеширования.

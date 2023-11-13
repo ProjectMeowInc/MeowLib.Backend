@@ -4,7 +4,7 @@ using MeowLib.Domain.Dto.Tag;
 using MeowLib.Domain.Enums;
 using MeowLib.Domain.Exceptions.Services;
 using MeowLib.Domain.Requests.Tag;
-using MeowLIb.Services.Interface;
+using MeowLib.Services.Interface;
 using MeowLib.WebApi.Abstractions;
 using MeowLib.WebApi.Filters;
 using MeowLib.WebApi.ProducesResponseTypes;

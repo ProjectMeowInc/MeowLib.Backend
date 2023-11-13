@@ -5,7 +5,7 @@ using MeowLib.Domain.Exceptions.User;
 using MeowLib.Domain.Requests.UserFavorite;
 using MeowLib.Domain.Responses;
 using MeowLib.Domain.Responses.UserFavorite;
-using MeowLIb.Services.Interface;
+using MeowLib.Services.Interface;
 using MeowLib.WebApi.Abstractions;
 using MeowLib.WebApi.Filters;
 using MeowLib.WebApi.ProducesResponseTypes;

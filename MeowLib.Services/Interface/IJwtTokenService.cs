@@ -1,7 +1,7 @@
 using MeowLib.Domain.Dto.User;
 using MeowLib.Domain.Models;
 
-namespace MeowLIb.Services.Interface;
+namespace MeowLib.Services.Interface;
 
 /// <summary>
 /// Абстракция сервиса для работы с JWT-токенами.

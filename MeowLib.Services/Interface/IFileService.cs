@@ -2,7 +2,7 @@
 using MeowLib.Domain.Result;
 using Microsoft.AspNetCore.Http;
 
-namespace MeowLIb.Services.Interface;
+namespace MeowLib.Services.Interface;
 
 /// <summary>
 /// Абстракция сервиса работы с файлами.

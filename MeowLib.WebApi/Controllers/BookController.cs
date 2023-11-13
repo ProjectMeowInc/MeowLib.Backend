@@ -11,7 +11,7 @@ using MeowLib.Domain.Requests.Chapter;
 using MeowLib.Domain.Responses;
 using MeowLib.Domain.Responses.Book;
 using MeowLib.Domain.Responses.Chapter;
-using MeowLIb.Services.Interface;
+using MeowLib.Services.Interface;
 using MeowLib.WebApi.Abstractions;
 using MeowLib.WebApi.Filters;
 using MeowLib.WebApi.ProducesResponseTypes;

@@ -4,7 +4,7 @@ using MeowLib.Domain.Requests.Authorization;
 using MeowLib.Domain.Requests.User;
 using MeowLib.Domain.Responses;
 using MeowLib.Domain.Responses.User;
-using MeowLIb.Services.Interface;
+using MeowLib.Services.Interface;
 using MeowLib.WebApi.Abstractions;
 using MeowLib.WebApi.ProducesResponseTypes;
 using Microsoft.AspNetCore.Mvc;

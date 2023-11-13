@@ -3,7 +3,7 @@ using MeowLib.Domain.Exceptions.Chapter;
 using MeowLib.Domain.Exceptions.User;
 using MeowLib.Domain.Requests.Bookmark;
 using MeowLib.Domain.Responses;
-using MeowLIb.Services.Interface;
+using MeowLib.Services.Interface;
 using MeowLib.WebApi.Abstractions;
 using MeowLib.WebApi.Filters;
 using MeowLib.WebApi.ProducesResponseTypes;

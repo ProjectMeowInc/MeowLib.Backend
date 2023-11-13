@@ -6,12 +6,12 @@ using MeowLib.Domain.Exceptions.DAL;
 using MeowLib.Domain.Exceptions.Services;
 using MeowLib.Domain.Models;
 using MeowLib.Domain.Result;
-using MeowLIb.Services.Interface;
+using MeowLib.Services.Interface;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace MeowLIb.Services.Implementation.Production;
+namespace MeowLib.Services.Implementation.Production;
 
 /// <summary>
 /// Сервис для работы с книгами.

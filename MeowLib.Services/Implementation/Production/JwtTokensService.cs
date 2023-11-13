@@ -3,11 +3,11 @@ using System.Security.Claims;
 using MeowLib.Domain.Dto.User;
 using MeowLib.Domain.Enums;
 using MeowLib.Domain.Models;
-using MeowLIb.Services.Interface;
+using MeowLib.Services.Interface;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 
-namespace MeowLIb.Services.Implementation.Production;
+namespace MeowLib.Services.Implementation.Production;
 
 /// <summary>
 /// Сервис для работы с JWT-токенами.

@@ -3,7 +3,7 @@ using MeowLib.Domain.Exceptions.User;
 using MeowLib.Domain.Requests.Team;
 using MeowLib.Domain.Responses;
 using MeowLib.Domain.Responses.Team;
-using MeowLIb.Services.Interface;
+using MeowLib.Services.Interface;
 using MeowLib.WebApi.Abstractions;
 using MeowLib.WebApi.Filters;
 using MeowLib.WebApi.ProducesResponseTypes;
@@ -149,6 +149,50 @@ public class TeamController : BaseController
             }
 
             _logger.LogError("Неизвестная ошибка покидания команды: {exception}", exception);
+            return ServerError();
+        }
+
+        return Ok();
+    }
+
+    [HttpPost("{teamId}/invite/{userId}"), Authorization]
+    [ProducesOkResponseType]
+    [ProducesUserErrorResponseType]
+    public async Task<IActionResult> InviteUserToTeam([FromRoute] int teamId, [FromRoute] int userId)
+    {
+        var requestUser = await GetUserDataAsync();
+
+        var hasAdminAccess = await _teamService.CheckUserIsTeamAdminAsync(teamId, requestUser.Id);
+        if (!hasAdminAccess)
+        {
+            return Error("У вас нет доступа к добавлению пользователей в комманду", 400);
+        }
+
+        var inviteResult = await _teamService.InviteUserToTeamAsync(teamId, userId);
+        if (inviteResult.IsFailure)
+        {
+            var exception = inviteResult.GetError();
+            if (exception is TeamNotFoundException)
+            {
+                _logger.LogWarning("Комманда с Id = {teamId} не найдена", teamId);
+                return NotFoundError();
+            }
+
+            if (exception is UserNotFoundException)
+            {
+                _logger.LogWarning("Пользователь с Id = {userId} не найден", userId);
+                return Error("Запрашиваемый пользователь не найден", 400);
+            }
+
+            if (exception is UserAlreadyInTeamException)
+            {
+                _logger.LogWarning("Пользователь с Id = {userId} уже состоит в комманде с Id = {teamId}",
+                    userId, teamId);
+                return Error("Запрашиваемый пользователь уже состоит в комманде", 400);
+            }
+            
+            _logger.LogError("Произошла неизвестная ошибка при приглашении пользователя в комманду: {exception}",
+                exception);
             return ServerError();
         }
 

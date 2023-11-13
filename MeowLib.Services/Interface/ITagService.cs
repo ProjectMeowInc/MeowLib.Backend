@@ -4,7 +4,7 @@ using MeowLib.Domain.Exceptions;
 using MeowLib.Domain.Exceptions.Services;
 using MeowLib.Domain.Result;
 
-namespace MeowLIb.Services.Interface;
+namespace MeowLib.Services.Interface;
 
 /// <summary>
 /// Абстракция сервси для работы с тегами.

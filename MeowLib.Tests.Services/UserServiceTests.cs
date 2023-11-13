@@ -1,7 +1,7 @@
 using MeowLib.DAL.Repository.Implementation.Tests;
 using MeowLib.Domain.Exceptions;
-using MeowLIb.Services.Implementation.Production;
-using MeowLIb.Services.Interface;
+using MeowLib.Services.Implementation.Production;
+using MeowLib.Services.Interface;
 using NUnit.Framework;
 
 namespace MeowLib.Tests.Services;

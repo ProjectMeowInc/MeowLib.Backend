@@ -8,10 +8,10 @@ using MeowLib.Domain.Exceptions;
 using MeowLib.Domain.Exceptions.Chapter;
 using MeowLib.Domain.Exceptions.User;
 using MeowLib.Domain.Result;
-using MeowLIb.Services.Interface;
+using MeowLib.Services.Interface;
 using Microsoft.EntityFrameworkCore;
 
-namespace MeowLIb.Services.Implementation.Production;
+namespace MeowLib.Services.Implementation.Production;
 
 public class BookmarkService : IBookmarkService
 {

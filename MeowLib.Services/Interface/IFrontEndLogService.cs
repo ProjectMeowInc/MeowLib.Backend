@@ -1,6 +1,6 @@
 using MeowLib.Domain.Models;
 
-namespace MeowLIb.Services.Interface;
+namespace MeowLib.Services.Interface;
 
 public interface IFrontEndLogService
 {

@@ -4,7 +4,7 @@ using MeowLib.Domain.Exceptions.Chapter;
 using MeowLib.Domain.Exceptions.User;
 using MeowLib.Domain.Result;
 
-namespace MeowLIb.Services.Interface;
+namespace MeowLib.Services.Interface;
 
 public interface IBookmarkService
 {

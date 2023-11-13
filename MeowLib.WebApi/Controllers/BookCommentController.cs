@@ -4,7 +4,7 @@ using MeowLib.Domain.Exceptions.User;
 using MeowLib.Domain.Requests.BookComment;
 using MeowLib.Domain.Responses;
 using MeowLib.Domain.Responses.BookComment;
-using MeowLIb.Services.Interface;
+using MeowLib.Services.Interface;
 using MeowLib.WebApi.Abstractions;
 using MeowLib.WebApi.Filters;
 using MeowLib.WebApi.ProducesResponseTypes;

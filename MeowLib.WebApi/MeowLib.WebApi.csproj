@@ -23,7 +23,7 @@
     <ItemGroup>
         <ProjectReference Include="..\MeowLib.Domain\MeowLib.Domain.csproj"/>
         <ProjectReference Include="..\MeowLib.DAL\MeowLib.DAL.csproj" />
-        <ProjectReference Include="..\MeowLIb.Services\MeowLIb.Services.csproj" />
+        <ProjectReference Include="..\MeowLib.Services\MeowLib.Services.csproj" />
     </ItemGroup>
 
     <ItemGroup>

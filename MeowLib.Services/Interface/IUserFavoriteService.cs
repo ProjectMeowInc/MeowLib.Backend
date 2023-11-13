@@ -5,7 +5,7 @@ using MeowLib.Domain.Exceptions.Book;
 using MeowLib.Domain.Exceptions.DAL;
 using MeowLib.Domain.Exceptions.User;
 
-namespace MeowLIb.Services.Interface;
+namespace MeowLib.Services.Interface;
 
 public interface IUserFavoriteService
 {

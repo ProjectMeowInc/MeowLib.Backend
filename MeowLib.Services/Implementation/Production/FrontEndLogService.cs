@@ -1,9 +1,9 @@
 using System.Text;
 using MeowLib.Domain.Models;
-using MeowLIb.Services.Interface;
+using MeowLib.Services.Interface;
 using Telegram.Bot;
 
-namespace MeowLIb.Services.Implementation.Production;
+namespace MeowLib.Services.Implementation.Production;
 
 public class FrontEndLogService : IFrontEndLogService
 {

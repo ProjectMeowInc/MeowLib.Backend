@@ -1,4 +1,4 @@
-namespace MeowLIb.Services.Interface;
+namespace MeowLib.Services.Interface;
 
 /// <summary>
 /// Абстракция сервиса для хеширования.

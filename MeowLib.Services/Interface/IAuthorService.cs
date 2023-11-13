@@ -5,7 +5,7 @@ using MeowLib.Domain.Exceptions.Services;
 using MeowLib.Domain.Requests.Author;
 using MeowLib.Domain.Result;
 
-namespace MeowLIb.Services.Interface;
+namespace MeowLib.Services.Interface;
 
 /// <summary>
 /// Абстракция сервиса для работы с авторами.

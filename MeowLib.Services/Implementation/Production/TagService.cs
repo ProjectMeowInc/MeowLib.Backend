@@ -6,10 +6,10 @@ using MeowLib.Domain.Exceptions.DAL;
 using MeowLib.Domain.Exceptions.Services;
 using MeowLib.Domain.Models;
 using MeowLib.Domain.Result;
-using MeowLIb.Services.Interface;
+using MeowLib.Services.Interface;
 using Microsoft.EntityFrameworkCore;
 
-namespace MeowLIb.Services.Implementation.Production;
+namespace MeowLib.Services.Implementation.Production;
 
 /// <summary>
 /// Сервси для работы с тегами.

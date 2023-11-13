@@ -5,7 +5,7 @@ using MeowLib.Domain.Exceptions.Services;
 using MeowLib.Domain.Result;
 using Microsoft.AspNetCore.Http;
 
-namespace MeowLIb.Services.Interface;
+namespace MeowLib.Services.Interface;
 
 public interface IBookService
 {
