@@ -199,7 +199,7 @@ public class TeamController : BaseController
         return Ok();
     }
 
-    [HttpPost("{teamId}/members/remove/{userId}"), Authorization]
+    [HttpPost("{teamId}/members/{userId}/remove"), Authorization]
     [ProducesOkResponseType]
     [ProducesUserErrorResponseType]
     [ProducesNotFoundResponseType]
