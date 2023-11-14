@@ -3,6 +3,7 @@ using MeowLib.Domain.DbModels.BookCommentEntity;
 using MeowLib.Domain.DbModels.BookEntity;
 using MeowLib.Domain.DbModels.BookmarkEntity;
 using MeowLib.Domain.DbModels.ChapterEntity;
+using MeowLib.Domain.DbModels.NotificationEntity;
 using MeowLib.Domain.DbModels.TagEntity;
 using MeowLib.Domain.DbModels.TeamEntity;
 using MeowLib.Domain.DbModels.TeamMemberEntity;
@@ -21,9 +22,7 @@ public class ApplicationDbContext : DbContext
     /// Конструктор.
     /// </summary>
     /// <param name="options">Настройки БД.</param>
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
-    {
-    }
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -102,4 +101,9 @@ public class ApplicationDbContext : DbContext
     /// Таблица членов команд.
     /// </summary>
     public required DbSet<TeamMemberEntityModel> TeamMembers { get; set; }
+
+    /// <summary>
+    /// Таблица уведомлений пользователей.
+    /// </summary>
+    public required DbSet<NotificationEntityModel> Notifications { get; set; }
 }

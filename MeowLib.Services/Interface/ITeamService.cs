@@ -17,7 +17,7 @@ public interface ITeamService
     /// <returns>Модель команды в случае успеха</returns>
     /// <exception cref="TeamOwnerNotFoundException">Возникает в случае, если пользователь запросивший создание команды не найден</exception>
     Task<Result<TeamEntityModel>> CreateNewTeamAsync(int createdById, string name, string description);
-    
+
     /// <summary>
     /// Метод вовзращает информацию о команде по её Id.
     /// </summary>
@@ -57,13 +57,13 @@ public interface ITeamService
     Task<Result> RemoveFromTeamAsync(int teamId, int userId);
 
     /// <summary>
-    /// Метод добавляет пользователя в команду.
+    /// Метод отправляет приглашение на вступление в комманду.
     /// </summary>
-    /// <param name="teamId">Id команды для добавления.</param>
-    /// <param name="userId">Id пользователя для добавления.</param>
-    /// <returns>Результат добавления пользователя в команду.</returns>
-    /// <exception cref="TeamNotFoundException">Указанная комманда не найдена.</exception>
-    /// <exception cref="UserNotFoundException">Указанный пользователь не найден.</exception>
-    /// <exception cref="UserAlreadyInTeamException">Указанный пользователь уже состоит в комманде.</exception>
+    /// <param name="teamId">Id комманды.</param>
+    /// <param name="userId">Id пользователя.</param>
+    /// <returns>Результат приглашения</returns>
+    /// <exception cref="TeamNotFoundException">Возникает в случае, если комманда не была найдена.</exception>
+    /// <exception cref="UserNotFoundException">Возникает в случае, пользователь не был найден.</exception>
+    /// <exception cref="UserAlreadyInTeamException">Возникает в случае, если пользователь уже состоит в данной комманде</exception>
     Task<Result> InviteUserToTeamAsync(int teamId, int userId);
 }

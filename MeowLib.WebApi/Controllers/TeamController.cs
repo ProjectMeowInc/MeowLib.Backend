@@ -16,20 +16,21 @@ public class TeamController : BaseController
 {
     private readonly ITeamService _teamService;
     private readonly ILogger<TeamController> _logger;
-    
+
     public TeamController(ITeamService teamService, ILogger<TeamController> logger)
     {
         _teamService = teamService;
         _logger = logger;
     }
 
-    [HttpPost, Authorization]
+    [HttpPost]
+    [Authorization]
     [ProducesOkResponseType]
     [ProducesResponseType(401, Type = typeof(BaseErrorResponse))]
     public async Task<IActionResult> CreateNewTeam([FromBody] CreateTeamRequest payload)
     {
         var user = await GetUserDataAsync();
-        
+
         var createNewTeamResult = await _teamService.CreateNewTeamAsync(user.Id, payload.Name, payload.Description);
         if (createNewTeamResult.IsFailure)
         {
@@ -72,11 +73,12 @@ public class TeamController : BaseController
         });
     }
 
-    [HttpPost("{teamId}/members/{userId}/role"), Authorization]
+    [HttpPost("{teamId}/members/{userId}/role")]
+    [Authorization]
     [ProducesOkResponseType]
     [ProducesResponseType(400, Type = typeof(BaseErrorResponse))]
     [ProducesNotFoundResponseType]
-    public async Task<IActionResult> SetUserTeamRole([FromRoute] int teamId, [FromRoute] int userId, 
+    public async Task<IActionResult> SetUserTeamRole([FromRoute] int teamId, [FromRoute] int userId,
         [FromBody] SetUserTeamRoleRequest payload)
     {
         var requestFromUser = await GetUserDataAsync();
@@ -118,14 +120,15 @@ public class TeamController : BaseController
         return Ok();
     }
 
-    [HttpPost("{teamId}/leave"), Authorization]
+    [HttpPost("{teamId}/leave")]
+    [Authorization]
     [ProducesOkResponseType]
     [ProducesUserErrorResponseType]
     [ProducesNotFoundResponseType]
     public async Task<IActionResult> LeaveFromTeam([FromRoute] int teamId)
     {
         var requestUser = await GetUserDataAsync();
-        
+
         var removeUserResult = await _teamService.RemoveFromTeamAsync(teamId, requestUser.Id);
         if (removeUserResult.IsFailure)
         {
@@ -155,7 +158,8 @@ public class TeamController : BaseController
         return Ok();
     }
 
-    [HttpPost("{teamId}/invite/{userId}"), Authorization]
+    [HttpPost("{teamId}/invite/{userId}")]
+    [Authorization]
     [ProducesOkResponseType]
     [ProducesUserErrorResponseType]
     public async Task<IActionResult> InviteUserToTeam([FromRoute] int teamId, [FromRoute] int userId)
@@ -190,7 +194,7 @@ public class TeamController : BaseController
                     userId, teamId);
                 return Error("Запрашиваемый пользователь уже состоит в комманде", 400);
             }
-            
+
             _logger.LogError("Произошла неизвестная ошибка при приглашении пользователя в комманду: {exception}",
                 exception);
             return ServerError();
@@ -199,7 +203,8 @@ public class TeamController : BaseController
         return Ok();
     }
 
-    [HttpPost("{teamId}/members/remove/{userId}"), Authorization]
+    [HttpPost("{teamId}/members/{userId}/remove")]
+    [Authorization]
     [ProducesOkResponseType]
     [ProducesUserErrorResponseType]
     [ProducesNotFoundResponseType]
@@ -221,9 +226,9 @@ public class TeamController : BaseController
         {
             var exception = removeFromTeamResult.GetError();
 
-            if (exception is TeamNotFoundException) 
-            { 
-                return NotFoundError(); 
+            if (exception is TeamNotFoundException)
+            {
+                return NotFoundError();
             }
 
             if (exception is ChangeOwnerRoleException)
