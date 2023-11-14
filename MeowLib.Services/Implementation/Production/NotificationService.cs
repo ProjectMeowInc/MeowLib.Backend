@@ -1,9 +1,7 @@
 using MeowLib.DAL;
 using MeowLib.Domain.DbModels.NotificationEntity;
-using MeowLib.Domain.DbModels.NotificationEntity.Payload;
 using MeowLib.Domain.Dto.Notification;
 using MeowLib.Domain.Enums;
-using MeowLib.Domain.Exceptions.Team;
 using MeowLib.Domain.Exceptions.User;
 using MeowLib.Domain.Models;
 using MeowLib.Domain.Result;
@@ -19,7 +17,7 @@ public class NotificationService(ApplicationDbContext dbContext, IJwtTokenServic
     private readonly IJwtTokenService _jwtTokenService = jwtTokenService;
     
     public async Task<Result> SendNotificationToUserAsync(int userId, NotificationTypeEnum notificationType, 
-        BaseNotificationPayload payload)
+        string payload)
     {
         var foundedUser = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == userId);
         if (foundedUser is null)
@@ -50,10 +48,7 @@ public class NotificationService(ApplicationDbContext dbContext, IJwtTokenServic
             InviteExpiredAt = DateTime.UtcNow.AddDays(3)
         });
 
-        var sendNotificationResult = await SendNotificationToUserAsync(userId, NotificationTypeEnum.TeamInvite, new TeamInviteNotificationPayload
-        {
-            InviteLink = inviteToken
-        });
+        var sendNotificationResult = await SendNotificationToUserAsync(userId, NotificationTypeEnum.TeamInvite, inviteToken);
 
         if (sendNotificationResult.IsFailure)
         {

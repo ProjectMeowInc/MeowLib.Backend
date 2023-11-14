@@ -1,4 +1,3 @@
-using MeowLib.Domain.DbModels.NotificationEntity.Payload;
 using MeowLib.Domain.Dto.Notification;
 using MeowLib.Domain.Enums;
 using MeowLib.Domain.Exceptions.User;
@@ -17,7 +16,7 @@ public interface INotificationService
     /// <returns>Результат отправки уведомления.</returns>
     /// <exception cref="UserNotFoundException">Возникает в случае, если пользователь не найден.</exception>
     Task<Result> SendNotificationToUserAsync(int userId, NotificationTypeEnum notificationType,
-        BaseNotificationPayload payload);
+        string payload);
     
     /// <summary>
     /// Метод отправляет пользователю уведомление с предложением вступить в комманду.

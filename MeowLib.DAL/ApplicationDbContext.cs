@@ -50,10 +50,7 @@ public class ApplicationDbContext : DbContext
             .HasMany<BookCommentEntityModel>()
             .WithOne()
             .OnDelete(DeleteBehavior.Cascade);
-
-        modelBuilder.Entity<NotificationEntityModel>()
-            .OwnsOne(n => n.Payload, payloadBuilder => payloadBuilder.ToJson());
-
+        
         base.OnModelCreating(modelBuilder);
     }
 
