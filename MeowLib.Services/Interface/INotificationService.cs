@@ -1,5 +1,6 @@
 using MeowLib.Domain.Dto.Notification;
 using MeowLib.Domain.Enums;
+using MeowLib.Domain.Exceptions.Notification;
 using MeowLib.Domain.Exceptions.User;
 using MeowLib.Domain.Result;
 
@@ -32,4 +33,13 @@ public interface INotificationService
     /// <param name="userId">Id пользователя.</param>
     /// <returns>Список уведомлений пользователя.</returns>
     Task<IEnumerable<NotificationDto>> GetUserNotificationsAsync(int userId);
+
+    /// <summary>
+    /// Метод делает уведомление пользователя просмотренным.
+    /// </summary>
+    /// <param name="userId">Id пользователя.</param>
+    /// <param name="notificationId">Id уведомления.</param>
+    /// <returns>Результат просмотра уведомления</returns>
+    /// <exception cref="NotificationNotFoundException">Возникает в случае, если уведомление не было найдено.</exception>
+    Task<Result> SetNotificationWatchedAsync(int userId, int notificationId);
 }

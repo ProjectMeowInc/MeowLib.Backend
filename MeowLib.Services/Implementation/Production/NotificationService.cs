@@ -2,6 +2,7 @@ using MeowLib.DAL;
 using MeowLib.Domain.DbModels.NotificationEntity;
 using MeowLib.Domain.Dto.Notification;
 using MeowLib.Domain.Enums;
+using MeowLib.Domain.Exceptions.Notification;
 using MeowLib.Domain.Exceptions.User;
 using MeowLib.Domain.Models;
 using MeowLib.Domain.Result;
@@ -72,5 +73,25 @@ public class NotificationService(ApplicationDbContext dbContext, IJwtTokenServic
                 CreatedAt = n.CreatedAt
             })
             .ToListAsync();
+    }
+    
+    public async Task<Result> SetNotificationWatchedAsync(int userId, int notificationId)
+    {
+        var foundedNotification = await _dbContext.Notifications
+            .Where(n => !n.IsWatched)
+            .Where(n => n.User.Id == userId)
+            .FirstOrDefaultAsync(n => n.Id == notificationId);
+
+        if (foundedNotification is null)
+        {
+            return Result.Fail(new NotificationNotFoundException(notificationId));
+        }
+
+        foundedNotification.IsWatched = true;
+        
+        _dbContext.Update(foundedNotification);
+        await _dbContext.SaveChangesAsync();
+        
+        return Result.Ok();
     }
 }
