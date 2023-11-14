@@ -1,7 +1,6 @@
 using MeowLib.Domain.DbModels.NotificationEntity.Payload;
 using MeowLib.Domain.Dto.Notification;
 using MeowLib.Domain.Enums;
-using MeowLib.Domain.Exceptions.Team;
 using MeowLib.Domain.Exceptions.User;
 using MeowLib.Domain.Result;
 
@@ -26,7 +25,6 @@ public interface INotificationService
     /// <param name="teamId">Id комманды.</param>
     /// <param name="userId">Id пользователя.</param>
     /// <returns>Результат отправки уведомления. Метод сохраняет все ошибки метода <see cref="SendNotificationToUserAsync"/></returns>
-    /// <exception cref="TeamNotFoundException">Возникает в случае, если комманда не была найдена.</exception>
     Task<Result> SendInviteToTeamNotificationAsync(int teamId, int userId);
     
     /// <summary>
