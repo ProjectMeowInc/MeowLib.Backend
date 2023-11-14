@@ -1,4 +1,4 @@
-using MeowLib.DAL;
+﻿using MeowLib.DAL;
 using MeowLib.Domain.DbModels.NotificationEntity;
 using MeowLib.Domain.Dto.Notification;
 using MeowLib.Domain.Enums;
@@ -11,11 +11,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MeowLib.Services.Implementation.Production;
 
-public class NotificationService(ApplicationDbContext dbContext, IJwtTokenService jwtTokenService)
-    : INotificationService
+public class NotificationService : INotificationService
 {
-    private readonly ApplicationDbContext _dbContext = dbContext;
-    private readonly IJwtTokenService _jwtTokenService = jwtTokenService;
+    private readonly ApplicationDbContext _dbContext;
+    private readonly IJwtTokenService _jwtTokenService;
+
+    public NotificationService(ApplicationDbContext dbContext, IJwtTokenService jwtTokenService)
+    {
+        _dbContext = dbContext;
+        _jwtTokenService = jwtTokenService;
+    }
 
     public async Task<Result> SendNotificationToUserAsync(int userId, NotificationTypeEnum notificationType,
         string payload)
@@ -94,5 +99,5 @@ public class NotificationService(ApplicationDbContext dbContext, IJwtTokenServic
         await _dbContext.SaveChangesAsync();
 
         return Result.Ok();
-    }
+    }    
 }
