@@ -2,6 +2,7 @@ using MeowLib.Domain.Responses.Notification;
 using MeowLib.Services.Interface;
 using MeowLib.WebApi.Abstractions;
 using MeowLib.WebApi.Filters;
+using MeowLib.WebApi.ProducesResponseTypes;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MeowLib.WebApi.Controllers;
@@ -17,6 +18,7 @@ public class NotificationController : BaseController
     }
 
     [HttpGet("my"), Authorization]
+    [ProducesOkResponseType(typeof(GetMyNotificationsResponse))]
     public async Task<IActionResult> GetMyNotifications()
     {
         var userData = await GetUserDataAsync();
