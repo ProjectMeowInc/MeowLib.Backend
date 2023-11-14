@@ -5,5 +5,5 @@ namespace MeowLib.Domain.Enums;
 [JsonConverter(typeof(JsonStringEnumConverter))]
 public enum NotificationTypeEnum
 {
-    TeamInvite = 1,
+    TeamInvite = 1
 }

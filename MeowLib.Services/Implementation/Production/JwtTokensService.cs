@@ -21,7 +21,7 @@ public class JwtTokensService : IJwtTokenService
     private readonly string _issuer;
     private readonly string _audience;
     private readonly ILogger<JwtTokensService> _logger;
-    
+
     /// <summary>
     /// Конструктор.
     /// </summary>
@@ -32,7 +32,7 @@ public class JwtTokensService : IJwtTokenService
         var accessTokenSecurityKey = "QevAyHIKuOHJwG6sdYwnfrrbUW61cu4r3vuyzSNkBw1itzJD5AMXdKqLfzv"u8.ToArray();
         var refreshTokenSecurityKey = "Wv8HLBxBztPocFYSMDZn3074USr48gxw9RXZw4BCxAp290CqsPPG9frFLR2p"u8.ToArray();
         var inviteTokenSecurityKey = "OCGRroap9tNmWNxohF8i3ImZUWYxa4L64nJxDKnqt60lgqddND2kwVDZJaEA"u8.ToArray();
-        
+
         _accessTokenSecurityKey = new SymmetricSecurityKey(accessTokenSecurityKey);
         _refreshTokenSecurityKey = new SymmetricSecurityKey(refreshTokenSecurityKey);
         _inviteTokenSecurityKey = new SymmetricSecurityKey(inviteTokenSecurityKey);
@@ -188,7 +188,7 @@ public class JwtTokensService : IJwtTokenService
             {
                 new Claim("userId", data.UserId.ToString()),
                 new Claim("teamId", data.TeamId.ToString()),
-                new Claim("inviteExpiredAt", expiredUnixDate.ToString()),
+                new Claim("inviteExpiredAt", expiredUnixDate.ToString())
             }),
             Issuer = _issuer,
             Audience = _audience,
@@ -224,9 +224,9 @@ public class JwtTokensService : IJwtTokenService
 
         var userId = int.Parse(validateResult.Claims["userId"].ToString() ??
                                throw new NullReferenceException("UserId не может быть null"));
-        
+
         var teamId = int.Parse(validateResult.Claims["teamId"].ToString() ??
-                                throw new NullReferenceException("TeamId не может быть null"));
+                               throw new NullReferenceException("TeamId не может быть null"));
         var inviteExpired = long.Parse(validateResult.Claims["inviteExpiredAt"].ToString() ??
                                        throw new NullReferenceException("InviteExpiredAt не может быть null"));
 
@@ -240,7 +240,7 @@ public class JwtTokensService : IJwtTokenService
             InviteExpiredAt = inviteExpiredDate
         };
     }
-    
+
     /// <summary>
     /// Метод подписывает JWT-токен.
     /// </summary>

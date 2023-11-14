@@ -20,7 +20,8 @@ public class NotificationController : BaseController
         _logger = logger;
     }
 
-    [HttpGet("my"), Authorization]
+    [HttpGet("my")]
+    [Authorization]
     [ProducesOkResponseType(typeof(GetMyNotificationsResponse))]
     public async Task<IActionResult> GetMyNotifications()
     {
@@ -31,11 +32,12 @@ public class NotificationController : BaseController
         return Json(new GetMyNotificationsResponse
         {
             Items = notificationDtos,
-            Count = notificationDtos.Count,
+            Count = notificationDtos.Count
         });
     }
 
-    [HttpPost("my/watch/{notificationId}"), Authorization]
+    [HttpPost("my/watch/{notificationId}")]
+    [Authorization]
     [ProducesOkResponseType]
     [ProducesNotFoundResponseType]
     public async Task<IActionResult> WatchNotification([FromRoute] int notificationId)
@@ -55,7 +57,8 @@ public class NotificationController : BaseController
                 return NotFoundError();
             }
 
-            _logger.LogError("Неизвестная ошибка при попытке сделать уведомление пользователя просмотренным: {exception}",
+            _logger.LogError(
+                "Неизвестная ошибка при попытке сделать уведомление пользователя просмотренным: {exception}",
                 exception);
             return ServerError();
         }

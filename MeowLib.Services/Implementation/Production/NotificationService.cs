@@ -46,7 +46,6 @@ public class NotificationService : INotificationService
 
     public async Task<Result> SendInviteToTeamNotificationAsync(int teamId, int userId)
     {
-
         var inviteToken = _jwtTokenService.GenerateInviteToTeamStringToken(new InviteToTeamTokenModel
         {
             UserId = userId,
@@ -99,5 +98,5 @@ public class NotificationService : INotificationService
         await _dbContext.SaveChangesAsync();
 
         return Result.Ok();
-    }    
+    }
 }

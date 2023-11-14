@@ -22,9 +22,7 @@ public class ApplicationDbContext : DbContext
     /// Конструктор.
     /// </summary>
     /// <param name="options">Настройки БД.</param>
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
-    {
-    }
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -50,7 +48,7 @@ public class ApplicationDbContext : DbContext
             .HasMany<BookCommentEntityModel>()
             .WithOne()
             .OnDelete(DeleteBehavior.Cascade);
-        
+
         base.OnModelCreating(modelBuilder);
     }
 
@@ -103,7 +101,7 @@ public class ApplicationDbContext : DbContext
     /// Таблица членов команд.
     /// </summary>
     public required DbSet<TeamMemberEntityModel> TeamMembers { get; set; }
-    
+
     /// <summary>
     /// Таблица уведомлений пользователей.
     /// </summary>

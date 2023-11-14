@@ -18,7 +18,7 @@ public interface INotificationService
     /// <exception cref="UserNotFoundException">Возникает в случае, если пользователь не найден.</exception>
     Task<Result> SendNotificationToUserAsync(int userId, NotificationTypeEnum notificationType,
         string payload);
-    
+
     /// <summary>
     /// Метод отправляет пользователю уведомление с предложением вступить в комманду.
     /// </summary>
@@ -26,7 +26,7 @@ public interface INotificationService
     /// <param name="userId">Id пользователя.</param>
     /// <returns>Результат отправки уведомления. Метод сохраняет все ошибки метода <see cref="SendNotificationToUserAsync"/></returns>
     Task<Result> SendInviteToTeamNotificationAsync(int teamId, int userId);
-    
+
     /// <summary>
     /// Метод возвращает список уведомлений пользователя.
     /// </summary>

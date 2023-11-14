@@ -43,7 +43,7 @@ public interface IJwtTokenService
     /// <param name="data">Информация для генерации токена.</param>
     /// <returns>Сгенерированный токен.</returns>
     string GenerateInviteToTeamStringToken(InviteToTeamTokenModel data);
-    
+
     /// <summary>
     /// Метод валидирует токен для приглашения в комманду.
     /// </summary>
