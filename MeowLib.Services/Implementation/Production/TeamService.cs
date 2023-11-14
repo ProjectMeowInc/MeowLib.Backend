@@ -3,6 +3,7 @@ using MeowLib.DAL.Repository.Interfaces;
 using MeowLib.Domain.DbModels.TeamEntity;
 using MeowLib.Domain.DbModels.TeamMemberEntity;
 using MeowLib.Domain.Enums;
+using MeowLib.Domain.Exceptions;
 using MeowLib.Domain.Exceptions.Team;
 using MeowLib.Domain.Exceptions.User;
 using MeowLib.Domain.Result;
@@ -15,11 +16,14 @@ public class TeamService : ITeamService
 {
     private readonly ApplicationDbContext _dbContext;
     private readonly IUserRepository _userRepository;
+    private readonly INotificationService _notificationService;
     
-    public TeamService(ApplicationDbContext dbContext, IUserRepository userRepository)
+    public TeamService(ApplicationDbContext dbContext, IUserRepository userRepository, 
+        INotificationService notificationService)
     {
         _dbContext = dbContext;
         _userRepository = userRepository;
+        _notificationService = notificationService;
     }
 
     public async Task<Result<TeamEntityModel>> CreateNewTeamAsync(int createdById, string name, string description)
@@ -167,7 +171,15 @@ public class TeamService : ITeamService
             return Result.Fail(new UserAlreadyInTeamException(userId, teamId));
         }
 
-        // todo: add send notification
-        return Result.Fail(new NotImplementedException());
+        var sendNotificationResult = await _notificationService.SendInviteToTeamNotificationAsync(foundedTeam.Id, 
+            foundedUser.Id);
+        if (sendNotificationResult.IsFailure)
+        {
+            var errorMessage = sendNotificationResult.GetError().Message;
+            return Result.Fail(
+                new InnerException($"Ошибка отправки уведомления о вступлении в комманду: {errorMessage}"));
+        }
+
+        return Result.Ok();
     }
 }
