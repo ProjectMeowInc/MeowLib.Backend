@@ -16,8 +16,8 @@ public class NotificationService(ApplicationDbContext dbContext, IJwtTokenServic
 {
     private readonly ApplicationDbContext _dbContext = dbContext;
     private readonly IJwtTokenService _jwtTokenService = jwtTokenService;
-    
-    public async Task<Result> SendNotificationToUserAsync(int userId, NotificationTypeEnum notificationType, 
+
+    public async Task<Result> SendNotificationToUserAsync(int userId, NotificationTypeEnum notificationType,
         string payload)
     {
         var foundedUser = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == userId);
@@ -25,7 +25,7 @@ public class NotificationService(ApplicationDbContext dbContext, IJwtTokenServic
         {
             return Result.Fail(new UserNotFoundException(userId));
         }
-        
+
         await _dbContext.Notifications.AddAsync(new NotificationEntityModel
         {
             Type = notificationType,
@@ -35,7 +35,7 @@ public class NotificationService(ApplicationDbContext dbContext, IJwtTokenServic
             User = foundedUser
         });
         await _dbContext.SaveChangesAsync();
-        
+
         return Result.Ok();
     }
 
@@ -49,16 +49,17 @@ public class NotificationService(ApplicationDbContext dbContext, IJwtTokenServic
             InviteExpiredAt = DateTime.UtcNow.AddDays(3)
         });
 
-        var sendNotificationResult = await SendNotificationToUserAsync(userId, NotificationTypeEnum.TeamInvite, inviteToken);
+        var sendNotificationResult =
+            await SendNotificationToUserAsync(userId, NotificationTypeEnum.TeamInvite, inviteToken);
 
         if (sendNotificationResult.IsFailure)
         {
             return Result.Fail(sendNotificationResult.GetError());
         }
-        
+
         return Result.Ok();
     }
-    
+
     public async Task<IEnumerable<NotificationDto>> GetUserNotificationsAsync(int userId)
     {
         return await _dbContext.Notifications
@@ -74,7 +75,7 @@ public class NotificationService(ApplicationDbContext dbContext, IJwtTokenServic
             })
             .ToListAsync();
     }
-    
+
     public async Task<Result> SetNotificationWatchedAsync(int userId, int notificationId)
     {
         var foundedNotification = await _dbContext.Notifications
@@ -88,10 +89,10 @@ public class NotificationService(ApplicationDbContext dbContext, IJwtTokenServic
         }
 
         foundedNotification.IsWatched = true;
-        
+
         _dbContext.Update(foundedNotification);
         await _dbContext.SaveChangesAsync();
-        
+
         return Result.Ok();
     }
 }
