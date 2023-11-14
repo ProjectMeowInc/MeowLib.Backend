@@ -12,18 +12,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MeowLib.Services.Implementation.Production;
 
-public class NotificationService : INotificationService
+public class NotificationService(ApplicationDbContext dbContext, ITeamService teamService,
+        IJwtTokenService jwtTokenService)
+    : INotificationService
 {
-    private readonly ApplicationDbContext _dbContext;
-    private readonly ITeamService _teamService;
-    private readonly IJwtTokenService _jwtTokenService;
-    
-    public NotificationService(ApplicationDbContext dbContext, ITeamService teamService, IJwtTokenService jwtTokenService)
-    {
-        _dbContext = dbContext;
-        _teamService = teamService;
-        _jwtTokenService = jwtTokenService;
-    }
+    private readonly ApplicationDbContext _dbContext = dbContext;
+    private readonly ITeamService _teamService = teamService;
+    private readonly IJwtTokenService _jwtTokenService = jwtTokenService;
 
     /// <summary>
     /// Метод отправляет уведомление произвольное уведомление пользователю.
@@ -100,6 +95,7 @@ public class NotificationService : INotificationService
         return await _dbContext.Notifications
             .Where(n => !n.IsWatched)
             .Where(n => n.User.Id == userId)
+            .AsNoTracking()
             .Select(n => new NotificationDto
             {
                 Id = n.Id,
