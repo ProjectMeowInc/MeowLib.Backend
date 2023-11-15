@@ -4,6 +4,7 @@ using MeowLib.Domain.DbModels.ChapterEntity;
 using MeowLib.Domain.DbModels.TeamEntity;
 using MeowLib.Domain.DbModels.TranslationEntity;
 using MeowLib.Domain.Dto.Chapter;
+using MeowLib.Domain.Exceptions;
 using MeowLib.Domain.Exceptions.Chapter;
 using MeowLib.Domain.Exceptions.Translation;
 using MeowLib.Domain.Result;
@@ -12,7 +13,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MeowLib.Services.Implementation.Production;
 
-public class TranslationService(ApplicationDbContext dbContext) : ITranslationService
+public class TranslationService(ApplicationDbContext dbContext, INotificationService notificationService) : ITranslationService
 {
     /// <summary>
     /// Метод создаёт перевод для заданной книги.
@@ -99,6 +100,7 @@ public class TranslationService(ApplicationDbContext dbContext) : ITranslationSe
     {
         var foundedTranslation = await dbContext.Translations
             .Include(translationEntityModel => translationEntityModel.Chapters)
+            .Include(translationEntityModel => translationEntityModel.Book)
             .FirstOrDefaultAsync(t => t.Id == translationId);
         
         if (foundedTranslation is null)
@@ -120,8 +122,18 @@ public class TranslationService(ApplicationDbContext dbContext) : ITranslationSe
             Translation = foundedTranslation
         };
 
-        await dbContext.Chapters.AddAsync(newChapter);
+        var newChapterEntry = await dbContext.Chapters.AddAsync(newChapter);
         await dbContext.SaveChangesAsync();
+        
+        //todo: move to worker?
+        var sendNotificationResult =
+            await notificationService.SendNotificationToBookSubscribersAsync(foundedTranslation.Book.Id,
+                newChapterEntry.Entity.Name);
+
+        if (sendNotificationResult.IsFailure)
+        {
+            return Result.Fail(new InnerException(sendNotificationResult.GetError().Message));
+        }
         
         return Result.Ok();
     }
