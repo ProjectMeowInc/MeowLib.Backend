@@ -125,4 +125,14 @@ public class TranslationService(ApplicationDbContext dbContext) : ITranslationSe
         
         return Result.Ok();
     }
+
+    /// <summary>
+    /// Метод возвращает перевод по его Id
+    /// </summary>
+    /// <param name="translationId">Id перевода.</param>
+    /// <returns>Найденный перевод или null</returns>
+    public async Task<TranslationEntityModel?> GetTranslationByIdAsync(int translationId)
+    {
+        return await dbContext.Translations.FirstOrDefaultAsync(t => t.Id == translationId);
+    }
 }
