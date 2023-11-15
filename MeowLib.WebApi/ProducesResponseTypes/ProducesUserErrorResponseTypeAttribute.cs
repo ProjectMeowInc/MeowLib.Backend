@@ -1,4 +1,4 @@
-﻿using MeowLib.Domain.Responses;
+﻿using MeowLib.WebApi.Models.Responses;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MeowLib.WebApi.ProducesResponseTypes;

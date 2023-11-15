@@ -2,12 +2,12 @@
 using MeowLib.Domain.Exceptions.Book;
 using MeowLib.Domain.Exceptions.DAL;
 using MeowLib.Domain.Exceptions.User;
-using MeowLib.Domain.Requests.UserFavorite;
-using MeowLib.Domain.Responses;
-using MeowLib.Domain.Responses.UserFavorite;
 using MeowLib.Services.Interface;
 using MeowLib.WebApi.Abstractions;
 using MeowLib.WebApi.Filters;
+using MeowLib.WebApi.Models.Requests.UserFavorite;
+using MeowLib.WebApi.Models.Responses;
+using MeowLib.WebApi.Models.Responses.UserFavorite;
 using MeowLib.WebApi.ProducesResponseTypes;
 using Microsoft.AspNetCore.Mvc;
 

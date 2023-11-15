@@ -1,6 +1,6 @@
 using MeowLib.Domain.Dto.User;
 using MeowLib.Domain.Exceptions;
-using MeowLib.Domain.Responses;
+using MeowLib.WebApi.Models.Responses;
 using MeowLib.WebApi.ProducesResponseTypes;
 using Microsoft.AspNetCore.Mvc;
 

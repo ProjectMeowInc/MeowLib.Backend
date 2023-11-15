@@ -1,10 +1,10 @@
 ﻿using MeowLib.Domain.Exceptions.Chapter;
 using MeowLib.Domain.Exceptions.Translation;
-using MeowLib.Domain.Requests.Translation;
-using MeowLib.Domain.Responses.Translation;
 using MeowLib.Services.Interface;
 using MeowLib.WebApi.Abstractions;
 using MeowLib.WebApi.Filters;
+using MeowLib.WebApi.Models.Requests.Translation;
+using MeowLib.WebApi.Models.Responses.Translation;
 using MeowLib.WebApi.ProducesResponseTypes;
 using Microsoft.AspNetCore.Mvc;
 

@@ -54,8 +54,8 @@ public interface IAuthorService
     /// <summary>
     /// Метод получает список авторов подходящих под поисковые параметры.
     /// </summary>
-    /// <param name="searchParams">Параметры для поиска.</param>
+    /// <param name="name">Имя автора</param>
     /// <returns>Список авторов подходящих под параметры поиска.</returns>
     /// <exception cref="SearchNotFoundException">Возникает если не был найден автор по заданным параметрам поиска.</exception>
-    Task<Result<IEnumerable<AuthorDto>>> GetAuthorWithParams(GetAuthorWithParamsRequest searchParams);
+    Task<Result<IEnumerable<AuthorDto>>> GetAuthorWithParams(string? name);
 }

@@ -1,11 +1,11 @@
 ﻿using MeowLib.Domain.Exceptions.Team;
 using MeowLib.Domain.Exceptions.User;
-using MeowLib.Domain.Requests.Team;
-using MeowLib.Domain.Responses;
-using MeowLib.Domain.Responses.Team;
 using MeowLib.Services.Interface;
 using MeowLib.WebApi.Abstractions;
 using MeowLib.WebApi.Filters;
+using MeowLib.WebApi.Models.Requests.Team;
+using MeowLib.WebApi.Models.Responses;
+using MeowLib.WebApi.Models.Responses.Team;
 using MeowLib.WebApi.ProducesResponseTypes;
 using Microsoft.AspNetCore.Mvc;
 

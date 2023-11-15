@@ -1,8 +1,8 @@
 using MeowLib.Domain.Exceptions.Notification;
-using MeowLib.Domain.Responses.Notification;
 using MeowLib.Services.Interface;
 using MeowLib.WebApi.Abstractions;
 using MeowLib.WebApi.Filters;
+using MeowLib.WebApi.Models.Responses.Notification;
 using MeowLib.WebApi.ProducesResponseTypes;
 using Microsoft.AspNetCore.Mvc;
 

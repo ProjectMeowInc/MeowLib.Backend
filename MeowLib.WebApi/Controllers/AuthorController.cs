@@ -4,10 +4,10 @@ using MeowLib.Domain.Dto.Author;
 using MeowLib.Domain.Enums;
 using MeowLib.Domain.Exceptions.DAL;
 using MeowLib.Domain.Exceptions.Services;
-using MeowLib.Domain.Requests.Author;
 using MeowLib.Services.Interface;
 using MeowLib.WebApi.Abstractions;
 using MeowLib.WebApi.Filters;
+using MeowLib.WebApi.Models.Requests.Author;
 using MeowLib.WebApi.ProducesResponseTypes;
 using Microsoft.AspNetCore.Mvc;
 using ValidationException = MeowLib.Domain.Exceptions.Services.ValidationException;
@@ -135,7 +135,7 @@ public class AuthorController : BaseController
     [ProducesNotFoundResponseType]
     public async Task<ActionResult> GetAuthorWithParams([FromBody] GetAuthorWithParamsRequest input)
     {
-        var getAuthorWithParamsResult = await _authorService.GetAuthorWithParams(input);
+        var getAuthorWithParamsResult = await _authorService.GetAuthorWithParams(input.Name);
         if (getAuthorWithParamsResult.IsFailure)
         {
             var exception = getAuthorWithParamsResult.GetError();
