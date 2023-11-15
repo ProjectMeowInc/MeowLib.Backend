@@ -1,5 +1,7 @@
 ﻿using MeowLib.Domain.DbModels.BookEntity;
+using MeowLib.Domain.DbModels.ChapterEntity;
 using MeowLib.Domain.DbModels.TeamEntity;
+using MeowLib.Domain.Dto.Chapter;
 using MeowLib.Domain.Exceptions.Translation;
 using MeowLib.Domain.Result;
 
@@ -15,4 +17,21 @@ public interface ITranslationService
     /// <returns>Результат создания перевода.</returns>
     /// <exception cref="TeamAlreadyTranslateBookException">Заданная комманда уже имеет перевод для этой книги.</exception>
     Task<Result> CreateTranslationAsync(BookEntityModel book, TeamEntityModel team);
+
+    /// <summary>
+    /// Метод возвращает список глав перевода.
+    /// </summary>
+    /// <param name="translationId">Id перевода.</param>
+    /// <returns>Список глав перевода</returns>
+    /// <exception cref="TranslationNotFoundException">Возникает в случае, если перевод с заданным Id не был найден</exception>
+    Task<Result<List<ChapterDto>>> GetTranslationChaptersAsync(int translationId);
+
+    /// <summary>
+    /// Метод возвращает главу книги по переводу и её положению в нём.
+    /// </summary>
+    /// <param name="translationId">Id перевода.</param>
+    /// <param name="position">Позиция в переводе.</param>
+    /// <returns>Искомую главу или null, если она не найдена.</returns>
+    Task<ChapterEntityModel?> GetChapterByTranslationAndPositionAsync(int translationId,
+        int position);
 }
