@@ -1,4 +1,5 @@
-﻿using MeowLib.Domain.Exceptions.Translation;
+﻿using MeowLib.Domain.Exceptions.Chapter;
+using MeowLib.Domain.Exceptions.Translation;
 using MeowLib.Domain.Requests.Translation;
 using MeowLib.Domain.Responses.Translation;
 using MeowLib.Services.Interface;
@@ -100,6 +101,40 @@ public class TranslationController(ITranslationService translationService, ITeam
                     payload.TeamId, payload.BookId);
                 return Error("Комманда уже занимается переводом данной книги", 400);
             }
+        }
+
+        return Ok();
+    }
+
+    [HttpPost("{translationId}/upload-chapter")]
+    [Authorization]
+    [ProducesOkResponseType]
+    [ProducesUserErrorResponseType]
+    [ProducesNotFoundResponseType]
+    public async Task<IActionResult> AddChapterToTranslation([FromRoute] int translationId, 
+        [FromBody] AddChapterToTranslationRequest payload)
+    {
+        var requestUserData = await GetUserDataAsync();
+        
+        var foundedTranslation = await translationService.GetTranslationByIdAsync(translationId);
+        if (foundedTranslation is null)
+        {
+            logger.LogWarning("Пользователь с Id = {userId} пытался добавить главу к несуществующему переводу",
+                requestUserData.Id);
+            return NotFoundError();
+        }
+
+        var addChapterResult = await translationService.AddChapterAsync(translationId, payload.Name, payload.Text, payload.Position);
+        if (addChapterResult.IsFailure)
+        {
+            var exception = addChapterResult.GetError();
+            if (exception is ChapterPositionAlreadyTaken)
+            {
+                logger.LogWarning("При добавлении главы позиция была занята: {position}", payload.Position);
+                return Error("Заданная позиция уже занята", 400);
+            }
+            
+            logger.LogError("При добавлении главы произошла ошибка: {exception}", exception);
         }
 
         return Ok();
