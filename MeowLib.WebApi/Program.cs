@@ -110,6 +110,7 @@ services.AddScoped<IBookmarkService, BookmarkService>();
 services.AddScoped<IBookCommentService, BookCommentService>();
 services.AddScoped<ITeamService, TeamService>();
 services.AddScoped<INotificationService, NotificationService>();
+services.AddScoped<ITranslationService, TranslationService>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(dbOptions =>
 {
