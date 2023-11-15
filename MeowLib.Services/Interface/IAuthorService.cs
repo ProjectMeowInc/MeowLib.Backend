@@ -2,7 +2,6 @@ using MeowLib.Domain.DbModels.AuthorEntity;
 using MeowLib.Domain.Dto.Author;
 using MeowLib.Domain.Exceptions;
 using MeowLib.Domain.Exceptions.Services;
-using MeowLib.Domain.Requests.Author;
 using MeowLib.Domain.Result;
 
 namespace MeowLib.Services.Interface;

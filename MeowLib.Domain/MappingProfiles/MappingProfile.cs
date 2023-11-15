@@ -13,11 +13,6 @@ using MeowLib.Domain.Dto.Chapter;
 using MeowLib.Domain.Dto.Tag;
 using MeowLib.Domain.Dto.Translation;
 using MeowLib.Domain.Dto.User;
-using MeowLib.Domain.Requests.Author;
-using MeowLib.Domain.Requests.Book;
-using MeowLib.Domain.Requests.Tag;
-using MeowLib.Domain.Requests.User;
-using MeowLib.Domain.Responses.Book;
 
 namespace MeowLib.Domain.MappingProfiles;
 

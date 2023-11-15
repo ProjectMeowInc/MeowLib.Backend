@@ -1,14 +1,11 @@
-using MeowLib.Domain.Interfaces;
 using MeowLib.Domain.Models;
-using MeowLib.Domain.Responses;
-using Microsoft.AspNetCore.Mvc;
 
 namespace MeowLib.Domain.Exceptions.Services;
 
 /// <summary>
 /// Класс для ошибок связанные с валидацией данных.
 /// </summary>
-public class ValidationException : ServiceLevelException, IHasResponseForm
+public class ValidationException : ServiceLevelException
 {
     /// <summary>
     /// Список ошибок валидации.
@@ -33,13 +30,5 @@ public class ValidationException : ServiceLevelException, IHasResponseForm
         base(serviceName)
     {
         ValidationErrors = validationErrors;
-    }
-
-    public JsonResult ToResponse()
-    {
-        return new JsonResult(new ValidationErrorResponse(ValidationErrors))
-        {
-            StatusCode = 403
-        };
     }
 }
