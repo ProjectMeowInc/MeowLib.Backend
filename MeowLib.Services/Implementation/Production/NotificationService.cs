@@ -1,7 +1,10 @@
-﻿using MeowLib.DAL;
+﻿using System.Text;
+using System.Text.Json;
+using MeowLib.DAL;
 using MeowLib.Domain.DbModels.NotificationEntity;
 using MeowLib.Domain.Dto.Notification;
 using MeowLib.Domain.Enums;
+using MeowLib.Domain.Exceptions.Book;
 using MeowLib.Domain.Exceptions.Notification;
 using MeowLib.Domain.Exceptions.User;
 using MeowLib.Domain.Models;
@@ -97,6 +100,51 @@ public class NotificationService : INotificationService
         _dbContext.Update(foundedNotification);
         await _dbContext.SaveChangesAsync();
 
+        return Result.Ok();
+    }
+
+    /// <summary>
+    /// Метод отправляет уведомления пользователям о выходе новой главы.
+    /// </summary>
+    /// <param name="bookId">Id книги.</param>
+    /// <param name="chapterName">Название главы.</param>
+    /// <returns>Результат отправки уведомлений.</returns>
+    /// <exception cref="BookNotFoundException">Возникает в случае, если книга не была найдена.</exception>
+    public async Task<Result> SendNotificationToBookSubscribersAsync(int bookId, string chapterName)
+    {
+        var foundedBook = await _dbContext.Books.FirstOrDefaultAsync(b => b.Id == bookId);
+        if (foundedBook is null)
+        {
+            return Result.Fail(new BookNotFoundException(bookId));
+        }
+        
+        var users = _dbContext.UsersFavorite
+            .Where(uf => uf.Book.Id == bookId)
+            .Select(uf => uf.User);
+        
+        var serializedPayload = JsonSerializer.Serialize(new
+        {
+            bookName = foundedBook.Name, chapterName
+        });
+
+        var payloadBase64 = Convert.ToBase64String(Encoding.UTF8.GetBytes(serializedPayload));
+        
+        var notifications = new List<NotificationEntityModel>();
+        foreach (var userEntityModel in users)
+        {
+            notifications.Add(new NotificationEntityModel
+            {
+                Type = NotificationTypeEnum.NewBookChapter,
+                Payload = payloadBase64,
+                IsWatched = false,
+                CreatedAt = DateTime.UtcNow,
+                User = userEntityModel
+            });
+        }
+
+        await _dbContext.Notifications.AddRangeAsync(notifications);
+        await _dbContext.SaveChangesAsync();
+        
         return Result.Ok();
     }
 }
