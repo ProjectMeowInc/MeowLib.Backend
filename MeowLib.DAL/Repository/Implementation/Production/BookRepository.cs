@@ -56,6 +56,8 @@ public class BookRepository : IBookRepository
         return await _applicationDbContext.Books
             .Include(b => b.Author)
             .Include(b => b.Tags)
+            .Include(b => b.Translations)
+            .ThenInclude(t => t.Team)
             .FirstOrDefaultAsync(b => b.Id == id);
     }
 
