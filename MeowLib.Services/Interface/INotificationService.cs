@@ -1,5 +1,6 @@
 using MeowLib.Domain.Dto.Notification;
 using MeowLib.Domain.Enums;
+using MeowLib.Domain.Exceptions.Book;
 using MeowLib.Domain.Exceptions.Notification;
 using MeowLib.Domain.Exceptions.User;
 using MeowLib.Domain.Result;
@@ -42,4 +43,13 @@ public interface INotificationService
     /// <returns>Результат просмотра уведомления</returns>
     /// <exception cref="NotificationNotFoundException">Возникает в случае, если уведомление не было найдено.</exception>
     Task<Result> SetNotificationWatchedAsync(int userId, int notificationId);
+    
+    /// <summary>
+    /// Метод отправляет уведомления пользователям о выходе новой главы.
+    /// </summary>
+    /// <param name="bookId">Id книги.</param>
+    /// <param name="chapterName">Название главы.</param>
+    /// <returns>Результат отправки уведомлений.</returns>
+    /// <exception cref="BookNotFoundException">Возникает в случае, если книга не была найдена.</exception>
+    Task<Result> SendNotificationToBookSubscribersAsync(int bookId, string chapterName);
 }

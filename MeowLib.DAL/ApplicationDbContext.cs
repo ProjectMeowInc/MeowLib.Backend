@@ -7,6 +7,7 @@ using MeowLib.Domain.DbModels.NotificationEntity;
 using MeowLib.Domain.DbModels.TagEntity;
 using MeowLib.Domain.DbModels.TeamEntity;
 using MeowLib.Domain.DbModels.TeamMemberEntity;
+using MeowLib.Domain.DbModels.TranslationEntity;
 using MeowLib.Domain.DbModels.UserEntity;
 using MeowLib.Domain.DbModels.UserFavoriteEntity;
 using Microsoft.EntityFrameworkCore;
@@ -31,8 +32,9 @@ public class ApplicationDbContext : DbContext
             .WithMany(t => t.Books);
 
         modelBuilder.Entity<BookEntityModel>()
-            .HasMany(b => b.Chapters)
-            .WithOne(c => c.Book);
+            .HasMany(b => b.Translations)
+            .WithOne(t => t.Book)
+            .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<BookEntityModel>()
             .HasOne(b => b.Author)
@@ -49,6 +51,11 @@ public class ApplicationDbContext : DbContext
             .WithOne()
             .OnDelete(DeleteBehavior.Cascade);
 
+        modelBuilder.Entity<TranslationEntityModel>()
+            .HasMany(t => t.Chapters)
+            .WithOne(c => c.Translation)
+            .OnDelete(DeleteBehavior.Cascade);
+        
         base.OnModelCreating(modelBuilder);
     }
 
@@ -106,4 +113,9 @@ public class ApplicationDbContext : DbContext
     /// Таблица уведомлений пользователей.
     /// </summary>
     public required DbSet<NotificationEntityModel> Notifications { get; set; }
+    
+    /// <summary>
+    /// Таблица переводов.
+    /// </summary>
+    public required DbSet<TranslationEntityModel> Translations { get; set; }
 }

@@ -1,6 +1,8 @@
 using MeowLib.DAL.Repository.Interfaces;
 using MeowLib.Domain.DbModels.AuthorEntity;
 using MeowLib.Domain.DbModels.BookEntity;
+using MeowLib.Domain.DbModels.TagEntity;
+using MeowLib.Domain.DbModels.TranslationEntity;
 using MeowLib.Domain.Exceptions;
 using MeowLib.Domain.Exceptions.DAL;
 using MeowLib.Domain.Exceptions.Services;
@@ -72,11 +74,14 @@ public class BookService : IBookService
 
         try
         {
+            // todo: fix author
             return await _bookRepository.CreateAsync(new BookEntityModel
             {
                 Name = inputName,
                 Description = inputDescription,
-                Author = null
+                Author = null,
+                Tags = new List<TagEntityModel>(),
+                Translations = new List<TranslationEntityModel>()
             });
         }
         catch (DbSavingException)

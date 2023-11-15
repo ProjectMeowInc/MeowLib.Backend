@@ -73,12 +73,12 @@ public class BookmarkRepository : IBookmarkRepository
     {
         await _applicationDbContext.Chapters
             .Entry(chapter)
-            .Reference(c => c.Book).LoadAsync();
+            .Reference(c => c.Translation.Book).LoadAsync();
 
         return await _applicationDbContext.Bookmarks
             .Include(bookmark => bookmark.Chapter)
             .FirstOrDefaultAsync(bookMark =>
-                bookMark.User == user && bookMark.Chapter.Book == chapter.Book);
+                bookMark.User == user && bookMark.Chapter.Translation.Book == chapter.Translation.Book);
     }
 
     public async Task<Result<BookmarkEntityModel>> UpdateAsync(BookmarkEntityModel entity)

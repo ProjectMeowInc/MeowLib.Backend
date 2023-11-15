@@ -78,7 +78,7 @@ public class BookmarkService : IBookmarkService
     {
         return await _bookmarkRepository
             .GetAll()
-            .Where(bookmark => bookmark.User.Id == userId && bookmark.Chapter.Book.Id == bookId)
+            .Where(bookmark => bookmark.User.Id == userId && bookmark.Chapter.Translation.Book.Id == bookId)
             .Select(bookmark => new BookmarkDto
             {
                 Id = bookmark.Id,

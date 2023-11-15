@@ -1,6 +1,6 @@
 using MeowLib.Domain.DbModels.AuthorEntity;
-using MeowLib.Domain.DbModels.ChapterEntity;
 using MeowLib.Domain.DbModels.TagEntity;
+using MeowLib.Domain.DbModels.TranslationEntity;
 
 namespace MeowLib.Domain.DbModels.BookEntity;
 
@@ -32,15 +32,15 @@ public class BookEntityModel
     /// <summary>
     /// Автор книги. FK.
     /// </summary>
-    public AuthorEntityModel? Author { get; set; }
+    public required AuthorEntityModel? Author { get; set; }
 
     /// <summary>
-    /// Список глав книги.
+    /// Список переводов книги.
     /// </summary>
-    public IEnumerable<ChapterEntityModel> Chapters { get; set; } = new List<ChapterEntityModel>();
+    public required IEnumerable<TranslationEntityModel> Translations { get; set; }
 
     /// <summary>
     /// Список тегов книги.
     /// </summary>
-    public IEnumerable<TagEntityModel> Tags { get; set; } = new List<TagEntityModel>();
+    public required IEnumerable<TagEntityModel> Tags { get; set; }
 }

@@ -11,13 +11,13 @@ using MeowLib.Domain.Dto.BookComment;
 using MeowLib.Domain.Dto.Bookmark;
 using MeowLib.Domain.Dto.Chapter;
 using MeowLib.Domain.Dto.Tag;
+using MeowLib.Domain.Dto.Translation;
 using MeowLib.Domain.Dto.User;
 using MeowLib.Domain.Requests.Author;
 using MeowLib.Domain.Requests.Book;
 using MeowLib.Domain.Requests.Tag;
 using MeowLib.Domain.Requests.User;
 using MeowLib.Domain.Responses.Book;
-using MeowLib.Domain.Responses.Chapter;
 
 namespace MeowLib.Domain.MappingProfiles;
 
@@ -53,12 +53,20 @@ public class MappingProfile : Profile
         // Book mapping
         CreateMap<CreateBookRequest, CreateBookEntityModel>()
             .ReverseMap();
-        CreateMap<BookEntityModel, GetBookResponse>();
+        CreateMap<BookEntityModel, GetBookResponse>()
+            .ForMember(
+                b => b.Translations,
+                b 
+                    => b.MapFrom(b => b.Translations.Select(tr => new TranslationDto
+                    {
+                        Id = tr.Id,
+                        Name = tr.Team.Name
+                    }))
+            );
         CreateMap<UpdateBookInfoRequest, UpdateBookEntityModel>();
 
         // Chapter mapping
         CreateMap<ChapterEntityModel, ChapterDto>();
-        CreateMap<ChapterEntityModel, GetBookChapterResponse>();
 
         // Bookmark mapping
         CreateMap<BookmarkEntityModel, BookmarkDto>()

@@ -66,4 +66,12 @@ public interface ITeamService
     /// <exception cref="UserNotFoundException">Возникает в случае, пользователь не был найден.</exception>
     /// <exception cref="UserAlreadyInTeamException">Возникает в случае, если пользователь уже состоит в данной комманде</exception>
     Task<Result> InviteUserToTeamAsync(int teamId, int userId);
+
+    /// <summary>
+    /// Метод проверяет сосотит ли пользователь в заданной комманде.
+    /// </summary>
+    /// <param name="userId">Id пользователя.</param>
+    /// <param name="teamId">Id комманды.</param>
+    /// <returns>True - если состоит, иначе - false</returns>
+    Task<bool> CheckUserInTeamAsync(int userId, int teamId);
 }

@@ -136,7 +136,12 @@ public class TeamService : ITeamService
             return Result.Fail(new UserNotFoundException(userId));
         }
 
-        // todo: add send notification
+        var sendNotificationResult = await _notificationService.SendInviteToTeamNotificationAsync(foundedTeam.Id, foundedUser.Id);
+        if (sendNotificationResult.IsFailure)
+        {
+            return Result.Fail(new InnerException(sendNotificationResult.GetError().Message));
+        }
+        
         _dbContext.Remove(foundedUser);
         await _dbContext.SaveChangesAsync();
 
@@ -172,5 +177,10 @@ public class TeamService : ITeamService
         }
 
         return Result.Ok();
+    }
+    
+    public async Task<bool> CheckUserInTeamAsync(int userId, int teamId)
+    {
+        return await _dbContext.TeamMembers.AnyAsync(tm => tm.Team.Id == teamId && tm.User.Id == userId);
     }
 }
