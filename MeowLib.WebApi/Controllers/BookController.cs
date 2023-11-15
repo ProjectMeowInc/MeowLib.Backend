@@ -1,16 +1,13 @@
 using AutoMapper;
 using MeowLib.DAL.Repository.Interfaces;
 using MeowLib.Domain.DbModels.BookEntity;
-using MeowLib.Domain.DbModels.ChapterEntity;
 using MeowLib.Domain.Dto.Book;
 using MeowLib.Domain.Enums;
 using MeowLib.Domain.Exceptions.DAL;
 using MeowLib.Domain.Exceptions.Services;
 using MeowLib.Domain.Requests.Book;
-using MeowLib.Domain.Requests.Chapter;
 using MeowLib.Domain.Responses;
 using MeowLib.Domain.Responses.Book;
-using MeowLib.Domain.Responses.Chapter;
 using MeowLib.Services.Interface;
 using MeowLib.WebApi.Abstractions;
 using MeowLib.WebApi.Filters;
@@ -26,15 +23,12 @@ public class BookController : BaseController
     private readonly IBookService _bookService;
     private readonly IBookRepository _bookRepository;
     private readonly IMapper _mapper;
-    private readonly IChapterService _chapterService;
 
-    public BookController(IBookService bookService, IBookRepository bookRepository, IMapper mapper,
-        IChapterService chapterService)
+    public BookController(IBookService bookService, IBookRepository bookRepository, IMapper mapper)
     {
         _bookService = bookService;
         _bookRepository = bookRepository;
         _mapper = mapper;
-        _chapterService = chapterService;
     }
 
     [HttpGet]
