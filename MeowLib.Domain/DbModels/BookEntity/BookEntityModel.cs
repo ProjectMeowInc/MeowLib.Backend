@@ -32,7 +32,7 @@ public class BookEntityModel
     /// <summary>
     /// Автор книги. FK.
     /// </summary>
-    public required AuthorEntityModel Author { get; set; }
+    public required AuthorEntityModel? Author { get; set; }
 
     /// <summary>
     /// Список переводов книги.
