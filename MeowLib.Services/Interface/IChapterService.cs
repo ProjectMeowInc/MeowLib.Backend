@@ -2,6 +2,7 @@
 using MeowLib.Domain.Dto.Chapter;
 using MeowLib.Domain.Exceptions.DAL;
 using MeowLib.Domain.Exceptions.Services;
+using MeowLib.Domain.Exceptions.Translation;
 using MeowLib.Domain.Result;
 
 namespace MeowLib.Services.Interface;
@@ -16,12 +17,12 @@ public interface IChapterService
     /// </summary>
     /// <param name="name">Название главы.</param>
     /// <param name="text">Текст главы.</param>
-    /// <param name="bookId">Id книги.</param>
+    /// <param name="translationId">Id перевода.</param>
     /// <returns>Модель созданной главы.</returns>
     /// <exception cref="ValidationException">Возникает в случае ошибки валидации данных.</exception>
-    /// <exception cref="EntityNotFoundException">Возникает в случае, если книга не была найдена.</exception>
+    /// <exception cref="TranslationNotFoundException">Возникает в случае, если перевод не был найден.</exception>
     /// <exception cref="DbSavingException">Возникает в случае ошибки БД.</exception>
-    Task<Result<ChapterEntityModel>> CreateChapterAsync(string name, string text, int bookId);
+    Task<Result<ChapterEntityModel>> CreateChapterAsync(string name, string text, int translationId);
 
     /// <summary>
     /// Метод обновляет текст главы.

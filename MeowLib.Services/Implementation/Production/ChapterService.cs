@@ -1,9 +1,11 @@
-﻿using MeowLib.DAL.Repository.Interfaces;
+﻿using MeowLib.DAL;
+using MeowLib.DAL.Repository.Interfaces;
 using MeowLib.Domain.DbModels.BookEntity;
 using MeowLib.Domain.DbModels.ChapterEntity;
 using MeowLib.Domain.Dto.Chapter;
 using MeowLib.Domain.Exceptions.DAL;
 using MeowLib.Domain.Exceptions.Services;
+using MeowLib.Domain.Exceptions.Translation;
 using MeowLib.Domain.Models;
 using MeowLib.Domain.Result;
 using MeowLib.Services.Interface;
@@ -18,24 +20,16 @@ public class ChapterService : IChapterService
 {
     private readonly IChapterRepository _chapterRepository;
     private readonly IBookService _bookService;
+    private readonly ApplicationDbContext _dbContext;
 
-    public ChapterService(IChapterRepository chapterRepository, IBookService bookService)
+    public ChapterService(IChapterRepository chapterRepository, IBookService bookService, ApplicationDbContext dbContext)
     {
         _chapterRepository = chapterRepository;
         _bookService = bookService;
+        _dbContext = dbContext;
     }
-
-    /// <summary>
-    /// Метод создаёт новую главу.
-    /// </summary>
-    /// <param name="name">Название главы.</param>
-    /// <param name="text">Текст главы.</param>
-    /// <param name="bookId">Id книги.</param>
-    /// <returns>Модель созданной главы.</returns>
-    /// <exception cref="ValidationException">Возникает в случае ошибки валидации данных.</exception>
-    /// <exception cref="EntityNotFoundException">Возникает в случае, если книга не была найдена.</exception>
-    /// <exception cref="DbSavingException">Возникает в случае ошибки БД.</exception>
-    public async Task<Result<ChapterEntityModel>> CreateChapterAsync(string name, string text, int bookId)
+    
+    public async Task<Result<ChapterEntityModel>> CreateChapterAsync(string name, string text, int translationId)
     {
         var validationErrors = new List<ValidationErrorModel>();
 
@@ -63,19 +57,19 @@ public class ChapterService : IChapterService
             return Result<ChapterEntityModel>.Fail(validationException);
         }
 
-        var foundedBook = await _bookService.GetBookByIdAsync(bookId);
-        if (foundedBook is null)
+        var foundedTranslation = await _dbContext.Translations.FirstOrDefaultAsync(t => t.Id == translationId);
+        if (foundedTranslation is null)
         {
-            var entityNotFoundException = new EntityNotFoundException(nameof(BookEntityModel), $"Id={bookId}");
-            return Result<ChapterEntityModel>.Fail(entityNotFoundException);
+            return Result<ChapterEntityModel>.Fail(new TranslationNotFoundException(translationId));
         }
-
+        
         var newChapter = new ChapterEntityModel
         {
             Name = name,
             Text = text,
             ReleaseDate = DateTime.UtcNow,
-            Book = foundedBook
+            Translation = foundedTranslation,
+            Position = 1
         };
 
         var createChapterResult = await _chapterRepository.CreateAsync(newChapter);
@@ -123,7 +117,7 @@ public class ChapterService : IChapterService
         }
 
         var bookChapters = await _chapterRepository.GetAll()
-            .Where(chapter => chapter.Book == foundedBook)
+            .Where(chapter => chapter.Translation.Book == foundedBook)
             .OrderBy(chapter => chapter.ReleaseDate)
             .Select(chapter => new ChapterDto
             {
