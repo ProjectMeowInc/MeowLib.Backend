@@ -134,7 +134,7 @@ public class BookController : BaseController
     [HttpGet("{id:int}")]
     [ProducesOkResponseType(typeof(GetBookResponse))]
     [ProducesNotFoundResponseType]
-    public async Task<ActionResult> GetBook([FromRoute] int id)
+    public async Task<ActionResult> GetBookInfo([FromRoute] int id)
     {
         var foundedBook = await _bookService.GetBookByIdAsync(id);
         if (foundedBook is null)
@@ -144,108 +144,6 @@ public class BookController : BaseController
 
         var getBookResponse = _mapper.Map<BookEntityModel, GetBookResponse>(foundedBook);
         return Json(getBookResponse);
-    }
-
-    [HttpPost("{bookId:int}/chapters")]
-    [Authorization(RequiredRoles = new[] { UserRolesEnum.Admin, UserRolesEnum.Editor })]
-    [ProducesOkResponseType]
-    [ProducesResponseType(400, Type = typeof(BaseErrorResponse))]
-    public async Task<ActionResult> CreateChapter([FromRoute] int bookId, [FromBody] CreateChapterRequest input)
-    {
-        var createChapterResult = await _chapterService.CreateChapterAsync(input.Name, input.Text, bookId);
-        if (createChapterResult.IsFailure)
-        {
-            var exception = createChapterResult.GetError();
-            if (exception is EntityNotFoundException)
-            {
-                return Error($"Книга с Id = {bookId} не найдена", 400);
-            }
-
-            return ServerError();
-        }
-
-        return EmptyResult();
-    }
-
-    [HttpPut("{bookId:int}/chapters/{chapterId:int}/text")]
-    [ProducesOkResponseType(typeof(ChapterEntityModel))]
-    [ProducesResponseType(400, Type = typeof(BaseErrorResponse))]
-    public async Task<ActionResult> UpdateChapterText([FromRoute] int chapterId,
-        [FromBody] UpdateChapterRequest input)
-    {
-        var updateChapterTextResult = await _chapterService.UpdateChapterTextAsync(chapterId, input.Text);
-        if (updateChapterTextResult.IsFailure)
-        {
-            var exception = updateChapterTextResult.GetError();
-            if (exception is EntityNotFoundException)
-            {
-                return Error($"Глава с Id = {chapterId} не найдена", 400);
-            }
-
-            return ServerError();
-        }
-
-        var updatedChapter = updateChapterTextResult.GetResult();
-        return Json(updatedChapter);
-    }
-
-    [HttpGet("{bookId:int}/chapters")]
-    [ProducesOkResponseType(typeof(GetAllBookChaptersResponse))]
-    [ProducesResponseType(400, Type = typeof(BaseErrorResponse))]
-    public async Task<ActionResult> GetBookChapterList([FromRoute] int bookId)
-    {
-        var getChaptersResult = await _chapterService.GetAllBookChapters(bookId);
-        if (getChaptersResult.IsFailure)
-        {
-            var exception = getChaptersResult.GetError();
-            if (exception is EntityNotFoundException)
-            {
-                return Error($"Книга с Id = {bookId} не найдена", 400);
-            }
-
-            return ServerError();
-        }
-
-        return Json(new GetAllBookChaptersResponse
-        {
-            Items = getChaptersResult.GetResult()
-        });
-    }
-
-    [HttpDelete("{bookId:int}/chapters/{chapterId:int}")]
-    [Authorization(RequiredRoles = new[] { UserRolesEnum.Admin, UserRolesEnum.Editor })]
-    [ProducesOkResponseType]
-    [ProducesResponseType(400, Type = typeof(BaseErrorResponse))]
-    public async Task<ActionResult> DeleteBookChapter([FromRoute] int chapterId)
-    {
-        var deleteChapterResult = await _chapterService.DeleteChapterAsync(chapterId);
-        if (deleteChapterResult.IsFailure)
-        {
-            var exception = deleteChapterResult.GetError();
-            if (exception is EntityNotFoundException)
-            {
-                return Error($"Глава с Id = {chapterId} не найдена", 400);
-            }
-
-            return ServerError();
-        }
-
-        return EmptyResult();
-    }
-
-    [HttpGet("{bookId:int}/chapters/{chapterId:int}")]
-    [ProducesOkResponseType(typeof(GetBookChapterResponse))]
-    [ProducesNotFoundResponseType]
-    public async Task<ActionResult> GetBookChapter([FromRoute] int chapterId)
-    {
-        var foundedChapter = await _chapterService.GetChapterByIdAsync(chapterId);
-        if (foundedChapter is null)
-        {
-            return NotFoundError();
-        }
-
-        var mappedResponse = _mapper.Map<ChapterEntityModel, GetBookChapterResponse>(foundedChapter);
-        return Json(mappedResponse);
     }
 
     [HttpPut("{bookId:int}/author/{authorId:int}")]
