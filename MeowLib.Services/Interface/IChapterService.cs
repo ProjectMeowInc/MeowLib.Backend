@@ -35,14 +35,6 @@ public interface IChapterService
     Task<Result<ChapterEntityModel>> UpdateChapterTextAsync(int chapterId, string newText);
 
     /// <summary>
-    /// Метод возвращает главы книги в виде <see cref="ChapterDto"/>
-    /// </summary>
-    /// <param name="bookId">Id книги.</param>
-    /// <returns>Модель главы в виде <see cref="ChapterDto"/></returns>
-    /// <exception cref="EntityNotFoundException">Возникает в случае, если книга с заданым Id не была найдена.</exception>
-    Task<Result<IEnumerable<ChapterDto>>> GetAllBookChapters(int bookId);
-
-    /// <summary>
     /// Метод удаляет главу по её Id.
     /// </summary>
     /// <param name="chapterId">Id главы.</param>
@@ -50,11 +42,4 @@ public interface IChapterService
     /// <exception cref="EntityNotFoundException">Возникает в случае, если глава не была найдена.</exception>
     /// <exception cref="DbSavingException">Возникает в случае ошибки сохранения данных.</exception>
     Task<Result> DeleteChapterAsync(int chapterId);
-
-    /// <summary>
-    /// Метод возвращает главу по её Id.
-    /// </summary>
-    /// <param name="chapterId">Id главы.</param>
-    /// <returns>Модель главы, если была найдена.</returns>
-    Task<ChapterEntityModel?> GetChapterByIdAsync(int chapterId);
 }

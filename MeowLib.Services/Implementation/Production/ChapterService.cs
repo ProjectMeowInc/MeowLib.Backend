@@ -1,8 +1,6 @@
 ﻿using MeowLib.DAL;
 using MeowLib.DAL.Repository.Interfaces;
-using MeowLib.Domain.DbModels.BookEntity;
 using MeowLib.Domain.DbModels.ChapterEntity;
-using MeowLib.Domain.Dto.Chapter;
 using MeowLib.Domain.Exceptions.DAL;
 using MeowLib.Domain.Exceptions.Services;
 using MeowLib.Domain.Exceptions.Translation;
@@ -98,35 +96,6 @@ public class ChapterService : IChapterService
         }
 
         return updateResult.GetResult();
-    }
-
-    /// <summary>
-    /// Метод возвращает главы книги в виде <see cref="ChapterDto"/>
-    /// </summary>
-    /// <param name="bookId">Id книги.</param>
-    /// <returns>Модель главы в виде <see cref="ChapterDto"/></returns>
-    /// <exception cref="EntityNotFoundException">Возникает в случае, если книга с заданым Id не была найдена.</exception>
-    public async Task<Result<IEnumerable<ChapterDto>>> GetAllBookChapters(int bookId)
-    {
-        var foundedBook = await _bookService.GetBookByIdAsync(bookId);
-
-        if (foundedBook is null)
-        {
-            var entityNotFoundException = new EntityNotFoundException(nameof(BookEntityModel), $"Id={bookId}");
-            return Result<IEnumerable<ChapterDto>>.Fail(entityNotFoundException);
-        }
-
-        var bookChapters = await _chapterRepository.GetAll()
-            .Where(chapter => chapter.Translation.Book == foundedBook)
-            .OrderBy(chapter => chapter.ReleaseDate)
-            .Select(chapter => new ChapterDto
-            {
-                Id = chapter.Id,
-                Name = chapter.Name,
-                ReleaseDate = chapter.ReleaseDate
-            }).ToListAsync();
-
-        return bookChapters;
     }
 
     /// <summary>
