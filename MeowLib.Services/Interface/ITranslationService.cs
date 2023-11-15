@@ -34,4 +34,16 @@ public interface ITranslationService
     /// <returns>Искомую главу или null, если она не найдена.</returns>
     Task<ChapterEntityModel?> GetChapterByTranslationAndPositionAsync(int translationId,
         int position);
+
+    /// <summary>
+    /// Метод добавляет главу в перевод.
+    /// </summary>
+    /// <param name="translationId">Id перевода.</param>
+    /// <param name="name">Название главы.</param>
+    /// <param name="text">Контент главы.</param>
+    /// <param name="position">Пизиция в списке глав.</param>
+    /// <returns>Результат добавления главы.</returns>
+    /// <exception cref="TranslationNotFoundException">Возникает в случае, если перевод не был найден.</exception>
+    /// <exception cref="ChapterPositionAlreadyTaken">Возникает в случае, если заданная позиция уже занята.</exception>
+    Task<Result> AddChapterAsync(int translationId, string name, string text, uint position);
 }

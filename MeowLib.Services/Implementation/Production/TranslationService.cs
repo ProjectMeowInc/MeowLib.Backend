@@ -4,6 +4,7 @@ using MeowLib.Domain.DbModels.ChapterEntity;
 using MeowLib.Domain.DbModels.TeamEntity;
 using MeowLib.Domain.DbModels.TranslationEntity;
 using MeowLib.Domain.Dto.Chapter;
+using MeowLib.Domain.Exceptions.Chapter;
 using MeowLib.Domain.Exceptions.Translation;
 using MeowLib.Domain.Result;
 using MeowLib.Services.Interface;
@@ -82,5 +83,46 @@ public class TranslationService(ApplicationDbContext dbContext) : ITranslationSe
             .FirstOrDefaultAsync(t => t.Position == position);
 
         return foundedChapter;
+    }
+
+    /// <summary>
+    /// Метод добавляет главу в перевод.
+    /// </summary>
+    /// <param name="translationId">Id перевода.</param>
+    /// <param name="name">Название главы.</param>
+    /// <param name="text">Контент главы.</param>
+    /// <param name="position">Пизиция в списке глав.</param>
+    /// <returns>Результат добавления главы.</returns>
+    /// <exception cref="TranslationNotFoundException">Возникает в случае, если перевод не был найден.</exception>
+    /// <exception cref="ChapterPositionAlreadyTaken">Возникает в случае, если заданная позиция уже занята.</exception>
+    public async Task<Result> AddChapterAsync(int translationId, string name, string text, uint position)
+    {
+        var foundedTranslation = await dbContext.Translations
+            .Include(translationEntityModel => translationEntityModel.Chapters)
+            .FirstOrDefaultAsync(t => t.Id == translationId);
+        
+        if (foundedTranslation is null)
+        {
+            return Result.Fail(new TranslationNotFoundException(translationId));
+        }
+
+        if (foundedTranslation.Chapters.Any(c => c.Position == position))
+        {
+            return Result.Fail(new ChapterPositionAlreadyTaken(position));
+        }
+        
+        var newChapter = new ChapterEntityModel
+        {
+            Name = name,
+            Text = text,
+            ReleaseDate = DateTime.UtcNow,
+            Position = position,
+            Translation = foundedTranslation
+        };
+
+        await dbContext.Chapters.AddAsync(newChapter);
+        await dbContext.SaveChangesAsync();
+        
+        return Result.Ok();
     }
 }
