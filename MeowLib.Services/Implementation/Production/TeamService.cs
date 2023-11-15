@@ -178,4 +178,9 @@ public class TeamService : ITeamService
 
         return Result.Ok();
     }
+    
+    public async Task<bool> CheckUserInTeamAsync(int userId, int teamId)
+    {
+        return await _dbContext.TeamMembers.AnyAsync(tm => tm.Team.Id == teamId && tm.User.Id == userId);
+    }
 }
