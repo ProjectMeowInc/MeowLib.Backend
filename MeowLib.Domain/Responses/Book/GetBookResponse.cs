@@ -1,5 +1,6 @@
 ﻿using MeowLib.Domain.Dto.Author;
 using MeowLib.Domain.Dto.Tag;
+using MeowLib.Domain.Dto.Translation;
 
 namespace MeowLib.Domain.Responses.Book;
 
@@ -11,4 +12,5 @@ public class GetBookResponse
     public required string ImageUrl { get; set; }
     public required AuthorDto Author { get; set; }
     public required IEnumerable<TagDto> Tags { get; set; }
+    public required IEnumerable<TranslationDto> Translations { get; set; }
 }
