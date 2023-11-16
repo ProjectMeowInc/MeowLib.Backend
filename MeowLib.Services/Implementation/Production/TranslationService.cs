@@ -13,7 +13,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MeowLib.Services.Implementation.Production;
 
-public class TranslationService(ApplicationDbContext dbContext, INotificationService notificationService) : ITranslationService
+public class TranslationService
+    (ApplicationDbContext dbContext, INotificationService notificationService) : ITranslationService
 {
     /// <summary>
     /// Метод создаёт перевод для заданной книги.
@@ -28,7 +29,7 @@ public class TranslationService(ApplicationDbContext dbContext, INotificationSer
         {
             return Result.Fail(new TeamAlreadyTranslateBookException(team.Id, book.Id));
         }
-        
+
         await dbContext.Translations.AddAsync(new TranslationEntityModel
         {
             Book = book,
@@ -36,7 +37,7 @@ public class TranslationService(ApplicationDbContext dbContext, INotificationSer
             Chapters = new List<ChapterEntityModel>()
         });
         await dbContext.SaveChangesAsync();
-        
+
         return Result.Ok();
     }
 
@@ -55,7 +56,7 @@ public class TranslationService(ApplicationDbContext dbContext, INotificationSer
         {
             return Result<List<ChapterDto>>.Fail(new TranslationNotFoundException(translationId));
         }
-        
+
         var translationChapters = await dbContext.Chapters.Where(c => c.Translation.Id == translationId)
             .OrderBy(c => c.Position)
             .ThenBy(c => c.ReleaseDate)
@@ -67,7 +68,7 @@ public class TranslationService(ApplicationDbContext dbContext, INotificationSer
                 Position = c.Position
             })
             .ToListAsync();
-        
+
         return translationChapters;
     }
 
@@ -102,7 +103,7 @@ public class TranslationService(ApplicationDbContext dbContext, INotificationSer
             .Include(translationEntityModel => translationEntityModel.Chapters)
             .Include(translationEntityModel => translationEntityModel.Book)
             .FirstOrDefaultAsync(t => t.Id == translationId);
-        
+
         if (foundedTranslation is null)
         {
             return Result.Fail(new TranslationNotFoundException(translationId));
@@ -112,7 +113,7 @@ public class TranslationService(ApplicationDbContext dbContext, INotificationSer
         {
             return Result.Fail(new ChapterPositionAlreadyTaken(position));
         }
-        
+
         var newChapter = new ChapterEntityModel
         {
             Name = name,
@@ -124,7 +125,7 @@ public class TranslationService(ApplicationDbContext dbContext, INotificationSer
 
         var newChapterEntry = await dbContext.Chapters.AddAsync(newChapter);
         await dbContext.SaveChangesAsync();
-        
+
         //todo: move to worker?
         var sendNotificationResult =
             await notificationService.SendNotificationToBookSubscribersAsync(foundedTranslation.Book.Id,
@@ -134,7 +135,7 @@ public class TranslationService(ApplicationDbContext dbContext, INotificationSer
         {
             return Result.Fail(new InnerException(sendNotificationResult.GetError().Message));
         }
-        
+
         return Result.Ok();
     }
 

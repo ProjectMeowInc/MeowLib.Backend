@@ -6,5 +6,5 @@ namespace MeowLib.Domain.Enums;
 public enum NotificationTypeEnum
 {
     TeamInvite = 1,
-    NewBookChapter = 2,
+    NewBookChapter = 2
 }

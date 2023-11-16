@@ -86,7 +86,7 @@ public class BookCommentService : IBookCommentService
                 Id = createdComment.Author.Id,
                 Login = createdComment.Author.Login,
                 Role = createdComment.Author.Role
-            },
+            }
         };
     }
 

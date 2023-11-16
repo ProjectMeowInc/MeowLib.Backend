@@ -47,7 +47,7 @@ public class UserController : BaseController
             Password = input.Password,
             Role = input.Role
         });
-        
+
         if (updateUserResult.IsFailure)
         {
             var exception = updateUserResult.GetError();

@@ -102,7 +102,7 @@ public class UserRepository : IUserRepository
 
         var updatedUser = _applicationDbContext.Users.Update(foundedUser).Entity;
         await _applicationDbContext.SaveChangesAsync();
-        
+
         return new UserDto
         {
             Id = updatedUser.Id,
@@ -137,7 +137,7 @@ public class UserRepository : IUserRepository
         {
             return null;
         }
-        
+
         return new UserDto
         {
             Id = foundedUser.Id,

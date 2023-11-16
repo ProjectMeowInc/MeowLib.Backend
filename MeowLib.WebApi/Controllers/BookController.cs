@@ -60,7 +60,7 @@ public class BookController : BaseController
             Name = input.Name,
             Description = input.Description
         });
-        
+
         if (createBookResult.IsFailure)
         {
             var exception = createBookResult.GetError();
@@ -109,7 +109,7 @@ public class BookController : BaseController
             Name = input.Name,
             Description = input.Description
         });
-        
+
         if (updateBookResult.IsFailure)
         {
             var exception = updateBookResult.GetError();
@@ -141,18 +141,20 @@ public class BookController : BaseController
         {
             return NotFoundError();
         }
-        
+
         return Json(new GetBookResponse
         {
             Id = foundedBook.Id,
             Name = foundedBook.Name,
             ImageUrl = foundedBook.ImageUrl,
             Description = foundedBook.Description,
-            Author = foundedBook.Author is not null ? new AuthorDto
-            {
-                Id = foundedBook.Author.Id,
-                Name = foundedBook.Author.Name
-            } : null,
+            Author = foundedBook.Author is not null
+                ? new AuthorDto
+                {
+                    Id = foundedBook.Author.Id,
+                    Name = foundedBook.Author.Name
+                }
+                : null,
             Tags = foundedBook.Tags.Select(t => new TagDto
             {
                 Id = t.Id,

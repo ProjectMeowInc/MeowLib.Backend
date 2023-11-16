@@ -63,7 +63,7 @@ public class BookmarkService : IBookmarkService
             return new BookmarkDto
             {
                 Id = updatedBookmark.Id,
-                ChapterId = updatedBookmark.Chapter.Id,
+                ChapterId = updatedBookmark.Chapter.Id
             };
         }
 

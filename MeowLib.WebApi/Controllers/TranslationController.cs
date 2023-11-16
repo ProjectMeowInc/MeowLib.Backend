@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace MeowLib.WebApi.Controllers;
 
 [Route("api/translation")]
-public class TranslationController(ITranslationService translationService, ITeamService teamService, 
+public class TranslationController(ITranslationService translationService, ITeamService teamService,
     IBookService bookService, ILogger<TranslationController> logger) : BaseController
 {
     [HttpGet("{translationId}")]
@@ -27,7 +27,7 @@ public class TranslationController(ITranslationService translationService, ITeam
             {
                 return Error("Запрашиваемый перевод не найден", 400);
             }
-            
+
             logger.LogError("Ошибка получения глав перевода: {exception}", exception);
         }
 
@@ -56,7 +56,7 @@ public class TranslationController(ITranslationService translationService, ITeam
             Name = foundedChapter.Name,
             Text = foundedChapter.Text,
             Position = foundedChapter.Position,
-            ReleaseDate = foundedChapter.ReleaseDate,
+            ReleaseDate = foundedChapter.ReleaseDate
         });
     }
 
@@ -75,7 +75,7 @@ public class TranslationController(ITranslationService translationService, ITeam
             logger.LogWarning("Коммана с Id = {teamId} для создания перевода не найдена", payload.TeamId);
             return NotFoundError();
         }
-        
+
         var isUserHasTeamAdminAccess = await teamService.CheckUserIsTeamAdminAsync(payload.TeamId, requestUserData.Id);
         if (!isUserHasTeamAdminAccess)
         {
@@ -111,11 +111,11 @@ public class TranslationController(ITranslationService translationService, ITeam
     [ProducesOkResponseType]
     [ProducesUserErrorResponseType]
     [ProducesNotFoundResponseType]
-    public async Task<IActionResult> AddChapterToTranslation([FromRoute] int translationId, 
+    public async Task<IActionResult> AddChapterToTranslation([FromRoute] int translationId,
         [FromBody] AddChapterToTranslationRequest payload)
     {
         var requestUserData = await GetUserDataAsync();
-        
+
         var foundedTranslation = await translationService.GetTranslationByIdAsync(translationId);
         if (foundedTranslation is null)
         {
@@ -124,7 +124,8 @@ public class TranslationController(ITranslationService translationService, ITeam
             return NotFoundError();
         }
 
-        var addChapterResult = await translationService.AddChapterAsync(translationId, payload.Name, payload.Text, payload.Position);
+        var addChapterResult =
+            await translationService.AddChapterAsync(translationId, payload.Name, payload.Text, payload.Position);
         if (addChapterResult.IsFailure)
         {
             var exception = addChapterResult.GetError();
@@ -133,7 +134,7 @@ public class TranslationController(ITranslationService translationService, ITeam
                 logger.LogWarning("При добавлении главы позиция была занята: {position}", payload.Position);
                 return Error("Заданная позиция уже занята", 400);
             }
-            
+
             logger.LogError("При добавлении главы произошла ошибка: {exception}", exception);
         }
 
