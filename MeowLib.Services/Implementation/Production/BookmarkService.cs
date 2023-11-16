@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using MeowLib.DAL.Repository.Interfaces;
+﻿using MeowLib.DAL.Repository.Interfaces;
 using MeowLib.Domain.DbModels.BookmarkEntity;
 using MeowLib.Domain.DbModels.ChapterEntity;
 using MeowLib.Domain.DbModels.UserEntity;
@@ -18,15 +17,13 @@ public class BookmarkService : IBookmarkService
     private readonly IBookmarkRepository _bookmarkRepository;
     private readonly IChapterRepository _chapterRepository;
     private readonly IUserRepository _userRepository;
-    private readonly IMapper _mapper;
 
     public BookmarkService(IBookmarkRepository bookmarkRepository, IChapterRepository chapterRepository,
-        IUserRepository userRepository, IMapper mapper)
+        IUserRepository userRepository)
     {
         _bookmarkRepository = bookmarkRepository;
         _chapterRepository = chapterRepository;
         _userRepository = userRepository;
-        _mapper = mapper;
     }
 
     /// <summary>
@@ -62,7 +59,12 @@ public class BookmarkService : IBookmarkService
                 return Result<BookmarkDto>.Fail(updateBookmarkResult.GetError());
             }
 
-            return _mapper.Map<BookmarkEntityModel, BookmarkDto>(updateBookmarkResult.GetResult());
+            var updatedBookmark = updateBookmarkResult.GetResult();
+            return new BookmarkDto
+            {
+                Id = updatedBookmark.Id,
+                ChapterId = updatedBookmark.Chapter.Id,
+            };
         }
 
         var createBookmarkResult = await CreateNewBookmarkAsync(foundedUser, foundedChapter);
@@ -71,7 +73,12 @@ public class BookmarkService : IBookmarkService
             return Result<BookmarkDto>.Fail(createBookmarkResult.GetError());
         }
 
-        return _mapper.Map<BookmarkEntityModel, BookmarkDto>(createBookmarkResult.GetResult());
+        var createdBookmark = createBookmarkResult.GetResult();
+        return new BookmarkDto
+        {
+            Id = createdBookmark.Id,
+            ChapterId = createdBookmark.Chapter.Id
+        };
     }
 
     public async Task<BookmarkDto?> GetBookmarkByUserAndBook(int userId, int bookId)

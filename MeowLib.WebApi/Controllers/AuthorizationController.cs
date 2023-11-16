@@ -34,7 +34,7 @@ public class AuthorizationController : BaseController
             var exception = signInResult.GetError();
             if (exception is ValidationException validationException)
             {
-                return validationException.ToResponse();
+                return ValidationError(validationException.ValidationErrors);
             }
 
             if (exception is ApiException)

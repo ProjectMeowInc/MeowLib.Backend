@@ -158,7 +158,7 @@ public class TeamController : BaseController
         return Ok();
     }
 
-    [HttpPost("{teamId}/invite/{userId}")]
+    [HttpPost("{teamId}/members/invite/{userId}")]
     [Authorization]
     [ProducesOkResponseType]
     [ProducesUserErrorResponseType]

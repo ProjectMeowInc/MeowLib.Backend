@@ -1,4 +1,3 @@
-using AutoMapper;
 using MeowLib.Domain.DbModels.TagEntity;
 using MeowLib.Domain.Dto.Tag;
 using MeowLib.Domain.Enums;
@@ -16,17 +15,14 @@ namespace MeowLib.WebApi.Controllers;
 public class TagController : BaseController
 {
     private readonly ITagService _tagService;
-    private readonly IMapper _mapper;
 
     /// <summary>
     /// Конструктор.
     /// </summary>
     /// <param name="tagService">Сервис для работы с тегами.</param>
-    /// <param name="mapper">Автомаппер.</param>
-    public TagController(ITagService tagService, IMapper mapper)
+    public TagController(ITagService tagService)
     {
         _tagService = tagService;
-        _mapper = mapper;
     }
 
     [HttpPost]
@@ -35,15 +31,18 @@ public class TagController : BaseController
     [ProducesForbiddenResponseType]
     public async Task<ActionResult> CreateTag([FromBody] CreateTagRequest input)
     {
-        var createModel = _mapper.Map<CreateTagRequest, CreateTagEntityModel>(input);
-        var createTagResult = await _tagService.CreateTagAsync(createModel);
+        var createTagResult = await _tagService.CreateTagAsync(new CreateTagEntityModel
+        {
+            Name = input.Name,
+            Description = input.Description
+        });
 
         if (createTagResult.IsFailure)
         {
             var exception = createTagResult.GetError();
             if (exception is ValidationException validationException)
             {
-                return validationException.ToResponse();
+                return ValidationError(validationException.ValidationErrors);
             }
 
             return ServerError();
@@ -81,15 +80,18 @@ public class TagController : BaseController
     [ProducesNotFoundResponseType]
     public async Task<ActionResult> UpdateTag([FromRoute] int id, [FromBody] UpdateTagRequest input)
     {
-        var updateModel = _mapper.Map<UpdateTagRequest, UpdateTagEntityModel>(input);
-        var updateTagResult = await _tagService.UpdateTagByIdAsync(id, updateModel);
+        var updateTagResult = await _tagService.UpdateTagByIdAsync(id, new UpdateTagEntityModel
+        {
+            Name = input.Name,
+            Description = input.Description
+        });
 
         if (updateTagResult.IsFailure)
         {
             var exception = updateTagResult.GetError();
             if (exception is ValidationException validationException)
             {
-                return validationException.ToResponse();
+                return ValidationError(validationException.ValidationErrors);
             }
 
             return ServerError();

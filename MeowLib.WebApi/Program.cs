@@ -3,12 +3,12 @@ using System.Text.Unicode;
 using MeowLib.DAL;
 using MeowLib.DAL.Repository.Implementation.Production;
 using MeowLib.DAL.Repository.Interfaces;
-using MeowLib.Domain.Exceptions.Services;
-using MeowLib.Domain.MappingProfiles;
 using MeowLib.Domain.Models;
 using MeowLib.Services.Implementation.Production;
 using MeowLib.Services.Interface;
 using MeowLib.WebApi.Middleware;
+using MeowLib.WebApi.Models.Responses;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
@@ -39,9 +39,10 @@ services.AddControllers()
                 });
             }
 
-            var validationException = new ValidationException(validationErrors);
-
-            return validationException.ToResponse();
+            return new JsonResult(new ValidationErrorResponse(validationErrors))
+            {
+                StatusCode = 400
+            };
         };
     });
 
@@ -74,8 +75,6 @@ services.AddSwaggerGen(options =>
         }
     });
 });
-
-services.AddAutoMapper(typeof(MappingProfile));
 
 // Init repos
 services.AddScoped<IUserRepository, UserRepository>();

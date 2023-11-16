@@ -1,4 +1,3 @@
-using AutoMapper;
 using MeowLib.DAL.Repository.Interfaces;
 using MeowLib.Domain.DbModels.AuthorEntity;
 using MeowLib.Domain.Dto.Author;
@@ -18,17 +17,14 @@ namespace MeowLib.Services.Implementation.Production;
 public class AuthorService : IAuthorService
 {
     private readonly IAuthorRepository _authorRepository;
-    private readonly IMapper _mapper;
 
     /// <summary>
     /// Конструктор.
     /// </summary>
     /// <param name="authorRepository">Репозиторий авторов.</param>
-    /// <param name="mapper">Автомаппер.</param>
-    public AuthorService(IAuthorRepository authorRepository, IMapper mapper)
+    public AuthorService(IAuthorRepository authorRepository)
     {
         _authorRepository = authorRepository;
-        _mapper = mapper;
     }
 
     /// <summary>
@@ -145,7 +141,11 @@ public class AuthorService : IAuthorService
             return Result<AuthorDto>.Fail(new EntityNotFoundException(nameof(AuthorEntityModel), $"Id = {authorId}"));
         }
 
-        return _mapper.Map<AuthorEntityModel, AuthorDto>(foundedAuthor);
+        return new AuthorDto
+        {
+            Id = foundedAuthor.Id,
+            Name = foundedAuthor.Name
+        };
     }
 
     /// <summary>

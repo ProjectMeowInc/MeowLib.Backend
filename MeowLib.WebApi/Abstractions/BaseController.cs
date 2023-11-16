@@ -1,5 +1,6 @@
 using MeowLib.Domain.Dto.User;
 using MeowLib.Domain.Exceptions;
+using MeowLib.Domain.Models;
 using MeowLib.WebApi.Models.Responses;
 using MeowLib.WebApi.ProducesResponseTypes;
 using Microsoft.AspNetCore.Mvc;
@@ -75,6 +76,10 @@ public class BaseController : ControllerBase
         return Json(new BaseErrorResponse(message), 404);
     }
 
+    protected JsonResult ValidationError(IEnumerable<ValidationErrorModel> errors)
+    {
+        return Json(new ValidationErrorResponse(errors), 400);
+    }
 
     [NonAction]
     protected async Task<UserDto> GetUserDataAsync()

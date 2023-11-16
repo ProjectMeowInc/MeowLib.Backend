@@ -1,4 +1,3 @@
-using AutoMapper;
 using MeowLib.DAL.Repository.Interfaces;
 using MeowLib.Domain.DbModels.AuthorEntity;
 using MeowLib.Domain.Dto.Author;
@@ -15,7 +14,6 @@ namespace MeowLib.DAL.Repository.Implementation.Production;
 public class AuthorRepository : IAuthorRepository
 {
     private readonly ApplicationDbContext _applicationDbContext;
-    private readonly IMapper _mapper;
     private readonly ILogger<AuthorRepository> _logger;
 
     /// <summary>
@@ -24,10 +22,9 @@ public class AuthorRepository : IAuthorRepository
     /// <param name="applicationDbContext">Контекст база данных.</param>
     /// <param name="mapper">Автомаппер.</param>
     /// <param name="logger">Логгер.</param>
-    public AuthorRepository(ApplicationDbContext applicationDbContext, IMapper mapper, ILogger<AuthorRepository> logger)
+    public AuthorRepository(ApplicationDbContext applicationDbContext, ILogger<AuthorRepository> logger)
     {
         _applicationDbContext = applicationDbContext;
-        _mapper = mapper;
         _logger = logger;
     }
 
@@ -38,13 +35,19 @@ public class AuthorRepository : IAuthorRepository
     /// <returns>DTO-модель автора</returns>
     public async Task<AuthorDto> CreateAsync(CreateAuthorEntityModel createAuthorData)
     {
-        var newAuthor = _mapper.Map<CreateAuthorEntityModel, AuthorEntityModel>(createAuthorData);
-        var dbResult = await _applicationDbContext.Authors.AddAsync(newAuthor);
+        var dbResult = await _applicationDbContext.Authors.AddAsync(new AuthorEntityModel
+        {
+            Name = createAuthorData.Name
+        });
 
         await _applicationDbContext.SaveChangesAsync();
 
-        var authorDto = _mapper.Map<AuthorEntityModel, AuthorDto>(dbResult.Entity);
-        return authorDto;
+        var createdAuthor = dbResult.Entity;
+        return new AuthorDto
+        {
+            Id = createdAuthor.Id,
+            Name = createdAuthor.Name
+        };
     }
 
     /// <summary>
@@ -114,10 +117,14 @@ public class AuthorRepository : IAuthorRepository
             foundedAuthor.Name = updateAuthorData.Name;
         }
 
-        _applicationDbContext.Authors.Update(foundedAuthor);
+        var updatedAuthor = _applicationDbContext.Authors.Update(foundedAuthor).Entity;
         await _applicationDbContext.SaveChangesAsync();
 
-        return _mapper.Map<AuthorEntityModel, AuthorDto>(foundedAuthor);
+        return new AuthorDto
+        {
+            Id = updatedAuthor.Id,
+            Name = updatedAuthor.Name
+        };
     }
 
     #region Приватные методы
