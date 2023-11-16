@@ -55,7 +55,7 @@ public class ApplicationDbContext : DbContext
             .HasMany(t => t.Chapters)
             .WithOne(c => c.Translation)
             .OnDelete(DeleteBehavior.Cascade);
-        
+
         base.OnModelCreating(modelBuilder);
     }
 
@@ -113,7 +113,7 @@ public class ApplicationDbContext : DbContext
     /// Таблица уведомлений пользователей.
     /// </summary>
     public required DbSet<NotificationEntityModel> Notifications { get; set; }
-    
+
     /// <summary>
     /// Таблица переводов.
     /// </summary>

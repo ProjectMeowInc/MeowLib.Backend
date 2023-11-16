@@ -1,4 +1,3 @@
-using AutoMapper;
 using MeowLib.DAL.Repository.Interfaces;
 using MeowLib.Domain.DbModels.AuthorEntity;
 using MeowLib.Domain.Dto.Author;
@@ -6,7 +5,6 @@ using MeowLib.Domain.Exceptions;
 using MeowLib.Domain.Exceptions.DAL;
 using MeowLib.Domain.Exceptions.Services;
 using MeowLib.Domain.Models;
-using MeowLib.Domain.Requests.Author;
 using MeowLib.Domain.Result;
 using MeowLib.Services.Interface;
 using Microsoft.EntityFrameworkCore;
@@ -19,17 +17,14 @@ namespace MeowLib.Services.Implementation.Production;
 public class AuthorService : IAuthorService
 {
     private readonly IAuthorRepository _authorRepository;
-    private readonly IMapper _mapper;
 
     /// <summary>
     /// Конструктор.
     /// </summary>
     /// <param name="authorRepository">Репозиторий авторов.</param>
-    /// <param name="mapper">Автомаппер.</param>
-    public AuthorService(IAuthorRepository authorRepository, IMapper mapper)
+    public AuthorService(IAuthorRepository authorRepository)
     {
         _authorRepository = authorRepository;
-        _mapper = mapper;
     }
 
     /// <summary>
@@ -146,22 +141,26 @@ public class AuthorService : IAuthorService
             return Result<AuthorDto>.Fail(new EntityNotFoundException(nameof(AuthorEntityModel), $"Id = {authorId}"));
         }
 
-        return _mapper.Map<AuthorEntityModel, AuthorDto>(foundedAuthor);
+        return new AuthorDto
+        {
+            Id = foundedAuthor.Id,
+            Name = foundedAuthor.Name
+        };
     }
 
     /// <summary>
     /// Метод получает список авторов подходящих под поисковые параметры.
     /// </summary>
-    /// <param name="searchParams">Параметры для поиска.</param>
+    /// <param name="name">Имя автора.</param>
     /// <returns>Список авторов подходящих под параметры поиска.</returns>
     /// <exception cref="SearchNotFoundException">Возникает если не был найден автор по заданным параметрам поиска.</exception>
-    public async Task<Result<IEnumerable<AuthorDto>>> GetAuthorWithParams(GetAuthorWithParamsRequest searchParams)
+    public async Task<Result<IEnumerable<AuthorDto>>> GetAuthorWithParams(string? name)
     {
         var filteredAuthors = _authorRepository.GetAll();
 
-        if (searchParams.Name is not null)
+        if (name is not null)
         {
-            filteredAuthors = filteredAuthors.Where(a => a.Name.Contains(searchParams.Name));
+            filteredAuthors = filteredAuthors.Where(a => a.Name.Contains(name));
         }
 
         if (!filteredAuthors.Any())

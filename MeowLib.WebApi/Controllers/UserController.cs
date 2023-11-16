@@ -1,13 +1,12 @@
-using AutoMapper;
 using MeowLib.Domain.DbModels.UserEntity;
 using MeowLib.Domain.Dto.User;
 using MeowLib.Domain.Enums;
 using MeowLib.Domain.Exceptions.DAL;
 using MeowLib.Domain.Exceptions.Services;
-using MeowLib.Domain.Requests.User;
 using MeowLib.Services.Interface;
 using MeowLib.WebApi.Abstractions;
 using MeowLib.WebApi.Filters;
+using MeowLib.WebApi.Models.Requests.User;
 using MeowLib.WebApi.ProducesResponseTypes;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,17 +16,14 @@ namespace MeowLib.WebApi.Controllers;
 public class UserController : BaseController
 {
     private readonly IUserService _userService;
-    private readonly IMapper _mapper;
 
     /// <summary>
     /// Конструктор.
     /// </summary>
     /// <param name="userService">Сервис для взаимодействия с пользователями.</param>
-    /// <param name="mapper">Автомаппер.</param>
-    public UserController(IUserService userService, IMapper mapper)
+    public UserController(IUserService userService)
     {
         _userService = userService;
-        _mapper = mapper;
     }
 
     [HttpGet]
@@ -45,15 +41,19 @@ public class UserController : BaseController
     [ProducesNotFoundResponseType]
     public async Task<ActionResult> UpdateUser([FromRoute] int id, [FromBody] UpdateUserRequest input)
     {
-        var mappedRequest = _mapper.Map<UpdateUserRequest, UpdateUserEntityModel>(input);
+        var updateUserResult = await _userService.UpdateUser(id, new UpdateUserEntityModel
+        {
+            Login = input.Login,
+            Password = input.Password,
+            Role = input.Role
+        });
 
-        var updateUserResult = await _userService.UpdateUser(id, mappedRequest);
         if (updateUserResult.IsFailure)
         {
             var exception = updateUserResult.GetError();
             if (exception is ValidationException validationException)
             {
-                return validationException.ToResponse();
+                return ValidationError(validationException.ValidationErrors);
             }
 
             if (exception is EntityNotFoundException)

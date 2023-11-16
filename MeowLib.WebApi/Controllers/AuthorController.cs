@@ -1,13 +1,12 @@
-using AutoMapper;
 using MeowLib.Domain.DbModels.AuthorEntity;
 using MeowLib.Domain.Dto.Author;
 using MeowLib.Domain.Enums;
 using MeowLib.Domain.Exceptions.DAL;
 using MeowLib.Domain.Exceptions.Services;
-using MeowLib.Domain.Requests.Author;
 using MeowLib.Services.Interface;
 using MeowLib.WebApi.Abstractions;
 using MeowLib.WebApi.Filters;
+using MeowLib.WebApi.Models.Requests.Author;
 using MeowLib.WebApi.ProducesResponseTypes;
 using Microsoft.AspNetCore.Mvc;
 using ValidationException = MeowLib.Domain.Exceptions.Services.ValidationException;
@@ -18,12 +17,10 @@ namespace MeowLib.WebApi.Controllers;
 public class AuthorController : BaseController
 {
     private readonly IAuthorService _authorService;
-    private readonly IMapper _mapper;
 
-    public AuthorController(IAuthorService authorService, IMapper mapper)
+    public AuthorController(IAuthorService authorService)
     {
         _authorService = authorService;
-        _mapper = mapper;
     }
 
     [HttpGet]
@@ -46,7 +43,7 @@ public class AuthorController : BaseController
             var exception = createResult.GetError();
             if (exception is ValidationException validationException)
             {
-                return validationException.ToResponse();
+                return ValidationError(validationException.ValidationErrors);
             }
 
             return ServerError();
@@ -63,8 +60,10 @@ public class AuthorController : BaseController
     [ProducesNotFoundResponseType]
     public async Task<ActionResult> UpdateAuthor([FromRoute] int authorId, [FromBody] UpdateAuthorRequest input)
     {
-        var updateAuthorModel = _mapper.Map<UpdateAuthorRequest, UpdateAuthorEntityModel>(input);
-        var updateResult = await _authorService.UpdateAuthorAsync(authorId, updateAuthorModel);
+        var updateResult = await _authorService.UpdateAuthorAsync(authorId, new UpdateAuthorEntityModel
+        {
+            Name = input.Name
+        });
 
         if (updateResult.IsFailure)
         {
@@ -72,7 +71,7 @@ public class AuthorController : BaseController
 
             if (exception is ValidationException validationException)
             {
-                return validationException.ToResponse();
+                return ValidationError(validationException.ValidationErrors);
             }
 
             if (exception is EntityNotFoundException)
@@ -135,7 +134,7 @@ public class AuthorController : BaseController
     [ProducesNotFoundResponseType]
     public async Task<ActionResult> GetAuthorWithParams([FromBody] GetAuthorWithParamsRequest input)
     {
-        var getAuthorWithParamsResult = await _authorService.GetAuthorWithParams(input);
+        var getAuthorWithParamsResult = await _authorService.GetAuthorWithParams(input.Name);
         if (getAuthorWithParamsResult.IsFailure)
         {
             var exception = getAuthorWithParamsResult.GetError();

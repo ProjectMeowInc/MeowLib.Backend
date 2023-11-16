@@ -26,7 +26,7 @@ public class ChapterEntityModel
     /// Позиция главы в переводе.
     /// </summary>
     public required uint Position { get; set; }
-    
+
     /// <summary>
     /// Время загрузки главы.
     /// </summary>

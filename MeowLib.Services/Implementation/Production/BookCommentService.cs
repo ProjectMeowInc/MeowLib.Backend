@@ -1,5 +1,4 @@
 ﻿using System.Text.RegularExpressions;
-using AutoMapper;
 using MeowLib.DAL.Repository.Interfaces;
 using MeowLib.Domain.DbModels.BookCommentEntity;
 using MeowLib.Domain.Dto.BookComment;
@@ -23,7 +22,6 @@ public class BookCommentService : IBookCommentService
     private readonly IBookCommentRepository _bookCommentRepository;
     private readonly IBookRepository _bookRepository;
     private readonly IUserRepository _userRepository;
-    private readonly IMapper _mapper;
 
     /// <summary>
     /// Конструктор.
@@ -31,14 +29,12 @@ public class BookCommentService : IBookCommentService
     /// <param name="bookCommentRepository">Репозиторий комментариев к книге.</param>
     /// <param name="bookRepository">Репозиторий книг.</param>
     /// <param name="userRepository">Репозиторий пользователя.</param>
-    /// <param name="mapper">Автомаппер.</param>
     public BookCommentService(IBookCommentRepository bookCommentRepository, IBookRepository bookRepository,
-        IUserRepository userRepository, IMapper mapper)
+        IUserRepository userRepository)
     {
         _bookCommentRepository = bookCommentRepository;
         _bookRepository = bookRepository;
         _userRepository = userRepository;
-        _mapper = mapper;
     }
 
     /// <summary>
@@ -79,8 +75,19 @@ public class BookCommentService : IBookCommentService
             return Result<BookCommentDto>.Fail(createCommentResult.GetError());
         }
 
-        var bookCommentDto = _mapper.Map<BookCommentEntityModel, BookCommentDto>(createCommentResult.GetResult());
-        return bookCommentDto;
+        var createdComment = createCommentResult.GetResult();
+        return new BookCommentDto
+        {
+            Id = createdComment.Id,
+            Text = createdComment.Text,
+            PostedAt = createdComment.PostedAt,
+            Author = new UserDto
+            {
+                Id = createdComment.Author.Id,
+                Login = createdComment.Author.Login,
+                Role = createdComment.Author.Role
+            }
+        };
     }
 
     /// <summary>

@@ -1,7 +1,7 @@
 using MeowLib.Domain.Exceptions;
 using MeowLib.Domain.Exceptions.DAL;
 using MeowLib.Domain.Exceptions.Services;
-using MeowLib.Domain.Responses;
+using MeowLib.WebApi.Models.Responses;
 
 namespace MeowLib.WebApi.Middleware;
 

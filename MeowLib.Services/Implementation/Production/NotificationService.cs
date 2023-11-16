@@ -117,18 +117,18 @@ public class NotificationService : INotificationService
         {
             return Result.Fail(new BookNotFoundException(bookId));
         }
-        
+
         var users = _dbContext.UsersFavorite
             .Where(uf => uf.Book.Id == bookId)
             .Select(uf => uf.User);
-        
+
         var serializedPayload = JsonSerializer.Serialize(new
         {
             bookName = foundedBook.Name, chapterName
         });
 
         var payloadBase64 = Convert.ToBase64String(Encoding.UTF8.GetBytes(serializedPayload));
-        
+
         var notifications = new List<NotificationEntityModel>();
         foreach (var userEntityModel in users)
         {
@@ -144,7 +144,7 @@ public class NotificationService : INotificationService
 
         await _dbContext.Notifications.AddRangeAsync(notifications);
         await _dbContext.SaveChangesAsync();
-        
+
         return Result.Ok();
     }
 }

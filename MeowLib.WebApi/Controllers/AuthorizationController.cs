@@ -1,11 +1,11 @@
 ﻿using MeowLib.Domain.Exceptions;
 using MeowLib.Domain.Exceptions.Services;
-using MeowLib.Domain.Requests.Authorization;
-using MeowLib.Domain.Requests.User;
-using MeowLib.Domain.Responses;
-using MeowLib.Domain.Responses.User;
 using MeowLib.Services.Interface;
 using MeowLib.WebApi.Abstractions;
+using MeowLib.WebApi.Models.Requests.Authorization;
+using MeowLib.WebApi.Models.Requests.User;
+using MeowLib.WebApi.Models.Responses;
+using MeowLib.WebApi.Models.Responses.User;
 using MeowLib.WebApi.ProducesResponseTypes;
 using Microsoft.AspNetCore.Mvc;
 
@@ -34,7 +34,7 @@ public class AuthorizationController : BaseController
             var exception = signInResult.GetError();
             if (exception is ValidationException validationException)
             {
-                return validationException.ToResponse();
+                return ValidationError(validationException.ValidationErrors);
             }
 
             if (exception is ApiException)

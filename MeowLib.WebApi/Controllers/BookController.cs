@@ -1,16 +1,18 @@
-using AutoMapper;
 using MeowLib.DAL.Repository.Interfaces;
 using MeowLib.Domain.DbModels.BookEntity;
+using MeowLib.Domain.Dto.Author;
 using MeowLib.Domain.Dto.Book;
+using MeowLib.Domain.Dto.Tag;
+using MeowLib.Domain.Dto.Translation;
 using MeowLib.Domain.Enums;
 using MeowLib.Domain.Exceptions.DAL;
 using MeowLib.Domain.Exceptions.Services;
-using MeowLib.Domain.Requests.Book;
-using MeowLib.Domain.Responses;
-using MeowLib.Domain.Responses.Book;
 using MeowLib.Services.Interface;
 using MeowLib.WebApi.Abstractions;
 using MeowLib.WebApi.Filters;
+using MeowLib.WebApi.Models.Requests.Book;
+using MeowLib.WebApi.Models.Responses;
+using MeowLib.WebApi.Models.Responses.Book;
 using MeowLib.WebApi.ProducesResponseTypes;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -22,13 +24,11 @@ public class BookController : BaseController
 {
     private readonly IBookService _bookService;
     private readonly IBookRepository _bookRepository;
-    private readonly IMapper _mapper;
 
-    public BookController(IBookService bookService, IBookRepository bookRepository, IMapper mapper)
+    public BookController(IBookService bookService, IBookRepository bookRepository)
     {
         _bookService = bookService;
         _bookRepository = bookRepository;
-        _mapper = mapper;
     }
 
     [HttpGet]
@@ -55,15 +55,18 @@ public class BookController : BaseController
     [ProducesForbiddenResponseType]
     public async Task<ActionResult> CreateBook([FromBody] CreateBookRequest input)
     {
-        var createBookEntityModel = _mapper.Map<CreateBookRequest, CreateBookEntityModel>(input);
+        var createBookResult = await _bookService.CreateBookAsync(new CreateBookEntityModel
+        {
+            Name = input.Name,
+            Description = input.Description
+        });
 
-        var createBookResult = await _bookService.CreateBookAsync(createBookEntityModel);
         if (createBookResult.IsFailure)
         {
             var exception = createBookResult.GetError();
             if (exception is ValidationException validationException)
             {
-                return validationException.ToResponse();
+                return ValidationError(validationException.ValidationErrors);
             }
 
             return ServerError();
@@ -101,15 +104,18 @@ public class BookController : BaseController
     [ProducesNotFoundResponseType]
     public async Task<ActionResult> UpdateBookInfo([FromRoute] int bookId, [FromBody] UpdateBookInfoRequest input)
     {
-        var updateBookEntityModel = _mapper.Map<UpdateBookInfoRequest, UpdateBookEntityModel>(input);
+        var updateBookResult = await _bookService.UpdateBookInfoByIdAsync(bookId, new UpdateBookEntityModel
+        {
+            Name = input.Name,
+            Description = input.Description
+        });
 
-        var updateBookResult = await _bookService.UpdateBookInfoByIdAsync(bookId, updateBookEntityModel);
         if (updateBookResult.IsFailure)
         {
             var exception = updateBookResult.GetError();
             if (exception is ValidationException validationException)
             {
-                return validationException.ToResponse();
+                return ValidationError(validationException.ValidationErrors);
             }
 
             return ServerError();
@@ -136,8 +142,30 @@ public class BookController : BaseController
             return NotFoundError();
         }
 
-        var getBookResponse = _mapper.Map<BookEntityModel, GetBookResponse>(foundedBook);
-        return Json(getBookResponse);
+        return Json(new GetBookResponse
+        {
+            Id = foundedBook.Id,
+            Name = foundedBook.Name,
+            ImageUrl = foundedBook.ImageUrl,
+            Description = foundedBook.Description,
+            Author = foundedBook.Author is not null
+                ? new AuthorDto
+                {
+                    Id = foundedBook.Author.Id,
+                    Name = foundedBook.Author.Name
+                }
+                : null,
+            Tags = foundedBook.Tags.Select(t => new TagDto
+            {
+                Id = t.Id,
+                Name = t.Name
+            }),
+            Translations = foundedBook.Translations.Select(t => new TranslationDto
+            {
+                Id = t.Id,
+                Name = t.Team.Name
+            })
+        });
     }
 
     [HttpPut("{bookId:int}/author/{authorId:int}")]

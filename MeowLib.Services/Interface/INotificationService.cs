@@ -43,7 +43,7 @@ public interface INotificationService
     /// <returns>Результат просмотра уведомления</returns>
     /// <exception cref="NotificationNotFoundException">Возникает в случае, если уведомление не было найдено.</exception>
     Task<Result> SetNotificationWatchedAsync(int userId, int notificationId);
-    
+
     /// <summary>
     /// Метод отправляет уведомления пользователям о выходе новой главы.
     /// </summary>

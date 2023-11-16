@@ -20,13 +20,14 @@ public class ChapterService : IChapterService
     private readonly IBookService _bookService;
     private readonly ApplicationDbContext _dbContext;
 
-    public ChapterService(IChapterRepository chapterRepository, IBookService bookService, ApplicationDbContext dbContext)
+    public ChapterService(IChapterRepository chapterRepository, IBookService bookService,
+        ApplicationDbContext dbContext)
     {
         _chapterRepository = chapterRepository;
         _bookService = bookService;
         _dbContext = dbContext;
     }
-    
+
     public async Task<Result<ChapterEntityModel>> CreateChapterAsync(string name, string text, int translationId)
     {
         var validationErrors = new List<ValidationErrorModel>();
@@ -60,7 +61,7 @@ public class ChapterService : IChapterService
         {
             return Result<ChapterEntityModel>.Fail(new TranslationNotFoundException(translationId));
         }
-        
+
         var newChapter = new ChapterEntityModel
         {
             Name = name,

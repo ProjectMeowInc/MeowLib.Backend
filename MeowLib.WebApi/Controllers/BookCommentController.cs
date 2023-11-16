@@ -1,12 +1,12 @@
 ﻿using MeowLib.Domain.Dto.BookComment;
 using MeowLib.Domain.Exceptions.Book;
 using MeowLib.Domain.Exceptions.User;
-using MeowLib.Domain.Requests.BookComment;
-using MeowLib.Domain.Responses;
-using MeowLib.Domain.Responses.BookComment;
 using MeowLib.Services.Interface;
 using MeowLib.WebApi.Abstractions;
 using MeowLib.WebApi.Filters;
+using MeowLib.WebApi.Models.Requests.BookComment;
+using MeowLib.WebApi.Models.Responses;
+using MeowLib.WebApi.Models.Responses.BookComment;
 using MeowLib.WebApi.ProducesResponseTypes;
 using Microsoft.AspNetCore.Mvc;
 

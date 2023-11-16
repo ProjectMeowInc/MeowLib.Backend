@@ -1,4 +1,3 @@
-using AutoMapper;
 using MeowLib.DAL.Repository.Interfaces;
 using MeowLib.Domain.DbModels.UserEntity;
 using MeowLib.Domain.Dto.User;
@@ -15,12 +14,10 @@ namespace MeowLib.DAL.Repository.Implementation.Production;
 public class UserRepository : IUserRepository
 {
     private readonly ApplicationDbContext _applicationDbContext;
-    private readonly IMapper _mapper;
 
-    public UserRepository(ApplicationDbContext applicationDbContext, IMapper mapper)
+    public UserRepository(ApplicationDbContext applicationDbContext)
     {
         _applicationDbContext = applicationDbContext;
-        _mapper = mapper;
     }
 
     /// <summary>
@@ -30,13 +27,22 @@ public class UserRepository : IUserRepository
     /// <returns>Dto-модель пользователя.</returns>
     public async Task<UserDto> CreateAsync(CreateUserEntityModel createUserData)
     {
-        var newUser = _mapper.Map<CreateUserEntityModel, UserEntityModel>(createUserData);
-        var dbResult = await _applicationDbContext.Users.AddAsync(newUser);
-
-        var userDto = _mapper.Map<UserEntityModel, UserDto>(dbResult.Entity);
-
+        var dbResult = await _applicationDbContext.Users.AddAsync(new UserEntityModel
+        {
+            Login = createUserData.Login,
+            Password = createUserData.Password,
+            RefreshToken = null,
+            Role = UserRolesEnum.User
+        });
         await _applicationDbContext.SaveChangesAsync();
-        return userDto;
+
+        var createdUser = dbResult.Entity;
+        return new UserDto
+        {
+            Id = createdUser.Id,
+            Login = createdUser.Login,
+            Role = createdUser.Role
+        };
     }
 
     /// <summary>
@@ -94,11 +100,15 @@ public class UserRepository : IUserRepository
         foundedUser.Password = updateUserData.Password ?? foundedUser.Password;
         foundedUser.Role = updateUserData.Role ?? foundedUser.Role;
 
-        _applicationDbContext.Users.Update(foundedUser);
+        var updatedUser = _applicationDbContext.Users.Update(foundedUser).Entity;
         await _applicationDbContext.SaveChangesAsync();
 
-        var userDto = _mapper.Map<UserEntityModel, UserDto>(foundedUser);
-        return userDto;
+        return new UserDto
+        {
+            Id = updatedUser.Id,
+            Login = updatedUser.Login,
+            Role = updatedUser.Role
+        };
     }
 
     /// <summary>
@@ -128,8 +138,12 @@ public class UserRepository : IUserRepository
             return null;
         }
 
-        var dtoUser = _mapper.Map<UserEntityModel, UserDto>(foundedUser);
-        return dtoUser;
+        return new UserDto
+        {
+            Id = foundedUser.Id,
+            Login = foundedUser.Login,
+            Role = foundedUser.Role
+        };
     }
 
     /// <summary>
