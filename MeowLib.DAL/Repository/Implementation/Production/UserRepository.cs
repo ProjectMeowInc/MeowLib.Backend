@@ -32,6 +32,7 @@ public class UserRepository : IUserRepository
             Login = createUserData.Login,
             Password = createUserData.Password,
             RefreshToken = null,
+            Coins = 0,
             Role = UserRolesEnum.User
         });
         await _applicationDbContext.SaveChangesAsync();
