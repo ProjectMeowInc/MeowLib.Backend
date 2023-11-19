@@ -22,8 +22,8 @@ namespace MeowLib.WebApi.Controllers;
 [Route("api/books")]
 public class BookController : BaseController
 {
-    private readonly IBookService _bookService;
     private readonly IBookRepository _bookRepository;
+    private readonly IBookService _bookService;
 
     public BookController(IBookService bookService, IBookRepository bookRepository)
     {

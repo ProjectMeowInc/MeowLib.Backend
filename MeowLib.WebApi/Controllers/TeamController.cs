@@ -14,8 +14,8 @@ namespace MeowLib.WebApi.Controllers;
 [Route("api/team")]
 public class TeamController : BaseController
 {
-    private readonly ITeamService _teamService;
     private readonly ILogger<TeamController> _logger;
+    private readonly ITeamService _teamService;
 
     public TeamController(ITeamService teamService, ILogger<TeamController> logger)
     {

@@ -8,11 +8,6 @@ namespace MeowLib.Domain.Exceptions.Services;
 public class ValidationException : ServiceLevelException
 {
     /// <summary>
-    /// Список ошибок валидации.
-    /// </summary>
-    public IEnumerable<ValidationErrorModel> ValidationErrors { get; protected set; }
-
-    /// <summary>
     /// Конструктор.
     /// </summary>
     /// <param name="validationErrors">Список ошибок валидации.</param>
@@ -31,4 +26,9 @@ public class ValidationException : ServiceLevelException
     {
         ValidationErrors = validationErrors;
     }
+
+    /// <summary>
+    /// Список ошибок валидации.
+    /// </summary>
+    public IEnumerable<ValidationErrorModel> ValidationErrors { get; protected set; }
 }

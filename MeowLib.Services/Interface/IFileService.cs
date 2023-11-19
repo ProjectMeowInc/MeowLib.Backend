@@ -18,7 +18,7 @@ public interface IFileService
     Task<Result<string>> UploadBookImageAsync(IFormFile file);
 
     /// <summary>
-    /// Метод возвращает загруженное ранее изображение книги. 
+    /// Метод возвращает загруженное ранее изображение книги.
     /// </summary>
     /// <param name="imageName">Название книги.</param>
     /// <returns>Картинка, в виде байтов и её mimeType, если картинка не найдена, то content - null</returns>

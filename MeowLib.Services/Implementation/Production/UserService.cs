@@ -17,8 +17,8 @@ namespace MeowLib.Services.Implementation.Production;
 public class UserService : IUserService
 {
     private readonly IHashService _hashService;
-    private readonly IUserRepository _userRepository;
     private readonly IJwtTokenService _jwtTokenService;
+    private readonly IUserRepository _userRepository;
 
     /// <summary>
     /// Конструктор.

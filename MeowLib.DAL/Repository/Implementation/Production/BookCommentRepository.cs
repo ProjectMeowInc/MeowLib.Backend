@@ -106,7 +106,7 @@ public class BookCommentRepository : IBookCommentRepository
     /// <summary>
     /// Метод возвращает все комментарии.
     /// </summary>
-    /// <returns>Комментарии в виде <see cref="IQueryable"/></returns>
+    /// <returns>Комментарии в виде <see cref="IQueryable" /></returns>
     public IQueryable<BookCommentEntityModel> GetAll()
     {
         return _applicationDbContext.BookComments.AsQueryable();

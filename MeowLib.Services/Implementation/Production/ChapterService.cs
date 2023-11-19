@@ -16,8 +16,8 @@ namespace MeowLib.Services.Implementation.Production;
 /// </summary>
 public class ChapterService : IChapterService
 {
-    private readonly IChapterRepository _chapterRepository;
     private readonly IBookService _bookService;
+    private readonly IChapterRepository _chapterRepository;
     private readonly ApplicationDbContext _dbContext;
 
     public ChapterService(IChapterRepository chapterRepository, IBookService bookService,

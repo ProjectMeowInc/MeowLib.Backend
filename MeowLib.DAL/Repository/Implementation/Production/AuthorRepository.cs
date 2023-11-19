@@ -130,7 +130,7 @@ public class AuthorRepository : IAuthorRepository
     #region Приватные методы
 
     /// <summary>
-    /// Метод получает автора по его Id.  
+    /// Метод получает автора по его Id.
     /// </summary>
     /// <param name="id">Id автора.</param>
     /// <returns>Модель автора если он был найден, иначе - null</returns>

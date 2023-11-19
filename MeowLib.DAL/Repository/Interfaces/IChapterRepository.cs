@@ -32,7 +32,7 @@ public interface IChapterRepository
     /// Метод удаляет главу по её Id.
     /// </summary>
     /// <param name="chapterId">Id главы.</param>
-    /// <returns>Ошибку, если она есть. Так же возращает ошибки метода <see cref="DeleteAsync"/>.</returns>
+    /// <returns>Ошибку, если она есть. Так же возращает ошибки метода <see cref="DeleteAsync" />.</returns>
     /// <exception cref="EntityNotFoundException">Возникает в случае, если глава не была найдена.</exception>
     public Task<Result> DeleteByIdAsync(int chapterId);
 

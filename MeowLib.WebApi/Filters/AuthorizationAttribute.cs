@@ -9,6 +9,11 @@ namespace MeowLib.WebApi.Filters;
 
 public class AuthorizationAttribute : ProducesResponseTypeAttribute, IAsyncAuthorizationFilter
 {
+    public AuthorizationAttribute() : base(typeof(BaseErrorResponse), 401) { }
+
+    public AuthorizationAttribute(Type type, int statusCode, string contentType, params string[] additionalContentTypes)
+        : base(type, statusCode, contentType, additionalContentTypes) { }
+
     public UserRolesEnum[] RequiredRoles { get; set; } = Array.Empty<UserRolesEnum>();
 
     public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
@@ -67,9 +72,4 @@ public class AuthorizationAttribute : ProducesResponseTypeAttribute, IAsyncAutho
 
         context.HttpContext.Items.Add("UserData", parsedTokenData);
     }
-
-    public AuthorizationAttribute() : base(typeof(BaseErrorResponse), 401) { }
-
-    public AuthorizationAttribute(Type type, int statusCode, string contentType, params string[] additionalContentTypes)
-        : base(type, statusCode, contentType, additionalContentTypes) { }
 }

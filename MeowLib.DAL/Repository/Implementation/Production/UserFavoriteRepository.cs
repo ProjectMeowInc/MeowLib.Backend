@@ -114,7 +114,7 @@ public class UserFavoriteRepository : IUserFavoriteRepository
     }
 
     /// <summary>
-    /// Метод получает все книги в списке пользователя в виде <see cref="IQueryable{T}"/>
+    /// Метод получает все книги в списке пользователя в виде <see cref="IQueryable{T}" />
     /// </summary>
     /// <returns></returns>
     public IQueryable<UserFavoriteEntityModel> GetAll()

@@ -16,11 +16,11 @@ public class JwtTokensService : IJwtTokenService
 {
     private static readonly JwtSecurityTokenHandler TokenHandler = new();
     private readonly SymmetricSecurityKey _accessTokenSecurityKey;
-    private readonly SymmetricSecurityKey _refreshTokenSecurityKey;
+    private readonly string _audience;
     private readonly SymmetricSecurityKey _inviteTokenSecurityKey;
     private readonly string _issuer;
-    private readonly string _audience;
     private readonly ILogger<JwtTokensService> _logger;
+    private readonly SymmetricSecurityKey _refreshTokenSecurityKey;
 
     /// <summary>
     /// Конструктор.

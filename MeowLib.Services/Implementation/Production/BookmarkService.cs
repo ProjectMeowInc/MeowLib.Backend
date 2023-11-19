@@ -31,7 +31,7 @@ public class BookmarkService : IBookmarkService
     /// </summary>
     /// <param name="userId">Id пользователя.</param>
     /// <param name="chapterId">Id главы.</param>
-    /// <returns>Созданную/обновлённую закладку в виде <see cref="BookmarkDto"/>.</returns>
+    /// <returns>Созданную/обновлённую закладку в виде <see cref="BookmarkDto" />.</returns>
     /// <exception cref="ChapterNotFoundException">Возникает в случае, если не была найдена глава.</exception>
     /// <exception cref="UserNotFoundException">Возникает в случае, если не был найден пользователь.</exception>
     /// <exception cref="InnerException">Возникает в случае внутренних проблем.</exception>

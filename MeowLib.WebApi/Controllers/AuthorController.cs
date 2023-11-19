@@ -9,7 +9,6 @@ using MeowLib.WebApi.Filters;
 using MeowLib.WebApi.Models.Requests.Author;
 using MeowLib.WebApi.ProducesResponseTypes;
 using Microsoft.AspNetCore.Mvc;
-using ValidationException = MeowLib.Domain.Exceptions.Services.ValidationException;
 
 namespace MeowLib.WebApi.Controllers;
 

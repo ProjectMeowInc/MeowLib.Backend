@@ -15,8 +15,8 @@ namespace MeowLib.Services.Implementation.Production;
 public class TeamService : ITeamService
 {
     private readonly ApplicationDbContext _dbContext;
-    private readonly IUserRepository _userRepository;
     private readonly INotificationService _notificationService;
+    private readonly IUserRepository _userRepository;
 
     public TeamService(ApplicationDbContext dbContext, IUserRepository userRepository,
         INotificationService notificationService)

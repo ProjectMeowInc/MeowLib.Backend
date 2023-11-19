@@ -20,11 +20,11 @@ namespace MeowLib.Services.Implementation.Production;
 /// </summary>
 public class BookService : IBookService
 {
-    private readonly IBookRepository _bookRepository;
     private readonly IAuthorRepository _authorRepository;
-    private readonly ITagRepository _tagRepository;
+    private readonly IBookRepository _bookRepository;
     private readonly IFileService _fileService;
     private readonly ILogger<BookService> _logger;
+    private readonly ITagRepository _tagRepository;
 
     /// <summary>
     /// Конструктор.

@@ -39,8 +39,8 @@ public class Result
 
 public class Result<TResult>
 {
-    private readonly TResult? _result;
     private readonly Exception? _error;
+    private readonly TResult? _result;
 
     protected Result(TResult result)
     {
