@@ -17,6 +17,7 @@ public class UserTestRepository : IUserRepository
             Login = "tester",
             Role = UserRolesEnum.Admin,
             Password = "test",
+            Coins = 0,
             RefreshToken = null
         },
         new UserEntityModel
@@ -25,6 +26,7 @@ public class UserTestRepository : IUserRepository
             Login = "sueta",
             Role = UserRolesEnum.User,
             Password = "test",
+            Coins = 0,
             RefreshToken = null
         }
     };
@@ -36,6 +38,7 @@ public class UserTestRepository : IUserRepository
             Id = _userData.Count,
             Login = createUserData.Login,
             Password = createUserData.Password,
+            Coins = 0,
             Role = UserRolesEnum.User,
             RefreshToken = null
         };
