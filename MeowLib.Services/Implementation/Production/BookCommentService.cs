@@ -17,7 +17,7 @@ namespace MeowLib.Services.Implementation.Production;
 /// </summary>
 public class BookCommentService : IBookCommentService
 {
-    private static readonly Regex _htmlRegex = new("<[^>]*>", RegexOptions.Compiled);
+    private static readonly Regex HtmlRegex = new("<[^>]*>", RegexOptions.Compiled);
 
     private readonly IBookCommentRepository _bookCommentRepository;
     private readonly IBookRepository _bookRepository;
@@ -127,6 +127,6 @@ public class BookCommentService : IBookCommentService
 
     private static string RemoveHtml(string str)
     {
-        return _htmlRegex.Replace(str, string.Empty);
+        return HtmlRegex.Replace(str, string.Empty);
     }
 }

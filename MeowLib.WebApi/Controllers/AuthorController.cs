@@ -52,7 +52,7 @@ public class AuthorController : BaseController
         return Json(author);
     }
 
-    [HttpPut("{authorId:int}")]
+    [HttpPut("{authorId}")]
     [Authorization(RequiredRoles = new[] { UserRolesEnum.Editor, UserRolesEnum.Admin })]
     [ProducesOkResponseType(typeof(AuthorDto))]
     [ProducesForbiddenResponseType]
@@ -85,7 +85,7 @@ public class AuthorController : BaseController
         return Json(updatedAuthor);
     }
 
-    [HttpDelete("{authorId:int}")]
+    [HttpDelete("{authorId}")]
     [Authorization(RequiredRoles = new[] { UserRolesEnum.Editor, UserRolesEnum.Admin })]
     [ProducesOkResponseType]
     [ProducesNotFoundResponseType]
@@ -106,7 +106,7 @@ public class AuthorController : BaseController
         return Ok();
     }
 
-    [HttpGet("{authorId:int}")]
+    [HttpGet("{authorId}")]
     [ProducesOkResponseType(typeof(AuthorDto))]
     [ProducesNotFoundResponseType]
     public async Task<ActionResult> GetAuthorById([FromRoute] int authorId)

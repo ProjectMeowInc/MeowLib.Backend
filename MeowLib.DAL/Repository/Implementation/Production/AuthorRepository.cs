@@ -20,7 +20,6 @@ public class AuthorRepository : IAuthorRepository
     /// Конструктор.
     /// </summary>
     /// <param name="applicationDbContext">Контекст база данных.</param>
-    /// <param name="mapper">Автомаппер.</param>
     /// <param name="logger">Логгер.</param>
     public AuthorRepository(ApplicationDbContext applicationDbContext, ILogger<AuthorRepository> logger)
     {

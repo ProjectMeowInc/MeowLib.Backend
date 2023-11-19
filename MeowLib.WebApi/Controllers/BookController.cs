@@ -76,7 +76,7 @@ public class BookController : BaseController
         return Json(createdBook);
     }
 
-    [HttpDelete("{id:int}")]
+    [HttpDelete("{id}")]
     [Authorization(RequiredRoles = new[] { UserRolesEnum.Admin, UserRolesEnum.Editor })]
     [ProducesOkResponseType]
     [ProducesNotFoundResponseType]
@@ -97,7 +97,7 @@ public class BookController : BaseController
         return Ok();
     }
 
-    [HttpPut("{bookId:int}/info")]
+    [HttpPut("{bookId}/info")]
     [Authorization(RequiredRoles = new[] { UserRolesEnum.Admin, UserRolesEnum.Editor })]
     [ProducesOkResponseType]
     [ProducesForbiddenResponseType]
@@ -131,7 +131,7 @@ public class BookController : BaseController
         return EmptyResult();
     }
 
-    [HttpGet("{id:int}")]
+    [HttpGet("{id}")]
     [ProducesOkResponseType(typeof(GetBookResponse))]
     [ProducesNotFoundResponseType]
     public async Task<ActionResult> GetBookInfo([FromRoute] int id)
@@ -168,7 +168,7 @@ public class BookController : BaseController
         });
     }
 
-    [HttpPut("{bookId:int}/author/{authorId:int}")]
+    [HttpPut("{bookId}/author/{authorId}")]
     [Authorization(RequiredRoles = new[] { UserRolesEnum.Editor, UserRolesEnum.Admin })]
     [ProducesOkResponseType]
     [ProducesResponseType(400, Type = typeof(BaseErrorResponse))]
@@ -196,7 +196,7 @@ public class BookController : BaseController
         return Json(updatedBook);
     }
 
-    [HttpPut("{bookId:int}/tags")]
+    [HttpPut("{bookId}/tags")]
     [Authorization(RequiredRoles = new[] { UserRolesEnum.Editor, UserRolesEnum.Admin })]
     [ProducesOkResponseType]
     [ProducesNotFoundResponseType]
@@ -217,7 +217,7 @@ public class BookController : BaseController
         return EmptyResult();
     }
 
-    [HttpPut("{bookId:int}/image")]
+    [HttpPut("{bookId}/image")]
     [Authorization(RequiredRoles = new[] { UserRolesEnum.Editor, UserRolesEnum.Admin })]
     [ProducesOkResponseType]
     [ProducesNotFoundResponseType]

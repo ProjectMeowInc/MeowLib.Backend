@@ -23,7 +23,7 @@ public class BookCommentController : BaseController
         _bookCommentService = bookCommentService;
     }
 
-    [HttpGet("{bookId:int}/comments")]
+    [HttpGet("{bookId}/comments")]
     [ProducesOkResponseType(typeof(GetBookCommentsResponse))]
     [ProducesNotFoundResponseType]
     public async Task<ActionResult> GetBookComments([FromRoute] int bookId)
@@ -48,7 +48,7 @@ public class BookCommentController : BaseController
         });
     }
 
-    [HttpPost("{bookId:int}/comments")]
+    [HttpPost("{bookId}/comments")]
     [Authorization]
     [ProducesOkResponseType(typeof(BookCommentDto))]
     [ProducesResponseType(400, Type = typeof(BaseErrorResponse))]

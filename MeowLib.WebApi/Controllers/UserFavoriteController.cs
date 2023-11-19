@@ -68,7 +68,7 @@ public class UserFavoriteController : BaseController
         return Json(response);
     }
 
-    [HttpGet("book/{bookId:int}")]
+    [HttpGet("book/{bookId}")]
     [Authorization]
     [ProducesOkResponseType(typeof(UserFavoriteDto))]
     [ProducesNotFoundResponseType]
