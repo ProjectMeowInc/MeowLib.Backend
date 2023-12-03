@@ -42,36 +42,6 @@ public class ExceptionHandlerMiddleware
             await context.Response.WriteAsJsonAsync(new ValidationErrorResponse(validationException.ValidationErrors));
             logger.LogInformation("[{@DateTime}] Ответ отправлен пользователю", DateTime.UtcNow);
         }
-        catch (DbSavingException)
-        {
-            if (context.Response.HasStarted)
-            {
-                return;
-            }
-
-            context.Response.StatusCode = 500;
-            await context.Response.WriteAsJsonAsync(new BaseErrorResponse("Внутреняя ошибка сервера"));
-        }
-        catch (DalLevelException)
-        {
-            if (context.Response.HasStarted)
-            {
-                return;
-            }
-
-            context.Response.StatusCode = 500;
-            await context.Response.WriteAsJsonAsync(new BaseErrorResponse("Внутреняя ошибка сервера"));
-        }
-        catch (ApiException apiException)
-        {
-            if (context.Response.HasStarted)
-            {
-                return;
-            }
-
-            context.Response.StatusCode = 500;
-            await context.Response.WriteAsJsonAsync(new BaseErrorResponse(apiException.ErrorMessage));
-        }
         catch (Exception exception)
         {
             if (context.Response.HasStarted)
