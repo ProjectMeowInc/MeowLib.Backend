@@ -5,8 +5,6 @@ namespace MeowLib.Domain.Exceptions;
 /// </summary>
 public class ApiException : Exception
 {
-    public string ErrorMessage { get; protected set; }
-
     /// <summary>
     /// Конструктор
     /// </summary>
@@ -15,4 +13,6 @@ public class ApiException : Exception
     {
         ErrorMessage = errorMessage;
     }
+
+    public string ErrorMessage { get; protected set; }
 }

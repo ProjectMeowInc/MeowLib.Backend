@@ -29,6 +29,7 @@ public class TranslationController(ITranslationService translationService, ITeam
             }
 
             logger.LogError("Ошибка получения глав перевода: {exception}", exception);
+            return ServerError();
         }
 
         var content = getTranslationChaptersResult.GetResult();
@@ -136,6 +137,7 @@ public class TranslationController(ITranslationService translationService, ITeam
             }
 
             logger.LogError("При добавлении главы произошла ошибка: {exception}", exception);
+            return ServerError();
         }
 
         return Ok();

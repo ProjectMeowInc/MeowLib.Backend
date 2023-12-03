@@ -6,11 +6,6 @@ namespace MeowLib.Domain.Exceptions.DAL;
 public class EntityNotFoundException : DalLevelException
 {
     /// <summary>
-    /// Параметр по каторому был произведён поиск.
-    /// </summary>
-    public string RequestParam { get; protected set; }
-
-    /// <summary>
     /// Конструктор.
     /// </summary>
     /// <param name="entityName">Название сущности.</param>
@@ -21,4 +16,9 @@ public class EntityNotFoundException : DalLevelException
         EntityName = entityName;
         RequestParam = requestParam;
     }
+
+    /// <summary>
+    /// Параметр по каторому был произведён поиск.
+    /// </summary>
+    public string RequestParam { get; protected set; }
 }

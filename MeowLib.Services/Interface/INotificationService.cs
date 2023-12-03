@@ -25,7 +25,9 @@ public interface INotificationService
     /// </summary>
     /// <param name="teamId">Id комманды.</param>
     /// <param name="userId">Id пользователя.</param>
-    /// <returns>Результат отправки уведомления. Метод сохраняет все ошибки метода <see cref="SendNotificationToUserAsync"/></returns>
+    /// <returns>
+    /// Результат отправки уведомления. Метод сохраняет все ошибки метода <see cref="SendNotificationToUserAsync" />
+    /// </returns>
     Task<Result> SendInviteToTeamNotificationAsync(int teamId, int userId);
 
     /// <summary>

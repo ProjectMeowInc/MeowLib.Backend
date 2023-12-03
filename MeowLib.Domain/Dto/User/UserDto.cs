@@ -4,7 +4,7 @@ using MeowLib.Domain.Enums;
 namespace MeowLib.Domain.Dto.User;
 
 /// <summary>
-/// DTO для сущности <see cref="UserEntityModel"/>
+/// DTO для сущности <see cref="UserEntityModel" />
 /// </summary>
 public class UserDto
 {

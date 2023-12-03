@@ -6,11 +6,6 @@ namespace MeowLib.Domain.Exceptions.DAL;
 public abstract class DalLevelException : ApiException
 {
     /// <summary>
-    /// Название сущности на уровне DAL.
-    /// </summary>
-    public string EntityName { get; protected set; }
-
-    /// <summary>
     /// Конструктор.
     /// </summary>
     /// <param name="entityName">Название сущности.</param>
@@ -18,4 +13,9 @@ public abstract class DalLevelException : ApiException
     {
         EntityName = entityName;
     }
+
+    /// <summary>
+    /// Название сущности на уровне DAL.
+    /// </summary>
+    public string EntityName { get; protected set; }
 }

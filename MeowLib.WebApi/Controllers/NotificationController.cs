@@ -11,8 +11,8 @@ namespace MeowLib.WebApi.Controllers;
 [Route("api/notifications")]
 public class NotificationController : BaseController
 {
-    private readonly INotificationService _notificationService;
     private readonly ILogger<NotificationController> _logger;
+    private readonly INotificationService _notificationService;
 
     public NotificationController(INotificationService notificationService, ILogger<NotificationController> logger)
     {

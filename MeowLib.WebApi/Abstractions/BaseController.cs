@@ -27,7 +27,7 @@ public class BaseController : ControllerBase
     }
 
     /// <summary>
-    /// Метод возвращающий JSON-объект в виде <see cref="BaseErrorResponse"/>.
+    /// Метод возвращающий JSON-объект в виде <see cref="BaseErrorResponse" />.
     /// </summary>
     /// <param name="errorMessage">Сообщение, котороые будет отправлены в модели ошибки.</param>
     /// <param name="statusCode">Статус код, который необходимо вернуть. Стандартное значение: 500.</param>
@@ -49,7 +49,7 @@ public class BaseController : ControllerBase
     }
 
     /// <summary>
-    /// Метод возвращает стандартный формат ошибки сервера в виде <see cref="BaseErrorResponse"/>.
+    /// Метод возвращает стандартный формат ошибки сервера в виде <see cref="BaseErrorResponse" />.
     /// </summary>
     /// <returns>Json-модель ответа.</returns>
     protected JsonResult ServerError()
@@ -58,7 +58,7 @@ public class BaseController : ControllerBase
     }
 
     /// <summary>
-    /// Метод возвращает стандартный формат ошибки 404 в виде <see cref="BaseErrorResponse"/>.
+    /// Метод возвращает стандартный формат ошибки 404 в виде <see cref="BaseErrorResponse" />.
     /// </summary>
     /// <returns>Json-модель ответа.</returns>
     protected JsonResult NotFoundError()
@@ -67,7 +67,7 @@ public class BaseController : ControllerBase
     }
 
     /// <summary>
-    /// Метод возвращает стандартный формат ошибки 404 в виде <see cref="BaseErrorResponse"/>, с указанным сообщением.
+    /// Метод возвращает стандартный формат ошибки 404 в виде <see cref="BaseErrorResponse" />, с указанным сообщением.
     /// </summary>
     /// <param name="message">Сообщение для отправки.</param>
     /// <returns>Json-модель ответа.</returns>

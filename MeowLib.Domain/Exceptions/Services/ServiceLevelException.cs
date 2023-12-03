@@ -6,16 +6,16 @@ namespace MeowLib.Domain.Exceptions.Services;
 public class ServiceLevelException : ApiException
 {
     /// <summary>
-    /// Название сервиса в котором произошло исключение.
-    /// </summary>
-    public string ServiceName { get; protected set; }
-
-    /// <summary>
     /// Конструктор.
     /// </summary>
     /// <param name="serviceName">Название сервиса.</param>
-    public ServiceLevelException(string serviceName) : base($"Внутреняя ошибка сервера")
+    public ServiceLevelException(string serviceName) : base("Внутреняя ошибка сервера")
     {
         ServiceName = serviceName;
     }
+
+    /// <summary>
+    /// Название сервиса в котором произошло исключение.
+    /// </summary>
+    public string ServiceName { get; protected set; }
 }

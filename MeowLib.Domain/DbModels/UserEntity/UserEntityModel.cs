@@ -28,6 +28,11 @@ public class UserEntityModel
     public required string? RefreshToken { get; set; }
 
     /// <summary>
+    /// Количество валюты пользователя.
+    /// </summary>
+    public required decimal Coins { get; set; }
+
+    /// <summary>
     /// Роль пользователя.
     /// </summary>
     public required UserRolesEnum Role { get; set; } = UserRolesEnum.User;

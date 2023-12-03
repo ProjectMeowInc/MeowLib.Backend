@@ -52,7 +52,7 @@ public class TagController : BaseController
         return Json(createdTag);
     }
 
-    [HttpDelete("{id:int}")]
+    [HttpDelete("{id}")]
     [ProducesOkResponseType]
     [ProducesNotFoundResponseType]
     public async Task<ActionResult> DeleteTag([FromRoute] int id)
@@ -73,7 +73,7 @@ public class TagController : BaseController
         return EmptyResult();
     }
 
-    [HttpPut("{id:int}")]
+    [HttpPut("{id}")]
     [Authorization(RequiredRoles = new[] { UserRolesEnum.Admin })]
     [ProducesOkResponseType(typeof(TagEntityModel))]
     [ProducesForbiddenResponseType]
@@ -114,7 +114,7 @@ public class TagController : BaseController
         return Json(tags);
     }
 
-    [HttpGet("{id:int}")]
+    [HttpGet("{id}")]
     [ProducesOkResponseType(typeof(TagEntityModel))]
     [ProducesNotFoundResponseType]
     public async Task<ActionResult> GetTagById([FromRoute] int id)

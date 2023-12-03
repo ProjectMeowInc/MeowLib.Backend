@@ -10,7 +10,6 @@ namespace MeowLib.Services.Implementation.Production;
 /// </summary>
 public class FileService : IFileService
 {
-    private readonly string _uploadDirectoryPath;
     private static readonly string[] ValidateExtension = { ".png", ".jpg" };
 
     private static readonly Dictionary<string, string> MimeMappings = new()
@@ -18,6 +17,8 @@ public class FileService : IFileService
         { "png", "image/png" },
         { "jpg", "image/jpg" }
     };
+
+    private readonly string _uploadDirectoryPath;
 
     /// <summary>
     /// Конструктор.
@@ -53,7 +54,7 @@ public class FileService : IFileService
     }
 
     /// <summary>
-    /// Метод возвращает загруженное ранее изображение книги. 
+    /// Метод возвращает загруженное ранее изображение книги.
     /// </summary>
     /// <param name="imageName">Название книги.</param>
     /// <returns>Картинка, в виде байтов и её mimeType, если картинка не найдена, то content - null</returns>

@@ -9,8 +9,6 @@ namespace MeowLib.Tests.Services;
 [TestFixture]
 public class UserServiceTests
 {
-    private static IUserService _userService = null!;
-
     [SetUp]
     public void SetUp()
     {
@@ -19,6 +17,8 @@ public class UserServiceTests
         var jwtTokenService = new JwtTokensService(null!);
         _userService = new UserService(hashService, userRepository, jwtTokenService);
     }
+
+    private static IUserService _userService = null!;
 
     [Test]
     public async Task SignInTestAlreadyExistUser()
@@ -30,7 +30,7 @@ public class UserServiceTests
         var signInResult = await _userService.SignInAsync(login, password);
         if (!signInResult.IsFailure)
         {
-            Assert.Fail($"Исключение не было вызвано");
+            Assert.Fail("Исключение не было вызвано");
         }
 
         var exception = signInResult.GetError();

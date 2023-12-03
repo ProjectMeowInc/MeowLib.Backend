@@ -1,5 +1,4 @@
 ﻿using MeowLib.Domain.DbModels.ChapterEntity;
-using MeowLib.Domain.Dto.Chapter;
 using MeowLib.Domain.Exceptions.DAL;
 using MeowLib.Domain.Exceptions.Services;
 using MeowLib.Domain.Exceptions.Translation;

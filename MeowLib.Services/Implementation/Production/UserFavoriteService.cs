@@ -16,9 +16,9 @@ namespace MeowLib.Services.Implementation.Production;
 
 public class UserFavoriteService : IUserFavoriteService
 {
+    private readonly IBookRepository _bookRepository;
     private readonly IUserFavoriteRepository _userFavoriteRepository;
     private readonly IUserRepository _userRepository;
-    private readonly IBookRepository _bookRepository;
 
     public UserFavoriteService(IUserFavoriteRepository userFavoriteRepository, IUserRepository userRepository,
         IBookRepository bookRepository)

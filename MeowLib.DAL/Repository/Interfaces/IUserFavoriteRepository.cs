@@ -50,7 +50,7 @@ public interface IUserFavoriteRepository
     Task<Result<UserFavoriteEntityModel>> UpdateAsync(UserFavoriteEntityModel entityModel);
 
     /// <summary>
-    /// Метод получает все книги в списке пользователя в виде <see cref="IQueryable{T}"/>
+    /// Метод получает все книги в списке пользователя в виде <see cref="IQueryable{T}" />
     /// </summary>
     /// <returns></returns>
     IQueryable<UserFavoriteEntityModel> GetAll();

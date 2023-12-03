@@ -15,7 +15,10 @@ public interface ITeamService
     /// <param name="name">Название команды.</param>
     /// <param name="description">Описание команды.</param>
     /// <returns>Модель команды в случае успеха</returns>
-    /// <exception cref="TeamOwnerNotFoundException">Возникает в случае, если пользователь запросивший создание команды не найден</exception>
+    /// <exception cref="TeamOwnerNotFoundException">
+    /// Возникает в случае, если пользователь запросивший создание команды не
+    /// найден
+    /// </exception>
     Task<Result<TeamEntityModel>> CreateNewTeamAsync(int createdById, string name, string description);
 
     /// <summary>

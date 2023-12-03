@@ -14,20 +14,9 @@ namespace MeowLib.Services.Implementation.Production;
 /// <summary>
 /// Сервис для работы с главами.
 /// </summary>
-public class ChapterService : IChapterService
+public class ChapterService(IChapterRepository chapterRepository, ApplicationDbContext dbContext)
+    : IChapterService
 {
-    private readonly IChapterRepository _chapterRepository;
-    private readonly IBookService _bookService;
-    private readonly ApplicationDbContext _dbContext;
-
-    public ChapterService(IChapterRepository chapterRepository, IBookService bookService,
-        ApplicationDbContext dbContext)
-    {
-        _chapterRepository = chapterRepository;
-        _bookService = bookService;
-        _dbContext = dbContext;
-    }
-
     public async Task<Result<ChapterEntityModel>> CreateChapterAsync(string name, string text, int translationId)
     {
         var validationErrors = new List<ValidationErrorModel>();
@@ -56,7 +45,7 @@ public class ChapterService : IChapterService
             return Result<ChapterEntityModel>.Fail(validationException);
         }
 
-        var foundedTranslation = await _dbContext.Translations.FirstOrDefaultAsync(t => t.Id == translationId);
+        var foundedTranslation = await dbContext.Translations.FirstOrDefaultAsync(t => t.Id == translationId);
         if (foundedTranslation is null)
         {
             return Result<ChapterEntityModel>.Fail(new TranslationNotFoundException(translationId));
@@ -71,7 +60,7 @@ public class ChapterService : IChapterService
             Position = 1
         };
 
-        var createChapterResult = await _chapterRepository.CreateAsync(newChapter);
+        var createChapterResult = await chapterRepository.CreateAsync(newChapter);
         if (createChapterResult.IsFailure)
         {
             return Result<ChapterEntityModel>.Fail(createChapterResult.GetError());
@@ -90,7 +79,7 @@ public class ChapterService : IChapterService
     /// <exception cref="DbSavingException">Возникает в случае ошибки сохранения данных.</exception>
     public async Task<Result<ChapterEntityModel>> UpdateChapterTextAsync(int chapterId, string newText)
     {
-        var updateResult = await _chapterRepository.UpdateTextAsync(chapterId, newText);
+        var updateResult = await chapterRepository.UpdateTextAsync(chapterId, newText);
         if (updateResult.IsFailure)
         {
             return Result<ChapterEntityModel>.Fail(updateResult.GetError());
@@ -108,7 +97,7 @@ public class ChapterService : IChapterService
     /// <exception cref="DbSavingException">Возникает в случае ошибки сохранения данных.</exception>
     public async Task<Result> DeleteChapterAsync(int chapterId)
     {
-        var deleteResult = await _chapterRepository.DeleteByIdAsync(chapterId);
+        var deleteResult = await chapterRepository.DeleteByIdAsync(chapterId);
         if (deleteResult.IsFailure)
         {
             return Result.Fail(deleteResult.GetError());
@@ -124,6 +113,6 @@ public class ChapterService : IChapterService
     /// <returns>Модель главы, если была найдена.</returns>
     public async Task<ChapterEntityModel?> GetChapterByIdAsync(int chapterId)
     {
-        return await _chapterRepository.GetByIdAsync(chapterId);
+        return await chapterRepository.GetByIdAsync(chapterId);
     }
 }

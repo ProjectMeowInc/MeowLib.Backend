@@ -1,1 +1,1 @@
-dotnet ef database update --project  .\MeowLib.WebApi.DAL\MeowLib.WebApi.DAL.csproj --startup-project .\MeowLib.WebApi\MeowLib.WebApi.csproj
+dotnet ef database update --startup-project .\MeowLib.WebApi\MeowLib.WebApi.csproj

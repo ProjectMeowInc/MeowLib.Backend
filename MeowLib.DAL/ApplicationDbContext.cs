@@ -3,6 +3,7 @@ using MeowLib.Domain.DbModels.BookCommentEntity;
 using MeowLib.Domain.DbModels.BookEntity;
 using MeowLib.Domain.DbModels.BookmarkEntity;
 using MeowLib.Domain.DbModels.ChapterEntity;
+using MeowLib.Domain.DbModels.CoinsChangeLogEntity;
 using MeowLib.Domain.DbModels.NotificationEntity;
 using MeowLib.Domain.DbModels.TagEntity;
 using MeowLib.Domain.DbModels.TeamEntity;
@@ -24,40 +25,6 @@ public class ApplicationDbContext : DbContext
     /// </summary>
     /// <param name="options">Настройки БД.</param>
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
-
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        modelBuilder.Entity<BookEntityModel>()
-            .HasMany(b => b.Tags)
-            .WithMany(t => t.Books);
-
-        modelBuilder.Entity<BookEntityModel>()
-            .HasMany(b => b.Translations)
-            .WithOne(t => t.Book)
-            .OnDelete(DeleteBehavior.Cascade);
-
-        modelBuilder.Entity<BookEntityModel>()
-            .HasOne(b => b.Author)
-            .WithMany()
-            .OnDelete(DeleteBehavior.SetNull);
-
-        modelBuilder.Entity<BookEntityModel>()
-            .HasMany<BookmarkEntityModel>()
-            .WithOne()
-            .OnDelete(DeleteBehavior.Cascade);
-
-        modelBuilder.Entity<BookEntityModel>()
-            .HasMany<BookCommentEntityModel>()
-            .WithOne()
-            .OnDelete(DeleteBehavior.Cascade);
-
-        modelBuilder.Entity<TranslationEntityModel>()
-            .HasMany(t => t.Chapters)
-            .WithOne(c => c.Translation)
-            .OnDelete(DeleteBehavior.Cascade);
-
-        base.OnModelCreating(modelBuilder);
-    }
 
     /// <summary>
     /// Таблица пользователей.
@@ -118,4 +85,43 @@ public class ApplicationDbContext : DbContext
     /// Таблица переводов.
     /// </summary>
     public required DbSet<TranslationEntityModel> Translations { get; set; }
+
+    /// <summary>
+    /// Таблица логов измененния денег пользователя.
+    /// </summary>
+    public required DbSet<CoinsChangeLogEntityModel> CoinsChangeLog { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<BookEntityModel>()
+            .HasMany(b => b.Tags)
+            .WithMany(t => t.Books);
+
+        modelBuilder.Entity<BookEntityModel>()
+            .HasMany(b => b.Translations)
+            .WithOne(t => t.Book)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<BookEntityModel>()
+            .HasOne(b => b.Author)
+            .WithMany()
+            .OnDelete(DeleteBehavior.SetNull);
+
+        modelBuilder.Entity<BookEntityModel>()
+            .HasMany<BookmarkEntityModel>()
+            .WithOne()
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<BookEntityModel>()
+            .HasMany<BookCommentEntityModel>()
+            .WithOne()
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<TranslationEntityModel>()
+            .HasMany(t => t.Chapters)
+            .WithOne(c => c.Translation)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        base.OnModelCreating(modelBuilder);
+    }
 }

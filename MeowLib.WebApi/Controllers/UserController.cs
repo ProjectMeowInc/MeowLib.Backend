@@ -34,7 +34,7 @@ public class UserController : BaseController
         return Json(users);
     }
 
-    [HttpPut("{id:int}")]
+    [HttpPut("{id}")]
     [Authorization(RequiredRoles = new[] { UserRolesEnum.Admin })]
     [ProducesOkResponseType(typeof(UserDto))]
     [ProducesForbiddenResponseType]
