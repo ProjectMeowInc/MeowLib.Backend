@@ -19,7 +19,7 @@ public interface IUserService
     /// <returns>Dto-модель пользователя.</returns>
     /// <exception cref="ApiException">Возникает в случае если логин пользователя занят.</exception>
     /// <exception cref="ValidationException">Возникает в случае ошибки валидации данных.</exception>
-    Task<Result<UserDto>> SignInAsync(string login, string password);
+    Task<Result<UserEntityModel>> SignInAsync(string login, string password);
 
     /// <summary>
     /// Метод генерирует пару JWT-токенов для авторизации пользователя.
@@ -42,10 +42,11 @@ public interface IUserService
     /// Метод обновляет информацию о пользователе и возвращает его Dto-модель.
     /// </summary>
     /// <param name="id">Id пользователя.</param>
-    /// <param name="updateData">Данные для обновления.</param>
+    /// <param name="login">Новый логин.</param>
+    /// <param name="password">Новый пароль.</param>
     /// <returns>Dto-модель пользователя.</returns>
     /// <exception cref="ValidationException">Возникает в случае, если входные данные были невалидны.</exception>
-    Task<Result<UserDto?>> UpdateUser(int id, UpdateUserEntityModel updateData);
+    Task<Result<UserDto?>> UpdateUser(int id, string? login, string? password);
 
     /// <summary>
     /// Метод авторизует пользователя по токену обновления.
@@ -54,4 +55,11 @@ public interface IUserService
     /// <returns>Пару JWT-токенов.</returns>
     /// <exception cref="IncorrectCreditionalException">Возникает в случае, если был введён некорректный токен обновления.</exception>
     Task<Result<(string accessToken, string refreshToken)>> LogInByRefreshTokenAsync(string refreshToken);
+
+    /// <summary>
+    /// Метод получает пользователя по Id.
+    /// </summary>
+    /// <param name="userId">Id пользователя.</param>
+    /// <returns>Найденного пользователя или null</returns>
+    Task<UserEntityModel?> GetUserByIdAsync(int userId);
 }

@@ -1,4 +1,3 @@
-using MeowLib.Domain.DbModels.UserEntity;
 using MeowLib.Domain.Dto.User;
 using MeowLib.Domain.Enums;
 using MeowLib.Domain.Exceptions.Services;
@@ -40,12 +39,7 @@ public class UserController : BaseController
     [ProducesNotFoundResponseType]
     public async Task<ActionResult> UpdateUser([FromRoute] int id, [FromBody] UpdateUserRequest input)
     {
-        var updateUserResult = await _userService.UpdateUser(id, new UpdateUserEntityModel
-        {
-            Login = input.Login,
-            Password = input.Password,
-            Role = input.Role
-        });
+        var updateUserResult = await _userService.UpdateUser(id, input.Login, input.Password);
 
         if (updateUserResult.IsFailure)
         {

@@ -1,7 +1,8 @@
-using MeowLib.DAL.Repository.Interfaces;
+using MeowLib.DAL;
 using MeowLib.Domain.DbModels.BookEntity;
 using MeowLib.Domain.DbModels.TagEntity;
 using MeowLib.Domain.DbModels.TranslationEntity;
+using MeowLib.Domain.Dto.Book;
 using MeowLib.Domain.Exceptions;
 using MeowLib.Domain.Exceptions.Author;
 using MeowLib.Domain.Exceptions.Services;
@@ -19,38 +20,21 @@ namespace MeowLib.Services.Implementation.Production;
 /// </summary>
 public class BookService : IBookService
 {
-    private readonly IAuthorRepository _authorRepository;
-    private readonly IBookRepository _bookRepository;
+    private readonly IAuthorService _authorService;
+    private readonly ApplicationDbContext _dbContext;
     private readonly IFileService _fileService;
     private readonly ILogger<BookService> _logger;
-    private readonly ITagRepository _tagRepository;
 
-    /// <summary>
-    /// Конструктор.
-    /// </summary>
-    /// <param name="bookRepository">Репозиторий книг.</param>
-    /// <param name="authorRepository">Репозиторий авторов.</param>
-    /// <param name="tagRepository">Репозиторий тегов.</param>
-    /// <param name="fileService">Сервис для работы с файлами.</param>
-    /// <param name="logger">Логгер.</param>
-    public BookService(IBookRepository bookRepository, IAuthorRepository authorRepository, ITagRepository tagRepository,
-        IFileService fileService, ILogger<BookService> logger)
+    public BookService(IFileService fileService, ILogger<BookService> logger, ApplicationDbContext dbContext,
+        IAuthorService authorService)
     {
-        _bookRepository = bookRepository;
-        _authorRepository = authorRepository;
-        _tagRepository = tagRepository;
         _fileService = fileService;
         _logger = logger;
+        _dbContext = dbContext;
+        _authorService = authorService;
     }
 
-    /// <summary>
-    /// Метод создаёт новую книгу.
-    /// </summary>
-    /// <param name="createBookEntityModel">Данные для создания книги.</param>
-    /// <returns>Модель созданной книги.</returns>
-    /// <exception cref="ValidationException">Возникает в случае ошибки валидации.</exception>
-    /// <exception cref="ApiException">Возникает в случае ошибки сохранения данных.</exception>
-    public async Task<Result<BookEntityModel>> CreateBookAsync(CreateBookEntityModel createBookEntityModel)
+    public async Task<Result<BookEntityModel>> CreateBookAsync(BookEntityModel createBookEntityModel)
     {
         var validationErrors = new List<ValidationErrorModel>();
 
@@ -71,9 +55,8 @@ public class BookService : IBookService
             return Result<BookEntityModel>.Fail(new ValidationException(nameof(BookService), validationErrors));
         }
 
-        
         // todo: fix author
-        return await _bookRepository.CreateAsync(new BookEntityModel
+        var entry = await _dbContext.Books.AddAsync(new BookEntityModel
         {
             Name = inputName,
             Description = inputDescription,
@@ -81,39 +64,35 @@ public class BookService : IBookService
             Tags = new List<TagEntityModel>(),
             Translations = new List<TranslationEntityModel>()
         });
+        return entry.Entity;
     }
 
-    /// <summary>
-    /// Метод обновляет основную информацию о книге по её Id.
-    /// </summary>
-    /// <param name="bookId">Id книги.</param>
-    /// <param name="updateBookEntityModel">Информация для обновления.</param>
-    /// <returns>Обновлённая модель книги или null если книга не найдена.</returns>
-    /// <exception cref="ValidationException">Возникает в случае ошибки валидации.</exception>
-    public async Task<Result<BookEntityModel?>> UpdateBookInfoByIdAsync(int bookId,
-        UpdateBookEntityModel updateBookEntityModel)
+    public async Task<Result<BookEntityModel?>> UpdateBookInfoByIdAsync(int bookId, string? name, string? description)
     {
-        var inputName = updateBookEntityModel.Name?.Trim() ?? null;
-        var inputDescription = updateBookEntityModel.Description?.Trim() ?? null;
+        var inputName = name?.Trim();
+        var inputDescription = description?.Trim();
 
         var validationErrors = new List<ValidationErrorModel>();
 
-        if (inputName is not null && inputName.Length < 5)
+        if (inputName is not null)
         {
-            validationErrors.Add(new ValidationErrorModel
+            if (inputName.Length < 5)
             {
-                PropertyName = nameof(updateBookEntityModel.Name),
-                Message = "Имя книги не может быть меньше 5 символов"
-            });
+                validationErrors.Add(new ValidationErrorModel
+                {
+                    PropertyName = nameof(name),
+                    Message = "Имя книги не может быть меньше 5 символов"
+                });
+            }
         }
-
+        
         if (validationErrors.Any())
         {
             var validationException = new ValidationException(nameof(BookService), validationErrors);
             return Result<BookEntityModel?>.Fail(validationException);
         }
 
-        var foundedBook = await _bookRepository.GetByIdAsync(bookId);
+        var foundedBook = await GetBookByIdAsync(bookId);
         if (foundedBook is null)
         {
             return Result<BookEntityModel?>.Ok(null);
@@ -122,13 +101,10 @@ public class BookService : IBookService
         foundedBook.Name = inputName ?? foundedBook.Name;
         foundedBook.Description = inputDescription ?? foundedBook.Description;
 
-        var updatedBookResult = await _bookRepository.UpdateAsync(foundedBook);
-        if (updatedBookResult.IsFailure)
-        {
-            return Result<BookEntityModel?>.Fail(updatedBookResult.GetError());
-        }
+        _dbContext.Books.Update(foundedBook);
+        await _dbContext.SaveChangesAsync();
 
-        return updatedBookResult.GetResult();
+        return Result<BookEntityModel?>.Ok(foundedBook);
     }
 
     /// <summary>
@@ -139,14 +115,14 @@ public class BookService : IBookService
     /// <returns>Обновлённую модель книги при удачном обновления, null - если книга не была найдена.</returns>
     public async Task<Result<BookEntityModel?>> UpdateBookAuthorAsync(int bookId, int authorId)
     {
-        var foundedBook = await _bookRepository.GetByIdAsync(bookId);
+        var foundedBook = await GetBookByIdAsync(bookId);
         if (foundedBook is null)
         {
             _logger.LogInformation("[{@DateTime}] Книга не найдена", DateTime.UtcNow);
             return Result<BookEntityModel?>.Ok(null);
         }
 
-        var foundedAuthor = await _authorRepository.GetByIdAsync(authorId);
+        var foundedAuthor = await _authorService.GetAuthorByIdAsync(authorId);
         if (foundedAuthor is null)
         {
             _logger.LogInformation("[{@DateTime}] Автор не найден", DateTime.UtcNow);
@@ -155,13 +131,10 @@ public class BookService : IBookService
 
         foundedBook.Author = foundedAuthor;
 
-        var updateBookResult = await _bookRepository.UpdateAsync(foundedBook);
-        if (updateBookResult.IsFailure)
-        {
-            updateBookResult.GetError();
-        }
+        _dbContext.Books.Update(foundedBook);
+        await _dbContext.SaveChangesAsync();
 
-        return updateBookResult.GetResult();
+        return foundedBook;
     }
 
     /// <summary>
@@ -172,7 +145,16 @@ public class BookService : IBookService
     /// <exception cref="ApiException">Возникает в случае если произошла ошибка сохранения данных.</exception>
     public async Task<Result<bool>> DeleteBookByIdAsync(int bookId)
     {
-        return await _bookRepository.DeleteByIdAsync(bookId);
+        var foundedBook = await GetBookByIdAsync(bookId);
+        if (foundedBook is null)
+        {
+            return false;
+        }
+
+        _dbContext.Books.Remove(foundedBook);
+        await _dbContext.SaveChangesAsync();
+
+        return true;
     }
 
     /// <summary>
@@ -180,9 +162,9 @@ public class BookService : IBookService
     /// </summary>
     /// <param name="bookId">Id книги.</param>
     /// <returns>Модель книги, или null если она не была найдена.</returns>
-    public async Task<BookEntityModel?> GetBookByIdAsync(int bookId)
+    public Task<BookEntityModel?> GetBookByIdAsync(int bookId)
     {
-        return await _bookRepository.GetByIdAsync(bookId);
+        return _dbContext.Books.FirstOrDefaultAsync(b => b.Id == bookId);
     }
 
     /// <summary>
@@ -193,26 +175,23 @@ public class BookService : IBookService
     /// <returns>Модель книги или null, если она не была найдена.</returns>
     public async Task<Result<BookEntityModel?>> UpdateBookTagsAsync(int bookId, IEnumerable<int> tags)
     {
-        var foundedBook = await _bookRepository.GetByIdAsync(bookId);
+        var foundedBook = await GetBookByIdAsync(bookId);
         if (foundedBook is null)
         {
             _logger.LogInformation("[{@DateTime}] Книга не найдена", DateTime.UtcNow);
             return Result<BookEntityModel?>.Ok(null);
         }
 
-        var foundedTags = await _tagRepository
-            .GetAll()
+        var foundedTags = await _dbContext.Tags
             .Where(tag => tags.Any(t => t == tag.Id))
             .ToListAsync();
 
         foundedBook.Tags = foundedTags;
-        var updateResult = await _bookRepository.UpdateAsync(foundedBook);
-        if (updateResult.IsFailure)
-        {
-            return Result<BookEntityModel?>.Fail(updateResult.GetError());
-        }
 
-        return updateResult.GetResult();
+        _dbContext.Books.Update(foundedBook);
+        await _dbContext.SaveChangesAsync();
+
+        return foundedBook;
     }
 
     /// <summary>
@@ -225,7 +204,7 @@ public class BookService : IBookService
     public async Task<Result<BookEntityModel?>> UpdateBookImageAsync(int bookId, IFormFile file)
     {
         // TODO: REFACTORING!!
-        var foundedBook = await _bookRepository.GetByIdAsync(bookId);
+        var foundedBook = await GetBookByIdAsync(bookId);
         if (foundedBook is null)
         {
             _logger.LogInformation("[{@DateTime}] Книга не найдена", DateTime.UtcNow);
@@ -243,12 +222,21 @@ public class BookService : IBookService
         var uploadedFile = uploadBookImageResult.GetResult();
         foundedBook.ImageUrl = uploadedFile;
 
-        var updateBookResult = await _bookRepository.UpdateAsync(foundedBook);
-        if (updateBookResult.IsFailure)
-        {
-            return Result<BookEntityModel?>.Fail(uploadBookImageResult.GetError());
-        }
+        _dbContext.Books.Update(foundedBook);
+        await _dbContext.SaveChangesAsync();
 
-        return updateBookResult.GetResult();
+        return foundedBook;
+    }
+
+    public Task<List<BookDto>> GetAllBooksAsync()
+    {
+        return _dbContext.Books.Select(b => new BookDto
+            {
+                Id = b.Id,
+                Name = b.Name,
+                Description = b.Description,
+                ImageName = b.ImageUrl
+            })
+            .ToListAsync();
     }
 }

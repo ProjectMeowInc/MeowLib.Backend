@@ -1,9 +1,7 @@
-using MeowLib.DAL.Repository.Interfaces;
+using MeowLib.DAL;
 using MeowLib.Domain.DbModels.TagEntity;
 using MeowLib.Domain.Dto.Tag;
-using MeowLib.Domain.Exceptions;
 using MeowLib.Domain.Exceptions.Services;
-using MeowLib.Domain.Exceptions.Tag;
 using MeowLib.Domain.Models;
 using MeowLib.Domain.Result;
 using MeowLib.Services.Interface;
@@ -16,62 +14,51 @@ namespace MeowLib.Services.Implementation.Production;
 /// </summary>
 public class TagService : ITagService
 {
-    private readonly ITagRepository _tagRepository;
+    private readonly ApplicationDbContext _dbContext;
 
-    /// <summary>
-    /// Конструктор.
-    /// </summary>
-    /// <param name="tagRepository">Репозиторий тегов.</param>
-    public TagService(ITagRepository tagRepository)
+    public TagService(ApplicationDbContext dbContext)
     {
-        _tagRepository = tagRepository;
+        _dbContext = dbContext;
     }
 
-    /// <summary>
-    /// Метод создаёт новый тег.
-    /// </summary>
-    /// <param name="createTagEntityModel">Данные для создания тега.</param>
-    /// <returns>Информацию о созданном теге.</returns>
-    /// <exception cref="ValidationException">Возникает в случае ошибки валидации данных.</exception>
-    /// <exception cref="ApiException">Возникает в случае ошибки сохранения данных.</exception>
-    public async Task<Result<TagEntityModel>> CreateTagAsync(CreateTagEntityModel createTagEntityModel)
+    public async Task<Result<TagEntityModel>> CreateTagAsync(string name, string? description)
     {
         var validationErrors = new List<ValidationErrorModel>();
 
-        if (string.IsNullOrEmpty(createTagEntityModel.Name))
+        if (string.IsNullOrEmpty(name))
         {
             validationErrors.Add(new ValidationErrorModel
             {
-                PropertyName = nameof(createTagEntityModel.Name),
+                PropertyName = nameof(name),
                 Message = "Имя не может быть пустым"
             });
         }
 
-        if (createTagEntityModel.Name.Length > 15)
+        if (name.Length > 15)
         {
             validationErrors.Add(new ValidationErrorModel
             {
-                PropertyName = nameof(createTagEntityModel.Name),
+                PropertyName = nameof(name),
                 Message = "Имя не может быть больше 15 символов"
             });
         }
 
-        if (createTagEntityModel.Description is not null)
+        if (description is not null)
         {
-            if (string.IsNullOrEmpty(createTagEntityModel.Description))
+            if (string.IsNullOrEmpty(description))
             {
                 validationErrors.Add(new ValidationErrorModel
                 {
-                    PropertyName = nameof(createTagEntityModel.Description),
+                    PropertyName = nameof(description),
                     Message = "Описание не может быть пустой строкой"
                 });
             }
 
-            if (createTagEntityModel.Description.Length > 100)
+            if (description.Length > 100)
             {
                 validationErrors.Add(new ValidationErrorModel
                 {
-                    PropertyName = nameof(createTagEntityModel.Description),
+                    PropertyName = nameof(description),
                     Message = "Описание не может быть больше 100 символов"
                 });
             }
@@ -83,117 +70,89 @@ public class TagService : ITagService
             return Result<TagEntityModel>.Fail(validationException);
         }
 
-        var createModel = new CreateTagEntityModel
+        var entry = await _dbContext.Tags.AddAsync(new TagEntityModel
         {
-            Name = createTagEntityModel.Name,
-            Description = createTagEntityModel.Description
-        };
+            Name = name,
+            Description = description ?? "",
+            Books = []
+        });
 
-        try
-        {
-            return await _tagRepository.CreateAsync(createModel);
-        }
-        catch (DbUpdateException)
-        {
-            var apiException = new ApiException("Внутренняя ошибка сервера.");
-            return Result<TagEntityModel>.Fail(apiException);
-        }
+        await _dbContext.SaveChangesAsync();
+        return Result<TagEntityModel>.Ok(entry.Entity);
     }
 
-    /// <summary>
-    /// Метод получает тег по его Id.
-    /// </summary>
-    /// <param name="id">Id тега.</param>
-    /// <returns>Найденный тег, иначе - null</returns>
-    public async Task<TagEntityModel?> GetTagByIdAsync(int id)
+    public Task<TagEntityModel?> GetTagByIdAsync(int id)
     {
-        var foundedTag = await _tagRepository.GetByIdAsync(id);
-        return foundedTag;
+        return _dbContext.Tags.FirstOrDefaultAsync(t => t.Id == id);
     }
 
-    /// <summary>
-    /// Метод получает все теги в формате Dto.
-    /// </summary>
-    /// <returns>Массив Dto тегов.</returns>
     public async Task<IEnumerable<TagDto>> GetAllTagsAsync()
     {
-        var tags = await _tagRepository.GetAll().Select(t => new TagDto
-        {
-            Id = t.Id,
-            Name = t.Name
-        }).ToListAsync();
+        var tags = await _dbContext.Tags
+            .Select(t => new TagDto
+            {
+                Id = t.Id,
+                Name = t.Name
+            }).ToListAsync();
 
         return tags;
     }
 
-    /// <summary>
-    /// Метод удаляет тег по его Id.
-    /// </summary>
-    /// <param name="id">Id тега.</param>
-    /// <returns>True - в случае удачного удаления, false - если тег не был найден.</returns>
-    /// <exception cref="ApiException">Возникает в случае ошибки сохранения данных.</exception>
-    public async Task<Result<bool>> DeleteTagByIdAsync(int id)
+    public async Task<bool> DeleteTagByIdAsync(int id)
     {
-        try
+        var foundedTag = await GetTagByIdAsync(id);
+        if (foundedTag is null)
         {
-            return await _tagRepository.DeleteByIdAsync(id);
+            return false;
         }
-        catch (DbUpdateException)
-        {
-            var apiException = new ApiException("Внутренняя ошибка сервера");
-            return Result<bool>.Fail(apiException);
-        }
+
+        _dbContext.Tags.Remove(foundedTag);
+        await _dbContext.SaveChangesAsync();
+
+        return true;
     }
 
-    /// <summary>
-    /// Метод обновляет информацию о теге.
-    /// </summary>
-    /// <param name="id">Id тега.</param>
-    /// <param name="updateTagEntityModel">Данные для обновления.</param>
-    /// <returns>Обновлённую информацию о теге или null если тег не был найден.</returns>
-    /// <exception cref="ValidationException">Возникает в случае ошибки валидации данных.</exception>
-    /// <exception cref="ApiException">Возникает в случае ошибки сохранения данных.</exception>
-    public async Task<Result<TagEntityModel?>> UpdateTagByIdAsync(int id, UpdateTagEntityModel updateTagEntityModel)
+    public async Task<Result<TagEntityModel?>> UpdateTagByIdAsync(int id, string? name, string? description)
     {
         var validationErrors = new List<ValidationErrorModel>();
 
-        if (updateTagEntityModel.Name is not null)
+        if (name is not null)
         {
-            if (string.IsNullOrEmpty(updateTagEntityModel.Name))
+            if (string.IsNullOrEmpty(name))
             {
                 validationErrors.Add(new ValidationErrorModel
                 {
-                    PropertyName = nameof(updateTagEntityModel.Name),
+                    PropertyName = nameof(name),
                     Message = "Имя тега не может быть пустой строкой"
                 });
             }
 
-            if (updateTagEntityModel.Name.Length > 15)
+            if (name.Length > 15)
             {
                 validationErrors.Add(new ValidationErrorModel
                 {
-                    PropertyName = nameof(updateTagEntityModel.Name),
+                    PropertyName = nameof(name),
                     Message = "Имя тега не можеь быть больше 15 символов"
                 });
             }
         }
 
-        if (updateTagEntityModel.Description is not null)
+        if (description is not null)
         {
-            if (string.IsNullOrEmpty(updateTagEntityModel.Description))
+            if (string.IsNullOrEmpty(description))
             {
                 validationErrors.Add(new ValidationErrorModel
                 {
-                    PropertyName = nameof(updateTagEntityModel.Description),
+                    PropertyName = nameof(description),
                     Message = "Описание не может быть пустой строкой"
                 });
             }
 
-            if (updateTagEntityModel.Description.Length > 256)
+            if (description.Length > 256)
             {
                 validationErrors.Add(new ValidationErrorModel
                 {
-                    PropertyName = nameof(updateTagEntityModel.Description),
+                    PropertyName = nameof(description),
                     Message = "Описание не может быть больше 256 символов"
                 });
             }
@@ -205,18 +164,19 @@ public class TagService : ITagService
             return Result<TagEntityModel?>.Fail(validationException);
         }
 
-        try
-        {
-            return await _tagRepository.UpdateAsync(id, updateTagEntityModel);
-        }
-        catch (TagNotFoundException)
+        var foundedTag = await GetTagByIdAsync(id);
+        if (foundedTag is null)
         {
             return Result<TagEntityModel?>.Ok(null);
         }
-        catch (DbUpdateException)
-        {
-            var apiException = new ApiException("Внутренняя ошибка сервера");
-            return Result<TagEntityModel?>.Fail(apiException);
-        }
+
+
+        foundedTag.Name = name ?? foundedTag.Name;
+        foundedTag.Description = description ?? foundedTag.Description;
+
+        _dbContext.Tags.Update(foundedTag);
+        await _dbContext.SaveChangesAsync();
+
+        return Result<TagEntityModel?>.Ok(foundedTag);
     }
 }

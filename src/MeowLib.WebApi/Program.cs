@@ -1,8 +1,6 @@
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
 using MeowLib.DAL;
-using MeowLib.DAL.Repository.Implementation.Production;
-using MeowLib.DAL.Repository.Interfaces;
 using MeowLib.Domain.Models;
 using MeowLib.Services.Implementation.Production;
 using MeowLib.Services.Interface;
@@ -75,16 +73,6 @@ services.AddSwaggerGen(options =>
         }
     });
 });
-
-// Init repos
-services.AddScoped<IUserRepository, UserRepository>();
-services.AddScoped<IAuthorRepository, AuthorRepository>();
-services.AddScoped<ITagRepository, TagRepository>();
-services.AddScoped<IBookRepository, BookRepository>();
-services.AddScoped<IChapterRepository, ChapterRepository>();
-services.AddScoped<IUserFavoriteRepository, UserFavoriteRepository>();
-services.AddScoped<IBookmarkRepository, BookmarkRepository>();
-services.AddScoped<IBookCommentRepository, BookCommentRepository>();
 
 // Init services
 services.AddSingleton<IHashService, HashService>();

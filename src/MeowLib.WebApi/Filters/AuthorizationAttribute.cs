@@ -14,7 +14,7 @@ public class AuthorizationAttribute : ProducesResponseTypeAttribute, IAsyncAutho
     public AuthorizationAttribute(Type type, int statusCode, string contentType, params string[] additionalContentTypes)
         : base(type, statusCode, contentType, additionalContentTypes) { }
 
-    public UserRolesEnum[] RequiredRoles { get; set; } = Array.Empty<UserRolesEnum>();
+    public UserRolesEnum[] RequiredRoles { get; set; } = [];
 
     public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
     {

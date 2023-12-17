@@ -1,6 +1,7 @@
-using MeowLib.DAL.Repository.Interfaces;
+using MeowLib.DAL;
 using MeowLib.Domain.DbModels.UserEntity;
 using MeowLib.Domain.Dto.User;
+using MeowLib.Domain.Enums;
 using MeowLib.Domain.Exceptions;
 using MeowLib.Domain.Exceptions.Services;
 using MeowLib.Domain.Models;
@@ -10,44 +11,27 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MeowLib.Services.Implementation.Production;
 
-/// <summary>
-/// Сервси для работы с пользователями.
-/// </summary>
 public class UserService : IUserService
 {
+    private readonly ApplicationDbContext _dbContext;
     private readonly IHashService _hashService;
     private readonly IJwtTokenService _jwtTokenService;
-    private readonly IUserRepository _userRepository;
 
-    /// <summary>
-    /// Конструктор.
-    /// </summary>
-    /// <param name="hashService">Сервис для хеширования.</param>
-    /// <param name="userRepository">Репозиторий пользователей.</param>
-    /// <param name="jwtTokenService">Сервис JWT-токенов.</param>
-    public UserService(IHashService hashService, IUserRepository userRepository, IJwtTokenService jwtTokenService)
+    public UserService(ApplicationDbContext dbContext, IHashService hashService, IJwtTokenService jwtTokenService)
     {
+        _dbContext = dbContext;
         _hashService = hashService;
-        _userRepository = userRepository;
         _jwtTokenService = jwtTokenService;
     }
-
-    /// <summary>
-    /// Метод создаёт нового пользователя.
-    /// </summary>
-    /// <param name="login">Логин пользователя</param>
-    /// <param name="password">Пароль пользователя</param>
-    /// <returns>Dto-модель пользователя.</returns>
-    /// <exception cref="ApiException">Возникает в случае если логин пользователя занят.</exception>
-    /// <exception cref="ValidationException">Возникает в случае ошибки валидации данных.</exception>
-    public async Task<Result<UserDto>> SignInAsync(string login, string password)
+    
+    public async Task<Result<UserEntityModel>> SignInAsync(string login, string password)
     {
-        var loginAlreadyExist = await _userRepository.CheckForUserExistAsync(login);
+        var existedUser = await _dbContext.Users.FirstOrDefaultAsync(u => u.Login == login);
 
-        if (loginAlreadyExist)
+        if (existedUser is not null)
         {
             var apiException = new ApiException($"Пользователь с логином {login} уже существует");
-            return Result<UserDto>.Fail(apiException);
+            return Result<UserEntityModel>.Fail(apiException);
         }
 
         var validationErrors = new List<ValidationErrorModel>();
@@ -75,36 +59,33 @@ public class UserService : IUserService
         if (validationErrors.Any())
         {
             var validationException = new ValidationException(validationErrors);
-            return Result<UserDto>.Fail(validationException);
+            return Result<UserEntityModel>.Fail(validationException);
         }
 
         var hashedPassword = _hashService.HashString(password);
-        var userData = new CreateUserEntityModel
+
+        var createdUserEntry = await _dbContext.Users.AddAsync(new UserEntityModel
         {
+            Id = 0,
             Login = login,
-            Password = hashedPassword
-        };
+            Password = hashedPassword,
+            RefreshToken = null,
+            Coins = 0,
+            Role = UserRolesEnum.User
+        });
+        await _dbContext.SaveChangesAsync();
 
-        var createdUser = await _userRepository.CreateAsync(userData);
-        return createdUser;
+        return createdUserEntry.Entity;
     }
-
-    /// <summary>
-    /// Метод генерирует пару JWT-токенов для авторизации пользователя.
-    /// </summary>
-    /// <param name="login">Логин пользователя.</param>
-    /// <param name="password">Пароль пользователя.</param>
-    /// <param name="isLongSession">True - RefreshToken будет создан на 30 дней, False - 30 минут.</param>
-    /// <returns>Пару JWT-токенов для авторизации.</returns>
-    /// <exception cref="IncorrectCreditionalException">Возникает в случае, если авторизационные данные некорректны.</exception>
-    /// <exception cref="CreateTokenException">Возникает в случае, если сгенерированные токен уже кому-то принадлежит.</exception>
+    
     public async Task<Result<(string accessToken, string refreshToken)>> LogIn(string login, string password,
         bool isLongSession)
     {
         var hashedPassword = _hashService.HashString(password);
 
-        var userData = await _userRepository.GetByLoginAndPasswordAsync(login, hashedPassword);
-        if (userData is null)
+        var foundedUser =
+            await _dbContext.Users.FirstOrDefaultAsync(u => u.Login == login && u.Password == hashedPassword);
+        if (foundedUser is null)
         {
             var incorrectCreditionalException = new IncorrectCreditionalException("Неверный логин или пароль");
             return Result<(string accessToken, string refreshToken)>.Fail(incorrectCreditionalException);
@@ -112,70 +93,63 @@ public class UserService : IUserService
 
         var tokenExpiredTime = isLongSession ? DateTime.UtcNow.AddDays(30) : DateTime.UtcNow.AddMinutes(30);
 
-        var accessToken = _jwtTokenService.GenerateAccessToken(userData);
+        var accessToken = _jwtTokenService.GenerateAccessToken(new UserDto
+        {
+            Id = foundedUser.Id,
+            Login = foundedUser.Login,
+            Role = foundedUser.Role
+        });
         var refreshToken = _jwtTokenService.GenerateRefreshToken(new RefreshTokenDataModel
         {
-            Login = userData.Login,
+            Login = foundedUser.Login,
             IsLongSession = isLongSession
         }, tokenExpiredTime);
 
         // Если каким-то образом сгенерированный токен уже занят, то обработаем это
-        var foundedUser = await _userRepository.GetByRefreshTokenAsync(refreshToken);
+        var userWithSameToken = await _dbContext.Users.FirstOrDefaultAsync(u => u.RefreshToken == refreshToken);
 
-        if (foundedUser is not null)
+        if (userWithSameToken is not null)
         {
             var createTokenException = new CreateTokenException("Токен уже занят");
             return Result<(string accessToken, string refreshToken)>.Fail(createTokenException);
         }
 
-        var updateRefreshTokenResult = await _userRepository.UpdateRefreshTokenAsync(userData.Login, refreshToken);
-        if (updateRefreshTokenResult.IsFailure)
-        {
-            return Result<(string accessToken, string refreshToken)>.Fail(updateRefreshTokenResult.GetError());
-        }
+        foundedUser.RefreshToken = refreshToken;
+        _dbContext.Users.Update(foundedUser);
+        await _dbContext.SaveChangesAsync();
 
         return (accessToken, refreshToken);
     }
 
-    /// <summary>
-    /// Метод получает список всех пользователей.
-    /// </summary>
-    /// <returns>Список пользователей.</returns>
     public async Task<IEnumerable<UserDto>> GetAllAsync()
     {
-        return await _userRepository.GetAll().Select(u => new UserDto
-        {
-            Id = u.Id,
-            Login = u.Login,
-            Role = u.Role
-        }).ToListAsync();
+        return await _dbContext.Users
+            .Select(u => new UserDto
+            {
+                Id = u.Id,
+                Login = u.Login,
+                Role = u.Role
+            }).ToListAsync();
     }
-
-    /// <summary>
-    /// Метод обновляет информацию о пользователе и возвращает его Dto-модель.
-    /// </summary>
-    /// <param name="id">Id пользователя.</param>
-    /// <param name="updateData">Данные для обновления.</param>
-    /// <returns>Dto-модель пользователя.</returns>
-    /// <exception cref="ValidationException">Возникает в случае, если входные данные были невалидны.</exception>
-    public async Task<Result<UserDto?>> UpdateUser(int id, UpdateUserEntityModel updateData)
+    
+    public async Task<Result<UserDto?>> UpdateUser(int id, string? login, string? password)
     {
         var validationErrors = new List<ValidationErrorModel>();
 
-        if (updateData.Login is not null && updateData.Login.Length < 6)
+        if (login?.Length < 6)
         {
             validationErrors.Add(new ValidationErrorModel
             {
-                PropertyName = nameof(updateData.Login),
+                PropertyName = nameof(login),
                 Message = "Логин не может быть меньше 6 символов"
             });
         }
 
-        if (updateData.Password is not null && updateData.Password.Length < 6)
+        if (password?.Length < 6)
         {
             validationErrors.Add(new ValidationErrorModel
             {
-                PropertyName = nameof(updateData.Password),
+                PropertyName = nameof(password),
                 Message = "Пароль не может быть меньше 6 символов"
             });
         }
@@ -186,14 +160,14 @@ public class UserService : IUserService
             return Result<UserDto?>.Fail(validationException);
         }
 
-        if (updateData.Login is not null)
+        if (login is not null)
         {
-            var foundedUser = await _userRepository.GetByLoginAsync(updateData.Login);
-            if (foundedUser is not null)
+            var loginAlreadyTaken = await CheckLoginAlreadyTaken(login);
+            if (loginAlreadyTaken)
             {
                 validationErrors.Add(new ValidationErrorModel
                 {
-                    PropertyName = nameof(updateData.Login),
+                    PropertyName = nameof(login),
                     Message = "Такой логин уже занят"
                 });
 
@@ -202,12 +176,29 @@ public class UserService : IUserService
             }
         }
 
-        if (updateData.Password is not null)
+        if (password is not null)
         {
-            updateData.Password = _hashService.HashString(updateData.Password);
+            password = _hashService.HashString(password);
         }
 
-        return await _userRepository.UpdateAsync(id, updateData);
+        var foundedUser = await GetUserByIdAsync(id);
+        if (foundedUser is null)
+        {
+            return Result<UserDto?>.Ok(null);
+        }
+
+        foundedUser.Login = login ?? foundedUser.Login;
+        foundedUser.Password = password ?? foundedUser.Password;
+
+        _dbContext.Users.Update(foundedUser);
+        await _dbContext.SaveChangesAsync();
+
+        return new UserDto
+        {
+            Id = foundedUser.Id,
+            Login = foundedUser.Login,
+            Role = foundedUser.Role
+        };
     }
 
     /// <summary>
@@ -225,7 +216,7 @@ public class UserService : IUserService
             return Result<(string accessToken, string refreshToken)>.Fail(incorrectCreditionalException);
         }
 
-        var foundedUser = await _userRepository.GetByRefreshTokenAsync(refreshToken);
+        var foundedUser = await GetUserByRefreshTokenAsync(refreshToken);
         if (foundedUser is null)
         {
             var sessionExpiredException = new IncorrectCreditionalException("Сессия с введёным токеном истекла");
@@ -234,7 +225,7 @@ public class UserService : IUserService
 
         var tokenExpiredDate = parsedRefreshToken.IsLongSession
             ? DateTime.UtcNow.AddDays(30)
-            : DateTime.UtcNow.AddMinutes(30);
+            : DateTime.UtcNow.AddMinutes(60);
 
         var newRefreshToken = _jwtTokenService.GenerateRefreshToken(new RefreshTokenDataModel
         {
@@ -249,13 +240,25 @@ public class UserService : IUserService
             Role = foundedUser.Role
         });
 
-        var updateRefreshTokenResult =
-            await _userRepository.UpdateRefreshTokenAsync(foundedUser.Login, newRefreshToken);
-        if (updateRefreshTokenResult.IsFailure)
-        {
-            return Result<(string accessToken, string refreshToken)>.Fail(updateRefreshTokenResult.GetError());
-        }
+        foundedUser.RefreshToken = newRefreshToken;
+        _dbContext.Users.Update(foundedUser);
+        await _dbContext.SaveChangesAsync();
 
         return (newAccessToken, newRefreshToken);
+    }
+
+    public Task<UserEntityModel?> GetUserByIdAsync(int userId)
+    {
+        return _dbContext.Users.FirstOrDefaultAsync(u => u.Id == userId);
+    }
+
+    private Task<bool> CheckLoginAlreadyTaken(string login)
+    {
+        return _dbContext.Users.AnyAsync(u => u.Login == login);
+    }
+
+    private Task<UserEntityModel?> GetUserByRefreshTokenAsync(string refreshToken)
+    {
+        return _dbContext.Users.FirstOrDefaultAsync(u => u.RefreshToken == refreshToken);
     }
 }

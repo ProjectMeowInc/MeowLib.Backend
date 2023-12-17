@@ -1,6 +1,6 @@
 ﻿using MeowLib.DAL;
-using MeowLib.DAL.Repository.Interfaces;
 using MeowLib.Domain.DbModels.ChapterEntity;
+using MeowLib.Domain.Exceptions.Chapter;
 using MeowLib.Domain.Exceptions.Services;
 using MeowLib.Domain.Exceptions.Translation;
 using MeowLib.Domain.Models;
@@ -13,7 +13,7 @@ namespace MeowLib.Services.Implementation.Production;
 /// <summary>
 /// Сервис для работы с главами.
 /// </summary>
-public class ChapterService(IChapterRepository chapterRepository, ApplicationDbContext dbContext)
+public class ChapterService(ApplicationDbContext dbContext)
     : IChapterService
 {
     public async Task<Result<ChapterEntityModel>> CreateChapterAsync(string name, string text, int translationId)
@@ -59,13 +59,10 @@ public class ChapterService(IChapterRepository chapterRepository, ApplicationDbC
             Position = 1
         };
 
-        var createChapterResult = await chapterRepository.CreateAsync(newChapter);
-        if (createChapterResult.IsFailure)
-        {
-            return Result<ChapterEntityModel>.Fail(createChapterResult.GetError());
-        }
+        var entry = await dbContext.Chapters.AddAsync(newChapter);
+        await dbContext.SaveChangesAsync();
 
-        return createChapterResult.GetResult();
+        return entry.Entity;
     }
 
     /// <summary>
@@ -73,16 +70,21 @@ public class ChapterService(IChapterRepository chapterRepository, ApplicationDbC
     /// </summary>
     /// <param name="chapterId">Id главы.</param>
     /// <param name="newText">Новый текст главы.</param>
-    /// <returns>Модель обновлённой главы.</returns>
-    public async Task<Result<ChapterEntityModel>> UpdateChapterTextAsync(int chapterId, string newText)
+    /// <returns>Модель обновлённой главы или null если она не найдена.</returns>
+    public async Task<Result<ChapterEntityModel?>> UpdateChapterTextAsync(int chapterId, string newText)
     {
-        var updateResult = await chapterRepository.UpdateTextAsync(chapterId, newText);
-        if (updateResult.IsFailure)
+        var foundedChapter = await GetChapterByIdAsync(chapterId);
+        if (foundedChapter is null)
         {
-            return Result<ChapterEntityModel>.Fail(updateResult.GetError());
+            return Result<ChapterEntityModel?>.Ok(null);
         }
 
-        return updateResult.GetResult();
+        foundedChapter.Text = newText;
+
+        dbContext.Chapters.Update(foundedChapter);
+        await dbContext.SaveChangesAsync();
+
+        return foundedChapter;
     }
 
     /// <summary>
@@ -92,22 +94,20 @@ public class ChapterService(IChapterRepository chapterRepository, ApplicationDbC
     /// <returns>Ошибку, если она есть.</returns>
     public async Task<Result> DeleteChapterAsync(int chapterId)
     {
-        var deleteResult = await chapterRepository.DeleteByIdAsync(chapterId);
-        if (deleteResult.IsFailure)
+        var foundedChapter = await GetChapterByIdAsync(chapterId);
+        if (foundedChapter is null)
         {
-            return Result.Fail(deleteResult.GetError());
+            return Result.Fail(new ChapterNotFoundException(chapterId));
         }
+
+        dbContext.Chapters.Remove(foundedChapter);
+        await dbContext.SaveChangesAsync();
 
         return Result.Ok();
     }
 
-    /// <summary>
-    /// Метод возвращает главу по её Id.
-    /// </summary>
-    /// <param name="chapterId">Id главы.</param>
-    /// <returns>Модель главы, если была найдена.</returns>
-    public async Task<ChapterEntityModel?> GetChapterByIdAsync(int chapterId)
+    public Task<ChapterEntityModel?> GetChapterByIdAsync(int chapterId)
     {
-        return await chapterRepository.GetByIdAsync(chapterId);
+        return dbContext.Chapters.FirstOrDefaultAsync(c => c.Id == chapterId);
     }
 }

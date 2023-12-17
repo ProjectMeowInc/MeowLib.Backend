@@ -26,8 +26,8 @@ public interface IChapterService
     /// </summary>
     /// <param name="chapterId">Id главы.</param>
     /// <param name="newText">Новый текст главы.</param>
-    /// <returns>Модель обновлённой главы.</returns>
-    Task<Result<ChapterEntityModel>> UpdateChapterTextAsync(int chapterId, string newText);
+    /// <returns>Модель обновлённой главы или null если она не найдена.</returns>
+    Task<Result<ChapterEntityModel?>> UpdateChapterTextAsync(int chapterId, string newText);
 
     /// <summary>
     /// Метод удаляет главу по её Id.
@@ -35,4 +35,11 @@ public interface IChapterService
     /// <param name="chapterId">Id главы.</param>
     /// <returns>Ошибку, если она есть.</returns>
     Task<Result> DeleteChapterAsync(int chapterId);
+
+    /// <summary>
+    /// Метод получает главу по её Id.
+    /// </summary>
+    /// <param name="chapterId">Id главы.</param>
+    /// <returns>Найденную главу или null.</returns>
+    Task<ChapterEntityModel?> GetChapterByIdAsync(int chapterId);
 }

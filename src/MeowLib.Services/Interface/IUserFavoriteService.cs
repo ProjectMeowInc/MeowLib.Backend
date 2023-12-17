@@ -34,5 +34,5 @@ public interface IUserFavoriteService
     /// <returns>Информацию о книге, если она была найдена. Иначе - null</returns>
     /// <exception cref="BookNotFoundException">Возникает в случае, если книга не была найдена.</exception>
     /// <exception cref="UserNotFoundException">Возникает в случае, если пользователь не был найден.</exception>
-    Task<Result<UserFavoriteDto?>> GetUserFavoriteByBookAsync(int userId, int bookId);
+    Task<Result<UserFavoriteEntityModel?>> GetUserFavoriteByBookAsync(int userId, int bookId);
 }

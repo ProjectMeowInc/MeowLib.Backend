@@ -17,7 +17,7 @@ public interface IAuthorService
     /// <param name="name">Имя автора.</param>
     /// <returns>DTO-модель автора.</returns>
     /// <exception cref="ValidationException">Возникает в случае ошибки валидации данных.</exception>
-    Task<Result<AuthorDto>> CreateAuthorAsync(string name);
+    Task<Result<AuthorEntityModel>> CreateAuthorAsync(string name);
 
     /// <summary>
     /// Метод получает всех авторов.
@@ -29,11 +29,10 @@ public interface IAuthorService
     /// Метод обновляет информацию об авторе.
     /// </summary>
     /// <param name="id">Id автора.</param>
-    /// <param name="updateAuthorEntityModel">Данные для обновления.</param>
+    /// <param name="data">Данные для обновления.</param>
     /// <returns>Обновлённую модель данных.</returns>
     /// <exception cref="ValidationException">Возникает в случае, если введёные данные некорректны.</exception>
-    /// <exception cref="ApiException">Возникает если автор не был найден.</exception>
-    Task<Result<AuthorDto?>> UpdateAuthorAsync(int id, UpdateAuthorEntityModel updateAuthorEntityModel);
+    Task<Result<AuthorEntityModel?>> UpdateAuthorAsync(int id, AuthorDto data);
 
     /// <summary>
     /// Метод удаляет автора.
@@ -48,7 +47,7 @@ public interface IAuthorService
     /// </summary>
     /// <param name="authorId">Id автора.</param>
     /// <returns>DTO-модель автора.</returns>
-    Task<Result<AuthorDto?>> GetAuthorByIdAsync(int authorId);
+    Task<AuthorEntityModel?> GetAuthorByIdAsync(int authorId);
 
     /// <summary>
     /// Метод получает список авторов подходящих под поисковые параметры.

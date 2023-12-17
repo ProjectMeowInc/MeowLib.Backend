@@ -1,7 +1,5 @@
-using MeowLib.DAL.Repository.Interfaces;
 using MeowLib.Domain.DbModels.BookEntity;
 using MeowLib.Domain.Dto.Author;
-using MeowLib.Domain.Dto.Book;
 using MeowLib.Domain.Dto.Tag;
 using MeowLib.Domain.Dto.Translation;
 using MeowLib.Domain.Enums;
@@ -14,20 +12,17 @@ using MeowLib.WebApi.Models.Responses;
 using MeowLib.WebApi.Models.Responses.Book;
 using MeowLib.WebApi.ProducesResponseTypes;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace MeowLib.WebApi.Controllers;
 
 [Route("api/books")]
 public class BookController : BaseController
 {
-    private readonly IBookRepository _bookRepository;
     private readonly IBookService _bookService;
 
-    public BookController(IBookService bookService, IBookRepository bookRepository)
+    public BookController(IBookService bookService)
     {
         _bookService = bookService;
-        _bookRepository = bookRepository;
     }
 
     [HttpGet]
@@ -36,13 +31,7 @@ public class BookController : BaseController
     {
         var response = new GetAllBooksResponse
         {
-            Items = await _bookRepository.GetAll().Select(book => new BookDto
-            {
-                Id = book.Id,
-                Name = book.Name,
-                Description = book.Description,
-                ImageName = book.ImageUrl
-            }).ToListAsync()
+            Items = await _bookService.GetAllBooksAsync()
         };
 
         return Json(response);
@@ -54,10 +43,14 @@ public class BookController : BaseController
     [ProducesForbiddenResponseType]
     public async Task<ActionResult> CreateBook([FromBody] CreateBookRequest input)
     {
-        var createBookResult = await _bookService.CreateBookAsync(new CreateBookEntityModel
+        var createBookResult = await _bookService.CreateBookAsync(new BookEntityModel
         {
             Name = input.Name,
-            Description = input.Description
+            Description = input.Description,
+            ImageUrl = null,
+            Author = null,
+            Translations = [],
+            Tags = []
         });
 
         if (createBookResult.IsFailure)
@@ -103,11 +96,7 @@ public class BookController : BaseController
     [ProducesNotFoundResponseType]
     public async Task<ActionResult> UpdateBookInfo([FromRoute] int bookId, [FromBody] UpdateBookInfoRequest input)
     {
-        var updateBookResult = await _bookService.UpdateBookInfoByIdAsync(bookId, new UpdateBookEntityModel
-        {
-            Name = input.Name,
-            Description = input.Description
-        });
+        var updateBookResult = await _bookService.UpdateBookInfoByIdAsync(bookId, input.Name, input.Description);
 
         if (updateBookResult.IsFailure)
         {

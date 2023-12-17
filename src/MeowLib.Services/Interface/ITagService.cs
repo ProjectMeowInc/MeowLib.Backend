@@ -1,6 +1,5 @@
 using MeowLib.Domain.DbModels.TagEntity;
 using MeowLib.Domain.Dto.Tag;
-using MeowLib.Domain.Exceptions;
 using MeowLib.Domain.Exceptions.Services;
 using MeowLib.Domain.Result;
 
@@ -14,11 +13,11 @@ public interface ITagService
     /// <summary>
     /// Метод создаёт новый тег.
     /// </summary>
-    /// <param name="createTagEntityModel">Данные для создания тега.</param>
+    /// <param name="name">Название тега.</param>
+    /// <param name="description">Описание тега.</param>
     /// <returns>Информацию о созданном теге.</returns>
     /// <exception cref="ValidationException">Возникает в случае ошибки валидации данных.</exception>
-    /// <exception cref="ApiException">Возникает в случае ошибки сохранения данных.</exception>
-    Task<Result<TagEntityModel>> CreateTagAsync(CreateTagEntityModel createTagEntityModel);
+    Task<Result<TagEntityModel>> CreateTagAsync(string name, string? description);
 
     /// <summary>
     /// Метод получает тег по его Id.
@@ -38,16 +37,15 @@ public interface ITagService
     /// </summary>
     /// <param name="id">Id тега.</param>
     /// <returns>True - в случае удачного удаления, false - если тег не был найден.</returns>
-    /// <exception cref="ApiException">Возникает в случае ошибки сохранения данных.</exception>
-    Task<Result<bool>> DeleteTagByIdAsync(int id);
+    Task<bool> DeleteTagByIdAsync(int id);
 
     /// <summary>
     /// Метод обновляет информацию о теге.
     /// </summary>
     /// <param name="id">Id тега.</param>
-    /// <param name="updateTagEntityModel">Данные для обновления.</param>
+    /// <param name="name">Новое название.</param>
+    /// <param name="description">Новое описание.</param>
     /// <returns>Обновлённую информацию о теге или null если тег не был найден.</returns>
     /// <exception cref="ValidationException">Возникает в случае ошибки валидации данных.</exception>
-    /// <exception cref="ApiException">Возникает в случае ошибки сохранения данных.</exception>
-    Task<Result<TagEntityModel?>> UpdateTagByIdAsync(int id, UpdateTagEntityModel updateTagEntityModel);
+    Task<Result<TagEntityModel?>> UpdateTagByIdAsync(int id, string? name, string? description);
 }

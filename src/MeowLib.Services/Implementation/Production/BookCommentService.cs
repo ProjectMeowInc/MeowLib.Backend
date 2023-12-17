@@ -1,5 +1,5 @@
 ﻿using System.Text.RegularExpressions;
-using MeowLib.DAL.Repository.Interfaces;
+using MeowLib.DAL;
 using MeowLib.Domain.DbModels.BookCommentEntity;
 using MeowLib.Domain.Dto.BookComment;
 using MeowLib.Domain.Dto.User;
@@ -19,23 +19,17 @@ public class BookCommentService : IBookCommentService
 {
     private static readonly Regex HtmlRegex = new("<[^>]*>", RegexOptions.Compiled);
 
-    private readonly IBookCommentRepository _bookCommentRepository;
-    private readonly IBookRepository _bookRepository;
-    private readonly IUserRepository _userRepository;
-
-    /// <summary>
-    /// Конструктор.
-    /// </summary>
-    /// <param name="bookCommentRepository">Репозиторий комментариев к книге.</param>
-    /// <param name="bookRepository">Репозиторий книг.</param>
-    /// <param name="userRepository">Репозиторий пользователя.</param>
-    public BookCommentService(IBookCommentRepository bookCommentRepository, IBookRepository bookRepository,
-        IUserRepository userRepository)
+    private readonly ApplicationDbContext _dbContext;
+    private readonly IUserService _userService;
+    private readonly IBookService _bookService;
+    
+    public BookCommentService(IUserService userService, IBookService bookService, ApplicationDbContext dbContext)
     {
-        _bookCommentRepository = bookCommentRepository;
-        _bookRepository = bookRepository;
-        _userRepository = userRepository;
+        _userService = userService;
+        _bookService = bookService;
+        _dbContext = dbContext;
     }
+
 
     /// <summary>
     /// Метод создаёт новый комментарий.
@@ -49,13 +43,13 @@ public class BookCommentService : IBookCommentService
     /// <exception cref="InnerException">Возникает в случае внутренних ошибок.</exception>
     public async Task<Result<BookCommentDto>> CreateNewCommentAsync(int userId, int bookId, string commentText)
     {
-        var foundedBook = await _bookRepository.GetByIdAsync(bookId);
+        var foundedBook = await _bookService.GetBookByIdAsync(bookId);
         if (foundedBook is null)
         {
             return Result<BookCommentDto>.Fail(new BookNotFoundException(bookId));
         }
 
-        var foundedUser = await _userRepository.GetByIdAsync(userId);
+        var foundedUser = await _userService.GetUserByIdAsync(userId);
         if (foundedUser is null)
         {
             return Result<BookCommentDto>.Fail(new UserNotFoundException(userId));
@@ -69,13 +63,10 @@ public class BookCommentService : IBookCommentService
             Book = foundedBook
         };
 
-        var createCommentResult = await _bookCommentRepository.CreateAsync(newComment);
-        if (createCommentResult.IsFailure)
-        {
-            return Result<BookCommentDto>.Fail(createCommentResult.GetError());
-        }
-
-        var createdComment = createCommentResult.GetResult();
+        var createCommentResult = await _dbContext.BookComments.AddAsync(newComment);
+        await _dbContext.SaveChangesAsync();
+        
+        var createdComment = createCommentResult.Entity;
         return new BookCommentDto
         {
             Id = createdComment.Id,
@@ -98,14 +89,14 @@ public class BookCommentService : IBookCommentService
     /// <exception cref="BookNotFoundException">Возникает в случае, если книга не была найдена.</exception>
     public async Task<Result<IEnumerable<BookCommentDto>>> GetBookCommentsAsync(int bookId)
     {
-        var foundedBook = await _bookRepository.GetByIdAsync(bookId);
+        var foundedBook = await _bookService.GetBookByIdAsync(bookId);
         if (foundedBook is null)
         {
             return Result<IEnumerable<BookCommentDto>>.Fail(new BookNotFoundException(bookId));
         }
 
-        var foundedComments = await _bookCommentRepository
-            .GetAll()
+        var foundedComments = await _dbContext
+            .BookComments
             .Where(comment => comment.Book == foundedBook)
             .OrderByDescending(comment => comment.PostedAt)
             .Select(comment => new BookCommentDto

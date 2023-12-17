@@ -8,10 +8,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Folder Include="Implementation\Tests\"/>
-    </ItemGroup>
-
-    <ItemGroup>
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0"/>
         <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.30.0"/>
         <PackageReference Include="Telegram.Bot" Version="19.0.0"/>

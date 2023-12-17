@@ -1,4 +1,3 @@
-using MeowLib.Domain.DbModels.AuthorEntity;
 using MeowLib.Domain.Dto.Author;
 using MeowLib.Domain.Enums;
 using MeowLib.Domain.Exceptions.Services;
@@ -58,8 +57,9 @@ public class AuthorController : BaseController
     [ProducesNotFoundResponseType]
     public async Task<ActionResult> UpdateAuthor([FromRoute] int authorId, [FromBody] UpdateAuthorRequest input)
     {
-        var updateResult = await _authorService.UpdateAuthorAsync(authorId, new UpdateAuthorEntityModel
+        var updateResult = await _authorService.UpdateAuthorAsync(authorId, new AuthorDto
         {
+            Id = authorId,
             Name = input.Name
         });
 
@@ -80,8 +80,12 @@ public class AuthorController : BaseController
         {
             return NotFoundError();
         }
-        
-        return Json(updatedAuthor);
+
+        return Json(new AuthorDto
+        {
+            Id = updatedAuthor.Id,
+            Name = updatedAuthor.Name
+        });
     }
 
     [HttpDelete("{authorId}")]
@@ -110,19 +114,17 @@ public class AuthorController : BaseController
     [ProducesNotFoundResponseType]
     public async Task<ActionResult> GetAuthorById([FromRoute] int authorId)
     {
-        var result = await _authorService.GetAuthorByIdAsync(authorId);
-        if (result.IsFailure)
-        {
-            return ServerError();
-        }
-
-        var author = result.GetResult();
-        if (author is null)
+        var foundedAuthor = await _authorService.GetAuthorByIdAsync(authorId);
+        if (foundedAuthor is null)
         {
             return NotFoundError();
         }
-        
-        return Json(author);
+
+        return Json(new AuthorDto
+        {
+            Id = foundedAuthor.Id,
+            Name = foundedAuthor.Name
+        });
     }
 
     [HttpPost]

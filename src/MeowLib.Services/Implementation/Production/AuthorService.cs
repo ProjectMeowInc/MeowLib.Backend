@@ -1,7 +1,6 @@
-using MeowLib.DAL.Repository.Interfaces;
+using MeowLib.DAL;
 using MeowLib.Domain.DbModels.AuthorEntity;
 using MeowLib.Domain.Dto.Author;
-using MeowLib.Domain.Exceptions;
 using MeowLib.Domain.Exceptions.Services;
 using MeowLib.Domain.Models;
 using MeowLib.Domain.Result;
@@ -15,15 +14,11 @@ namespace MeowLib.Services.Implementation.Production;
 /// </summary>
 public class AuthorService : IAuthorService
 {
-    private readonly IAuthorRepository _authorRepository;
+    private readonly ApplicationDbContext _dbContext;
 
-    /// <summary>
-    /// Конструктор.
-    /// </summary>
-    /// <param name="authorRepository">Репозиторий авторов.</param>
-    public AuthorService(IAuthorRepository authorRepository)
+    public AuthorService(ApplicationDbContext dbContext)
     {
-        _authorRepository = authorRepository;
+        _dbContext = dbContext;
     }
 
     /// <summary>
@@ -32,7 +27,7 @@ public class AuthorService : IAuthorService
     /// <param name="name">Имя автора.</param>
     /// <returns>DTO-модель автора.</returns>
     /// <exception cref="ValidationException">Возникает в случае ошибки валидации данных.</exception>
-    public async Task<Result<AuthorDto>> CreateAuthorAsync(string name)
+    public async Task<Result<AuthorEntityModel>> CreateAuthorAsync(string name)
     {
         var validationErrors = new List<ValidationErrorModel>();
 
@@ -47,16 +42,16 @@ public class AuthorService : IAuthorService
 
         if (validationErrors.Any())
         {
-            return Result<AuthorDto>.Fail(new ValidationException(validationErrors));
+            return Result<AuthorEntityModel>.Fail(new ValidationException(validationErrors));
         }
 
-        var authorData = new CreateAuthorEntityModel
+        var entry = await _dbContext.Authors.AddAsync(new AuthorEntityModel
         {
             Name = name
-        };
+        });
 
-        var createAuthor = await _authorRepository.CreateAsync(authorData);
-        return createAuthor;
+        await _dbContext.SaveChangesAsync();
+        return entry.Entity;
     }
 
     /// <summary>
@@ -65,7 +60,7 @@ public class AuthorService : IAuthorService
     /// <returns>DTO список авторов.</returns>
     public async Task<IEnumerable<AuthorDto>> GetAllAuthorsAsync()
     {
-        var authors = await _authorRepository.GetAll().Select(a => new AuthorDto
+        var authors = await _dbContext.Authors.Select(a => new AuthorDto
         {
             Id = a.Id,
             Name = a.Name
@@ -77,29 +72,38 @@ public class AuthorService : IAuthorService
     /// Метод обновляет информацию об авторе.
     /// </summary>
     /// <param name="id">Id автора.</param>
-    /// <param name="updateAuthorEntityModel">Данные для обновления.</param>
+    /// <param name="data">Данные для обновления.</param>
     /// <returns>Обновлённую модель данных.</returns>
     /// <exception cref="ValidationException">Возникает в случае, если введёные данные некорректны.</exception>
-    /// <exception cref="ApiException">Возникает если автор не был найден.</exception>
-    public async Task<Result<AuthorDto?>> UpdateAuthorAsync(int id, UpdateAuthorEntityModel updateAuthorEntityModel)
+    public async Task<Result<AuthorEntityModel?>> UpdateAuthorAsync(int id, AuthorDto data)
     {
         var validationErrors = new List<ValidationErrorModel>();
 
-        if (string.IsNullOrEmpty(updateAuthorEntityModel.Name) || updateAuthorEntityModel.Name.Length < 6)
+        if (string.IsNullOrEmpty(data.Name) || data.Name.Length < 6)
         {
             validationErrors.Add(new ValidationErrorModel
             {
-                PropertyName = nameof(updateAuthorEntityModel.Name),
+                PropertyName = nameof(data.Name),
                 Message = "Имя автора не может быть пустым или короче 6 символов"
             });
         }
 
         if (validationErrors.Any())
         {
-            return Result<AuthorDto?>.Fail(new ValidationException(validationErrors));
+            return Result<AuthorEntityModel?>.Fail(new ValidationException(validationErrors));
         }
 
-        return await _authorRepository.UpdateByIdAsync(id, updateAuthorEntityModel);
+        var foundedAuthor = await GetAuthorByIdAsync(id);
+        if (foundedAuthor is null)
+        {
+            return Result<AuthorEntityModel?>.Ok(null);
+        }
+
+        foundedAuthor.Name = data.Name;
+        _dbContext.Authors.Update(foundedAuthor);
+        await _dbContext.SaveChangesAsync();
+
+        return foundedAuthor;
     }
 
     /// <summary>
@@ -107,10 +111,18 @@ public class AuthorService : IAuthorService
     /// </summary>
     /// <param name="id"></param>
     /// <returns>True - в случае удачного удаления, false - в случае если автор не найден.</returns>
-    /// <exception cref="ApiException">Возникает в случае внутренней ошибки.</exception>
     public async Task<Result<bool>> DeleteAuthorAsync(int id)
     {
-        return await _authorRepository.DeleteByIdAsync(id);
+        var foundedAuthor = await GetAuthorByIdAsync(id);
+        if (foundedAuthor is null)
+        {
+            return false;
+        }
+
+        _dbContext.Authors.Remove(foundedAuthor);
+        await _dbContext.SaveChangesAsync();
+
+        return true;
     }
 
     /// <summary>
@@ -118,19 +130,9 @@ public class AuthorService : IAuthorService
     /// </summary>
     /// <param name="authorId">Id автора.</param>
     /// <returns>DTO-модель автора.</returns>
-    public async Task<Result<AuthorDto?>> GetAuthorByIdAsync(int authorId)
+    public Task<AuthorEntityModel?> GetAuthorByIdAsync(int authorId)
     {
-        var foundedAuthor = await _authorRepository.GetByIdAsync(authorId);
-        if (foundedAuthor is null)
-        {
-            return Result<AuthorDto?>.Ok(null);
-        }
-
-        return new AuthorDto
-        {
-            Id = foundedAuthor.Id,
-            Name = foundedAuthor.Name
-        };
+        return _dbContext.Authors.FirstOrDefaultAsync(a => a.Id == authorId);
     }
 
     /// <summary>
@@ -141,7 +143,7 @@ public class AuthorService : IAuthorService
     /// <exception cref="SearchNotFoundException">Возникает если не был найден автор по заданным параметрам поиска.</exception>
     public async Task<Result<IEnumerable<AuthorDto>>> GetAuthorWithParams(string? name)
     {
-        var filteredAuthors = _authorRepository.GetAll();
+        var filteredAuthors = _dbContext.Authors.AsNoTracking();
 
         if (name is not null)
         {

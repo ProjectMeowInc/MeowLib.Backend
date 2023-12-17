@@ -26,16 +26,12 @@ public class TagController : BaseController
     }
 
     [HttpPost]
-    [Authorization(RequiredRoles = [UserRolesEnum.Admin])]
+    [Authorization(RequiredRoles = new [] { UserRolesEnum.Admin })]
     [ProducesOkResponseType(typeof(TagEntityModel))]
     [ProducesForbiddenResponseType]
     public async Task<ActionResult> CreateTag([FromBody] CreateTagRequest input)
     {
-        var createTagResult = await _tagService.CreateTagAsync(new CreateTagEntityModel
-        {
-            Name = input.Name,
-            Description = input.Description
-        });
+        var createTagResult = await _tagService.CreateTagAsync(input.Name, input.Description);
 
         if (createTagResult.IsFailure)
         {
@@ -57,15 +53,9 @@ public class TagController : BaseController
     [ProducesNotFoundResponseType]
     public async Task<ActionResult> DeleteTag([FromRoute] int id)
     {
-        var deleteTagResult = await _tagService.DeleteTagByIdAsync(id);
+        var tagDeleted = await _tagService.DeleteTagByIdAsync(id);
 
-        if (deleteTagResult.IsFailure)
-        {
-            return ServerError();
-        }
-
-        var tagFoundedAndDeleted = deleteTagResult.GetResult();
-        if (!tagFoundedAndDeleted)
+        if (!tagDeleted)
         {
             return NotFoundError();
         }
@@ -80,11 +70,7 @@ public class TagController : BaseController
     [ProducesNotFoundResponseType]
     public async Task<ActionResult> UpdateTag([FromRoute] int id, [FromBody] UpdateTagRequest input)
     {
-        var updateTagResult = await _tagService.UpdateTagByIdAsync(id, new UpdateTagEntityModel
-        {
-            Name = input.Name,
-            Description = input.Description
-        });
+        var updateTagResult = await _tagService.UpdateTagByIdAsync(id, input.Name, input.Description);
 
         if (updateTagResult.IsFailure)
         {

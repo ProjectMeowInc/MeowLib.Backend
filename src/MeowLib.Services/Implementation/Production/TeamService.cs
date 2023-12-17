@@ -1,5 +1,4 @@
 ﻿using MeowLib.DAL;
-using MeowLib.DAL.Repository.Interfaces;
 using MeowLib.Domain.DbModels.TeamEntity;
 using MeowLib.Domain.DbModels.TeamMemberEntity;
 using MeowLib.Domain.Enums;
@@ -16,19 +15,19 @@ public class TeamService : ITeamService
 {
     private readonly ApplicationDbContext _dbContext;
     private readonly INotificationService _notificationService;
-    private readonly IUserRepository _userRepository;
+    private readonly IUserService _userService;
 
-    public TeamService(ApplicationDbContext dbContext, IUserRepository userRepository,
-        INotificationService notificationService)
+    public TeamService(ApplicationDbContext dbContext, INotificationService notificationService,
+        IUserService userService)
     {
         _dbContext = dbContext;
-        _userRepository = userRepository;
         _notificationService = notificationService;
+        _userService = userService;
     }
 
     public async Task<Result<TeamEntityModel>> CreateNewTeamAsync(int createdById, string name, string description)
     {
-        var foundedOwner = await _userRepository.GetByIdAsync(createdById);
+        var foundedOwner = await _userService.GetUserByIdAsync(createdById);
         if (foundedOwner is null)
         {
             return Result<TeamEntityModel>.Fail(new TeamOwnerNotFoundException(createdById));
@@ -157,7 +156,7 @@ public class TeamService : ITeamService
             return Result.Fail(new TeamNotFoundException(teamId));
         }
 
-        var foundedUser = await _userRepository.GetByIdAsync(userId);
+        var foundedUser = await _userService.GetUserByIdAsync(userId);
         if (foundedUser is null)
         {
             return Result.Fail(new UserNotFoundException(userId));
@@ -180,8 +179,8 @@ public class TeamService : ITeamService
         return Result.Ok();
     }
 
-    public async Task<bool> CheckUserInTeamAsync(int userId, int teamId)
+    public Task<bool> CheckUserInTeamAsync(int userId, int teamId)
     {
-        return await _dbContext.TeamMembers.AnyAsync(tm => tm.Team.Id == teamId && tm.User.Id == userId);
+        return _dbContext.TeamMembers.AnyAsync(tm => tm.Team.Id == teamId && tm.User.Id == userId);
     }
 }

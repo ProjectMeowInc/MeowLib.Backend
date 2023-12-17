@@ -1,4 +1,4 @@
-﻿using MeowLib.DAL.Repository.Interfaces;
+﻿using MeowLib.DAL;
 using MeowLib.Domain.DbModels.BookmarkEntity;
 using MeowLib.Domain.DbModels.ChapterEntity;
 using MeowLib.Domain.DbModels.UserEntity;
@@ -14,16 +14,15 @@ namespace MeowLib.Services.Implementation.Production;
 
 public class BookmarkService : IBookmarkService
 {
-    private readonly IBookmarkRepository _bookmarkRepository;
-    private readonly IChapterRepository _chapterRepository;
-    private readonly IUserRepository _userRepository;
+    private readonly IChapterService _chapterService;
+    private readonly ApplicationDbContext _dbContext;
+    private readonly IUserService _userService;
 
-    public BookmarkService(IBookmarkRepository bookmarkRepository, IChapterRepository chapterRepository,
-        IUserRepository userRepository)
+    public BookmarkService(ApplicationDbContext dbContext, IChapterService chapterService, IUserService userService)
     {
-        _bookmarkRepository = bookmarkRepository;
-        _chapterRepository = chapterRepository;
-        _userRepository = userRepository;
+        _dbContext = dbContext;
+        _chapterService = chapterService;
+        _userService = userService;
     }
 
     /// <summary>
@@ -37,13 +36,13 @@ public class BookmarkService : IBookmarkService
     /// <exception cref="InnerException">Возникает в случае внутренних проблем.</exception>
     public async Task<Result<BookmarkDto>> CreateBookmarkAsync(int userId, int chapterId)
     {
-        var foundedChapter = await _chapterRepository.GetByIdAsync(chapterId);
+        var foundedChapter = await _chapterService.GetChapterByIdAsync(chapterId);
         if (foundedChapter is null)
         {
             return Result<BookmarkDto>.Fail(new ChapterNotFoundException(chapterId));
         }
 
-        var foundedUser = await _userRepository.GetByIdAsync(userId);
+        var foundedUser = await _userService.GetUserByIdAsync(userId);
         if (foundedUser is null)
         {
             return Result<BookmarkDto>.Fail(new UserNotFoundException(userId));
@@ -81,10 +80,9 @@ public class BookmarkService : IBookmarkService
         };
     }
 
-    public async Task<BookmarkDto?> GetBookmarkByUserAndBook(int userId, int bookId)
+    public Task<BookmarkDto?> GetBookmarkByUserAndBook(int userId, int bookId)
     {
-        return await _bookmarkRepository
-            .GetAll()
+        return _dbContext.Bookmarks
             .Where(bookmark => bookmark.User.Id == userId && bookmark.Chapter.Translation.Book.Id == bookId)
             .Select(bookmark => new BookmarkDto
             {
@@ -94,39 +92,34 @@ public class BookmarkService : IBookmarkService
             .FirstOrDefaultAsync();
     }
 
-    private async Task<BookmarkEntityModel?> GetBookmarkByUserAndChapter(UserEntityModel user,
+    private Task<BookmarkEntityModel?> GetBookmarkByUserAndChapter(UserEntityModel user,
         ChapterEntityModel chapter)
     {
-        return await _bookmarkRepository.GetByUserAndChapterAsync(user, chapter);
+        return _dbContext.Bookmarks
+            .FirstOrDefaultAsync(b => b.User.Id == user.Id
+                                      && b.Chapter.Id == chapter.Id);
     }
 
     private async Task<Result<BookmarkEntityModel>> CreateNewBookmarkAsync(UserEntityModel user,
         ChapterEntityModel chapter)
     {
-        var createBookmarkResult = await _bookmarkRepository.CreateAsync(new BookmarkEntityModel
+        var entry = await _dbContext.Bookmarks.AddAsync(new BookmarkEntityModel
         {
             User = user,
             Chapter = chapter
         });
+        await _dbContext.SaveChangesAsync();
 
-        if (createBookmarkResult.IsFailure)
-        {
-            return Result<BookmarkEntityModel>.Fail(createBookmarkResult.GetError());
-        }
-
-        return createBookmarkResult.GetResult();
+        return entry.Entity;
     }
 
     private async Task<Result<BookmarkEntityModel>> UpdateBookmarkAsync(BookmarkEntityModel bookmark,
         ChapterEntityModel newChapter)
     {
         bookmark.Chapter = newChapter;
-        var updateBookmarkResult = await _bookmarkRepository.UpdateAsync(bookmark);
-        if (updateBookmarkResult.IsFailure)
-        {
-            return Result<BookmarkEntityModel>.Fail(updateBookmarkResult.GetError());
-        }
+        var entry = _dbContext.Bookmarks.Update(bookmark);
+        await _dbContext.SaveChangesAsync();
 
-        return updateBookmarkResult.GetResult();
+        return entry.Entity;
     }
 }
