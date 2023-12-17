@@ -16,20 +16,13 @@ using Microsoft.AspNetCore.Mvc;
 namespace MeowLib.WebApi.Controllers.v1;
 
 [Route("api/v1/books")]
-public class BookController : BaseController
+public class BookController(IBookService bookService) : BaseController
 {
-    private readonly IBookService _bookService;
-
-    public BookController(IBookService bookService)
-    {
-        _bookService = bookService;
-    }
-
     [HttpGet]
     [ProducesOkResponseType(typeof(GetAllBooksResponse))]
     public async Task<ActionResult> GetAllBooks()
     {
-        var books = await _bookService.GetAllBooksAsync();
+        var books = await bookService.GetAllBooksAsync();
         
         var response = new GetAllBooksResponse
         {
@@ -51,7 +44,7 @@ public class BookController : BaseController
     [ProducesForbiddenResponseType]
     public async Task<ActionResult> CreateBook([FromBody] CreateBookRequest input)
     {
-        var createBookResult = await _bookService.CreateBookAsync(new BookEntityModel
+        var createBookResult = await bookService.CreateBookAsync(new BookEntityModel
         {
             Name = input.Name,
             Description = input.Description,
@@ -85,7 +78,7 @@ public class BookController : BaseController
     [ProducesNotFoundResponseType]
     public async Task<ActionResult> DeleteBook([FromRoute] int id)
     {
-        var deleteBookResult = await _bookService.DeleteBookByIdAsync(id);
+        var deleteBookResult = await bookService.DeleteBookByIdAsync(id);
         if (deleteBookResult.IsFailure)
         {
             return ServerError();
@@ -107,7 +100,7 @@ public class BookController : BaseController
     [ProducesNotFoundResponseType]
     public async Task<ActionResult> UpdateBookInfo([FromRoute] int bookId, [FromBody] UpdateBookInfoRequest input)
     {
-        var updateBookResult = await _bookService.UpdateBookInfoByIdAsync(bookId, input.Name, input.Description);
+        var updateBookResult = await bookService.UpdateBookInfoByIdAsync(bookId, input.Name, input.Description);
 
         if (updateBookResult.IsFailure)
         {
@@ -135,7 +128,7 @@ public class BookController : BaseController
     [ProducesNotFoundResponseType]
     public async Task<ActionResult> GetBookInfo([FromRoute] int id)
     {
-        var foundedBook = await _bookService.GetBookByIdAsync(id);
+        var foundedBook = await bookService.GetBookByIdAsync(id);
         if (foundedBook is null)
         {
             return NotFoundError();
@@ -154,11 +147,14 @@ public class BookController : BaseController
                     Name = foundedBook.Author.Name
                 }
                 : null,
-            Tags = foundedBook.Tags.Select(t => new TagDto
+            Tags = foundedBook.Tags.Select(t =>
             {
-                Id = t.Id,
-                Name = t.Name,
-                Description = t.Description
+                return new TagDto
+                {
+                    Id = t.Id,
+                    Name = t.Name,
+                    Description = t.Description
+                };
             }),
             Translations = foundedBook.Translations.Select(t => new TranslationDto
             {
@@ -175,7 +171,7 @@ public class BookController : BaseController
     [ProducesNotFoundResponseType]
     public async Task<ActionResult> UpdateBookAuthor([FromRoute] int bookId, [FromRoute] int authorId)
     {
-        var updateBookResult = await _bookService.UpdateBookAuthorAsync(bookId, authorId);
+        var updateBookResult = await bookService.UpdateBookAuthorAsync(bookId, authorId);
         if (updateBookResult.IsFailure)
         {
             return ServerError();
@@ -196,7 +192,7 @@ public class BookController : BaseController
     [ProducesNotFoundResponseType]
     public async Task<ActionResult> UpdateBookTags([FromRoute] int bookId, [FromBody] UpdateBookTagsRequest input)
     {
-        var updateBookResult = await _bookService.UpdateBookTagsAsync(bookId, input.Tags);
+        var updateBookResult = await bookService.UpdateBookTagsAsync(bookId, input.Tags);
         if (updateBookResult.IsFailure)
         {
             return ServerError();
@@ -217,7 +213,7 @@ public class BookController : BaseController
     [ProducesNotFoundResponseType]
     public async Task<ActionResult> UpdateBookImage([FromRoute] int bookId, IFormFile image)
     {
-        var uploadImageResult = await _bookService.UpdateBookImageAsync(bookId, image);
+        var uploadImageResult = await bookService.UpdateBookImageAsync(bookId, image);
         if (uploadImageResult.IsFailure)
         {
             return ServerError();

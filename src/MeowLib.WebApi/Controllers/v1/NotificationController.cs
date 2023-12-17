@@ -1,4 +1,3 @@
-using MeowLib.Domain.Enums;
 using MeowLib.Domain.Exceptions.Notification;
 using MeowLib.Services.Interface;
 using MeowLib.WebApi.Abstractions;

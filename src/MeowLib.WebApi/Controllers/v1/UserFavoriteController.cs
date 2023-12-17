@@ -1,7 +1,4 @@
-﻿using MeowLib.Domain.DbModels.UserFavoriteEntity;
-using MeowLib.Domain.Dto.UserFavorite;
-using MeowLib.Domain.Enums;
-using MeowLib.Domain.Exceptions.Book;
+﻿using MeowLib.Domain.Exceptions.Book;
 using MeowLib.Domain.Exceptions.User;
 using MeowLib.Services.Interface;
 using MeowLib.WebApi.Abstractions;

@@ -1,5 +1,4 @@
-﻿using MeowLib.Domain.Dto.Bookmark;
-using MeowLib.Domain.Exceptions.Chapter;
+﻿using MeowLib.Domain.Exceptions.Chapter;
 using MeowLib.Domain.Exceptions.User;
 using MeowLib.Services.Interface;
 using MeowLib.WebApi.Abstractions;
