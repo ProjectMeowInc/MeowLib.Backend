@@ -5,7 +5,7 @@ using MeowLib.Domain.Models;
 using MeowLib.Services.Implementation.Production;
 using MeowLib.Services.Interface;
 using MeowLib.WebApi.Middleware;
-using MeowLib.WebApi.Models.Responses;
+using MeowLib.WebApi.Models.Responses.v1;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;

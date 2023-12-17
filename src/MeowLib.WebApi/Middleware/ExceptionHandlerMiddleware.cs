@@ -1,5 +1,5 @@
 using MeowLib.Domain.Exceptions.Services;
-using MeowLib.WebApi.Models.Responses;
+using MeowLib.WebApi.Models.Responses.v1;
 
 namespace MeowLib.WebApi.Middleware;
 
