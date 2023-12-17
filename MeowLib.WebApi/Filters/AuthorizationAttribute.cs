@@ -18,15 +18,6 @@ public class AuthorizationAttribute : ProducesResponseTypeAttribute, IAsyncAutho
 
     public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
     {
-        if (!context.HttpContext.Request.IsHttps)
-        {
-            context.Result = new JsonResult(new BaseErrorResponse("Доступ к методам с авторизацией только по HTTPS"))
-            {
-                StatusCode = 401
-            };
-            return;
-        }
-
         var authToken = context.HttpContext.Request.Headers["Authorization"];
         if (authToken.Equals(StringValues.Empty))
         {
