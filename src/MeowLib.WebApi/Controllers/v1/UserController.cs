@@ -4,13 +4,13 @@ using MeowLib.Domain.Exceptions.Services;
 using MeowLib.Services.Interface;
 using MeowLib.WebApi.Abstractions;
 using MeowLib.WebApi.Filters;
-using MeowLib.WebApi.Models.Requests.User;
+using MeowLib.WebApi.Models.Requests.v1.User;
 using MeowLib.WebApi.ProducesResponseTypes;
 using Microsoft.AspNetCore.Mvc;
 
-namespace MeowLib.WebApi.Controllers;
+namespace MeowLib.WebApi.Controllers.v1;
 
-[Route("api/users")]
+[Route("api/v1/users")]
 public class UserController : BaseController
 {
     private readonly IUserService _userService;

@@ -4,13 +4,13 @@ using MeowLib.Domain.Exceptions.Services;
 using MeowLib.Services.Interface;
 using MeowLib.WebApi.Abstractions;
 using MeowLib.WebApi.Filters;
-using MeowLib.WebApi.Models.Requests.Author;
+using MeowLib.WebApi.Models.Requests.v1.Author;
 using MeowLib.WebApi.ProducesResponseTypes;
 using Microsoft.AspNetCore.Mvc;
 
-namespace MeowLib.WebApi.Controllers;
+namespace MeowLib.WebApi.Controllers.v1;
 
-[Route("api/authors")]
+[Route("api/v1/authors")]
 public class AuthorController : BaseController
 {
     private readonly IAuthorService _authorService;

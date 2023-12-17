@@ -7,15 +7,15 @@ using MeowLib.Domain.Exceptions.Services;
 using MeowLib.Services.Interface;
 using MeowLib.WebApi.Abstractions;
 using MeowLib.WebApi.Filters;
-using MeowLib.WebApi.Models.Requests.Book;
-using MeowLib.WebApi.Models.Responses;
-using MeowLib.WebApi.Models.Responses.Book;
+using MeowLib.WebApi.Models.Requests.v1.Book;
+using MeowLib.WebApi.Models.Responses.v1;
+using MeowLib.WebApi.Models.Responses.v1.Book;
 using MeowLib.WebApi.ProducesResponseTypes;
 using Microsoft.AspNetCore.Mvc;
 
-namespace MeowLib.WebApi.Controllers;
+namespace MeowLib.WebApi.Controllers.v1;
 
-[Route("api/books")]
+[Route("api/v1/books")]
 public class BookController : BaseController
 {
     private readonly IBookService _bookService;

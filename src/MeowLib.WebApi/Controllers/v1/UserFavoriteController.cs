@@ -4,15 +4,15 @@ using MeowLib.Domain.Exceptions.User;
 using MeowLib.Services.Interface;
 using MeowLib.WebApi.Abstractions;
 using MeowLib.WebApi.Filters;
-using MeowLib.WebApi.Models.Requests.UserFavorite;
-using MeowLib.WebApi.Models.Responses;
-using MeowLib.WebApi.Models.Responses.UserFavorite;
+using MeowLib.WebApi.Models.Requests.v1.UserFavorite;
+using MeowLib.WebApi.Models.Responses.v1;
+using MeowLib.WebApi.Models.Responses.v1.UserFavorite;
 using MeowLib.WebApi.ProducesResponseTypes;
 using Microsoft.AspNetCore.Mvc;
 
-namespace MeowLib.WebApi.Controllers;
+namespace MeowLib.WebApi.Controllers.v1;
 
-[Route("api/users/favorite")]
+[Route("api/v1/users/favorite")]
 public class UserFavoriteController : BaseController
 {
     private readonly IUserFavoriteService _userFavoriteService;

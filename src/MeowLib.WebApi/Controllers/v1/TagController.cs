@@ -5,13 +5,13 @@ using MeowLib.Domain.Exceptions.Services;
 using MeowLib.Services.Interface;
 using MeowLib.WebApi.Abstractions;
 using MeowLib.WebApi.Filters;
-using MeowLib.WebApi.Models.Requests.Tag;
+using MeowLib.WebApi.Models.Requests.v1.Tag;
 using MeowLib.WebApi.ProducesResponseTypes;
 using Microsoft.AspNetCore.Mvc;
 
-namespace MeowLib.WebApi.Controllers;
+namespace MeowLib.WebApi.Controllers.v1;
 
-[Route("api/tags")]
+[Route("api/v1/tags")]
 public class TagController : BaseController
 {
     private readonly ITagService _tagService;

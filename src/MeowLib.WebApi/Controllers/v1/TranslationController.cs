@@ -3,14 +3,14 @@ using MeowLib.Domain.Exceptions.Translation;
 using MeowLib.Services.Interface;
 using MeowLib.WebApi.Abstractions;
 using MeowLib.WebApi.Filters;
-using MeowLib.WebApi.Models.Requests.Translation;
-using MeowLib.WebApi.Models.Responses.Translation;
+using MeowLib.WebApi.Models.Requests.v1.Translation;
+using MeowLib.WebApi.Models.Responses.v1.Translation;
 using MeowLib.WebApi.ProducesResponseTypes;
 using Microsoft.AspNetCore.Mvc;
 
-namespace MeowLib.WebApi.Controllers;
+namespace MeowLib.WebApi.Controllers.v1;
 
-[Route("api/translation")]
+[Route("api/v1/translation")]
 public class TranslationController(ITranslationService translationService, ITeamService teamService,
     IBookService bookService, ILogger<TranslationController> logger) : BaseController
 {

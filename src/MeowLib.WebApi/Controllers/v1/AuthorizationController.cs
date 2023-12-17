@@ -2,16 +2,16 @@
 using MeowLib.Domain.Exceptions.Services;
 using MeowLib.Services.Interface;
 using MeowLib.WebApi.Abstractions;
-using MeowLib.WebApi.Models.Requests.Authorization;
-using MeowLib.WebApi.Models.Requests.User;
-using MeowLib.WebApi.Models.Responses;
-using MeowLib.WebApi.Models.Responses.User;
+using MeowLib.WebApi.Models.Requests.v1.Authorization;
+using MeowLib.WebApi.Models.Requests.v1.User;
+using MeowLib.WebApi.Models.Responses.v1;
+using MeowLib.WebApi.Models.Responses.v1.User;
 using MeowLib.WebApi.ProducesResponseTypes;
 using Microsoft.AspNetCore.Mvc;
 
-namespace MeowLib.WebApi.Controllers;
+namespace MeowLib.WebApi.Controllers.v1;
 
-[Route("api/authorization")]
+[Route("api/v1/authorization")]
 public class AuthorizationController : BaseController
 {
     private readonly IUserService _userService;

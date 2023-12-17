@@ -2,13 +2,13 @@ using MeowLib.Domain.Exceptions.Notification;
 using MeowLib.Services.Interface;
 using MeowLib.WebApi.Abstractions;
 using MeowLib.WebApi.Filters;
-using MeowLib.WebApi.Models.Responses.Notification;
+using MeowLib.WebApi.Models.Responses.v1.Notification;
 using MeowLib.WebApi.ProducesResponseTypes;
 using Microsoft.AspNetCore.Mvc;
 
-namespace MeowLib.WebApi.Controllers;
+namespace MeowLib.WebApi.Controllers.v1;
 
-[Route("api/notifications")]
+[Route("api/v1/notifications")]
 public class NotificationController : BaseController
 {
     private readonly ILogger<NotificationController> _logger;

@@ -3,15 +3,15 @@ using MeowLib.Domain.Exceptions.User;
 using MeowLib.Services.Interface;
 using MeowLib.WebApi.Abstractions;
 using MeowLib.WebApi.Filters;
-using MeowLib.WebApi.Models.Requests.Team;
-using MeowLib.WebApi.Models.Responses;
-using MeowLib.WebApi.Models.Responses.Team;
+using MeowLib.WebApi.Models.Requests.v1.Team;
+using MeowLib.WebApi.Models.Responses.v1;
+using MeowLib.WebApi.Models.Responses.v1.Team;
 using MeowLib.WebApi.ProducesResponseTypes;
 using Microsoft.AspNetCore.Mvc;
 
-namespace MeowLib.WebApi.Controllers;
+namespace MeowLib.WebApi.Controllers.v1;
 
-[Route("api/team")]
+[Route("api/v1/team")]
 public class TeamController : BaseController
 {
     private readonly ILogger<TeamController> _logger;

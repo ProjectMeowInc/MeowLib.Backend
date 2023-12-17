@@ -3,10 +3,10 @@ using MeowLib.WebApi.Abstractions;
 using MeowLib.WebApi.ProducesResponseTypes;
 using Microsoft.AspNetCore.Mvc;
 
-namespace MeowLib.WebApi.Controllers;
+namespace MeowLib.WebApi.Controllers.v1;
 
 [ApiController]
-[Route("api/images")]
+[Route("api/v1/images")]
 public class FileController : BaseController
 {
     private readonly IFileService _fileService;

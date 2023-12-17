@@ -4,16 +4,16 @@ using MeowLib.Domain.Exceptions.User;
 using MeowLib.Services.Interface;
 using MeowLib.WebApi.Abstractions;
 using MeowLib.WebApi.Filters;
-using MeowLib.WebApi.Models.Requests.BookComment;
-using MeowLib.WebApi.Models.Responses;
-using MeowLib.WebApi.Models.Responses.BookComment;
+using MeowLib.WebApi.Models.Requests.v1.BookComment;
+using MeowLib.WebApi.Models.Responses.v1;
+using MeowLib.WebApi.Models.Responses.v1.BookComment;
 using MeowLib.WebApi.ProducesResponseTypes;
 using Microsoft.AspNetCore.Mvc;
 
-namespace MeowLib.WebApi.Controllers;
+namespace MeowLib.WebApi.Controllers.v1;
 
 [ApiController]
-[Route("api/books")]
+[Route("api/v1/books")]
 public class BookCommentController : BaseController
 {
     private readonly IBookCommentService _bookCommentService;

@@ -3,13 +3,13 @@ using MeowLib.Domain.Exceptions.User;
 using MeowLib.Services.Interface;
 using MeowLib.WebApi.Abstractions;
 using MeowLib.WebApi.Filters;
-using MeowLib.WebApi.Models.Requests.Coin;
+using MeowLib.WebApi.Models.Requests.v1.Coin;
 using MeowLib.WebApi.ProducesResponseTypes;
 using Microsoft.AspNetCore.Mvc;
 
-namespace MeowLib.WebApi.Controllers;
+namespace MeowLib.WebApi.Controllers.v1;
 
-[Route("api/coins")]
+[Route("api/v1/coins")]
 public class CoinController(ICoinService coinService, ILogger<CoinController> logger) : BaseController
 {
     [HttpPost("admin-change")]
