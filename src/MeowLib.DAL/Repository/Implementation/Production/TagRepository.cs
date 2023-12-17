@@ -1,7 +1,6 @@
 using MeowLib.DAL.Repository.Interfaces;
 using MeowLib.Domain.DbModels.BookEntity;
 using MeowLib.Domain.DbModels.TagEntity;
-using MeowLib.Domain.Enums;
 using MeowLib.Domain.Exceptions.Tag;
 using Microsoft.EntityFrameworkCore;
 
@@ -58,7 +57,6 @@ public class TagRepository : ITagRepository
     /// </summary>
     /// <param name="id">Id тега.</param>
     /// <returns>True - в случае удачного удаления, false - если тег не был найден.</returns>
-    /// <exception cref="DbSavingException">Возникает в случае, если произошла ошибка сохранения данных.</exception>
     public async Task<bool> DeleteByIdAsync(int id)
     {
         var foundedTag = await GetByIdAsync(id);

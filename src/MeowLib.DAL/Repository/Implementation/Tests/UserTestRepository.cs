@@ -68,12 +68,12 @@ public class UserTestRepository : IUserRepository
         return Task.FromResult(true);
     }
 
-    public Task<Result<UserDto>> UpdateAsync(int id, UpdateUserEntityModel updateUserData)
+    public Task<Result<UserDto?>> UpdateAsync(int id, UpdateUserEntityModel updateUserData)
     {
         var foundedUser = _userData.FirstOrDefault(u => u.Id == id);
         if (foundedUser is null)
         {
-            throw new EntityNotFoundException(nameof(UserEntityModel), $"Id = {id}");
+            return Task.FromResult(Result<UserDto?>.Ok(null));
         }
 
         if (updateUserData.Login is not null)
@@ -81,12 +81,14 @@ public class UserTestRepository : IUserRepository
             foundedUser.Login = updateUserData.Login;
         }
 
+#pragma warning disable CS8619 // Nullability of reference types in value doesn't match target type.
         return Task.FromResult(Result<UserDto>.Ok(new UserDto
         {
             Id = foundedUser.Id,
             Login = foundedUser.Login,
             Role = foundedUser.Role
         }));
+#pragma warning restore CS8619 // Nullability of reference types in value doesn't match target type.
     }
 
     public Task<bool> CheckForUserExistAsync(string login)
