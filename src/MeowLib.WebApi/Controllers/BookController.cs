@@ -177,12 +177,6 @@ public class BookController : BaseController
         var updateBookResult = await _bookService.UpdateBookAuthorAsync(bookId, authorId);
         if (updateBookResult.IsFailure)
         {
-            var exception = updateBookResult.GetError();
-            if (exception is EntityNotFoundException)
-            {
-                return Error($"Автор с Id = {authorId} не найден", 400);
-            }
-
             return ServerError();
         }
 

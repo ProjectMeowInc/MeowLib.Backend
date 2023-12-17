@@ -19,7 +19,6 @@ public interface IChapterService
     /// <returns>Модель созданной главы.</returns>
     /// <exception cref="ValidationException">Возникает в случае ошибки валидации данных.</exception>
     /// <exception cref="TranslationNotFoundException">Возникает в случае, если перевод не был найден.</exception>
-    /// <exception cref="DbSavingException">Возникает в случае ошибки БД.</exception>
     Task<Result<ChapterEntityModel>> CreateChapterAsync(string name, string text, int translationId);
 
     /// <summary>
@@ -28,8 +27,6 @@ public interface IChapterService
     /// <param name="chapterId">Id главы.</param>
     /// <param name="newText">Новый текст главы.</param>
     /// <returns>Модель обновлённой главы.</returns>
-    /// <exception cref="EntityNotFoundException">Возникает в случае, если глава не была найдена.</exception>
-    /// <exception cref="DbSavingException">Возникает в случае ошибки сохранения данных.</exception>
     Task<Result<ChapterEntityModel>> UpdateChapterTextAsync(int chapterId, string newText);
 
     /// <summary>
@@ -37,7 +34,5 @@ public interface IChapterService
     /// </summary>
     /// <param name="chapterId">Id главы.</param>
     /// <returns>Ошибку, если она есть.</returns>
-    /// <exception cref="EntityNotFoundException">Возникает в случае, если глава не была найдена.</exception>
-    /// <exception cref="DbSavingException">Возникает в случае ошибки сохранения данных.</exception>
     Task<Result> DeleteChapterAsync(int chapterId);
 }

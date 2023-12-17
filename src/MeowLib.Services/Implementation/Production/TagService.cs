@@ -3,6 +3,7 @@ using MeowLib.Domain.DbModels.TagEntity;
 using MeowLib.Domain.Dto.Tag;
 using MeowLib.Domain.Exceptions;
 using MeowLib.Domain.Exceptions.Services;
+using MeowLib.Domain.Exceptions.Tag;
 using MeowLib.Domain.Models;
 using MeowLib.Domain.Result;
 using MeowLib.Services.Interface;
@@ -208,7 +209,7 @@ public class TagService : ITagService
         {
             return await _tagRepository.UpdateAsync(id, updateTagEntityModel);
         }
-        catch (EntityNotFoundException)
+        catch (TagNotFoundException)
         {
             return Result<TagEntityModel?>.Ok(null);
         }

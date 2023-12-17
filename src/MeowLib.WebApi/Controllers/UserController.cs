@@ -54,16 +54,16 @@ public class UserController : BaseController
             {
                 return ValidationError(validationException.ValidationErrors);
             }
-
-            if (exception is EntityNotFoundException)
-            {
-                return NotFoundError();
-            }
-
+            
             return ServerError();
         }
 
         var updatedUser = updateUserResult.GetResult();
+        if (updatedUser is null)
+        {
+            return NotFoundError();
+        }
+        
         return Json(updatedUser);
     }
 }

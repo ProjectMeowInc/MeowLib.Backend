@@ -36,8 +36,7 @@ public interface IUserRepository
     /// <param name="id">Id пользователя.</param>
     /// <param name="updateUserData">Данные для обновления.</param>
     /// <returns>Dto-модель пользователя.</returns>
-    /// <exception cref="EntityNotFoundException">Возникает в том случае, если пользователь с заданным Id не найден.</exception>
-    Task<Result<UserDto>> UpdateAsync(int id, UpdateUserEntityModel updateUserData);
+    Task<Result<UserDto?>> UpdateAsync(int id, UpdateUserEntityModel updateUserData);
 
     /// <summary>
     /// Метод проверяет существует ли пользователь с заданным логином.
@@ -80,7 +79,5 @@ public interface IUserRepository
     /// <param name="login">Логин пользователя.</param>
     /// <param name="newRefreshToken">Новый токен обновления.</param>
     /// <returns>Ошибку, если она есть.</returns>
-    /// <exception cref="EntityNotFoundException">Возникает в случае, если пользователь не был найден.</exception>
-    /// <exception cref="DbSavingException">Возникает в случае ошибки сохранения данных.</exception>
     Task<Result> UpdateRefreshTokenAsync(string login, string newRefreshToken);
 }

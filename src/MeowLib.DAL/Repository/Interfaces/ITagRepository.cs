@@ -18,7 +18,6 @@ public interface ITagRepository
     /// </summary>
     /// <param name="createTagData">Данные для создания тега.</param>
     /// <returns>Созданные тег.</returns>
-    /// <exception cref="DbSavingException">Возникает в случае, если произошла ошибка сохранения данных.</exception>
     Task<TagEntityModel> CreateAsync(CreateTagEntityModel createTagData);
 
     /// <summary>
@@ -26,7 +25,6 @@ public interface ITagRepository
     /// </summary>
     /// <param name="id">Id тега.</param>
     /// <returns>True - в случае удачного удаления, false - если тег не был найден.</returns>
-    /// <exception cref="DbSavingException">Возникает в случае, если произошла ошибка сохранения данных.</exception>
     Task<bool> DeleteByIdAsync(int id);
 
     /// <summary>
@@ -35,8 +33,6 @@ public interface ITagRepository
     /// <param name="id">Id тега.</param>
     /// <param name="updateTagData">Информация на обновление.</param>
     /// <returns>Обновлённая информация о теге.</returns>
-    /// <exception cref="EntityNotFoundException">Возникает в случае, если тег не был найден.</exception>
-    /// <exception cref="DbSavingException">Возникает в случае если произошла ошибка сохранения данных.</exception>
     Task<TagEntityModel> UpdateAsync(int id, UpdateTagEntityModel updateTagData);
 
     /// <summary>

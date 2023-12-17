@@ -74,8 +74,6 @@ public class ChapterService(IChapterRepository chapterRepository, ApplicationDbC
     /// <param name="chapterId">Id главы.</param>
     /// <param name="newText">Новый текст главы.</param>
     /// <returns>Модель обновлённой главы.</returns>
-    /// <exception cref="EntityNotFoundException">Возникает в случае, если глава не была найдена.</exception>
-    /// <exception cref="DbSavingException">Возникает в случае ошибки сохранения данных.</exception>
     public async Task<Result<ChapterEntityModel>> UpdateChapterTextAsync(int chapterId, string newText)
     {
         var updateResult = await chapterRepository.UpdateTextAsync(chapterId, newText);
@@ -92,8 +90,6 @@ public class ChapterService(IChapterRepository chapterRepository, ApplicationDbC
     /// </summary>
     /// <param name="chapterId">Id главы.</param>
     /// <returns>Ошибку, если она есть.</returns>
-    /// <exception cref="EntityNotFoundException">Возникает в случае, если глава не была найдена.</exception>
-    /// <exception cref="DbSavingException">Возникает в случае ошибки сохранения данных.</exception>
     public async Task<Result> DeleteChapterAsync(int chapterId)
     {
         var deleteResult = await chapterRepository.DeleteByIdAsync(chapterId);

@@ -30,7 +30,6 @@ public interface IUserService
     /// <returns>Пару JWT-токенов для авторизации.</returns>
     /// <exception cref="IncorrectCreditionalException">Возникает в случае, если авторизационные данные некорректны.</exception>
     /// <exception cref="CreateTokenException">Возникает в случае, если сгенерированные токен уже кому-то принадлежит.</exception>
-    /// <exception cref="EntityNotFoundException">Возникает в случае, если пользователь не был найден.</exception>
     Task<Result<(string accessToken, string refreshToken)>> LogIn(string login, string password, bool isLongSession);
 
     /// <summary>
@@ -46,8 +45,7 @@ public interface IUserService
     /// <param name="updateData">Данные для обновления.</param>
     /// <returns>Dto-модель пользователя.</returns>
     /// <exception cref="ValidationException">Возникает в случае, если входные данные были невалидны.</exception>
-    /// <exception cref="EntityNotFoundException">Возникает в том случае, если пользователь с заданным Id не найден.</exception>
-    Task<Result<UserDto>> UpdateUser(int id, UpdateUserEntityModel updateData);
+    Task<Result<UserDto?>> UpdateUser(int id, UpdateUserEntityModel updateData);
 
     /// <summary>
     /// Метод авторизует пользователя по токену обновления.

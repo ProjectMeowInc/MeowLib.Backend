@@ -34,22 +34,19 @@ public class UserFavoriteService : IUserFavoriteService
     /// <param name="userId">Id пользователя.</param>
     /// <param name="status">Статус для обновления</param>
     /// <returns>Обновлённую книгу в списке пользователя.</returns>
-    /// <exception cref="EntityNotFoundException">Возникает в случае, если книга или пользователь не были найдены.</exception>
     public async Task<Result<UserFavoriteEntityModel>> AddOrUpdateUserListAsync(int bookId, int userId,
         UserFavoritesStatusEnum status)
     {
         var foundedBook = await _bookRepository.GetByIdAsync(bookId);
         if (foundedBook is null)
         {
-            var entityNotFoundException = new EntityNotFoundException(nameof(BookEntityModel), $"Id={bookId}");
-            return Result<UserFavoriteEntityModel>.Fail(entityNotFoundException);
+            return Result<UserFavoriteEntityModel>.Fail(new BookNotFoundException(bookId));
         }
 
         var foundedUser = await _userRepository.GetByIdAsync(userId);
         if (foundedUser is null)
         {
-            var entityNotFoundException = new EntityNotFoundException(nameof(UserEntityModel), $"Id={userId}");
-            return Result<UserFavoriteEntityModel>.Fail(entityNotFoundException);
+            return Result<UserFavoriteEntityModel>.Fail(new UserNotFoundException(userId));
         }
 
         var existedUserFavorites = await _userFavoriteRepository.GetByBookAndUserAsync(foundedBook, foundedUser);

@@ -98,7 +98,6 @@ public class UserService : IUserService
     /// <returns>Пару JWT-токенов для авторизации.</returns>
     /// <exception cref="IncorrectCreditionalException">Возникает в случае, если авторизационные данные некорректны.</exception>
     /// <exception cref="CreateTokenException">Возникает в случае, если сгенерированные токен уже кому-то принадлежит.</exception>
-    /// <exception cref="EntityNotFoundException">Возникает в случае, если пользователь не был найден.</exception>
     public async Task<Result<(string accessToken, string refreshToken)>> LogIn(string login, string password,
         bool isLongSession)
     {
@@ -159,8 +158,7 @@ public class UserService : IUserService
     /// <param name="updateData">Данные для обновления.</param>
     /// <returns>Dto-модель пользователя.</returns>
     /// <exception cref="ValidationException">Возникает в случае, если входные данные были невалидны.</exception>
-    /// <exception cref="EntityNotFoundException">Возникает в том случае, если пользователь с заданным Id не найден.</exception>
-    public async Task<Result<UserDto>> UpdateUser(int id, UpdateUserEntityModel updateData)
+    public async Task<Result<UserDto?>> UpdateUser(int id, UpdateUserEntityModel updateData)
     {
         var validationErrors = new List<ValidationErrorModel>();
 
@@ -185,7 +183,7 @@ public class UserService : IUserService
         if (validationErrors.Any())
         {
             var validationException = new ValidationException(validationErrors);
-            return Result<UserDto>.Fail(validationException);
+            return Result<UserDto?>.Fail(validationException);
         }
 
         if (updateData.Login is not null)
@@ -200,7 +198,7 @@ public class UserService : IUserService
                 });
 
                 var validationException = new ValidationException(validationErrors);
-                return Result<UserDto>.Fail(validationException);
+                return Result<UserDto?>.Fail(validationException);
             }
         }
 

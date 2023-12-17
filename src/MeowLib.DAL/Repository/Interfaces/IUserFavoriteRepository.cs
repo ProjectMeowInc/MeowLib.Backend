@@ -15,7 +15,6 @@ public interface IUserFavoriteRepository
     /// </summary>
     /// <param name="entityModel">Модель для создания.</param>
     /// <returns>Созданную книгу в списке пользователя.</returns>
-    /// <exception cref="DbSavingException">Возникает в случае ошибки сохранения данных.</exception>
     Task<Result<UserFavoriteEntityModel>> CreateAsync(UserFavoriteEntityModel entityModel);
 
     /// <summary>
@@ -45,7 +44,6 @@ public interface IUserFavoriteRepository
     /// </summary>
     /// <param name="entityModel">Книга в списке пользователя для обновления.</param>
     /// <returns>Обновлённую модель книги</returns>
-    /// <exception cref="DbSavingException">Возникает в случае ошибки сохранения данных.</exception>
     Task<Result<UserFavoriteEntityModel>> UpdateAsync(UserFavoriteEntityModel entityModel);
 
     /// <summary>

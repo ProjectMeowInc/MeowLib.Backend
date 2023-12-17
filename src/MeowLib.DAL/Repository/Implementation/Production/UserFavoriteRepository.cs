@@ -2,7 +2,6 @@
 using MeowLib.Domain.DbModels.BookEntity;
 using MeowLib.Domain.DbModels.UserEntity;
 using MeowLib.Domain.DbModels.UserFavoriteEntity;
-using MeowLib.Domain.Enums;
 using MeowLib.Domain.Result;
 using Microsoft.EntityFrameworkCore;
 
@@ -29,20 +28,10 @@ public class UserFavoriteRepository : IUserFavoriteRepository
     /// </summary>
     /// <param name="entityModel">Модель для создания.</param>
     /// <returns>Созданную книгу в списке пользователя.</returns>
-    /// <exception cref="DbSavingException">Возникает в случае ошибки сохранения данных.</exception>
     public async Task<Result<UserFavoriteEntityModel>> CreateAsync(UserFavoriteEntityModel entityModel)
     {
         var createdUserFavoritesEntry = await _applicationDbContext.UsersFavorite.AddAsync(entityModel);
-
-        try
-        {
-            await _applicationDbContext.SaveChangesAsync();
-        }
-        catch (DbUpdateException)
-        {
-            var dbSavingException = new DbSavingException(nameof(UserFavoriteEntityModel), DbSavingTypesEnum.Create);
-            return Result<UserFavoriteEntityModel>.Fail(dbSavingException);
-        }
+        await _applicationDbContext.SaveChangesAsync();
 
         return createdUserFavoritesEntry.Entity;
     }
@@ -52,9 +41,9 @@ public class UserFavoriteRepository : IUserFavoriteRepository
     /// </summary>
     /// <param name="id">Id книги.</param>
     /// <returns>Найденную книгу или null, если её нет.</returns>
-    public async Task<UserFavoriteEntityModel?> GetByIdAsync(int id)
+    public Task<UserFavoriteEntityModel?> GetByIdAsync(int id)
     {
-        return await _applicationDbContext.UsersFavorite.FirstOrDefaultAsync(uf => uf.Id == id);
+        return _applicationDbContext.UsersFavorite.FirstOrDefaultAsync(uf => uf.Id == id);
     }
 
     /// <summary>
@@ -63,9 +52,9 @@ public class UserFavoriteRepository : IUserFavoriteRepository
     /// <param name="book">Книга.</param>
     /// <param name="user">Пользователь.</param>
     /// <returns>Найденную книгу или null, если её нет.</returns>
-    public async Task<UserFavoriteEntityModel?> GetByBookAndUserAsync(BookEntityModel book, UserEntityModel user)
+    public Task<UserFavoriteEntityModel?> GetByBookAndUserAsync(BookEntityModel book, UserEntityModel user)
     {
-        return await _applicationDbContext.UsersFavorite.FirstOrDefaultAsync(uf => uf.Book == book && uf.User == user);
+        return _applicationDbContext.UsersFavorite.FirstOrDefaultAsync(uf => uf.Book == book && uf.User == user);
     }
 
     /// <summary>
@@ -94,20 +83,11 @@ public class UserFavoriteRepository : IUserFavoriteRepository
     /// </summary>
     /// <param name="entityModel">Книга в списке пользователя для обновления.</param>
     /// <returns>Обновлённую модель книги</returns>
-    /// <exception cref="DbSavingException">Возникает в случае ошибки сохранения данных.</exception>
     public async Task<Result<UserFavoriteEntityModel>> UpdateAsync(UserFavoriteEntityModel entityModel)
     {
         var updateUserFavoriteEntry = _applicationDbContext.UsersFavorite.Update(entityModel);
 
-        try
-        {
-            await _applicationDbContext.SaveChangesAsync();
-        }
-        catch (DbUpdateException)
-        {
-            var dbSavingException = new DbSavingException(nameof(UserFavoriteEntityModel), DbSavingTypesEnum.Update);
-            return Result<UserFavoriteEntityModel>.Fail(dbSavingException);
-        }
+        await _applicationDbContext.SaveChangesAsync();
 
         return updateUserFavoriteEntry.Entity;
     }

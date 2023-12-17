@@ -34,11 +34,16 @@ public class UserFavoriteController : BaseController
         if (updatedUserListResult.IsFailure)
         {
             var exception = updatedUserListResult.GetError();
-            if (exception is EntityNotFoundException)
+            if (exception is BookNotFoundException)
             {
-                return Error("Неверно указана книга или пользователь", 400);
+                return Error("Запрашиваемая книга не найдена");
             }
 
+            if (exception is UserNotFoundException)
+            {
+                return UpdateAuthorizeError();
+            }
+            
             return ServerError();
         }
 

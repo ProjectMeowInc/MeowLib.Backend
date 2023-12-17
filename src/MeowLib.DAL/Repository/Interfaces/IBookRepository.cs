@@ -15,7 +15,6 @@ public interface IBookRepository
     /// </summary>
     /// <param name="entity">Модель для создания.</param>
     /// <returns>Созданную в базе данных сущность.</returns>
-    /// <exception cref="DbSavingException">Возникает в случае ошибки сохранения.</exception>
     Task<BookEntityModel> CreateAsync(BookEntityModel entity);
 
     /// <summary>
@@ -36,7 +35,6 @@ public interface IBookRepository
     /// </summary>
     /// <param name="id">Id книги.</param>
     /// <returns>True - если удаление прошло удачно, false - если книга не была найдена.</returns>
-    /// <exception cref="DbSavingException">Возникает в случае ошибки сохранения данных.</exception>
     Task<bool> DeleteByIdAsync(int id);
 
     /// <summary>
@@ -44,7 +42,6 @@ public interface IBookRepository
     /// </summary>
     /// <param name="entity">Модель книги.</param>
     /// <returns>Обновлённую модель книги.</returns>
-    /// <exception cref="DbSavingException">Возникает в случае ошибки сохранения данных.</exception>
     Task<Result<BookEntityModel>> UpdateAsync(BookEntityModel entity);
 
     /// <summary>
@@ -53,8 +50,6 @@ public interface IBookRepository
     /// <param name="id">Id книги.</param>
     /// <param name="updateData">Данные для обновления.</param>
     /// <returns>Обновлённую модель книги.</returns>
-    /// <exception cref="EntityNotFoundException">Возникает в случае если книга не была найдена.</exception>
-    /// <exception cref="DbSavingException">Возникате в случае ошибки сохранения данных.</exception>
     Task<BookEntityModel?> UpdateInfoByIdAsync(int id, UpdateBookEntityModel updateData);
 
     /// <summary>
@@ -63,8 +58,6 @@ public interface IBookRepository
     /// <param name="id">Id книги.</param>
     /// <param name="author">Новый автор.</param>
     /// <returns>Обновлённую модель книги.</returns>
-    /// <exception cref="EntityNotFoundException">Возникает в случае если книга не была найдена.</exception>
-    /// <exception cref="DbSavingException">Возникате в случае ошибки сохранения данных.</exception>
     Task<BookEntityModel?> UpdateAuthorByIdAsync(int id, AuthorEntityModel author);
 
     /// <summary>
@@ -73,7 +66,5 @@ public interface IBookRepository
     /// <param name="id">Id книги.</param>
     /// <param name="tags">Новый список тегов.</param>
     /// <returns>Обновлённую модель книги.</returns>
-    /// <exception cref="EntityNotFoundException">Возникает в случае если книга не была найдена.</exception>
-    /// <exception cref="DbSavingException">Возникате в случае ошибки сохранения данных.</exception>
     Task<BookEntityModel?> UpdateTagsByIdAsync(int id, IEnumerable<TagEntityModel> tags);
 }

@@ -24,7 +24,6 @@ public interface IBookService
     /// <param name="updateBookEntityModel">Информация для обновления.</param>
     /// <returns>Обновлённая модель книги или null если книга не найдена.</returns>
     /// <exception cref="ValidationException">Возникает в случае ошибки валидации.</exception>
-    /// <exception cref="DbSavingException">Возникает в случае ошибки сохранения данных.</exception>
     Task<Result<BookEntityModel?>> UpdateBookInfoByIdAsync(int bookId, UpdateBookEntityModel updateBookEntityModel);
 
     /// <summary>
@@ -33,8 +32,6 @@ public interface IBookService
     /// <param name="bookId">Id книги для обновления.</param>
     /// <param name="authorId">Id автора для обновления.</param>
     /// <returns>Обновлённую модель книги при удачном обновления, null - если книга не была найдена.</returns>
-    /// <exception cref="EntityNotFoundException">Возникает в случае, если автор не был найден.</exception>
-    /// <exception cref="DbSavingException">Возникает в случае ошибки сохранения данных.</exception>
     Task<Result<BookEntityModel?>> UpdateBookAuthorAsync(int bookId, int authorId);
 
     /// <summary>
@@ -58,7 +55,6 @@ public interface IBookService
     /// <param name="bookId">Id книги.</param>
     /// <param name="tags">Список Id тегов.</param>
     /// <returns>Модель книги или null, если она не была найдена.</returns>
-    /// <exception cref="DbSavingException">Возникает в случае ошибки сохранения данных.</exception>
     Task<Result<BookEntityModel?>> UpdateBookTagsAsync(int bookId, IEnumerable<int> tags);
 
     /// <summary>
@@ -68,6 +64,5 @@ public interface IBookService
     /// <param name="file">Картинка для обновления.</param>
     /// <returns>Обновлённую модель книги, или null, если книга не была найдена.</returns>
     /// <exception cref="UploadingFileException">Возникает в случае ошибки загрузки файла.</exception>
-    /// <exception cref="DbSavingException">Возникает в случае ошибки сохранения данных.</exception>
     Task<Result<BookEntityModel?>> UpdateBookImageAsync(int bookId, IFormFile file);
 }

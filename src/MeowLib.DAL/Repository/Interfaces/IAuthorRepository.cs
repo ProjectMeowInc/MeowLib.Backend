@@ -24,7 +24,6 @@ public interface IAuthorRepository
     /// </summary>
     /// <param name="id">Id автора.</param>
     /// <returns>True - в случае удачного удаления, False - если автор не найден. </returns>
-    /// <exception cref="DbSavingException">Возникает в случае неудачного сохранения данных.</exception>
     Task<bool> DeleteByIdAsync(int id);
 
     /// <summary>

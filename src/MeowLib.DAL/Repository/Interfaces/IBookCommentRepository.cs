@@ -13,7 +13,6 @@ public interface IBookCommentRepository
     /// </summary>
     /// <param name="entity">Модель комментария.</param>
     /// <returns>Комментарий, в случае успеха.</returns>
-    /// <exception cref="DbSavingException">Возникает в случае ошибки сохранения данных.</exception>
     Task<Result<BookCommentEntityModel>> CreateAsync(BookCommentEntityModel entity);
 
     /// <summary>
@@ -28,7 +27,6 @@ public interface IBookCommentRepository
     /// </summary>
     /// <param name="entity">Модель для обновления.</param>
     /// <returns>Обновлённый комментарий.</returns>
-    /// <exception cref="DbSavingException">Возникает в случае ошибки сохранения данных.</exception>
     Task<Result<BookCommentEntityModel>> UpdateAsync(BookCommentEntityModel entity);
 
     /// <summary>
@@ -36,7 +34,6 @@ public interface IBookCommentRepository
     /// </summary>
     /// <param name="entity">Модель для удаления.</param>
     /// <returns>True в случае успеха.</returns>
-    /// <exception cref="DbSavingException">Возникает в случае ошибки сохранения данных.</exception>
     Task<Result<bool>> DeleteAsync(BookCommentEntityModel entity);
 
     /// <summary>
