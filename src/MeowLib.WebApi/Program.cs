@@ -77,7 +77,7 @@ services.AddSwaggerGen(options =>
 // Init services
 services.AddSingleton<IHashService, HashService>();
 services.AddSingleton<IJwtTokenService, JwtTokensService>();
-services.AddSingleton<IFrontEndLogService, FrontEndLogService>();
+services.AddSingleton<ITelegramLogService, TelegramLogService>();
 
 var uploadFileDirectory = builder.Configuration.GetValue<string>("UploadFileDirectory");
 if (string.IsNullOrEmpty(uploadFileDirectory))
