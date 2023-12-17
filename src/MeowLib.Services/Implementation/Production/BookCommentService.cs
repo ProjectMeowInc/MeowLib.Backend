@@ -15,20 +15,10 @@ namespace MeowLib.Services.Implementation.Production;
 /// <summary>
 /// Сервис комментариев к книге.
 /// </summary>
-public class BookCommentService : IBookCommentService
+public class BookCommentService(IUserService userService, IBookService bookService, ApplicationDbContext dbContext)
+    : IBookCommentService
 {
     private static readonly Regex HtmlRegex = new("<[^>]*>", RegexOptions.Compiled);
-
-    private readonly ApplicationDbContext _dbContext;
-    private readonly IUserService _userService;
-    private readonly IBookService _bookService;
-    
-    public BookCommentService(IUserService userService, IBookService bookService, ApplicationDbContext dbContext)
-    {
-        _userService = userService;
-        _bookService = bookService;
-        _dbContext = dbContext;
-    }
 
 
     /// <summary>
@@ -43,13 +33,13 @@ public class BookCommentService : IBookCommentService
     /// <exception cref="InnerException">Возникает в случае внутренних ошибок.</exception>
     public async Task<Result<BookCommentDto>> CreateNewCommentAsync(int userId, int bookId, string commentText)
     {
-        var foundedBook = await _bookService.GetBookByIdAsync(bookId);
+        var foundedBook = await bookService.GetBookByIdAsync(bookId);
         if (foundedBook is null)
         {
             return Result<BookCommentDto>.Fail(new BookNotFoundException(bookId));
         }
 
-        var foundedUser = await _userService.GetUserByIdAsync(userId);
+        var foundedUser = await userService.GetUserByIdAsync(userId);
         if (foundedUser is null)
         {
             return Result<BookCommentDto>.Fail(new UserNotFoundException(userId));
@@ -63,8 +53,8 @@ public class BookCommentService : IBookCommentService
             Book = foundedBook
         };
 
-        var createCommentResult = await _dbContext.BookComments.AddAsync(newComment);
-        await _dbContext.SaveChangesAsync();
+        var createCommentResult = await dbContext.BookComments.AddAsync(newComment);
+        await dbContext.SaveChangesAsync();
         
         var createdComment = createCommentResult.Entity;
         return new BookCommentDto
@@ -89,13 +79,13 @@ public class BookCommentService : IBookCommentService
     /// <exception cref="BookNotFoundException">Возникает в случае, если книга не была найдена.</exception>
     public async Task<Result<IEnumerable<BookCommentDto>>> GetBookCommentsAsync(int bookId)
     {
-        var foundedBook = await _bookService.GetBookByIdAsync(bookId);
+        var foundedBook = await bookService.GetBookByIdAsync(bookId);
         if (foundedBook is null)
         {
             return Result<IEnumerable<BookCommentDto>>.Fail(new BookNotFoundException(bookId));
         }
 
-        var foundedComments = await _dbContext
+        var foundedComments = await dbContext
             .BookComments
             .Where(comment => comment.Book == foundedBook)
             .OrderByDescending(comment => comment.PostedAt)

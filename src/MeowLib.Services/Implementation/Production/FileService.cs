@@ -19,11 +19,7 @@ public class FileService : IFileService
     };
 
     private readonly string _uploadDirectoryPath;
-
-    /// <summary>
-    /// Конструктор.
-    /// </summary>
-    /// <param name="uploadDirectoryPath">Путь до директории загрузки файлов.</param>
+    
     public FileService(string uploadDirectoryPath)
     {
         _uploadDirectoryPath = uploadDirectoryPath;

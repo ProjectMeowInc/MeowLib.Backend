@@ -12,15 +12,8 @@ namespace MeowLib.Services.Implementation.Production;
 /// <summary>
 /// Сервси для работы с тегами.
 /// </summary>
-public class TagService : ITagService
+public class TagService(ApplicationDbContext dbContext) : ITagService
 {
-    private readonly ApplicationDbContext _dbContext;
-
-    public TagService(ApplicationDbContext dbContext)
-    {
-        _dbContext = dbContext;
-    }
-
     public async Task<Result<TagEntityModel>> CreateTagAsync(string name, string? description)
     {
         var validationErrors = new List<ValidationErrorModel>();
@@ -70,25 +63,25 @@ public class TagService : ITagService
             return Result<TagEntityModel>.Fail(validationException);
         }
 
-        var entry = await _dbContext.Tags.AddAsync(new TagEntityModel
+        var entry = await dbContext.Tags.AddAsync(new TagEntityModel
         {
             Name = name,
             Description = description ?? "",
             Books = []
         });
 
-        await _dbContext.SaveChangesAsync();
+        await dbContext.SaveChangesAsync();
         return Result<TagEntityModel>.Ok(entry.Entity);
     }
 
     public Task<TagEntityModel?> GetTagByIdAsync(int id)
     {
-        return _dbContext.Tags.FirstOrDefaultAsync(t => t.Id == id);
+        return dbContext.Tags.FirstOrDefaultAsync(t => t.Id == id);
     }
 
     public async Task<IEnumerable<TagDto>> GetAllTagsAsync()
     {
-        var tags = await _dbContext.Tags
+        var tags = await dbContext.Tags
             .Select(t => new TagDto
             {
                 Id = t.Id,
@@ -107,8 +100,8 @@ public class TagService : ITagService
             return false;
         }
 
-        _dbContext.Tags.Remove(foundedTag);
-        await _dbContext.SaveChangesAsync();
+        dbContext.Tags.Remove(foundedTag);
+        await dbContext.SaveChangesAsync();
 
         return true;
     }
@@ -175,8 +168,8 @@ public class TagService : ITagService
         foundedTag.Name = name ?? foundedTag.Name;
         foundedTag.Description = description ?? foundedTag.Description;
 
-        _dbContext.Tags.Update(foundedTag);
-        await _dbContext.SaveChangesAsync();
+        dbContext.Tags.Update(foundedTag);
+        await dbContext.SaveChangesAsync();
 
         return Result<TagEntityModel?>.Ok(foundedTag);
     }

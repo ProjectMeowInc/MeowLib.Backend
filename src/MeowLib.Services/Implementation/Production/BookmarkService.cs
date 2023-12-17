@@ -12,19 +12,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MeowLib.Services.Implementation.Production;
 
-public class BookmarkService : IBookmarkService
+public class BookmarkService(ApplicationDbContext dbContext, IChapterService chapterService, IUserService userService)
+    : IBookmarkService
 {
-    private readonly IChapterService _chapterService;
-    private readonly ApplicationDbContext _dbContext;
-    private readonly IUserService _userService;
-
-    public BookmarkService(ApplicationDbContext dbContext, IChapterService chapterService, IUserService userService)
-    {
-        _dbContext = dbContext;
-        _chapterService = chapterService;
-        _userService = userService;
-    }
-
     /// <summary>
     /// Метод создаёт новую (если её нет) или обновляет старую закладку книги пользователя.
     /// </summary>
@@ -36,13 +26,13 @@ public class BookmarkService : IBookmarkService
     /// <exception cref="InnerException">Возникает в случае внутренних проблем.</exception>
     public async Task<Result<BookmarkDto>> CreateBookmarkAsync(int userId, int chapterId)
     {
-        var foundedChapter = await _chapterService.GetChapterByIdAsync(chapterId);
+        var foundedChapter = await chapterService.GetChapterByIdAsync(chapterId);
         if (foundedChapter is null)
         {
             return Result<BookmarkDto>.Fail(new ChapterNotFoundException(chapterId));
         }
 
-        var foundedUser = await _userService.GetUserByIdAsync(userId);
+        var foundedUser = await userService.GetUserByIdAsync(userId);
         if (foundedUser is null)
         {
             return Result<BookmarkDto>.Fail(new UserNotFoundException(userId));
@@ -82,7 +72,7 @@ public class BookmarkService : IBookmarkService
 
     public Task<BookmarkDto?> GetBookmarkByUserAndBook(int userId, int bookId)
     {
-        return _dbContext.Bookmarks
+        return dbContext.Bookmarks
             .Where(bookmark => bookmark.User.Id == userId && bookmark.Chapter.Translation.Book.Id == bookId)
             .Select(bookmark => new BookmarkDto
             {
@@ -95,7 +85,7 @@ public class BookmarkService : IBookmarkService
     private Task<BookmarkEntityModel?> GetBookmarkByUserAndChapter(UserEntityModel user,
         ChapterEntityModel chapter)
     {
-        return _dbContext.Bookmarks
+        return dbContext.Bookmarks
             .FirstOrDefaultAsync(b => b.User.Id == user.Id
                                       && b.Chapter.Id == chapter.Id);
     }
@@ -103,12 +93,12 @@ public class BookmarkService : IBookmarkService
     private async Task<Result<BookmarkEntityModel>> CreateNewBookmarkAsync(UserEntityModel user,
         ChapterEntityModel chapter)
     {
-        var entry = await _dbContext.Bookmarks.AddAsync(new BookmarkEntityModel
+        var entry = await dbContext.Bookmarks.AddAsync(new BookmarkEntityModel
         {
             User = user,
             Chapter = chapter
         });
-        await _dbContext.SaveChangesAsync();
+        await dbContext.SaveChangesAsync();
 
         return entry.Entity;
     }
@@ -117,8 +107,8 @@ public class BookmarkService : IBookmarkService
         ChapterEntityModel newChapter)
     {
         bookmark.Chapter = newChapter;
-        var entry = _dbContext.Bookmarks.Update(bookmark);
-        await _dbContext.SaveChangesAsync();
+        var entry = dbContext.Bookmarks.Update(bookmark);
+        await dbContext.SaveChangesAsync();
 
         return entry.Entity;
     }

@@ -12,15 +12,8 @@ namespace MeowLib.Services.Implementation.Production;
 /// <summary>
 /// Сервис для работы с авторами.
 /// </summary>
-public class AuthorService : IAuthorService
+public class AuthorService(ApplicationDbContext dbContext) : IAuthorService
 {
-    private readonly ApplicationDbContext _dbContext;
-
-    public AuthorService(ApplicationDbContext dbContext)
-    {
-        _dbContext = dbContext;
-    }
-
     /// <summary>
     /// Метод создаёт нового автора.
     /// </summary>
@@ -45,12 +38,12 @@ public class AuthorService : IAuthorService
             return Result<AuthorEntityModel>.Fail(new ValidationException(validationErrors));
         }
 
-        var entry = await _dbContext.Authors.AddAsync(new AuthorEntityModel
+        var entry = await dbContext.Authors.AddAsync(new AuthorEntityModel
         {
             Name = name
         });
 
-        await _dbContext.SaveChangesAsync();
+        await dbContext.SaveChangesAsync();
         return entry.Entity;
     }
 
@@ -60,7 +53,7 @@ public class AuthorService : IAuthorService
     /// <returns>DTO список авторов.</returns>
     public async Task<IEnumerable<AuthorDto>> GetAllAuthorsAsync()
     {
-        var authors = await _dbContext.Authors.Select(a => new AuthorDto
+        var authors = await dbContext.Authors.Select(a => new AuthorDto
         {
             Id = a.Id,
             Name = a.Name
@@ -100,8 +93,8 @@ public class AuthorService : IAuthorService
         }
 
         foundedAuthor.Name = data.Name;
-        _dbContext.Authors.Update(foundedAuthor);
-        await _dbContext.SaveChangesAsync();
+        dbContext.Authors.Update(foundedAuthor);
+        await dbContext.SaveChangesAsync();
 
         return foundedAuthor;
     }
@@ -119,8 +112,8 @@ public class AuthorService : IAuthorService
             return false;
         }
 
-        _dbContext.Authors.Remove(foundedAuthor);
-        await _dbContext.SaveChangesAsync();
+        dbContext.Authors.Remove(foundedAuthor);
+        await dbContext.SaveChangesAsync();
 
         return true;
     }
@@ -132,7 +125,7 @@ public class AuthorService : IAuthorService
     /// <returns>DTO-модель автора.</returns>
     public Task<AuthorEntityModel?> GetAuthorByIdAsync(int authorId)
     {
-        return _dbContext.Authors.FirstOrDefaultAsync(a => a.Id == authorId);
+        return dbContext.Authors.FirstOrDefaultAsync(a => a.Id == authorId);
     }
 
     /// <summary>
@@ -143,7 +136,7 @@ public class AuthorService : IAuthorService
     /// <exception cref="SearchNotFoundException">Возникает если не был найден автор по заданным параметрам поиска.</exception>
     public async Task<Result<IEnumerable<AuthorDto>>> GetAuthorWithParams(string? name)
     {
-        var filteredAuthors = _dbContext.Authors.AsNoTracking();
+        var filteredAuthors = dbContext.Authors.AsNoTracking();
 
         if (name is not null)
         {

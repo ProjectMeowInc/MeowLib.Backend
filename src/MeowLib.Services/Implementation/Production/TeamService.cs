@@ -11,30 +11,22 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MeowLib.Services.Implementation.Production;
 
-public class TeamService : ITeamService
+public class TeamService(
+    ApplicationDbContext dbContext,
+    INotificationService notificationService,
+    IUserService userService)
+    : ITeamService
 {
-    private readonly ApplicationDbContext _dbContext;
-    private readonly INotificationService _notificationService;
-    private readonly IUserService _userService;
-
-    public TeamService(ApplicationDbContext dbContext, INotificationService notificationService,
-        IUserService userService)
-    {
-        _dbContext = dbContext;
-        _notificationService = notificationService;
-        _userService = userService;
-    }
-
     public async Task<Result<TeamEntityModel>> CreateNewTeamAsync(int createdById, string name, string description)
     {
-        var foundedOwner = await _userService.GetUserByIdAsync(createdById);
+        var foundedOwner = await userService.GetUserByIdAsync(createdById);
         if (foundedOwner is null)
         {
             return Result<TeamEntityModel>.Fail(new TeamOwnerNotFoundException(createdById));
         }
 
         // create team
-        var createdEntry = await _dbContext.Teams.AddAsync(new TeamEntityModel
+        var createdEntry = await dbContext.Teams.AddAsync(new TeamEntityModel
         {
             Name = name,
             Description = description,
@@ -42,7 +34,7 @@ public class TeamService : ITeamService
             Owner = foundedOwner
         });
 
-        await _dbContext.SaveChangesAsync();
+        await dbContext.SaveChangesAsync();
 
         // add owner to team
         var createdTeam = createdEntry.Entity;
@@ -53,15 +45,15 @@ public class TeamService : ITeamService
             Role = UserTeamMemberRoleEnum.Admin
         });
 
-        _dbContext.Update(createdTeam);
-        await _dbContext.SaveChangesAsync();
+        dbContext.Update(createdTeam);
+        await dbContext.SaveChangesAsync();
 
         return Result<TeamEntityModel>.Ok(createdEntry.Entity);
     }
 
     public async Task<TeamEntityModel?> GetTeamByIdAsync(int teamId)
     {
-        return await _dbContext.Teams
+        return await dbContext.Teams
             .Include(t => t.Members)
             .ThenInclude(t => t.User)
             .Include(t => t.Owner)
@@ -88,8 +80,8 @@ public class TeamService : ITeamService
         }
 
         foundedUser.Role = role;
-        _dbContext.Update(foundedUser);
-        await _dbContext.SaveChangesAsync();
+        dbContext.Update(foundedUser);
+        await dbContext.SaveChangesAsync();
         return Result.Ok();
     }
 
@@ -136,14 +128,14 @@ public class TeamService : ITeamService
         }
 
         var sendNotificationResult =
-            await _notificationService.SendInviteToTeamNotificationAsync(foundedTeam.Id, foundedUser.Id);
+            await notificationService.SendInviteToTeamNotificationAsync(foundedTeam.Id, foundedUser.Id);
         if (sendNotificationResult.IsFailure)
         {
             return Result.Fail(new InnerException(sendNotificationResult.GetError().Message));
         }
 
-        _dbContext.Remove(foundedUser);
-        await _dbContext.SaveChangesAsync();
+        dbContext.Remove(foundedUser);
+        await dbContext.SaveChangesAsync();
 
         return Result.Ok();
     }
@@ -156,7 +148,7 @@ public class TeamService : ITeamService
             return Result.Fail(new TeamNotFoundException(teamId));
         }
 
-        var foundedUser = await _userService.GetUserByIdAsync(userId);
+        var foundedUser = await userService.GetUserByIdAsync(userId);
         if (foundedUser is null)
         {
             return Result.Fail(new UserNotFoundException(userId));
@@ -167,7 +159,7 @@ public class TeamService : ITeamService
             return Result.Fail(new UserAlreadyInTeamException(userId, teamId));
         }
 
-        var sendNotificationResult = await _notificationService.SendInviteToTeamNotificationAsync(foundedTeam.Id,
+        var sendNotificationResult = await notificationService.SendInviteToTeamNotificationAsync(foundedTeam.Id,
             foundedUser.Id);
         if (sendNotificationResult.IsFailure)
         {
@@ -181,6 +173,6 @@ public class TeamService : ITeamService
 
     public Task<bool> CheckUserInTeamAsync(int userId, int teamId)
     {
-        return _dbContext.TeamMembers.AnyAsync(tm => tm.Team.Id == teamId && tm.User.Id == userId);
+        return dbContext.TeamMembers.AnyAsync(tm => tm.Team.Id == teamId && tm.User.Id == userId);
     }
 }

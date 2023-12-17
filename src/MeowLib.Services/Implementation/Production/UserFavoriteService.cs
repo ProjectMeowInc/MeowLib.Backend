@@ -14,20 +14,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MeowLib.Services.Implementation.Production;
 
-public class UserFavoriteService : IUserFavoriteService
+public class UserFavoriteService(ApplicationDbContext dbContext, IUserService userService, IBookService bookService)
+    : IUserFavoriteService
 {
-    private readonly IBookService _bookService;
-    private readonly ApplicationDbContext _dbContext;
-    private readonly IUserService _userService;
-
-    public UserFavoriteService(ApplicationDbContext dbContext, IUserService userService, IBookService bookService)
-    {
-        _dbContext = dbContext;
-        _userService = userService;
-        _bookService = bookService;
-    }
-
-
     /// <summary>
     /// Метод обновляет книгу в списке пользователя.
     /// </summary>
@@ -38,13 +27,13 @@ public class UserFavoriteService : IUserFavoriteService
     public async Task<Result<UserFavoriteEntityModel>> AddOrUpdateUserListAsync(int bookId, int userId,
         UserFavoritesStatusEnum status)
     {
-        var foundedBook = await _bookService.GetBookByIdAsync(bookId);
+        var foundedBook = await bookService.GetBookByIdAsync(bookId);
         if (foundedBook is null)
         {
             return Result<UserFavoriteEntityModel>.Fail(new BookNotFoundException(bookId));
         }
 
-        var foundedUser = await _userService.GetUserByIdAsync(userId);
+        var foundedUser = await userService.GetUserByIdAsync(userId);
         if (foundedUser is null)
         {
             return Result<UserFavoriteEntityModel>.Fail(new UserNotFoundException(userId));
@@ -74,7 +63,7 @@ public class UserFavoriteService : IUserFavoriteService
     /// <returns>Список избранныъ книг пользователя.</returns>
     public Task<List<UserFavoriteDto>> GetUserFavoritesAsync(int userId)
     {
-        return _dbContext.UsersFavorite
+        return dbContext.UsersFavorite
             .Where(uf => uf.User.Id == userId)
             .Select(uf => new UserFavoriteDto
             {
@@ -100,14 +89,14 @@ public class UserFavoriteService : IUserFavoriteService
     /// <exception cref="UserNotFoundException">Возникает в случае, если пользователь не был найден.</exception>
     public async Task<Result<UserFavoriteEntityModel?>> GetUserFavoriteByBookAsync(int userId, int bookId)
     {
-        var foundedBook = await _bookService.GetBookByIdAsync(bookId);
+        var foundedBook = await bookService.GetBookByIdAsync(bookId);
         if (foundedBook is null)
         {
             var bookNotFoundException = new BookNotFoundException(bookId);
             return Result<UserFavoriteEntityModel?>.Fail(bookNotFoundException);
         }
 
-        var foundedUser = await _userService.GetUserByIdAsync(userId);
+        var foundedUser = await userService.GetUserByIdAsync(userId);
         if (foundedUser is null)
         {
             var userNotFoundException = new UserNotFoundException(userId);
@@ -115,7 +104,7 @@ public class UserFavoriteService : IUserFavoriteService
         }
 
         var foundedUserFavorite =
-            await _dbContext.UsersFavorite.FirstOrDefaultAsync(uf => uf.User.Id == userId && uf.Book.Id == bookId);
+            await dbContext.UsersFavorite.FirstOrDefaultAsync(uf => uf.User.Id == userId && uf.Book.Id == bookId);
 
         return foundedUserFavorite;
     }
@@ -123,13 +112,13 @@ public class UserFavoriteService : IUserFavoriteService
     private async Task<Result<UserFavoriteEntityModel>> AddNewAsync(BookEntityModel book, UserEntityModel user,
         UserFavoritesStatusEnum status)
     {
-        var entry = await _dbContext.UsersFavorite.AddAsync(new UserFavoriteEntityModel
+        var entry = await dbContext.UsersFavorite.AddAsync(new UserFavoriteEntityModel
         {
             Book = book,
             User = user,
             Status = status
         });
-        await _dbContext.SaveChangesAsync();
+        await dbContext.SaveChangesAsync();
         return entry.Entity;
     }
 
@@ -137,8 +126,8 @@ public class UserFavoriteService : IUserFavoriteService
         UserFavoritesStatusEnum status)
     {
         userFavoriteEntity.Status = status;
-        _dbContext.UsersFavorite.Update(userFavoriteEntity);
-        await _dbContext.SaveChangesAsync();
+        dbContext.UsersFavorite.Update(userFavoriteEntity);
+        await dbContext.SaveChangesAsync();
         return userFavoriteEntity;
     }
 }

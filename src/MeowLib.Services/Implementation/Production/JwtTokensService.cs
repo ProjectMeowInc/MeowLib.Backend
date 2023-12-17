@@ -22,9 +22,6 @@ public class JwtTokensService : IJwtTokenService
     private readonly ILogger<JwtTokensService> _logger;
     private readonly SymmetricSecurityKey _refreshTokenSecurityKey;
 
-    /// <summary>
-    /// Конструктор.
-    /// </summary>
     public JwtTokensService(ILogger<JwtTokensService> logger)
     {
         _logger = logger;

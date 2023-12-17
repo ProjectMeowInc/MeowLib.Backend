@@ -18,22 +18,13 @@ namespace MeowLib.Services.Implementation.Production;
 /// <summary>
 /// Сервис для работы с книгами.
 /// </summary>
-public class BookService : IBookService
+public class BookService(
+    IFileService fileService,
+    ILogger<BookService> logger,
+    ApplicationDbContext dbContext,
+    IAuthorService authorService)
+    : IBookService
 {
-    private readonly IAuthorService _authorService;
-    private readonly ApplicationDbContext _dbContext;
-    private readonly IFileService _fileService;
-    private readonly ILogger<BookService> _logger;
-
-    public BookService(IFileService fileService, ILogger<BookService> logger, ApplicationDbContext dbContext,
-        IAuthorService authorService)
-    {
-        _fileService = fileService;
-        _logger = logger;
-        _dbContext = dbContext;
-        _authorService = authorService;
-    }
-
     public async Task<Result<BookEntityModel>> CreateBookAsync(BookEntityModel createBookEntityModel)
     {
         var validationErrors = new List<ValidationErrorModel>();
@@ -56,7 +47,7 @@ public class BookService : IBookService
         }
 
         // todo: fix author
-        var entry = await _dbContext.Books.AddAsync(new BookEntityModel
+        var entry = await dbContext.Books.AddAsync(new BookEntityModel
         {
             Name = inputName,
             Description = inputDescription,
@@ -101,8 +92,8 @@ public class BookService : IBookService
         foundedBook.Name = inputName ?? foundedBook.Name;
         foundedBook.Description = inputDescription ?? foundedBook.Description;
 
-        _dbContext.Books.Update(foundedBook);
-        await _dbContext.SaveChangesAsync();
+        dbContext.Books.Update(foundedBook);
+        await dbContext.SaveChangesAsync();
 
         return Result<BookEntityModel?>.Ok(foundedBook);
     }
@@ -118,21 +109,21 @@ public class BookService : IBookService
         var foundedBook = await GetBookByIdAsync(bookId);
         if (foundedBook is null)
         {
-            _logger.LogInformation("[{@DateTime}] Книга не найдена", DateTime.UtcNow);
+            logger.LogInformation("[{@DateTime}] Книга не найдена", DateTime.UtcNow);
             return Result<BookEntityModel?>.Ok(null);
         }
 
-        var foundedAuthor = await _authorService.GetAuthorByIdAsync(authorId);
+        var foundedAuthor = await authorService.GetAuthorByIdAsync(authorId);
         if (foundedAuthor is null)
         {
-            _logger.LogInformation("[{@DateTime}] Автор не найден", DateTime.UtcNow);
+            logger.LogInformation("[{@DateTime}] Автор не найден", DateTime.UtcNow);
             return Result<BookEntityModel?>.Fail(new AuthorNotFoundException(authorId));
         }
 
         foundedBook.Author = foundedAuthor;
 
-        _dbContext.Books.Update(foundedBook);
-        await _dbContext.SaveChangesAsync();
+        dbContext.Books.Update(foundedBook);
+        await dbContext.SaveChangesAsync();
 
         return foundedBook;
     }
@@ -151,8 +142,8 @@ public class BookService : IBookService
             return false;
         }
 
-        _dbContext.Books.Remove(foundedBook);
-        await _dbContext.SaveChangesAsync();
+        dbContext.Books.Remove(foundedBook);
+        await dbContext.SaveChangesAsync();
 
         return true;
     }
@@ -164,7 +155,7 @@ public class BookService : IBookService
     /// <returns>Модель книги, или null если она не была найдена.</returns>
     public Task<BookEntityModel?> GetBookByIdAsync(int bookId)
     {
-        return _dbContext.Books.FirstOrDefaultAsync(b => b.Id == bookId);
+        return dbContext.Books.FirstOrDefaultAsync(b => b.Id == bookId);
     }
 
     /// <summary>
@@ -178,18 +169,18 @@ public class BookService : IBookService
         var foundedBook = await GetBookByIdAsync(bookId);
         if (foundedBook is null)
         {
-            _logger.LogInformation("[{@DateTime}] Книга не найдена", DateTime.UtcNow);
+            logger.LogInformation("[{@DateTime}] Книга не найдена", DateTime.UtcNow);
             return Result<BookEntityModel?>.Ok(null);
         }
 
-        var foundedTags = await _dbContext.Tags
+        var foundedTags = await dbContext.Tags
             .Where(tag => tags.Any(t => t == tag.Id))
             .ToListAsync();
 
         foundedBook.Tags = foundedTags;
 
-        _dbContext.Books.Update(foundedBook);
-        await _dbContext.SaveChangesAsync();
+        dbContext.Books.Update(foundedBook);
+        await dbContext.SaveChangesAsync();
 
         return foundedBook;
     }
@@ -207,14 +198,14 @@ public class BookService : IBookService
         var foundedBook = await GetBookByIdAsync(bookId);
         if (foundedBook is null)
         {
-            _logger.LogInformation("[{@DateTime}] Книга не найдена", DateTime.UtcNow);
+            logger.LogInformation("[{@DateTime}] Книга не найдена", DateTime.UtcNow);
             return Result<BookEntityModel?>.Ok(null);
         }
 
-        var uploadBookImageResult = await _fileService.UploadBookImageAsync(file);
+        var uploadBookImageResult = await fileService.UploadBookImageAsync(file);
         if (uploadBookImageResult.IsFailure)
         {
-            _logger.LogError("[{@DateTime}] Ошибка загрузки файла", DateTime.UtcNow);
+            logger.LogError("[{@DateTime}] Ошибка загрузки файла", DateTime.UtcNow);
             var uploadingFileException = new UploadingFileException();
             return Result<BookEntityModel?>.Fail(uploadingFileException);
         }
@@ -222,15 +213,15 @@ public class BookService : IBookService
         var uploadedFile = uploadBookImageResult.GetResult();
         foundedBook.ImageUrl = uploadedFile;
 
-        _dbContext.Books.Update(foundedBook);
-        await _dbContext.SaveChangesAsync();
+        dbContext.Books.Update(foundedBook);
+        await dbContext.SaveChangesAsync();
 
         return foundedBook;
     }
 
     public Task<List<BookDto>> GetAllBooksAsync()
     {
-        return _dbContext.Books.Select(b => new BookDto
+        return dbContext.Books.Select(b => new BookDto
             {
                 Id = b.Id,
                 Name = b.Name,

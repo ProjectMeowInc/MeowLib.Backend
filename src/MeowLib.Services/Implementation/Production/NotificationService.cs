@@ -14,27 +14,19 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MeowLib.Services.Implementation.Production;
 
-public class NotificationService : INotificationService
+public class NotificationService(ApplicationDbContext dbContext, IJwtTokenService jwtTokenService)
+    : INotificationService
 {
-    private readonly ApplicationDbContext _dbContext;
-    private readonly IJwtTokenService _jwtTokenService;
-
-    public NotificationService(ApplicationDbContext dbContext, IJwtTokenService jwtTokenService)
-    {
-        _dbContext = dbContext;
-        _jwtTokenService = jwtTokenService;
-    }
-
     public async Task<Result> SendNotificationToUserAsync(int userId, NotificationTypeEnum notificationType,
         string payload)
     {
-        var foundedUser = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == userId);
+        var foundedUser = await dbContext.Users.FirstOrDefaultAsync(u => u.Id == userId);
         if (foundedUser is null)
         {
             return Result.Fail(new UserNotFoundException(userId));
         }
 
-        await _dbContext.Notifications.AddAsync(new NotificationEntityModel
+        await dbContext.Notifications.AddAsync(new NotificationEntityModel
         {
             Type = notificationType,
             Payload = payload,
@@ -42,14 +34,14 @@ public class NotificationService : INotificationService
             IsWatched = false,
             User = foundedUser
         });
-        await _dbContext.SaveChangesAsync();
+        await dbContext.SaveChangesAsync();
 
         return Result.Ok();
     }
 
     public async Task<Result> SendInviteToTeamNotificationAsync(int teamId, int userId)
     {
-        var inviteToken = _jwtTokenService.GenerateInviteToTeamStringToken(new InviteToTeamTokenModel
+        var inviteToken = jwtTokenService.GenerateInviteToTeamStringToken(new InviteToTeamTokenModel
         {
             UserId = userId,
             TeamId = teamId,
@@ -69,7 +61,7 @@ public class NotificationService : INotificationService
 
     public async Task<IEnumerable<NotificationDto>> GetUserNotificationsAsync(int userId)
     {
-        return await _dbContext.Notifications
+        return await dbContext.Notifications
             .Where(n => !n.IsWatched)
             .Where(n => n.User.Id == userId)
             .AsNoTracking()
@@ -85,7 +77,7 @@ public class NotificationService : INotificationService
 
     public async Task<Result> SetNotificationWatchedAsync(int userId, int notificationId)
     {
-        var foundedNotification = await _dbContext.Notifications
+        var foundedNotification = await dbContext.Notifications
             .Where(n => !n.IsWatched)
             .Where(n => n.User.Id == userId)
             .FirstOrDefaultAsync(n => n.Id == notificationId);
@@ -97,8 +89,8 @@ public class NotificationService : INotificationService
 
         foundedNotification.IsWatched = true;
 
-        _dbContext.Update(foundedNotification);
-        await _dbContext.SaveChangesAsync();
+        dbContext.Update(foundedNotification);
+        await dbContext.SaveChangesAsync();
 
         return Result.Ok();
     }
@@ -112,13 +104,13 @@ public class NotificationService : INotificationService
     /// <exception cref="BookNotFoundException">Возникает в случае, если книга не была найдена.</exception>
     public async Task<Result> SendNotificationToBookSubscribersAsync(int bookId, string chapterName)
     {
-        var foundedBook = await _dbContext.Books.FirstOrDefaultAsync(b => b.Id == bookId);
+        var foundedBook = await dbContext.Books.FirstOrDefaultAsync(b => b.Id == bookId);
         if (foundedBook is null)
         {
             return Result.Fail(new BookNotFoundException(bookId));
         }
 
-        var users = _dbContext.UsersFavorite
+        var users = dbContext.UsersFavorite
             .Where(uf => uf.Book.Id == bookId)
             .Select(uf => uf.User);
 
@@ -142,8 +134,8 @@ public class NotificationService : INotificationService
             });
         }
 
-        await _dbContext.Notifications.AddRangeAsync(notifications);
-        await _dbContext.SaveChangesAsync();
+        await dbContext.Notifications.AddRangeAsync(notifications);
+        await dbContext.SaveChangesAsync();
 
         return Result.Ok();
     }
