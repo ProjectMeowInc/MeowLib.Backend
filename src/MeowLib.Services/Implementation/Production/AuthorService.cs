@@ -81,7 +81,7 @@ public class AuthorService : IAuthorService
     /// <returns>Обновлённую модель данных.</returns>
     /// <exception cref="ValidationException">Возникает в случае, если введёные данные некорректны.</exception>
     /// <exception cref="ApiException">Возникает если автор не был найден.</exception>
-    public async Task<Result<AuthorDto>> UpdateAuthorAsync(int id, UpdateAuthorEntityModel updateAuthorEntityModel)
+    public async Task<Result<AuthorDto?>> UpdateAuthorAsync(int id, UpdateAuthorEntityModel updateAuthorEntityModel)
     {
         var validationErrors = new List<ValidationErrorModel>();
 
@@ -96,7 +96,7 @@ public class AuthorService : IAuthorService
 
         if (validationErrors.Any())
         {
-            return Result<AuthorDto>.Fail(new ValidationException(validationErrors));
+            return Result<AuthorDto?>.Fail(new ValidationException(validationErrors));
         }
 
         return await _authorRepository.UpdateByIdAsync(id, updateAuthorEntityModel);

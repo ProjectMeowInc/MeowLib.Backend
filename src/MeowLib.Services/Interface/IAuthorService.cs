@@ -33,7 +33,7 @@ public interface IAuthorService
     /// <returns>Обновлённую модель данных.</returns>
     /// <exception cref="ValidationException">Возникает в случае, если введёные данные некорректны.</exception>
     /// <exception cref="ApiException">Возникает если автор не был найден.</exception>
-    Task<Result<AuthorDto>> UpdateAuthorAsync(int id, UpdateAuthorEntityModel updateAuthorEntityModel);
+    Task<Result<AuthorDto?>> UpdateAuthorAsync(int id, UpdateAuthorEntityModel updateAuthorEntityModel);
 
     /// <summary>
     /// Метод удаляет автора.

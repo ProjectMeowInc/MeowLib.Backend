@@ -39,6 +39,5 @@ public interface IAuthorRepository
     /// <param name="id">Id автора.</param>
     /// <param name="updateAuthorData">Данные для обновления.</param>
     /// <returns>Обновлённую информацию об авторе.</returns>
-    /// <exception cref="EntityNotFoundException">Возникает если автор под указаным Id не найден.</exception>
-    Task<AuthorDto> UpdateByIdAsync(int id, UpdateAuthorEntityModel updateAuthorData);
+    Task<AuthorDto?> UpdateByIdAsync(int id, UpdateAuthorEntityModel updateAuthorData);
 }

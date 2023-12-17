@@ -72,15 +72,15 @@ public class AuthorController : BaseController
                 return ValidationError(validationException.ValidationErrors);
             }
 
-            if (exception is EntityNotFoundException)
-            {
-                return NotFoundError();
-            }
-
             return ServerError();
         }
 
         var updatedAuthor = updateResult.GetResult();
+        if (updatedAuthor is null)
+        {
+            return NotFoundError();
+        }
+        
         return Json(updatedAuthor);
     }
 
@@ -113,16 +113,15 @@ public class AuthorController : BaseController
         var result = await _authorService.GetAuthorByIdAsync(authorId);
         if (result.IsFailure)
         {
-            var exception = result.GetError();
-            if (exception is EntityNotFoundException)
-            {
-                return NotFoundError();
-            }
-
             return ServerError();
         }
 
         var author = result.GetResult();
+        if (author is null)
+        {
+            return NotFoundError();
+        }
+        
         return Json(author);
     }
 

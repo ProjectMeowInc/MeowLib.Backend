@@ -99,13 +99,12 @@ public class AuthorRepository : IAuthorRepository
     /// <param name="id">Id автора.</param>
     /// <param name="updateAuthorData">Данные для обновления.</param>
     /// <returns>Обновлённую информацию об авторе.</returns>
-    public async Task<AuthorDto> UpdateByIdAsync(int id, UpdateAuthorEntityModel updateAuthorData)
+    public async Task<AuthorDto?> UpdateByIdAsync(int id, UpdateAuthorEntityModel updateAuthorData)
     {
         var foundedAuthor = await GetAuthorById(id);
         if (foundedAuthor is null)
         {
-            // todo: remove this
-            throw new ArgumentOutOfRangeException(nameof(id), "Автор с заданным Id не сушествует");
+            return null;
         }
 
         if (updateAuthorData.Name is not null)
