@@ -48,7 +48,7 @@ public interface IAuthorService
     /// </summary>
     /// <param name="authorId">Id автора.</param>
     /// <returns>DTO-модель автора.</returns>
-    Task<Result<AuthorDto>> GetAuthorByIdAsync(int authorId);
+    Task<Result<AuthorDto?>> GetAuthorByIdAsync(int authorId);
 
     /// <summary>
     /// Метод получает список авторов подходящих под поисковые параметры.

@@ -1,7 +1,5 @@
 ﻿using MeowLib.DAL.Repository.Interfaces;
 using MeowLib.Domain.DbModels.BookCommentEntity;
-using MeowLib.Domain.Enums;
-using MeowLib.Domain.Exceptions.DAL;
 using MeowLib.Domain.Result;
 using Microsoft.EntityFrameworkCore;
 
@@ -28,21 +26,10 @@ public class BookCommentRepository : IBookCommentRepository
     /// </summary>
     /// <param name="entity">Модель комментария.</param>
     /// <returns>Комментарий, в случае успеха.</returns>
-    /// <exception cref="DbSavingException">Возникает в случае ошибки сохранения данных.</exception>
     public async Task<Result<BookCommentEntityModel>> CreateAsync(BookCommentEntityModel entity)
     {
         var entryEntity = await _applicationDbContext.BookComments.AddAsync(entity);
-
-        try
-        {
-            await _applicationDbContext.SaveChangesAsync();
-        }
-        catch (DbUpdateException)
-        {
-            var dbSavingException = new DbSavingException(nameof(BookCommentEntityModel), DbSavingTypesEnum.Create);
-            return Result<BookCommentEntityModel>.Fail(dbSavingException);
-        }
-
+        await _applicationDbContext.SaveChangesAsync();
         return entryEntity.Entity;
     }
 
@@ -61,22 +48,12 @@ public class BookCommentRepository : IBookCommentRepository
     /// </summary>
     /// <param name="entity">Модель для обновления.</param>
     /// <returns>Обновлённый комментарий.</returns>
-    /// <exception cref="DbSavingException">Возникает в случае ошибки сохранения данных.</exception>
     public async Task<Result<BookCommentEntityModel>> UpdateAsync(BookCommentEntityModel entity)
     {
         var entryEntity = _applicationDbContext.BookComments.Entry(entity);
         entryEntity.State = EntityState.Modified;
 
-        try
-        {
-            await _applicationDbContext.SaveChangesAsync();
-        }
-        catch (DbUpdateException)
-        {
-            var dbSavingException = new DbSavingException(nameof(BookCommentEntityModel), DbSavingTypesEnum.Update);
-            return Result<BookCommentEntityModel>.Fail(dbSavingException);
-        }
-
+        await _applicationDbContext.SaveChangesAsync();
         return entryEntity.Entity;
     }
 
@@ -85,21 +62,10 @@ public class BookCommentRepository : IBookCommentRepository
     /// </summary>
     /// <param name="entity">Модель для удаления.</param>
     /// <returns>True в случае успеха.</returns>
-    /// <exception cref="DbSavingException">Возникает в случае ошибки сохранения данных.</exception>
     public async Task<Result<bool>> DeleteAsync(BookCommentEntityModel entity)
     {
         _applicationDbContext.BookComments.Remove(entity);
-
-        try
-        {
-            await _applicationDbContext.SaveChangesAsync();
-        }
-        catch (DbUpdateException)
-        {
-            var dbSavingException = new DbSavingException(nameof(BookCommentEntityModel), DbSavingTypesEnum.Delete);
-            return Result<bool>.Fail(dbSavingException);
-        }
-
+        await _applicationDbContext.SaveChangesAsync();
         return true;
     }
 

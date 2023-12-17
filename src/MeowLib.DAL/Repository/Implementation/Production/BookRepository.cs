@@ -2,8 +2,6 @@ using MeowLib.DAL.Repository.Interfaces;
 using MeowLib.Domain.DbModels.AuthorEntity;
 using MeowLib.Domain.DbModels.BookEntity;
 using MeowLib.Domain.DbModels.TagEntity;
-using MeowLib.Domain.Enums;
-using MeowLib.Domain.Exceptions.DAL;
 using MeowLib.Domain.Result;
 using Microsoft.EntityFrameworkCore;
 
@@ -30,20 +28,12 @@ public class BookRepository : IBookRepository
     /// </summary>
     /// <param name="entity">Модель для создания.</param>
     /// <returns>Созданную в базе данных сущность.</returns>
-    /// <exception cref="DbSavingException">Возникает в случае ошибки сохранения.</exception>
     public async Task<BookEntityModel> CreateAsync(BookEntityModel entity)
     {
         var result = await _applicationDbContext.Books.AddAsync(entity);
 
-        try
-        {
-            await _applicationDbContext.SaveChangesAsync();
-            return result.Entity;
-        }
-        catch (DbUpdateException)
-        {
-            throw new DbSavingException(nameof(BookEntityModel), DbSavingTypesEnum.Create);
-        }
+        await _applicationDbContext.SaveChangesAsync();
+        return result.Entity;
     }
 
     /// <summary>
@@ -75,7 +65,6 @@ public class BookRepository : IBookRepository
     /// </summary>
     /// <param name="id">Id книги.</param>
     /// <returns>True - если удаление прошло удачно, false - если книга не была найдена.</returns>
-    /// <exception cref="DbSavingException">Возникает в случае ошибки сохранения данных.</exception>
     public async Task<bool> DeleteByIdAsync(int id)
     {
         var foundedBook = await GetByIdAsync(id);
@@ -84,16 +73,10 @@ public class BookRepository : IBookRepository
             return false;
         }
 
-        try
-        {
-            _applicationDbContext.Books.Remove(foundedBook);
-            await _applicationDbContext.SaveChangesAsync();
-        }
-        catch (DbUpdateException)
-        {
-            throw new DbSavingException(nameof(BookEntityModel), DbSavingTypesEnum.Delete);
-        }
-
+        
+        _applicationDbContext.Books.Remove(foundedBook);
+        await _applicationDbContext.SaveChangesAsync();
+        
         return true;
     }
 
@@ -102,21 +85,12 @@ public class BookRepository : IBookRepository
     /// </summary>
     /// <param name="entity">Модель книги.</param>
     /// <returns>Обновлённую модель книги.</returns>
-    /// <exception cref="DbSavingException">Возникает в случае ошибки сохранения данных.</exception>
     public async Task<Result<BookEntityModel>> UpdateAsync(BookEntityModel entity)
     {
-        try
-        {
-            var entryEntity = _applicationDbContext.Entry(entity);
-            entryEntity.State = EntityState.Modified;
-            await _applicationDbContext.SaveChangesAsync();
-            return entryEntity.Entity;
-        }
-        catch (DbUpdateException)
-        {
-            var dbSavingException = new DbSavingException(nameof(BookEntityModel), DbSavingTypesEnum.Update);
-            return Result<BookEntityModel>.Fail(dbSavingException);
-        }
+        var entryEntity = _applicationDbContext.Entry(entity);
+        entryEntity.State = EntityState.Modified;
+        await _applicationDbContext.SaveChangesAsync();
+        return entryEntity.Entity;
     }
 
     /// <summary>
@@ -125,14 +99,12 @@ public class BookRepository : IBookRepository
     /// <param name="id">Id книги.</param>
     /// <param name="updateData">Данные для обновления.</param>
     /// <returns>Обновлённую модель книги.</returns>
-    /// <exception cref="EntityNotFoundException">Возникает в случае если книга не была найдена.</exception>
-    /// <exception cref="DbSavingException">Возникате в случае ошибки сохранения данных.</exception>
-    public async Task<BookEntityModel> UpdateInfoByIdAsync(int id, UpdateBookEntityModel updateData)
+    public async Task<BookEntityModel?> UpdateInfoByIdAsync(int id, UpdateBookEntityModel updateData)
     {
         var foundedBook = await GetByIdAsync(id);
         if (foundedBook is null)
         {
-            throw new EntityNotFoundException(nameof(BookEntityModel), $"Id = {id}");
+            return null;
         }
 
         if (updateData.Name is not null)
@@ -145,14 +117,7 @@ public class BookRepository : IBookRepository
             foundedBook.Description = updateData.Description;
         }
 
-        try
-        {
-            await _applicationDbContext.SaveChangesAsync();
-        }
-        catch (DbUpdateException)
-        {
-            throw new DbSavingException(nameof(BookEntityModel), DbSavingTypesEnum.Update);
-        }
+        await _applicationDbContext.SaveChangesAsync();
 
         return foundedBook;
     }
@@ -163,27 +128,18 @@ public class BookRepository : IBookRepository
     /// <param name="id">Id книги.</param>
     /// <param name="author">Новый автор.</param>
     /// <returns>Обновлённую модель книги.</returns>
-    /// <exception cref="EntityNotFoundException">Возникает в случае если книга не была найдена.</exception>
-    /// <exception cref="DbSavingException">Возникате в случае ошибки сохранения данных.</exception>
-    public async Task<BookEntityModel> UpdateAuthorByIdAsync(int id, AuthorEntityModel author)
+    public async Task<BookEntityModel?> UpdateAuthorByIdAsync(int id, AuthorEntityModel author)
     {
         var foundedBook = await GetByIdAsync(id);
         if (foundedBook is null)
         {
-            throw new EntityNotFoundException(nameof(BookEntityModel), $"Id = {id}");
+            return null;
         }
 
         foundedBook.Author = author;
         _applicationDbContext.Books.Update(foundedBook);
-        try
-        {
-            await _applicationDbContext.SaveChangesAsync();
-            return foundedBook;
-        }
-        catch (DbUpdateException)
-        {
-            throw new DbSavingException(nameof(BookEntityModel), DbSavingTypesEnum.Update);
-        }
+        await _applicationDbContext.SaveChangesAsync();
+        return foundedBook;
     }
 
     /// <summary>
@@ -192,26 +148,17 @@ public class BookRepository : IBookRepository
     /// <param name="id">Id книги.</param>
     /// <param name="tags">Новый список тегов.</param>
     /// <returns>Обновлённую модель книги.</returns>
-    /// <exception cref="EntityNotFoundException">Возникает в случае если книга не была найдена.</exception>
-    /// <exception cref="DbSavingException">Возникате в случае ошибки сохранения данных.</exception>
-    public async Task<BookEntityModel> UpdateTagsByIdAsync(int id, IEnumerable<TagEntityModel> tags)
+    public async Task<BookEntityModel?> UpdateTagsByIdAsync(int id, IEnumerable<TagEntityModel> tags)
     {
         var foundedBook = await GetByIdAsync(id);
         if (foundedBook is null)
         {
-            throw new EntityNotFoundException(nameof(BookEntityModel), $"Id = {id}");
+            return null;
         }
 
         foundedBook.Tags = tags;
         _applicationDbContext.Books.Update(foundedBook);
-        try
-        {
-            await _applicationDbContext.SaveChangesAsync();
-            return foundedBook;
-        }
-        catch (DbUpdateException)
-        {
-            throw new DbSavingException(nameof(BookEntityModel), DbSavingTypesEnum.Update);
-        }
+        await _applicationDbContext.SaveChangesAsync();
+        return foundedBook;
     }
 }

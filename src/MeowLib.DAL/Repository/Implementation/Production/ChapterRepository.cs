@@ -1,8 +1,7 @@
 ﻿using MeowLib.DAL.Repository.Interfaces;
 using MeowLib.Domain.DbModels.BookEntity;
 using MeowLib.Domain.DbModels.ChapterEntity;
-using MeowLib.Domain.Enums;
-using MeowLib.Domain.Exceptions.DAL;
+using MeowLib.Domain.Exceptions.Chapter;
 using MeowLib.Domain.Result;
 using Microsoft.EntityFrameworkCore;
 
@@ -29,21 +28,10 @@ public class ChapterRepository : IChapterRepository
     /// </summary>
     /// <param name="chapter">Модель главы для создания.</param>
     /// <returns>Модель созданной книги.</returns>
-    /// <exception cref="DbSavingException">Возникает в случае ошибки сохранения данных.</exception>
     public async Task<Result<ChapterEntityModel>> CreateAsync(ChapterEntityModel chapter)
     {
         var createdChapter = await _applicationDbContext.Chapters.AddAsync(chapter);
-
-        try
-        {
-            await _applicationDbContext.SaveChangesAsync();
-        }
-        catch (DbUpdateException)
-        {
-            var dbSavingException = new DbSavingException(nameof(ChapterEntityModel), DbSavingTypesEnum.Create);
-            return Result<ChapterEntityModel>.Fail(dbSavingException);
-        }
-
+        await _applicationDbContext.SaveChangesAsync();
         return createdChapter.Entity;
     }
 
@@ -57,20 +45,10 @@ public class ChapterRepository : IChapterRepository
     /// </summary>
     /// <param name="chapter">Глава для удаления.</param>
     /// <returns>Ошибку, если она есть.</returns>
-    /// <exception cref="DbSavingException">Возникает в случае ошибки сохранения данных.</exception>
     public async Task<Result> DeleteAsync(ChapterEntityModel chapter)
     {
-        try
-        {
-            _applicationDbContext.Chapters.Remove(chapter);
-            await _applicationDbContext.SaveChangesAsync();
-        }
-        catch (DbUpdateException)
-        {
-            var dbSavingException = new DbSavingException(nameof(ChapterEntityModel), DbSavingTypesEnum.Delete);
-            return Result.Fail(dbSavingException);
-        }
-
+        _applicationDbContext.Chapters.Remove(chapter);
+        await _applicationDbContext.SaveChangesAsync();
         return Result.Ok();
     }
 
@@ -79,14 +57,13 @@ public class ChapterRepository : IChapterRepository
     /// </summary>
     /// <param name="chapterId">Id главы.</param>
     /// <returns>Ошибку, если она есть. Так же возращает ошибки метода <see cref="DeleteAsync" />.</returns>
-    /// <exception cref="EntityNotFoundException">Возникает в случае, если глава не была найдена.</exception>
+    /// <exception cref="ChapterNotFoundException">Возникает в случае, если главы не была найдена.</exception>
     public async Task<Result> DeleteByIdAsync(int chapterId)
     {
         var foundedChapter = await GetByIdAsync(chapterId);
         if (foundedChapter is null)
         {
-            var entityNotFoundException = new EntityNotFoundException(nameof(ChapterEntityModel), $"Id={chapterId}");
-            return Result.Fail(entityNotFoundException);
+            return Result.Fail(new ChapterNotFoundException(chapterId));
         }
 
         return await DeleteAsync(foundedChapter);
@@ -94,18 +71,10 @@ public class ChapterRepository : IChapterRepository
 
     public async Task<Result<ChapterEntityModel>> UpdateAsync(ChapterEntityModel chapter)
     {
-        try
-        {
-            var entryEntity = _applicationDbContext.Chapters.Entry(chapter);
-            _applicationDbContext.Chapters.Update(entryEntity.Entity);
-            await _applicationDbContext.SaveChangesAsync();
-            return entryEntity.Entity;
-        }
-        catch (DbUpdateException)
-        {
-            var dbSavingException = new DbSavingException(nameof(ChapterEntityModel), DbSavingTypesEnum.Update);
-            return Result<ChapterEntityModel>.Fail(dbSavingException);
-        }
+        var entryEntity = _applicationDbContext.Chapters.Entry(chapter);
+        _applicationDbContext.Chapters.Update(entryEntity.Entity);
+        await _applicationDbContext.SaveChangesAsync();
+        return entryEntity.Entity;
     }
 
     public Task<Result<ChapterEntityModel>> UpdateBookAsync(int chapterId, BookEntityModel book)
@@ -119,31 +88,20 @@ public class ChapterRepository : IChapterRepository
     /// <param name="chapterId">Id главы.</param>
     /// <param name="newText">Текст для обновления.</param>
     /// <returns>Модель главы.</returns>
-    /// <exception cref="EntityNotFoundException">Возникает в случае, если сущность не была найдена.</exception>
-    /// <exception cref="DbSavingException">Возникает в случае ошибки сохранения данных.</exception>
+    /// <exception cref="ChapterNotFoundException">Возникает в случае, если глава не была найдена.</exception>
     public async Task<Result<ChapterEntityModel>> UpdateTextAsync(int chapterId, string newText)
     {
         var foundedChapter = await GetByIdAsync(chapterId);
         if (foundedChapter is null)
         {
-            var entityNotFoundException = new EntityNotFoundException(nameof(ChapterEntityModel), $"Id={chapterId}");
-            return Result<ChapterEntityModel>.Fail(entityNotFoundException);
+            return Result<ChapterEntityModel>.Fail(new ChapterNotFoundException(chapterId));
         }
 
         foundedChapter.Text = newText;
 
         var updateResult = _applicationDbContext.Chapters.Update(foundedChapter);
-
-        try
-        {
-            await _applicationDbContext.SaveChangesAsync();
-        }
-        catch (DbUpdateException)
-        {
-            var dbSavingException = new DbSavingException(nameof(ChapterEntityModel), DbSavingTypesEnum.Update);
-            return Result<ChapterEntityModel>.Fail(dbSavingException);
-        }
-
+        await _applicationDbContext.SaveChangesAsync();
+        
         return updateResult.Entity;
     }
 

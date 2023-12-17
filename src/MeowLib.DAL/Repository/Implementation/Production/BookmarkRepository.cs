@@ -2,8 +2,6 @@
 using MeowLib.Domain.DbModels.BookmarkEntity;
 using MeowLib.Domain.DbModels.ChapterEntity;
 using MeowLib.Domain.DbModels.UserEntity;
-using MeowLib.Domain.Enums;
-using MeowLib.Domain.Exceptions.DAL;
 using MeowLib.Domain.Result;
 using Microsoft.EntityFrameworkCore;
 
@@ -22,16 +20,8 @@ public class BookmarkRepository : IBookmarkRepository
     {
         var result = await _applicationDbContext.Bookmarks.AddAsync(entity);
 
-        try
-        {
-            await _applicationDbContext.SaveChangesAsync();
-            return result.Entity;
-        }
-        catch (DbUpdateException)
-        {
-            var dbSavingException = new DbSavingException(nameof(BookmarkEntityModel), DbSavingTypesEnum.Create);
-            return Result<BookmarkEntityModel>.Fail(dbSavingException);
-        }
+        await _applicationDbContext.SaveChangesAsync();
+        return result.Entity;
     }
 
     public async Task<BookmarkEntityModel?> GetByIdAsync(int id)
@@ -55,16 +45,8 @@ public class BookmarkRepository : IBookmarkRepository
             return false;
         }
 
-        try
-        {
-            _applicationDbContext.Bookmarks.Remove(foundedBookmark);
-            await _applicationDbContext.SaveChangesAsync();
-        }
-        catch (DbUpdateException)
-        {
-            var dbSavingException = new DbSavingException(nameof(BookmarkEntityModel), DbSavingTypesEnum.Delete);
-            return Result<bool>.Fail(dbSavingException);
-        }
+        _applicationDbContext.Bookmarks.Remove(foundedBookmark);
+        await _applicationDbContext.SaveChangesAsync();
 
         return true;
     }
@@ -83,17 +65,9 @@ public class BookmarkRepository : IBookmarkRepository
 
     public async Task<Result<BookmarkEntityModel>> UpdateAsync(BookmarkEntityModel entity)
     {
-        try
-        {
-            var entryEntity = _applicationDbContext.Entry(entity);
-            entryEntity.State = EntityState.Modified;
-            await _applicationDbContext.SaveChangesAsync();
-            return entryEntity.Entity;
-        }
-        catch (DbUpdateException)
-        {
-            var dbSavingException = new DbSavingException(nameof(BookmarkEntityModel), DbSavingTypesEnum.Update);
-            return Result<BookmarkEntityModel>.Fail(dbSavingException);
-        }
+        var entryEntity = _applicationDbContext.Entry(entity);
+        entryEntity.State = EntityState.Modified;
+        await _applicationDbContext.SaveChangesAsync();
+        return entryEntity.Entity;
     }
 }

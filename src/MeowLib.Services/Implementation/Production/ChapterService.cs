@@ -1,7 +1,6 @@
 ﻿using MeowLib.DAL;
 using MeowLib.DAL.Repository.Interfaces;
 using MeowLib.Domain.DbModels.ChapterEntity;
-using MeowLib.Domain.Exceptions.DAL;
 using MeowLib.Domain.Exceptions.Services;
 using MeowLib.Domain.Exceptions.Translation;
 using MeowLib.Domain.Models;

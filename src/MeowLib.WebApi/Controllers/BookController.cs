@@ -5,7 +5,6 @@ using MeowLib.Domain.Dto.Book;
 using MeowLib.Domain.Dto.Tag;
 using MeowLib.Domain.Dto.Translation;
 using MeowLib.Domain.Enums;
-using MeowLib.Domain.Exceptions.DAL;
 using MeowLib.Domain.Exceptions.Services;
 using MeowLib.Services.Interface;
 using MeowLib.WebApi.Abstractions;

@@ -1,7 +1,6 @@
 using MeowLib.Domain.DbModels.AuthorEntity;
 using MeowLib.Domain.DbModels.BookEntity;
 using MeowLib.Domain.DbModels.TagEntity;
-using MeowLib.Domain.Exceptions.DAL;
 using MeowLib.Domain.Result;
 
 namespace MeowLib.DAL.Repository.Interfaces;
@@ -56,7 +55,7 @@ public interface IBookRepository
     /// <returns>Обновлённую модель книги.</returns>
     /// <exception cref="EntityNotFoundException">Возникает в случае если книга не была найдена.</exception>
     /// <exception cref="DbSavingException">Возникате в случае ошибки сохранения данных.</exception>
-    Task<BookEntityModel> UpdateInfoByIdAsync(int id, UpdateBookEntityModel updateData);
+    Task<BookEntityModel?> UpdateInfoByIdAsync(int id, UpdateBookEntityModel updateData);
 
     /// <summary>
     /// Метод обновляет автора книги по её Id.
@@ -66,7 +65,7 @@ public interface IBookRepository
     /// <returns>Обновлённую модель книги.</returns>
     /// <exception cref="EntityNotFoundException">Возникает в случае если книга не была найдена.</exception>
     /// <exception cref="DbSavingException">Возникате в случае ошибки сохранения данных.</exception>
-    Task<BookEntityModel> UpdateAuthorByIdAsync(int id, AuthorEntityModel author);
+    Task<BookEntityModel?> UpdateAuthorByIdAsync(int id, AuthorEntityModel author);
 
     /// <summary>
     /// Метод обновляет теги книги по её Id.
@@ -76,5 +75,5 @@ public interface IBookRepository
     /// <returns>Обновлённую модель книги.</returns>
     /// <exception cref="EntityNotFoundException">Возникает в случае если книга не была найдена.</exception>
     /// <exception cref="DbSavingException">Возникате в случае ошибки сохранения данных.</exception>
-    Task<BookEntityModel> UpdateTagsByIdAsync(int id, IEnumerable<TagEntityModel> tags);
+    Task<BookEntityModel?> UpdateTagsByIdAsync(int id, IEnumerable<TagEntityModel> tags);
 }

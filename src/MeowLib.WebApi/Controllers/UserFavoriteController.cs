@@ -1,6 +1,5 @@
 ﻿using MeowLib.Domain.Dto.UserFavorite;
 using MeowLib.Domain.Exceptions.Book;
-using MeowLib.Domain.Exceptions.DAL;
 using MeowLib.Domain.Exceptions.User;
 using MeowLib.Services.Interface;
 using MeowLib.WebApi.Abstractions;

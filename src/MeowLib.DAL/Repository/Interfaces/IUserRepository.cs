@@ -1,6 +1,5 @@
 using MeowLib.Domain.DbModels.UserEntity;
 using MeowLib.Domain.Dto.User;
-using MeowLib.Domain.Exceptions.DAL;
 using MeowLib.Domain.Result;
 
 namespace MeowLib.DAL.Repository.Interfaces;

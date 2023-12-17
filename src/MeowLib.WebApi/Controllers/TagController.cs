@@ -26,7 +26,7 @@ public class TagController : BaseController
     }
 
     [HttpPost]
-    [Authorization(RequiredRoles = new[] { UserRolesEnum.Admin })]
+    [Authorization(RequiredRoles = [UserRolesEnum.Admin])]
     [ProducesOkResponseType(typeof(TagEntityModel))]
     [ProducesForbiddenResponseType]
     public async Task<ActionResult> CreateTag([FromBody] CreateTagRequest input)

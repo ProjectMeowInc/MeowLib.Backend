@@ -1,5 +1,4 @@
 using MeowLib.Domain.DbModels.TagEntity;
-using MeowLib.Domain.Exceptions.DAL;
 
 namespace MeowLib.DAL.Repository.Interfaces;
 

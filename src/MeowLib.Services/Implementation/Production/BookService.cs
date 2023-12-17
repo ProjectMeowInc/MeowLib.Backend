@@ -1,10 +1,9 @@
 using MeowLib.DAL.Repository.Interfaces;
-using MeowLib.Domain.DbModels.AuthorEntity;
 using MeowLib.Domain.DbModels.BookEntity;
 using MeowLib.Domain.DbModels.TagEntity;
 using MeowLib.Domain.DbModels.TranslationEntity;
 using MeowLib.Domain.Exceptions;
-using MeowLib.Domain.Exceptions.DAL;
+using MeowLib.Domain.Exceptions.Author;
 using MeowLib.Domain.Exceptions.Services;
 using MeowLib.Domain.Models;
 using MeowLib.Domain.Result;
@@ -72,24 +71,16 @@ public class BookService : IBookService
             return Result<BookEntityModel>.Fail(new ValidationException(nameof(BookService), validationErrors));
         }
 
-        try
+        
+        // todo: fix author
+        return await _bookRepository.CreateAsync(new BookEntityModel
         {
-            // todo: fix author
-            return await _bookRepository.CreateAsync(new BookEntityModel
-            {
-                Name = inputName,
-                Description = inputDescription,
-                Author = null,
-                Tags = new List<TagEntityModel>(),
-                Translations = new List<TranslationEntityModel>()
-            });
-        }
-        catch (DbSavingException)
-        {
-            _logger.LogError("[{@DateTime}] Ошибка сохранения книги в БД", DateTime.UtcNow);
-            var apiException = new ApiException("Внутреяя ошибка сервера");
-            return Result<BookEntityModel>.Fail(apiException);
-        }
+            Name = inputName,
+            Description = inputDescription,
+            Author = null,
+            Tags = new List<TagEntityModel>(),
+            Translations = new List<TranslationEntityModel>()
+        });
     }
 
     /// <summary>
@@ -99,7 +90,6 @@ public class BookService : IBookService
     /// <param name="updateBookEntityModel">Информация для обновления.</param>
     /// <returns>Обновлённая модель книги или null если книга не найдена.</returns>
     /// <exception cref="ValidationException">Возникает в случае ошибки валидации.</exception>
-    /// <exception cref="DbSavingException">Возникает в случае ошибки сохранения данных.</exception>
     public async Task<Result<BookEntityModel?>> UpdateBookInfoByIdAsync(int bookId,
         UpdateBookEntityModel updateBookEntityModel)
     {
@@ -147,8 +137,6 @@ public class BookService : IBookService
     /// <param name="bookId">Id книги для обновления.</param>
     /// <param name="authorId">Id автора для обновления.</param>
     /// <returns>Обновлённую модель книги при удачном обновления, null - если книга не была найдена.</returns>
-    /// <exception cref="EntityNotFoundException">Возникает в случае, если автор не был найден.</exception>
-    /// <exception cref="DbSavingException">Возникает в случае ошибки сохранения данных.</exception>
     public async Task<Result<BookEntityModel?>> UpdateBookAuthorAsync(int bookId, int authorId)
     {
         var foundedBook = await _bookRepository.GetByIdAsync(bookId);
@@ -162,8 +150,7 @@ public class BookService : IBookService
         if (foundedAuthor is null)
         {
             _logger.LogInformation("[{@DateTime}] Автор не найден", DateTime.UtcNow);
-            return Result<BookEntityModel?>.Fail(new EntityNotFoundException(nameof(AuthorEntityModel),
-                $"Id={authorId}"));
+            return Result<BookEntityModel?>.Fail(new AuthorNotFoundException(authorId));
         }
 
         foundedBook.Author = foundedAuthor;
@@ -185,15 +172,7 @@ public class BookService : IBookService
     /// <exception cref="ApiException">Возникает в случае если произошла ошибка сохранения данных.</exception>
     public async Task<Result<bool>> DeleteBookByIdAsync(int bookId)
     {
-        try
-        {
-            return await _bookRepository.DeleteByIdAsync(bookId);
-        }
-        catch (DbSavingException)
-        {
-            _logger.LogError("[{@DateTime}] Ошибка удаления книги в базе данных", DateTime.UtcNow);
-            return Result<bool>.Fail(new ApiException("Внутренняя ошибка сервера"));
-        }
+        return await _bookRepository.DeleteByIdAsync(bookId);
     }
 
     /// <summary>
@@ -212,7 +191,6 @@ public class BookService : IBookService
     /// <param name="bookId">Id книги.</param>
     /// <param name="tags">Список Id тегов.</param>
     /// <returns>Модель книги или null, если она не была найдена.</returns>
-    /// <exception cref="DbSavingException">Возникает в случае ошибки сохранения данных.</exception>
     public async Task<Result<BookEntityModel?>> UpdateBookTagsAsync(int bookId, IEnumerable<int> tags)
     {
         var foundedBook = await _bookRepository.GetByIdAsync(bookId);
@@ -244,7 +222,6 @@ public class BookService : IBookService
     /// <param name="file">Картинка для обновления.</param>
     /// <returns>Обновлённую модель книги, или null, если книга не была найдена.</returns>
     /// <exception cref="UploadingFileException">Возникает в случае ошибки загрузки файла.</exception>
-    /// <exception cref="DbSavingException">Возникает в случае ошибки сохранения данных.</exception>
     public async Task<Result<BookEntityModel?>> UpdateBookImageAsync(int bookId, IFormFile file)
     {
         // TODO: REFACTORING!!

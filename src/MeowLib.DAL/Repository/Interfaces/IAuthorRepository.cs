@@ -1,6 +1,5 @@
 using MeowLib.Domain.DbModels.AuthorEntity;
 using MeowLib.Domain.Dto.Author;
-using MeowLib.Domain.Exceptions.DAL;
 
 namespace MeowLib.DAL.Repository.Interfaces;
 

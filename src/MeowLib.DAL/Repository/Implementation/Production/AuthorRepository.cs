@@ -1,8 +1,6 @@
 using MeowLib.DAL.Repository.Interfaces;
 using MeowLib.Domain.DbModels.AuthorEntity;
 using MeowLib.Domain.Dto.Author;
-using MeowLib.Domain.Enums;
-using MeowLib.Domain.Exceptions.DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -64,7 +62,6 @@ public class AuthorRepository : IAuthorRepository
     /// </summary>
     /// <param name="id">Id автора.</param>
     /// <returns>True - в случае удачного удаления, False - если автор не найден. </returns>
-    /// <exception cref="DbSavingException">Возникает в случае неудачного сохранения данных.</exception>
     public async Task<bool> DeleteByIdAsync(int id)
     {
         var foundedAuthor = await GetAuthorById(id);
@@ -81,7 +78,7 @@ public class AuthorRepository : IAuthorRepository
         catch (DbUpdateException dbUpdateException)
         {
             _logger.LogError("Ошибка удаления автора: {}", dbUpdateException.Message);
-            throw new DbSavingException(nameof(AuthorEntityModel), DbSavingTypesEnum.Delete);
+            throw;
         }
 
         return true;
@@ -102,13 +99,13 @@ public class AuthorRepository : IAuthorRepository
     /// <param name="id">Id автора.</param>
     /// <param name="updateAuthorData">Данные для обновления.</param>
     /// <returns>Обновлённую информацию об авторе.</returns>
-    /// <exception cref="EntityNotFoundException">Возникает если автор под указаным Id не найден.</exception>
     public async Task<AuthorDto> UpdateByIdAsync(int id, UpdateAuthorEntityModel updateAuthorData)
     {
         var foundedAuthor = await GetAuthorById(id);
         if (foundedAuthor is null)
         {
-            throw new EntityNotFoundException(nameof(AuthorEntityModel), $"{nameof(id)} = {id}");
+            // todo: remove this
+            throw new ArgumentOutOfRangeException(nameof(id), "Автор с заданным Id не сушествует");
         }
 
         if (updateAuthorData.Name is not null)

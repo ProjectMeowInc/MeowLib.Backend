@@ -1,6 +1,5 @@
 ﻿using MeowLib.Domain.DbModels.BookEntity;
 using MeowLib.Domain.DbModels.ChapterEntity;
-using MeowLib.Domain.Exceptions.DAL;
 using MeowLib.Domain.Result;
 
 namespace MeowLib.DAL.Repository.Interfaces;

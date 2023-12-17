@@ -1,7 +1,6 @@
 ﻿using MeowLib.Domain.DbModels.BookEntity;
 using MeowLib.Domain.DbModels.UserEntity;
 using MeowLib.Domain.DbModels.UserFavoriteEntity;
-using MeowLib.Domain.Exceptions.DAL;
 using MeowLib.Domain.Result;
 
 namespace MeowLib.DAL.Repository.Interfaces;

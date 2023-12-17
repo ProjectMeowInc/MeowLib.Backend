@@ -6,7 +6,6 @@ using MeowLib.Domain.Dto.Book;
 using MeowLib.Domain.Dto.UserFavorite;
 using MeowLib.Domain.Enums;
 using MeowLib.Domain.Exceptions.Book;
-using MeowLib.Domain.Exceptions.DAL;
 using MeowLib.Domain.Exceptions.User;
 using MeowLib.Domain.Result;
 using MeowLib.Services.Interface;

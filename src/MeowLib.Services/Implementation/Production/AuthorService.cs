@@ -2,7 +2,6 @@ using MeowLib.DAL.Repository.Interfaces;
 using MeowLib.Domain.DbModels.AuthorEntity;
 using MeowLib.Domain.Dto.Author;
 using MeowLib.Domain.Exceptions;
-using MeowLib.Domain.Exceptions.DAL;
 using MeowLib.Domain.Exceptions.Services;
 using MeowLib.Domain.Models;
 using MeowLib.Domain.Result;
@@ -100,14 +99,7 @@ public class AuthorService : IAuthorService
             return Result<AuthorDto>.Fail(new ValidationException(validationErrors));
         }
 
-        try
-        {
-            return await _authorRepository.UpdateByIdAsync(id, updateAuthorEntityModel);
-        }
-        catch (EntityNotFoundException entityNotFoundException)
-        {
-            return Result<AuthorDto>.Fail(entityNotFoundException);
-        }
+        return await _authorRepository.UpdateByIdAsync(id, updateAuthorEntityModel);
     }
 
     /// <summary>
@@ -118,14 +110,7 @@ public class AuthorService : IAuthorService
     /// <exception cref="ApiException">Возникает в случае внутренней ошибки.</exception>
     public async Task<Result<bool>> DeleteAuthorAsync(int id)
     {
-        try
-        {
-            return await _authorRepository.DeleteByIdAsync(id);
-        }
-        catch (DbSavingException)
-        {
-            return Result<bool>.Fail(new ApiException("Внутреняя ошибка сервера"));
-        }
+        return await _authorRepository.DeleteByIdAsync(id);
     }
 
     /// <summary>
@@ -133,12 +118,12 @@ public class AuthorService : IAuthorService
     /// </summary>
     /// <param name="authorId">Id автора.</param>
     /// <returns>DTO-модель автора.</returns>
-    public async Task<Result<AuthorDto>> GetAuthorByIdAsync(int authorId)
+    public async Task<Result<AuthorDto?>> GetAuthorByIdAsync(int authorId)
     {
         var foundedAuthor = await _authorRepository.GetByIdAsync(authorId);
         if (foundedAuthor is null)
         {
-            return Result<AuthorDto>.Fail(new EntityNotFoundException(nameof(AuthorEntityModel), $"Id = {authorId}"));
+            return Result<AuthorDto?>.Ok(null);
         }
 
         return new AuthorDto

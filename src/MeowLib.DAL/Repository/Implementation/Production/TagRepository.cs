@@ -2,7 +2,7 @@ using MeowLib.DAL.Repository.Interfaces;
 using MeowLib.Domain.DbModels.BookEntity;
 using MeowLib.Domain.DbModels.TagEntity;
 using MeowLib.Domain.Enums;
-using MeowLib.Domain.Exceptions.DAL;
+using MeowLib.Domain.Exceptions.Tag;
 using Microsoft.EntityFrameworkCore;
 
 namespace MeowLib.DAL.Repository.Implementation.Production;
@@ -37,7 +37,6 @@ public class TagRepository : ITagRepository
     /// </summary>
     /// <param name="createTagData">Данные для создания тега.</param>
     /// <returns>Созданные тег.</returns>
-    /// <exception cref="DbSavingException">Возникает в случае, если произошла ошибка сохранения данных.</exception>
     public async Task<TagEntityModel> CreateAsync(CreateTagEntityModel createTagData)
     {
         var newTag = new TagEntityModel
@@ -48,15 +47,7 @@ public class TagRepository : ITagRepository
         };
 
         var dbResult = await _applicationDbContext.Tags.AddAsync(newTag);
-
-        try
-        {
-            await _applicationDbContext.SaveChangesAsync();
-        }
-        catch (DbUpdateException)
-        {
-            throw new DbSavingException(nameof(TagEntityModel), DbSavingTypesEnum.Create);
-        }
+        await _applicationDbContext.SaveChangesAsync();
 
 
         return dbResult.Entity;
@@ -76,17 +67,9 @@ public class TagRepository : ITagRepository
             return false;
         }
 
-        try
-        {
-            _applicationDbContext.Tags.Remove(foundedTag);
-            await _applicationDbContext.SaveChangesAsync();
-        }
-        catch (DbUpdateException)
-        {
-            throw new DbSavingException(nameof(TagEntityModel), DbSavingTypesEnum.Delete);
-        }
-
-
+        _applicationDbContext.Tags.Remove(foundedTag);
+        await _applicationDbContext.SaveChangesAsync();
+        
         return true;
     }
 
@@ -96,14 +79,13 @@ public class TagRepository : ITagRepository
     /// <param name="id">Id тега.</param>
     /// <param name="updateTagData">Информация на обновление.</param>
     /// <returns>Обновлённая информация о теге.</returns>
-    /// <exception cref="EntityNotFoundException">Возникает в случае, если тег не был найден.</exception>
-    /// <exception cref="DbSavingException">Возникает в случае если произошла ошибка сохранения данных.</exception>
+    /// <exception cref="TagNotFoundException">Возникает в случае, если тег не был найден.</exception>
     public async Task<TagEntityModel> UpdateAsync(int id, UpdateTagEntityModel updateTagData)
     {
         var foundedTag = await GetByIdAsync(id);
         if (foundedTag is null)
         {
-            throw new EntityNotFoundException(nameof(TagEntityModel), $"Id = {id}");
+            throw new TagNotFoundException(id);
         }
 
         if (updateTagData.Name is not null)
@@ -118,14 +100,7 @@ public class TagRepository : ITagRepository
 
         _applicationDbContext.Tags.Update(foundedTag);
 
-        try
-        {
-            await _applicationDbContext.SaveChangesAsync();
-        }
-        catch (DbUpdateException)
-        {
-            throw new DbSavingException(nameof(TagEntityModel), DbSavingTypesEnum.Update);
-        }
+        await _applicationDbContext.SaveChangesAsync();
 
         return foundedTag;
     }

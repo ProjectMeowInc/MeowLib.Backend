@@ -1,5 +1,4 @@
 ﻿using MeowLib.Domain.DbModels.BookCommentEntity;
-using MeowLib.Domain.Exceptions.DAL;
 using MeowLib.Domain.Result;
 
 namespace MeowLib.DAL.Repository.Interfaces;
