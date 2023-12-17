@@ -12,17 +12,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace MeowLib.WebApi.Controllers.v1;
 
 [Route("api/v1/team")]
-public class TeamController : BaseController
+public class TeamController(ITeamService teamService, ILogger<TeamController> logger) : BaseController
 {
-    private readonly ILogger<TeamController> _logger;
-    private readonly ITeamService _teamService;
-
-    public TeamController(ITeamService teamService, ILogger<TeamController> logger)
-    {
-        _teamService = teamService;
-        _logger = logger;
-    }
-
     [HttpPost]
     [Authorization]
     [ProducesOkResponseType]
@@ -31,17 +22,17 @@ public class TeamController : BaseController
     {
         var user = await GetUserDataAsync();
 
-        var createNewTeamResult = await _teamService.CreateNewTeamAsync(user.Id, payload.Name, payload.Description);
+        var createNewTeamResult = await teamService.CreateNewTeamAsync(user.Id, payload.Name, payload.Description);
         if (createNewTeamResult.IsFailure)
         {
             var exception = createNewTeamResult.GetError();
             if (exception is TeamOwnerNotFoundException teamOwnerNotFoundException)
             {
-                _logger.LogError(teamOwnerNotFoundException.ErrorMessage);
+                logger.LogError(teamOwnerNotFoundException.ErrorMessage);
                 return UpdateAuthorizeError();
             }
 
-            _logger.LogError("Произошла неизвестная ошибка при создании команды: {error}", exception);
+            logger.LogError("Произошла неизвестная ошибка при создании команды: {error}", exception);
             return ServerError();
         }
 
@@ -53,7 +44,7 @@ public class TeamController : BaseController
     [ProducesNotFoundResponseType]
     public async Task<IActionResult> GetTeamById([FromRoute] int teamId)
     {
-        var foundedTeam = await _teamService.GetTeamByIdAsync(teamId);
+        var foundedTeam = await teamService.GetTeamByIdAsync(teamId);
         if (foundedTeam is null)
         {
             return NotFoundError();
@@ -64,7 +55,7 @@ public class TeamController : BaseController
             Id = foundedTeam.Id,
             Name = foundedTeam.Name,
             Description = foundedTeam.Description,
-            Members = foundedTeam.Members.Select(m => new TeamMember
+            Members = foundedTeam.Members.Select(m => new TeamMemberModel
             {
                 Id = m.User.Id,
                 Login = m.User.Login,
@@ -82,38 +73,38 @@ public class TeamController : BaseController
         [FromBody] SetUserTeamRoleRequest payload)
     {
         var requestFromUser = await GetUserDataAsync();
-        var isCanChange = await _teamService.CheckUserIsTeamAdminAsync(teamId, requestFromUser.Id);
+        var isCanChange = await teamService.CheckUserIsTeamAdminAsync(teamId, requestFromUser.Id);
         if (!isCanChange)
         {
-            _logger.LogWarning(
+            logger.LogWarning(
                 "Пользователь с Id = {userId} не имеет доступа к изменению ролей в команде с Id = {teamId}",
                 requestFromUser.Id, teamId);
             return Error("У вас нет доступа к изменению ролей в данной команде", 400);
         }
 
-        var setUserTeamRoleResult = await _teamService.SetUserTeamRoleAsync(teamId, userId, payload.NewRole);
+        var setUserTeamRoleResult = await teamService.SetUserTeamRoleAsync(teamId, userId, payload.NewRole);
         if (setUserTeamRoleResult.IsFailure)
         {
             var exception = setUserTeamRoleResult.GetError();
             if (exception is TeamNotFoundException)
             {
-                _logger.LogWarning("Команда с Id = {teamId} не найдена", teamId);
+                logger.LogWarning("Команда с Id = {teamId} не найдена", teamId);
                 return NotFoundError();
             }
 
             if (exception is ChangeOwnerRoleException)
             {
-                _logger.LogWarning("Попытка изменить роль владельца команды");
+                logger.LogWarning("Попытка изменить роль владельца команды");
                 return Error("Нельзя изменить роль владельца команды", 400);
             }
 
             if (exception is UserNotFoundException)
             {
-                _logger.LogWarning("Запрашиваемый пользователь не состоит в команде");
+                logger.LogWarning("Запрашиваемый пользователь не состоит в команде");
                 return Error("Пользователь не состоит в команде");
             }
 
-            _logger.LogError("Неизвестная ошибка обновления командной роли пользователя: {exception}", exception);
+            logger.LogError("Неизвестная ошибка обновления командной роли пользователя: {exception}", exception);
             return ServerError();
         }
 
@@ -129,29 +120,29 @@ public class TeamController : BaseController
     {
         var requestUser = await GetUserDataAsync();
 
-        var removeUserResult = await _teamService.RemoveFromTeamAsync(teamId, requestUser.Id);
+        var removeUserResult = await teamService.RemoveFromTeamAsync(teamId, requestUser.Id);
         if (removeUserResult.IsFailure)
         {
             var exception = removeUserResult.GetError();
             if (exception is TeamNotFoundException)
             {
-                _logger.LogWarning("Команда с Id = {teamId} не найдена", teamId);
+                logger.LogWarning("Команда с Id = {teamId} не найдена", teamId);
                 return NotFoundError();
             }
 
             if (exception is ChangeOwnerRoleException)
             {
-                _logger.LogWarning("Попытка выйти из команды владельцем команды");
+                logger.LogWarning("Попытка выйти из команды владельцем команды");
                 return Error("Невозможно покинуть команду будучи её владельцем", 400);
             }
 
             if (exception is UserNotFoundException)
             {
-                _logger.LogWarning("Попытка покинуть команду в который пользователь не состоит");
+                logger.LogWarning("Попытка покинуть команду в который пользователь не состоит");
                 return Error("Вы не состоите в этой команде", 400);
             }
 
-            _logger.LogError("Неизвестная ошибка покидания команды: {exception}", exception);
+            logger.LogError("Неизвестная ошибка покидания команды: {exception}", exception);
             return ServerError();
         }
 
@@ -166,36 +157,36 @@ public class TeamController : BaseController
     {
         var requestUser = await GetUserDataAsync();
 
-        var hasAdminAccess = await _teamService.CheckUserIsTeamAdminAsync(teamId, requestUser.Id);
+        var hasAdminAccess = await teamService.CheckUserIsTeamAdminAsync(teamId, requestUser.Id);
         if (!hasAdminAccess)
         {
             return Error("У вас нет доступа к добавлению пользователей в комманду", 400);
         }
 
-        var inviteResult = await _teamService.InviteUserToTeamAsync(teamId, userId);
+        var inviteResult = await teamService.InviteUserToTeamAsync(teamId, userId);
         if (inviteResult.IsFailure)
         {
             var exception = inviteResult.GetError();
             if (exception is TeamNotFoundException)
             {
-                _logger.LogWarning("Комманда с Id = {teamId} не найдена", teamId);
+                logger.LogWarning("Комманда с Id = {teamId} не найдена", teamId);
                 return NotFoundError();
             }
 
             if (exception is UserNotFoundException)
             {
-                _logger.LogWarning("Пользователь с Id = {userId} не найден", userId);
+                logger.LogWarning("Пользователь с Id = {userId} не найден", userId);
                 return Error("Запрашиваемый пользователь не найден", 400);
             }
 
             if (exception is UserAlreadyInTeamException)
             {
-                _logger.LogWarning("Пользователь с Id = {userId} уже состоит в комманде с Id = {teamId}",
+                logger.LogWarning("Пользователь с Id = {userId} уже состоит в комманде с Id = {teamId}",
                     userId, teamId);
                 return Error("Запрашиваемый пользователь уже состоит в комманде", 400);
             }
 
-            _logger.LogError("Произошла неизвестная ошибка при приглашении пользователя в комманду: {exception}",
+            logger.LogError("Произошла неизвестная ошибка при приглашении пользователя в комманду: {exception}",
                 exception);
             return ServerError();
         }
@@ -212,16 +203,16 @@ public class TeamController : BaseController
     {
         var fromUserData = await GetUserDataAsync();
 
-        var isUserAdmin = await _teamService.CheckUserIsTeamAdminAsync(teamId, fromUserData.Id);
+        var isUserAdmin = await teamService.CheckUserIsTeamAdminAsync(teamId, fromUserData.Id);
         if (!isUserAdmin)
         {
-            _logger.LogWarning(
+            logger.LogWarning(
                 "Пользователь с Id = {userId} пытался исключить участника с Id = {teamMemberId} из комманды не имея на это прав",
                 fromUserData.Id, userId);
             return Error("У вас нет доступа к исключению участников из комманды", 400);
         }
 
-        var removeFromTeamResult = await _teamService.RemoveFromTeamAsync(teamId, userId);
+        var removeFromTeamResult = await teamService.RemoveFromTeamAsync(teamId, userId);
         if (removeFromTeamResult.IsFailure)
         {
             var exception = removeFromTeamResult.GetError();
@@ -241,7 +232,7 @@ public class TeamController : BaseController
                 return Error("Пользователь не состоит в комманде", 400);
             }
 
-            _logger.LogError("Неизвестная ошибка при исключении пользователя из комманды: {exception}", exception);
+            logger.LogError("Неизвестная ошибка при исключении пользователя из комманды: {exception}", exception);
             return ServerError();
         }
 

@@ -1,6 +1,6 @@
-namespace MeowLib.Domain.Dto.Tag;
+﻿namespace MeowLib.WebApi.Models.Responses.v1.Tag;
 
-public class TagDto
+public class TagModel
 {
     public int Id { get; set; }
     public required string Name { get; set; }

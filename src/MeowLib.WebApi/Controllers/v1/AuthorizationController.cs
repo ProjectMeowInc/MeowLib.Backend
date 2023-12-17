@@ -12,15 +12,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace MeowLib.WebApi.Controllers.v1;
 
 [Route("api/v1/authorization")]
-public class AuthorizationController : BaseController
+public class AuthorizationController(IUserService userService) : BaseController
 {
-    private readonly IUserService _userService;
-
-    public AuthorizationController(IUserService userService)
-    {
-        _userService = userService;
-    }
-
     [HttpPost]
     [Route("sign-in")]
     [ProducesOkResponseType]
@@ -28,7 +21,7 @@ public class AuthorizationController : BaseController
     [ProducesForbiddenResponseType]
     public async Task<ActionResult> SignIn([FromBody] SignInRequest input)
     {
-        var signInResult = await _userService.SignInAsync(input.Login, input.Password);
+        var signInResult = await userService.SignInAsync(input.Login, input.Password);
         if (signInResult.IsFailure)
         {
             var exception = signInResult.GetError();
@@ -55,7 +48,7 @@ public class AuthorizationController : BaseController
     [ProducesResponseType(401, Type = typeof(BaseErrorResponse))]
     public async Task<ActionResult> LogIn([FromBody] LogInRequest input)
     {
-        var logInResult = await _userService.LogIn(input.Login, input.Password, input.IsLongSession);
+        var logInResult = await userService.LogIn(input.Login, input.Password, input.IsLongSession);
         if (logInResult.IsFailure)
         {
             var exception = logInResult.GetError();
@@ -81,7 +74,7 @@ public class AuthorizationController : BaseController
     [ProducesResponseType(401, Type = typeof(BaseErrorResponse))]
     public async Task<ActionResult> UpdateTokens([FromBody] UpdateAuthorizationRequest input)
     {
-        var loginResult = await _userService.LogInByRefreshTokenAsync(input.RefreshToken);
+        var loginResult = await userService.LogInByRefreshTokenAsync(input.RefreshToken);
         if (loginResult.IsFailure)
         {
             var exception = loginResult.GetError();

@@ -92,7 +92,8 @@ public class TagService : ITagService
             .Select(t => new TagDto
             {
                 Id = t.Id,
-                Name = t.Name
+                Name = t.Name,
+                Description = t.Description
             }).ToListAsync();
 
         return tags;

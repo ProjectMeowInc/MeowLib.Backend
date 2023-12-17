@@ -1,4 +1,6 @@
-﻿using MeowLib.Domain.Dto.UserFavorite;
+﻿using MeowLib.Domain.DbModels.UserFavoriteEntity;
+using MeowLib.Domain.Dto.UserFavorite;
+using MeowLib.Domain.Enums;
 using MeowLib.Domain.Exceptions.Book;
 using MeowLib.Domain.Exceptions.User;
 using MeowLib.Services.Interface;
@@ -6,6 +8,7 @@ using MeowLib.WebApi.Abstractions;
 using MeowLib.WebApi.Filters;
 using MeowLib.WebApi.Models.Requests.v1.UserFavorite;
 using MeowLib.WebApi.Models.Responses.v1;
+using MeowLib.WebApi.Models.Responses.v1.Book;
 using MeowLib.WebApi.Models.Responses.v1.UserFavorite;
 using MeowLib.WebApi.ProducesResponseTypes;
 using Microsoft.AspNetCore.Mvc;
@@ -13,15 +16,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace MeowLib.WebApi.Controllers.v1;
 
 [Route("api/v1/users/favorite")]
-public class UserFavoriteController : BaseController
+public class UserFavoriteController(IUserFavoriteService userFavoriteService) : BaseController
 {
-    private readonly IUserFavoriteService _userFavoriteService;
-
-    public UserFavoriteController(IUserFavoriteService userFavoriteService)
-    {
-        _userFavoriteService = userFavoriteService;
-    }
-
     [HttpPost]
     [Authorization]
     [ProducesOkResponseType]
@@ -30,7 +26,7 @@ public class UserFavoriteController : BaseController
     {
         var userData = await GetUserDataAsync();
         var updatedUserListResult =
-            await _userFavoriteService.AddOrUpdateUserListAsync(input.BookId, userData.Id, input.Status);
+            await userFavoriteService.AddOrUpdateUserListAsync(input.BookId, userData.Id, input.Status);
         if (updatedUserListResult.IsFailure)
         {
             var exception = updatedUserListResult.GetError();
@@ -56,16 +52,22 @@ public class UserFavoriteController : BaseController
     public async Task<ActionResult> GetUserBookList()
     {
         var userData = await GetUserDataAsync();
-        var userFavorites = await _userFavoriteService.GetUserFavoritesAsync(userData.Id);
+        var userFavorites = await userFavoriteService.GetUserFavoritesAsync(userData.Id);
 
         var response = new GetUserBookListResponse
         {
             Items = userFavorites
                 .GroupBy(uf => uf.Status)
-                .Select(d => new UserFavoriteCategory
+                .Select(d => new UserFavoriteCategoryModel
                 {
                     Status = d.Key,
-                    Books = d.Select(b => b.Book)
+                    Books = d.Select(b => new BookShortModel
+                    {
+                        Id = b.Book.Id,
+                        Name = b.Book.Name,
+                        Description = b.Book.Description,
+                        ImageUrl = b.Book.ImageName
+                    })
                 })
         };
 
@@ -74,13 +76,13 @@ public class UserFavoriteController : BaseController
 
     [HttpGet("book/{bookId}")]
     [Authorization]
-    [ProducesOkResponseType(typeof(UserFavoriteDto))]
+    [ProducesOkResponseType(typeof(UserFavoriteModel))]
     [ProducesNotFoundResponseType]
     [ProducesResponseType(400, Type = typeof(BaseErrorResponse))]
     public async Task<ActionResult> GetUserFavoriteByBook([FromRoute] int bookId)
     {
         var userData = await GetUserDataAsync();
-        var getUserFavoriteResult = await _userFavoriteService.GetUserFavoriteByBookAsync(userData.Id, bookId);
+        var getUserFavoriteResult = await userFavoriteService.GetUserFavoriteByBookAsync(userData.Id, bookId);
         if (getUserFavoriteResult.IsFailure)
         {
             var exception = getUserFavoriteResult.GetError();
@@ -102,7 +104,19 @@ public class UserFavoriteController : BaseController
         {
             return NotFoundError("Книга отсутствует в списке пользователя");
         }
+        
 
-        return Json(foundedFavorite);
+        return Json(new UserFavoriteModel
+        {
+            Id = foundedFavorite.Id,
+            Status = foundedFavorite.Status,
+            Book = new BookShortModel
+            {
+                Id = foundedFavorite.Book.Id,
+                Name = foundedFavorite.Book.Name,
+                Description = foundedFavorite.Book.Description,
+                ImageUrl = foundedFavorite.Book.ImageUrl
+            }
+        });
     }
 }

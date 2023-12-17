@@ -5,36 +5,37 @@ using MeowLib.Services.Interface;
 using MeowLib.WebApi.Abstractions;
 using MeowLib.WebApi.Filters;
 using MeowLib.WebApi.Models.Requests.v1.Author;
+using MeowLib.WebApi.Models.Responses.v1.Author;
 using MeowLib.WebApi.ProducesResponseTypes;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MeowLib.WebApi.Controllers.v1;
 
 [Route("api/v1/authors")]
-public class AuthorController : BaseController
+public class AuthorController(IAuthorService authorService) : BaseController
 {
-    private readonly IAuthorService _authorService;
-
-    public AuthorController(IAuthorService authorService)
-    {
-        _authorService = authorService;
-    }
-
     [HttpGet]
-    [ProducesOkResponseType(typeof(IEnumerable<AuthorDto>))]
+    [ProducesOkResponseType(typeof(GetAllAuthorsResponse))]
     public async Task<ActionResult> GetAllAuthors()
     {
-        var authors = await _authorService.GetAllAuthorsAsync();
-        return Json(authors);
+        var authors = await authorService.GetAllAuthorsAsync();
+        return Json(new GetAllAuthorsResponse
+        {
+            Items = authors.Select(a => new AuthorModel
+            {
+                Id = a.Id,
+                Name = a.Name
+            })
+        });
     }
 
     [HttpPost]
     [Authorization(RequiredRoles = new[] { UserRolesEnum.Editor, UserRolesEnum.Admin })]
-    [ProducesOkResponseType(typeof(AuthorDto))]
+    [ProducesOkResponseType(typeof(AuthorModel))]
     [ProducesForbiddenResponseType]
     public async Task<ActionResult> CreateAuthor([FromBody] CreateAuthorRequest input)
     {
-        var createResult = await _authorService.CreateAuthorAsync(input.Name);
+        var createResult = await authorService.CreateAuthorAsync(input.Name);
         if (createResult.IsFailure)
         {
             var exception = createResult.GetError();
@@ -47,17 +48,21 @@ public class AuthorController : BaseController
         }
 
         var author = createResult.GetResult();
-        return Json(author);
+        return Json(new AuthorModel
+        {
+            Id = author.Id,
+            Name = author.Name
+        });
     }
 
     [HttpPut("{authorId}")]
     [Authorization(RequiredRoles = new[] { UserRolesEnum.Editor, UserRolesEnum.Admin })]
-    [ProducesOkResponseType(typeof(AuthorDto))]
+    [ProducesOkResponseType(typeof(AuthorModel))]
     [ProducesForbiddenResponseType]
     [ProducesNotFoundResponseType]
     public async Task<ActionResult> UpdateAuthor([FromRoute] int authorId, [FromBody] UpdateAuthorRequest input)
     {
-        var updateResult = await _authorService.UpdateAuthorAsync(authorId, new AuthorDto
+        var updateResult = await authorService.UpdateAuthorAsync(authorId, new AuthorDto
         {
             Id = authorId,
             Name = input.Name
@@ -81,7 +86,7 @@ public class AuthorController : BaseController
             return NotFoundError();
         }
 
-        return Json(new AuthorDto
+        return Json(new AuthorModel
         {
             Id = updatedAuthor.Id,
             Name = updatedAuthor.Name
@@ -94,7 +99,7 @@ public class AuthorController : BaseController
     [ProducesNotFoundResponseType]
     public async Task<ActionResult> DeleteAuthor([FromRoute] int authorId)
     {
-        var deleteAuthorResult = await _authorService.DeleteAuthorAsync(authorId);
+        var deleteAuthorResult = await authorService.DeleteAuthorAsync(authorId);
         if (deleteAuthorResult.IsFailure)
         {
             return ServerError();
@@ -110,30 +115,30 @@ public class AuthorController : BaseController
     }
 
     [HttpGet("{authorId}")]
-    [ProducesOkResponseType(typeof(AuthorDto))]
+    [ProducesOkResponseType(typeof(AuthorModel))]
     [ProducesNotFoundResponseType]
     public async Task<ActionResult> GetAuthorById([FromRoute] int authorId)
     {
-        var foundedAuthor = await _authorService.GetAuthorByIdAsync(authorId);
+        var foundedAuthor = await authorService.GetAuthorByIdAsync(authorId);
         if (foundedAuthor is null)
         {
             return NotFoundError();
         }
 
-        return Json(new AuthorDto
+        return Json(new AuthorModel
         {
             Id = foundedAuthor.Id,
             Name = foundedAuthor.Name
         });
     }
 
-    [HttpPost]
-    [Route("get-with-params")]
-    [ProducesOkResponseType(typeof(IEnumerable<AuthorDto>))]
+    [HttpGet]
+    [Route("search")]
+    [ProducesOkResponseType(typeof(GetAllAuthorsResponse))]
     [ProducesNotFoundResponseType]
-    public async Task<ActionResult> GetAuthorWithParams([FromBody] GetAuthorWithParamsRequest input)
+    public async Task<ActionResult> GetAuthorWithParams([FromQuery] GetAuthorWithFilterRequest input)
     {
-        var getAuthorWithParamsResult = await _authorService.GetAuthorWithParams(input.Name);
+        var getAuthorWithParamsResult = await authorService.GetAuthorWithParams(input.Name);
         if (getAuthorWithParamsResult.IsFailure)
         {
             var exception = getAuthorWithParamsResult.GetError();
@@ -145,7 +150,14 @@ public class AuthorController : BaseController
             return ServerError();
         }
 
-        var author = getAuthorWithParamsResult.GetResult();
-        return Json(author);
+        var authors = getAuthorWithParamsResult.GetResult();
+        return Json(new GetAllAuthorsResponse
+        {
+            Items = authors.Select(a => new AuthorModel
+            {
+                Id = a.Id,
+                Name = a.Name
+            })
+        });
     }
 }

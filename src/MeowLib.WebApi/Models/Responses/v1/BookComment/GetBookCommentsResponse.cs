@@ -1,5 +1,4 @@
 ﻿using System.Text.Json.Serialization;
-using MeowLib.Domain.Dto.BookComment;
 
 namespace MeowLib.WebApi.Models.Responses.v1.BookComment;
 
@@ -9,5 +8,5 @@ public class GetBookCommentsResponse
     public required int BookId { get; set; }
 
     [JsonPropertyName("items")]
-    public required IEnumerable<BookCommentDto> Items { get; set; }
+    public required IEnumerable<BookCommentModel> Items { get; set; }
 }

@@ -14,21 +14,14 @@ namespace MeowLib.WebApi.Controllers.v1;
 
 [ApiController]
 [Route("api/v1/books")]
-public class BookCommentController : BaseController
+public class BookCommentController(IBookCommentService bookCommentService) : BaseController
 {
-    private readonly IBookCommentService _bookCommentService;
-
-    public BookCommentController(IBookCommentService bookCommentService)
-    {
-        _bookCommentService = bookCommentService;
-    }
-
     [HttpGet("{bookId}/comments")]
     [ProducesOkResponseType(typeof(GetBookCommentsResponse))]
     [ProducesNotFoundResponseType]
     public async Task<ActionResult> GetBookComments([FromRoute] int bookId)
     {
-        var getBookCommentsResult = await _bookCommentService.GetBookCommentsAsync(bookId);
+        var getBookCommentsResult = await bookCommentService.GetBookCommentsAsync(bookId);
         if (getBookCommentsResult.IsFailure)
         {
             var exception = getBookCommentsResult.GetError();
@@ -44,7 +37,13 @@ public class BookCommentController : BaseController
         return Json(new GetBookCommentsResponse
         {
             BookId = bookId,
-            Items = bookComments
+            Items = bookComments.Select(bk => new BookCommentModel
+            {
+                Id = bk.Id,
+                Text = bk.Text,
+                PostedAt = bk.PostedAt,
+                Author = bk.Author
+            })
         });
     }
 
@@ -56,7 +55,7 @@ public class BookCommentController : BaseController
     {
         var userData = await GetUserDataAsync();
 
-        var createNewCommentResult = await _bookCommentService.CreateNewCommentAsync(userData.Id, bookId, input.Text);
+        var createNewCommentResult = await bookCommentService.CreateNewCommentAsync(userData.Id, bookId, input.Text);
         if (createNewCommentResult.IsFailure)
         {
             var exception = createNewCommentResult.GetError();

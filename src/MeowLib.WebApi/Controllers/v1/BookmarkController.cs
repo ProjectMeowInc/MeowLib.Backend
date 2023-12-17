@@ -6,6 +6,7 @@ using MeowLib.WebApi.Abstractions;
 using MeowLib.WebApi.Filters;
 using MeowLib.WebApi.Models.Requests.v1.Bookmark;
 using MeowLib.WebApi.Models.Responses.v1;
+using MeowLib.WebApi.Models.Responses.v1.Bookmark;
 using MeowLib.WebApi.ProducesResponseTypes;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,23 +14,16 @@ namespace MeowLib.WebApi.Controllers.v1;
 
 [ApiController]
 [Route("api/v1/users/bookmark")]
-public class BookmarkController : BaseController
+public class BookmarkController(IBookmarkService bookmarkService) : BaseController
 {
-    private readonly IBookmarkService _bookmarkService;
-
-    public BookmarkController(IBookmarkService bookmarkService)
-    {
-        _bookmarkService = bookmarkService;
-    }
-
     [HttpPost]
     [Authorization]
-    [ProducesOkResponseType(typeof(BookmarkDto))]
+    [ProducesOkResponseType(typeof(BookmarkModel))]
     [ProducesResponseType(400, Type = typeof(BaseErrorResponse))]
     public async Task<ActionResult> CreateOrUpdateBookmark([FromBody] CreateOrUpdateBookmarkRequest input)
     {
         var user = await GetUserDataAsync();
-        var createBookmarkResult = await _bookmarkService.CreateBookmarkAsync(user.Id, input.ChapterId);
+        var createBookmarkResult = await bookmarkService.CreateBookmarkAsync(user.Id, input.ChapterId);
         if (createBookmarkResult.IsFailure)
         {
             var exception = createBookmarkResult.GetError();
@@ -47,23 +41,31 @@ public class BookmarkController : BaseController
         }
 
         var createdBookmark = createBookmarkResult.GetResult();
-        return Json(createdBookmark);
+        return Json(new BookmarkModel
+        {
+            Id = createdBookmark.Id,
+            ChapterId = createdBookmark.ChapterId
+        });
     }
 
     [HttpGet("book/{bookId}")]
     [Authorization]
-    [ProducesOkResponseType(typeof(BookmarkDto))]
+    [ProducesOkResponseType(typeof(BookmarkModel))]
     [ProducesNotFoundResponseType]
     public async Task<ActionResult> GetBookmarkByBook([FromRoute] int bookId)
     {
         var userData = await GetUserDataAsync();
-        var foundedBookmark = await _bookmarkService.GetBookmarkByUserAndBook(userData.Id, bookId);
+        var foundedBookmark = await bookmarkService.GetBookmarkByUserAndBook(userData.Id, bookId);
 
         if (foundedBookmark is null)
         {
             return NotFoundError($"Закладка для книги с Id = {bookId} не найдена");
         }
 
-        return Json(foundedBookmark);
+        return Json(new BookmarkModel
+        {
+            Id = foundedBookmark.Id,
+            ChapterId = foundedBookmark.ChapterId
+        });
     }
 }

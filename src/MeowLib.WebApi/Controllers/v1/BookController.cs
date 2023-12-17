@@ -1,5 +1,4 @@
 using MeowLib.Domain.DbModels.BookEntity;
-using MeowLib.Domain.Dto.Author;
 using MeowLib.Domain.Dto.Tag;
 using MeowLib.Domain.Dto.Translation;
 using MeowLib.Domain.Enums;
@@ -9,6 +8,7 @@ using MeowLib.WebApi.Abstractions;
 using MeowLib.WebApi.Filters;
 using MeowLib.WebApi.Models.Requests.v1.Book;
 using MeowLib.WebApi.Models.Responses.v1;
+using MeowLib.WebApi.Models.Responses.v1.Author;
 using MeowLib.WebApi.Models.Responses.v1.Book;
 using MeowLib.WebApi.ProducesResponseTypes;
 using Microsoft.AspNetCore.Mvc;
@@ -29,9 +29,17 @@ public class BookController : BaseController
     [ProducesOkResponseType(typeof(GetAllBooksResponse))]
     public async Task<ActionResult> GetAllBooks()
     {
+        var books = await _bookService.GetAllBooksAsync();
+        
         var response = new GetAllBooksResponse
         {
-            Items = await _bookService.GetAllBooksAsync()
+            Items = books.Select(b => new BookShortModel
+            {
+                Id = b.Id,
+                Name = b.Name,
+                Description = b.Description,
+                ImageUrl = b.ImageName
+            })
         };
 
         return Json(response);
@@ -39,7 +47,7 @@ public class BookController : BaseController
 
     [HttpPost]
     [Authorization(RequiredRoles = new[] { UserRolesEnum.Admin, UserRolesEnum.Editor })]
-    [ProducesOkResponseType(typeof(BookEntityModel))]
+    [ProducesOkResponseType(typeof(CreateBookResponse))]
     [ProducesForbiddenResponseType]
     public async Task<ActionResult> CreateBook([FromBody] CreateBookRequest input)
     {
@@ -65,7 +73,10 @@ public class BookController : BaseController
         }
 
         var createdBook = createBookResult.GetResult();
-        return Json(createdBook);
+        return Json(new CreateBookResponse
+        {
+            CreatedId = createdBook.Id
+        });
     }
 
     [HttpDelete("{id}")]
@@ -120,7 +131,7 @@ public class BookController : BaseController
     }
 
     [HttpGet("{id}")]
-    [ProducesOkResponseType(typeof(GetBookResponse))]
+    [ProducesOkResponseType(typeof(BookModel))]
     [ProducesNotFoundResponseType]
     public async Task<ActionResult> GetBookInfo([FromRoute] int id)
     {
@@ -130,14 +141,14 @@ public class BookController : BaseController
             return NotFoundError();
         }
 
-        return Json(new GetBookResponse
+        return Json(new BookModel
         {
             Id = foundedBook.Id,
             Name = foundedBook.Name,
             ImageUrl = foundedBook.ImageUrl,
             Description = foundedBook.Description,
             Author = foundedBook.Author is not null
-                ? new AuthorDto
+                ? new AuthorModel
                 {
                     Id = foundedBook.Author.Id,
                     Name = foundedBook.Author.Name
@@ -146,7 +157,8 @@ public class BookController : BaseController
             Tags = foundedBook.Tags.Select(t => new TagDto
             {
                 Id = t.Id,
-                Name = t.Name
+                Name = t.Name,
+                Description = t.Description
             }),
             Translations = foundedBook.Translations.Select(t => new TranslationDto
             {

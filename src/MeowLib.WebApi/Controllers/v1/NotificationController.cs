@@ -1,3 +1,4 @@
+using MeowLib.Domain.Enums;
 using MeowLib.Domain.Exceptions.Notification;
 using MeowLib.Services.Interface;
 using MeowLib.WebApi.Abstractions;
@@ -9,29 +10,27 @@ using Microsoft.AspNetCore.Mvc;
 namespace MeowLib.WebApi.Controllers.v1;
 
 [Route("api/v1/notifications")]
-public class NotificationController : BaseController
+public class NotificationController(INotificationService notificationService, ILogger<NotificationController> logger)
+    : BaseController
 {
-    private readonly ILogger<NotificationController> _logger;
-    private readonly INotificationService _notificationService;
-
-    public NotificationController(INotificationService notificationService, ILogger<NotificationController> logger)
-    {
-        _notificationService = notificationService;
-        _logger = logger;
-    }
-
     [HttpGet("my")]
     [Authorization]
     [ProducesOkResponseType(typeof(GetMyNotificationsResponse))]
     public async Task<IActionResult> GetMyNotifications()
     {
         var userData = await GetUserDataAsync();
-        var notifications = await _notificationService.GetUserNotificationsAsync(userData.Id);
+        var notifications = await notificationService.GetUserNotificationsAsync(userData.Id);
 
         var notificationDtos = notifications.ToList();
         return Json(new GetMyNotificationsResponse
         {
-            Items = notificationDtos,
+            Items = notificationDtos.Select(n => new NotificationModel
+            {
+                Id = n.Id,
+                Type = n.Type,
+                Payload = n.Payload,
+                CreatedAt = n.CreatedAt
+            }),
             Count = notificationDtos.Count
         });
     }
@@ -44,20 +43,20 @@ public class NotificationController : BaseController
     {
         var userRequestData = await GetUserDataAsync();
         var setNotificationAsWatchedResult =
-            await _notificationService.SetNotificationWatchedAsync(userRequestData.Id, notificationId);
+            await notificationService.SetNotificationWatchedAsync(userRequestData.Id, notificationId);
 
         if (setNotificationAsWatchedResult.IsFailure)
         {
             var exception = setNotificationAsWatchedResult.GetError();
             if (exception is NotificationNotFoundException)
             {
-                _logger.LogWarning(
+                logger.LogWarning(
                     "Пользователь с Id = {userId} пытался удалить несуществующее уведомление с Id = {notificationId}",
                     userRequestData.Id, notificationId);
                 return NotFoundError();
             }
 
-            _logger.LogError(
+            logger.LogError(
                 "Неизвестная ошибка при попытке сделать уведомление пользователя просмотренным: {exception}",
                 exception);
             return ServerError();
