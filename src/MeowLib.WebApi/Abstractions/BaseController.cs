@@ -21,9 +21,9 @@ public class BaseController : ControllerBase
     }
 
     [NonAction]
-    protected EmptyResult EmptyResult(int statusCode = 200)
+    protected IActionResult EmptyResult(int statusCode = 200)
     {
-        return Empty;
+        return StatusCode(200);
     }
 
     /// <summary>

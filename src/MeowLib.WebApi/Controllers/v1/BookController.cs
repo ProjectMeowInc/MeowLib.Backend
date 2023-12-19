@@ -98,7 +98,7 @@ public class BookController(IBookService bookService) : BaseController
     [ProducesOkResponseType]
     [ProducesForbiddenResponseType]
     [ProducesNotFoundResponseType]
-    public async Task<ActionResult> UpdateBookInfo([FromRoute] int bookId, [FromBody] UpdateBookInfoRequest input)
+    public async Task<IActionResult> UpdateBookInfo([FromRoute] int bookId, [FromBody] UpdateBookInfoRequest input)
     {
         var updateBookResult = await bookService.UpdateBookInfoByIdAsync(bookId, input.Name, input.Description);
 
@@ -190,7 +190,7 @@ public class BookController(IBookService bookService) : BaseController
     [Authorization(RequiredRoles = new[] { UserRolesEnum.Editor, UserRolesEnum.Admin })]
     [ProducesOkResponseType]
     [ProducesNotFoundResponseType]
-    public async Task<ActionResult> UpdateBookTags([FromRoute] int bookId, [FromBody] UpdateBookTagsRequest input)
+    public async Task<IActionResult> UpdateBookTags([FromRoute] int bookId, [FromBody] UpdateBookTagsRequest input)
     {
         var updateBookResult = await bookService.UpdateBookTagsAsync(bookId, input.Tags);
         if (updateBookResult.IsFailure)
@@ -211,7 +211,7 @@ public class BookController(IBookService bookService) : BaseController
     [Authorization(RequiredRoles = new[] { UserRolesEnum.Editor, UserRolesEnum.Admin })]
     [ProducesOkResponseType]
     [ProducesNotFoundResponseType]
-    public async Task<ActionResult> UpdateBookImage([FromRoute] int bookId, IFormFile image)
+    public async Task<IActionResult> UpdateBookImage([FromRoute] int bookId, IFormFile image)
     {
         var uploadImageResult = await bookService.UpdateBookImageAsync(bookId, image);
         if (uploadImageResult.IsFailure)

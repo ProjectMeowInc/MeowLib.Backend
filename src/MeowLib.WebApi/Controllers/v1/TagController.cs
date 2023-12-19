@@ -44,7 +44,7 @@ public class TagController(ITagService tagService) : BaseController
     [HttpDelete("{id}")]
     [ProducesOkResponseType]
     [ProducesNotFoundResponseType]
-    public async Task<ActionResult> DeleteTag([FromRoute] int id)
+    public async Task<IActionResult> DeleteTag([FromRoute] int id)
     {
         var tagDeleted = await tagService.DeleteTagByIdAsync(id);
 

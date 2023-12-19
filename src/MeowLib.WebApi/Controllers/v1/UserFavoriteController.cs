@@ -19,7 +19,7 @@ public class UserFavoriteController(IUserFavoriteService userFavoriteService) : 
     [Authorization]
     [ProducesOkResponseType]
     [ProducesResponseType(400, Type = typeof(BaseErrorResponse))]
-    public async Task<ActionResult> UpdateUserList([FromBody] UpdateUserListRequest input)
+    public async Task<IActionResult> UpdateUserList([FromBody] UpdateUserListRequest input)
     {
         var userData = await GetUserDataAsync();
         var updatedUserListResult =
