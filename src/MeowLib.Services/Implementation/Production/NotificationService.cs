@@ -14,7 +14,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MeowLib.Services.Implementation.Production;
 
-public class NotificationService(ApplicationDbContext dbContext, IJwtTokenService jwtTokenService)
+public class NotificationService(ApplicationDbContext dbContext, INotificationTokenService notificationTokenService)
     : INotificationService
 {
     public async Task<Result> SendNotificationToUserAsync(int userId, NotificationTypeEnum notificationType,
@@ -41,7 +41,7 @@ public class NotificationService(ApplicationDbContext dbContext, IJwtTokenServic
 
     public async Task<Result> SendInviteToTeamNotificationAsync(int teamId, int userId)
     {
-        var inviteToken = jwtTokenService.GenerateInviteToTeamStringToken(new InviteToTeamTokenModel
+        var inviteToken = notificationTokenService.GenerateInviteToTeamStringToken(new InviteToTeamTokenModel
         {
             UserId = userId,
             TeamId = teamId,

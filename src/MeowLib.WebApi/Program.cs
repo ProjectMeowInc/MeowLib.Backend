@@ -76,7 +76,7 @@ services.AddSwaggerGen(options =>
 
 // Init services
 services.AddSingleton<IHashService, HashService>();
-services.AddSingleton<IJwtTokenService, JwtTokensService>();
+services.AddSingleton<IUserTokenService, UserTokensService>();
 services.AddSingleton<ITelegramLogService, TelegramLogService>();
 
 var uploadFileDirectory = builder.Configuration.GetValue<string>("UploadFileDirectory");
@@ -99,6 +99,7 @@ services.AddScoped<ITeamService, TeamService>();
 services.AddScoped<INotificationService, NotificationService>();
 services.AddScoped<ITranslationService, TranslationService>();
 services.AddScoped<ICoinService, CoinService>();
+services.AddScoped<INotificationTokenService, NotificationTokenService>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(dbOptions =>
 {

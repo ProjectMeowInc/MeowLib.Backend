@@ -28,7 +28,7 @@ public class AuthorizationAttribute : ProducesResponseTypeAttribute, IAsyncAutho
             return;
         }
 
-        var jwtTokenService = context.HttpContext.RequestServices.GetService<IJwtTokenService>();
+        var jwtTokenService = context.HttpContext.RequestServices.GetService<IUserTokenService>();
         if (jwtTokenService is null)
         {
             context.Result = new JsonResult(new BaseErrorResponse("Ошибка сервера"))

@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MeowLib.Services.Implementation.Production;
 
-public class UserService(ApplicationDbContext dbContext, IHashService hashService, IJwtTokenService jwtTokenService)
+public class UserService(ApplicationDbContext dbContext, IHashService hashService, IUserTokenService userTokenService)
     : IUserService
 {
     public async Task<Result<UserEntityModel>> SignInAsync(string login, string password)
@@ -83,13 +83,13 @@ public class UserService(ApplicationDbContext dbContext, IHashService hashServic
 
         var tokenExpiredTime = isLongSession ? DateTime.UtcNow.AddDays(30) : DateTime.UtcNow.AddMinutes(30);
 
-        var accessToken = jwtTokenService.GenerateAccessToken(new UserDto
+        var accessToken = userTokenService.GenerateAccessToken(new UserDto
         {
             Id = foundedUser.Id,
             Login = foundedUser.Login,
             Role = foundedUser.Role
         });
-        var refreshToken = jwtTokenService.GenerateRefreshToken(new RefreshTokenDataModel
+        var refreshToken = userTokenService.GenerateRefreshToken(new RefreshTokenDataModel
         {
             Login = foundedUser.Login,
             IsLongSession = isLongSession
@@ -199,7 +199,7 @@ public class UserService(ApplicationDbContext dbContext, IHashService hashServic
     /// <exception cref="IncorrectCreditionalException">Возникает в случае, если был введён некорректный токен обновления.</exception>
     public async Task<Result<(string accessToken, string refreshToken)>> LogInByRefreshTokenAsync(string refreshToken)
     {
-        var parsedRefreshToken = await jwtTokenService.ParseRefreshTokenAsync(refreshToken);
+        var parsedRefreshToken = await userTokenService.ParseRefreshTokenAsync(refreshToken);
         if (parsedRefreshToken is null)
         {
             var incorrectCreditionalException = new IncorrectCreditionalException("Неверный RefreshToken");
@@ -217,13 +217,13 @@ public class UserService(ApplicationDbContext dbContext, IHashService hashServic
             ? DateTime.UtcNow.AddDays(30)
             : DateTime.UtcNow.AddMinutes(60);
 
-        var newRefreshToken = jwtTokenService.GenerateRefreshToken(new RefreshTokenDataModel
+        var newRefreshToken = userTokenService.GenerateRefreshToken(new RefreshTokenDataModel
         {
             Login = foundedUser.Login,
             IsLongSession = parsedRefreshToken.IsLongSession
         }, tokenExpiredDate);
 
-        var newAccessToken = jwtTokenService.GenerateAccessToken(new UserDto
+        var newAccessToken = userTokenService.GenerateAccessToken(new UserDto
         {
             Id = foundedUser.Id,
             Login = foundedUser.Login,
