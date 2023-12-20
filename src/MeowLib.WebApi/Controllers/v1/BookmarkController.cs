@@ -11,10 +11,18 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MeowLib.WebApi.Controllers.v1;
 
+/// <summary>
+/// Контроллер закладок пользователя.
+/// </summary>
+/// <param name="bookmarkService">Сервис закладок.</param>
 [ApiController]
 [Route("api/v1/users/bookmark")]
 public class BookmarkController(IBookmarkService bookmarkService) : BaseController
 {
+    /// <summary>
+    /// Создать или обновить существующую закладку.
+    /// </summary>
+    /// <param name="input">Данные для создания/обновления.</param>
     [HttpPost]
     [Authorization]
     [ProducesOkResponseType(typeof(BookmarkModel))]
@@ -47,6 +55,10 @@ public class BookmarkController(IBookmarkService bookmarkService) : BaseControll
         });
     }
 
+    /// <summary>
+    /// Получение закладки пользователя по Id книги.
+    /// </summary>
+    /// <param name="bookId">Id книги.</param>
     [HttpGet("book/{bookId}")]
     [Authorization]
     [ProducesOkResponseType(typeof(BookmarkModel))]

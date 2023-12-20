@@ -10,10 +10,24 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MeowLib.WebApi.Controllers.v1;
 
+/// <summary>
+/// Контроллер переводов
+/// </summary>
+/// <param name="translationService">Сервис переводов.</param>
+/// <param name="teamService">Сервис комманд.</param>
+/// <param name="bookService">Сервис книг.</param>
+/// <param name="logger">Логгер.</param>
 [Route("api/v1/translation")]
-public class TranslationController(ITranslationService translationService, ITeamService teamService,
-    IBookService bookService, ILogger<TranslationController> logger) : BaseController
+public class TranslationController(
+    ITranslationService translationService,
+    ITeamService teamService,
+    IBookService bookService,
+    ILogger<TranslationController> logger) : BaseController
 {
+    /// <summary>
+    /// Получение глав перевода.
+    /// </summary>
+    /// <param name="translationId">Id перевода.</param>
     [HttpGet("{translationId}")]
     [ProducesOkResponseType(typeof(GetAllTranslationChaptersResponse))]
     [ProducesUserErrorResponseType]
@@ -40,6 +54,11 @@ public class TranslationController(ITranslationService translationService, ITeam
         });
     }
 
+    /// <summary>
+    /// Получение главы в переводе.
+    /// </summary>
+    /// <param name="translationId">Id перевода.</param>
+    /// <param name="position">Позиция в переводе.</param>
     [HttpGet("{translationId}/chapters/{position}")]
     [ProducesOkResponseType(typeof(GetTranslationChapterResponse))]
     [ProducesNotFoundResponseType]
@@ -61,6 +80,10 @@ public class TranslationController(ITranslationService translationService, ITeam
         });
     }
 
+    /// <summary>
+    /// Создание нового перевода.
+    /// </summary>
+    /// <param name="payload">Данные для создания.</param>
     [HttpPost]
     [Authorization]
     [ProducesOkResponseType]
@@ -107,6 +130,11 @@ public class TranslationController(ITranslationService translationService, ITeam
         return Ok();
     }
 
+    /// <summary>
+    /// Добавление главы в перевод.
+    /// </summary>
+    /// <param name="translationId">Id перевода.</param>
+    /// <param name="payload">Данные для добавления главы.</param>
     [HttpPost("{translationId}/upload-chapter")]
     [Authorization]
     [ProducesOkResponseType]

@@ -10,9 +10,16 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MeowLib.WebApi.Controllers.v1;
 
+/// <summary>
+/// Контроллер пользователей.
+/// </summary>
+/// <param name="userService">Сервис пользователей.</param>
 [Route("api/v1/users")]
 public class UserController(IUserService userService) : BaseController
 {
+    /// <summary>
+    /// Получение всех пользователей.
+    /// </summary>
     [HttpGet]
     [ProducesOkResponseType(typeof(GetAllUsersResponse))]
     public async Task<ActionResult> GetAll()
@@ -29,6 +36,11 @@ public class UserController(IUserService userService) : BaseController
         });
     }
 
+    /// <summary>
+    /// Обновление пользователя.
+    /// </summary>
+    /// <param name="id">Id пользователя.</param>
+    /// <param name="input">Данные для обновления.</param>
     [HttpPut("{id}")]
     [Authorization(RequiredRoles = new[] { UserRolesEnum.Admin })]
     [ProducesOkResponseType(typeof(UserModel))]
@@ -45,7 +57,7 @@ public class UserController(IUserService userService) : BaseController
             {
                 return ValidationError(validationException.ValidationErrors);
             }
-            
+
             return ServerError();
         }
 
@@ -54,7 +66,7 @@ public class UserController(IUserService userService) : BaseController
         {
             return NotFoundError();
         }
-        
+
         return Json(new UserModel
         {
             Id = updatedUser.Id,

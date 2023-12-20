@@ -12,14 +12,22 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MeowLib.WebApi.Controllers.v1;
 
+/// <summary>
+/// Контроллер избранного пользователей.
+/// </summary>
+/// <param name="userFavoriteService"></param>
 [Route("api/v1/users/favorite")]
 public class UserFavoriteController(IUserFavoriteService userFavoriteService) : BaseController
 {
+    /// <summary>
+    /// Обновление книги в списке пользователя.
+    /// </summary>
+    /// <param name="input">Данные для обновления.</param>
     [HttpPost]
     [Authorization]
     [ProducesOkResponseType]
     [ProducesResponseType(400, Type = typeof(BaseErrorResponse))]
-    public async Task<IActionResult> UpdateUserList([FromBody] UpdateUserListRequest input)
+    public async Task<IActionResult> UpdateUserFavoriteList([FromBody] UpdateUserListRequest input)
     {
         var userData = await GetUserDataAsync();
         var updatedUserListResult =
@@ -36,14 +44,17 @@ public class UserFavoriteController(IUserFavoriteService userFavoriteService) : 
             {
                 return UpdateAuthorizeError();
             }
-            
+
             return ServerError();
         }
 
         return EmptyResult();
     }
 
-    [HttpGet]
+    /// <summary>
+    /// Получить список книг пользователя.
+    /// </summary>
+    [HttpGet("my")]
     [Authorization]
     [ProducesOkResponseType(typeof(GetUserBookListResponse))]
     public async Task<ActionResult> GetUserBookList()
@@ -71,7 +82,11 @@ public class UserFavoriteController(IUserFavoriteService userFavoriteService) : 
         return Json(response);
     }
 
-    [HttpGet("book/{bookId}")]
+    /// <summary>
+    /// Получить информацию о книге в избранном пользователя.
+    /// </summary>
+    /// <param name="bookId">Id книги.</param>
+    [HttpGet("my/book/{bookId}")]
     [Authorization]
     [ProducesOkResponseType(typeof(UserFavoriteModel))]
     [ProducesNotFoundResponseType]
@@ -101,7 +116,7 @@ public class UserFavoriteController(IUserFavoriteService userFavoriteService) : 
         {
             return NotFoundError("Книга отсутствует в списке пользователя");
         }
-        
+
 
         return Json(new UserFavoriteModel
         {

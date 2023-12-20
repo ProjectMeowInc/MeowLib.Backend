@@ -11,9 +11,16 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MeowLib.WebApi.Controllers.v1;
 
+/// <summary>
+/// Контроллер авторов.
+/// </summary>
+/// <param name="authorService">Сервис авторов</param>
 [Route("api/v1/authors")]
 public class AuthorController(IAuthorService authorService) : BaseController
 {
+    /// <summary>
+    /// Получение всех авторов.
+    /// </summary>
     [HttpGet]
     [ProducesOkResponseType(typeof(GetAllAuthorsResponse))]
     public async Task<ActionResult> GetAllAuthors()
@@ -29,6 +36,10 @@ public class AuthorController(IAuthorService authorService) : BaseController
         });
     }
 
+    /// <summary>
+    /// Создание нового автора.
+    /// </summary>
+    /// <param name="input">Данные для создания.</param>
     [HttpPost]
     [Authorization(RequiredRoles = new[] { UserRolesEnum.Editor, UserRolesEnum.Admin })]
     [ProducesOkResponseType(typeof(AuthorModel))]
@@ -55,6 +66,11 @@ public class AuthorController(IAuthorService authorService) : BaseController
         });
     }
 
+    /// <summary>
+    /// Обновление автора
+    /// </summary>
+    /// <param name="authorId">Id автора.</param>
+    /// <param name="input">Данные для обновления</param>
     [HttpPut("{authorId}")]
     [Authorization(RequiredRoles = new[] { UserRolesEnum.Editor, UserRolesEnum.Admin })]
     [ProducesOkResponseType(typeof(AuthorModel))]
@@ -93,6 +109,10 @@ public class AuthorController(IAuthorService authorService) : BaseController
         });
     }
 
+    /// <summary>
+    /// Удаление автора.
+    /// </summary>
+    /// <param name="authorId">Id автора.</param>
     [HttpDelete("{authorId}")]
     [Authorization(RequiredRoles = new[] { UserRolesEnum.Editor, UserRolesEnum.Admin })]
     [ProducesOkResponseType]
@@ -114,6 +134,10 @@ public class AuthorController(IAuthorService authorService) : BaseController
         return Ok();
     }
 
+    /// <summary>
+    /// Получение автора.
+    /// </summary>
+    /// <param name="authorId">Id автора.</param>
     [HttpGet("{authorId}")]
     [ProducesOkResponseType(typeof(AuthorModel))]
     [ProducesNotFoundResponseType]
@@ -132,6 +156,10 @@ public class AuthorController(IAuthorService authorService) : BaseController
         });
     }
 
+    /// <summary>
+    /// Получение автора по заданным параметрам.
+    /// </summary>
+    /// <param name="input">Параметры для поиска.</param>
     [HttpGet]
     [Route("search")]
     [ProducesOkResponseType(typeof(GetAllAuthorsResponse))]

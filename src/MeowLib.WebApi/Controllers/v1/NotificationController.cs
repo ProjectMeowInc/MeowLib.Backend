@@ -8,10 +8,18 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MeowLib.WebApi.Controllers.v1;
 
+/// <summary>
+/// Контроллер уведомлений.
+/// </summary>
+/// <param name="notificationService">Сервис уведомлений.</param>
+/// <param name="logger">Логгер.</param>
 [Route("api/v1/notifications")]
 public class NotificationController(INotificationService notificationService, ILogger<NotificationController> logger)
     : BaseController
 {
+    /// <summary>
+    /// Получение уведомление пользователя.
+    /// </summary>
     [HttpGet("my")]
     [Authorization]
     [ProducesOkResponseType(typeof(GetMyNotificationsResponse))]
@@ -34,6 +42,10 @@ public class NotificationController(INotificationService notificationService, IL
         });
     }
 
+    /// <summary>
+    /// Отметить уведомление прочитанным.
+    /// </summary>
+    /// <param name="notificationId">Id уведомления</param>
     [HttpPost("my/watch/{notificationId}")]
     [Authorization]
     [ProducesOkResponseType]

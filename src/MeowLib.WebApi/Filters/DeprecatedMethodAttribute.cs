@@ -4,12 +4,19 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace MeowLib.WebApi.Filters;
 
-public class DeprecatedMethodAttribute(int expiredDay, int expiredMonth, int expiredYear) : Attribute, IAsyncActionFilter
+/// <summary>
+/// Объявляет endpoint устаревшим.
+/// </summary>
+/// <param name="expiredDay">День устаревания.</param>
+/// <param name="expiredMonth">Месяц устаревания.</param>
+/// <param name="expiredYear">Год устаревания.</param>
+public class DeprecatedMethodAttribute(int expiredDay, int expiredMonth, int expiredYear)
+    : Attribute, IAsyncActionFilter
 {
     public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
     {
         context.HttpContext.Response.Headers.Append("Deprecated-Date", $"{expiredDay}.{expiredMonth}.{expiredYear}");
-        
+
         if (IsEndpointDeprecated())
         {
             context.Result = new JsonResult(new BaseErrorResponse(

@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
 using MeowLib.DAL;
@@ -72,6 +73,9 @@ services.AddSwaggerGen(options =>
             new List<string>()
         }
     });
+
+    var xmlFileName = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFileName));
 });
 
 // Init services

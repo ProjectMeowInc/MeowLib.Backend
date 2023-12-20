@@ -2,6 +2,9 @@
 
 namespace MeowLib.WebApi.Filters;
 
+/// <summary>
+/// Объявляет endpoint нестабильным. Возвращаемые и принимаемые данные могут быть изменены.
+/// </summary>
 public class UnstableMethodAttribute : Attribute, IAsyncActionFilter
 {
     public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)

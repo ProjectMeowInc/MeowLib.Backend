@@ -5,6 +5,8 @@ using MeowLib.WebApi.Models.Responses.v1;
 using MeowLib.WebApi.ProducesResponseTypes;
 using Microsoft.AspNetCore.Mvc;
 
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+
 namespace MeowLib.WebApi.Abstractions;
 
 [ApiController]

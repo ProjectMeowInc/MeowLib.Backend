@@ -11,9 +11,17 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MeowLib.WebApi.Controllers.v1;
 
+/// <summary>
+/// Контроллер авторизации.
+/// </summary>
+/// <param name="userService">Сервис пользователей.</param>
 [Route("api/v1/authorization")]
 public class AuthorizationController(IUserService userService) : BaseController
 {
+    /// <summary>
+    /// Регистрация нововго пользователя.
+    /// </summary>
+    /// <param name="input">Данные для регистрации.</param>
     [HttpPost]
     [Route("sign-in")]
     [ProducesOkResponseType]
@@ -41,6 +49,10 @@ public class AuthorizationController(IUserService userService) : BaseController
         return Ok();
     }
 
+    /// <summary>
+    /// Авторизация.
+    /// </summary>
+    /// <param name="input">Данные для авторизации.</param>
     [HttpPost]
     [Route("log-in")]
     [ProducesOkResponseType(typeof(LogInResponse))]
@@ -68,6 +80,10 @@ public class AuthorizationController(IUserService userService) : BaseController
         });
     }
 
+    /// <summary>
+    /// Обновление авторизации.
+    /// </summary>
+    /// <param name="input">Данные для обновления.</param>
     [HttpPost]
     [Route("update-auth")]
     [ProducesOkResponseType(typeof(LogInResponse))]

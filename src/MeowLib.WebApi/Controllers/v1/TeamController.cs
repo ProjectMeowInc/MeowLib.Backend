@@ -11,9 +11,18 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MeowLib.WebApi.Controllers.v1;
 
+/// <summary>
+/// Контроллер комманд.
+/// </summary>
+/// <param name="teamService">Сервис комманд.</param>
+/// <param name="logger">Логгер.</param>
 [Route("api/v1/team")]
 public class TeamController(ITeamService teamService, ILogger<TeamController> logger) : BaseController
 {
+    /// <summary>
+    /// Создание новой комманды.
+    /// </summary>
+    /// <param name="payload">Данные для создания.</param>
     [HttpPost]
     [Authorization]
     [ProducesOkResponseType]
@@ -39,6 +48,10 @@ public class TeamController(ITeamService teamService, ILogger<TeamController> lo
         return EmptyResult();
     }
 
+    /// <summary>
+    /// Получение комманды.
+    /// </summary>
+    /// <param name="teamId">Id комманды.</param>
     [HttpGet("{teamId}")]
     [ProducesOkResponseType(typeof(GetTeamByIdResponse))]
     [ProducesNotFoundResponseType]
@@ -64,6 +77,12 @@ public class TeamController(ITeamService teamService, ILogger<TeamController> lo
         });
     }
 
+    /// <summary>
+    /// Установить роль пользователя в комманде.
+    /// </summary>
+    /// <param name="teamId">Id комманды.</param>
+    /// <param name="userId">Id пользователя.</param>
+    /// <param name="payload">Данные для установки.</param>
     [HttpPost("{teamId}/members/{userId}/role")]
     [Authorization]
     [ProducesOkResponseType]
@@ -111,6 +130,10 @@ public class TeamController(ITeamService teamService, ILogger<TeamController> lo
         return Ok();
     }
 
+    /// <summary>
+    /// Покинуть комманду.
+    /// </summary>
+    /// <param name="teamId">Id комманды.</param>
     [HttpPost("{teamId}/leave")]
     [Authorization]
     [ProducesOkResponseType]
@@ -149,6 +172,11 @@ public class TeamController(ITeamService teamService, ILogger<TeamController> lo
         return Ok();
     }
 
+    /// <summary>
+    /// Пригласить пользователя в комманду.
+    /// </summary>
+    /// <param name="teamId">Id комманды.</param>
+    /// <param name="userId">Id пользователя.</param>
     [HttpPost("{teamId}/members/invite/{userId}")]
     [Authorization]
     [ProducesOkResponseType]
@@ -194,6 +222,11 @@ public class TeamController(ITeamService teamService, ILogger<TeamController> lo
         return Ok();
     }
 
+    /// <summary>
+    /// Удалить пользователя из комманды.
+    /// </summary>
+    /// <param name="teamId">Id комманды.</param>
+    /// <param name="userId">Id пользователя.</param>
     [HttpPost("{teamId}/members/{userId}/remove")]
     [Authorization]
     [ProducesOkResponseType]

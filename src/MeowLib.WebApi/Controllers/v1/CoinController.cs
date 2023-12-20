@@ -9,9 +9,19 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MeowLib.WebApi.Controllers.v1;
 
+/// <summary>
+/// Контроллер монет.
+/// </summary>
+/// <param name="coinService">Сервис монет.</param>
+/// <param name="logger">Логгер.</param>
 [Route("api/v1/coins")]
 public class CoinController(ICoinService coinService, ILogger<CoinController> logger) : BaseController
 {
+    /// <summary>
+    /// Обновление монет пользователя администратором.
+    /// </summary>
+    /// <remarks>Стоит учитывать, что манеты изменяются на указанную сумма, а не устаналиваются в неё.</remarks>
+    /// <param name="payload"></param>
     [HttpPost("admin-change")]
     [Authorization(RequiredRoles = new[] { UserRolesEnum.Admin })]
     [ProducesOkResponseType]

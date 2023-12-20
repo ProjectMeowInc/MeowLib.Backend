@@ -15,15 +15,22 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MeowLib.WebApi.Controllers.v1;
 
+/// <summary>
+/// Контроллер книг.
+/// </summary>
+/// <param name="bookService">Сервис книг.</param>
 [Route("api/v1/books")]
 public class BookController(IBookService bookService) : BaseController
 {
+    /// <summary>
+    /// Получение всех книг.
+    /// </summary>
     [HttpGet]
     [ProducesOkResponseType(typeof(GetAllBooksResponse))]
     public async Task<ActionResult> GetAllBooks()
     {
         var books = await bookService.GetAllBooksAsync();
-        
+
         var response = new GetAllBooksResponse
         {
             Items = books.Select(b => new BookShortModel
@@ -38,6 +45,10 @@ public class BookController(IBookService bookService) : BaseController
         return Json(response);
     }
 
+    /// <summary>
+    /// Создание новой книги.
+    /// </summary>
+    /// <param name="input">Данные для создания книги.</param>
     [HttpPost]
     [Authorization(RequiredRoles = new[] { UserRolesEnum.Admin, UserRolesEnum.Editor })]
     [ProducesOkResponseType(typeof(CreateBookResponse))]
@@ -72,13 +83,17 @@ public class BookController(IBookService bookService) : BaseController
         });
     }
 
-    [HttpDelete("{id}")]
+    /// <summary>
+    /// Удаление книги.
+    /// </summary>
+    /// <param name="bookId">Id книги.</param>
+    [HttpDelete("{bookId}")]
     [Authorization(RequiredRoles = new[] { UserRolesEnum.Admin, UserRolesEnum.Editor })]
     [ProducesOkResponseType]
     [ProducesNotFoundResponseType]
-    public async Task<ActionResult> DeleteBook([FromRoute] int id)
+    public async Task<ActionResult> DeleteBook([FromRoute] int bookId)
     {
-        var deleteBookResult = await bookService.DeleteBookByIdAsync(id);
+        var deleteBookResult = await bookService.DeleteBookByIdAsync(bookId);
         if (deleteBookResult.IsFailure)
         {
             return ServerError();
@@ -93,6 +108,11 @@ public class BookController(IBookService bookService) : BaseController
         return Ok();
     }
 
+    /// <summary>
+    /// Обновление информации книги.
+    /// </summary>
+    /// <param name="bookId">Id книги.</param>
+    /// <param name="input">Данные для обновления.</param>
     [HttpPut("{bookId}/info")]
     [Authorization(RequiredRoles = new[] { UserRolesEnum.Admin, UserRolesEnum.Editor })]
     [ProducesOkResponseType]
@@ -123,12 +143,16 @@ public class BookController(IBookService bookService) : BaseController
         return EmptyResult();
     }
 
-    [HttpGet("{id}")]
+    /// <summary>
+    /// Получение информации о книге.
+    /// </summary>
+    /// <param name="bookId">Id книги.</param>
+    [HttpGet("{bookId}")]
     [ProducesOkResponseType(typeof(BookModel))]
     [ProducesNotFoundResponseType]
-    public async Task<ActionResult> GetBookInfo([FromRoute] int id)
+    public async Task<ActionResult> GetBookInfo([FromRoute] int bookId)
     {
-        var foundedBook = await bookService.GetBookByIdAsync(id);
+        var foundedBook = await bookService.GetBookByIdAsync(bookId);
         if (foundedBook is null)
         {
             return NotFoundError();
@@ -164,6 +188,11 @@ public class BookController(IBookService bookService) : BaseController
         });
     }
 
+    /// <summary>
+    /// Обновление автора книги.
+    /// </summary>
+    /// <param name="bookId">Id книги.</param>
+    /// <param name="authorId">Id автора.</param>
     [HttpPut("{bookId}/author/{authorId}")]
     [Authorization(RequiredRoles = new[] { UserRolesEnum.Editor, UserRolesEnum.Admin })]
     [ProducesOkResponseType]
@@ -186,6 +215,11 @@ public class BookController(IBookService bookService) : BaseController
         return Json(updatedBook);
     }
 
+    /// <summary>
+    /// Обновление тегов книги.
+    /// </summary>
+    /// <param name="bookId">Id книги.</param>
+    /// <param name="input">Данные для обновления.</param>
     [HttpPut("{bookId}/tags")]
     [Authorization(RequiredRoles = new[] { UserRolesEnum.Editor, UserRolesEnum.Admin })]
     [ProducesOkResponseType]
@@ -207,6 +241,11 @@ public class BookController(IBookService bookService) : BaseController
         return EmptyResult();
     }
 
+    /// <summary>
+    /// Обновление картинки книги.
+    /// </summary>
+    /// <param name="bookId">Id книги.</param>
+    /// <param name="image">Картинка для обновления.</param>
     [HttpPut("{bookId}/image")]
     [Authorization(RequiredRoles = new[] { UserRolesEnum.Editor, UserRolesEnum.Admin })]
     [ProducesOkResponseType]

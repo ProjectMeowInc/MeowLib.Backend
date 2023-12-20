@@ -10,11 +10,19 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MeowLib.WebApi.Controllers.v1;
 
+/// <summary>
+/// Контроллер тегов.
+/// </summary>
+/// <param name="tagService">Сервис тегов.</param>
 [Route("api/v1/tags")]
 public class TagController(ITagService tagService) : BaseController
 {
+    /// <summary>
+    /// Создание тега.
+    /// </summary>
+    /// <param name="input">Данные для создания.</param>
     [HttpPost]
-    [Authorization(RequiredRoles = new [] { UserRolesEnum.Admin })]
+    [Authorization(RequiredRoles = new[] { UserRolesEnum.Admin })]
     [ProducesOkResponseType(typeof(TagModel))]
     [ProducesForbiddenResponseType]
     public async Task<ActionResult> CreateTag([FromBody] CreateTagRequest input)
@@ -41,12 +49,16 @@ public class TagController(ITagService tagService) : BaseController
         });
     }
 
-    [HttpDelete("{id}")]
+    /// <summary>
+    /// Удаление тега.
+    /// </summary>
+    /// <param name="tagId">Id тега.</param>
+    [HttpDelete("{tagId}")]
     [ProducesOkResponseType]
     [ProducesNotFoundResponseType]
-    public async Task<IActionResult> DeleteTag([FromRoute] int id)
+    public async Task<IActionResult> DeleteTag([FromRoute] int tagId)
     {
-        var tagDeleted = await tagService.DeleteTagByIdAsync(id);
+        var tagDeleted = await tagService.DeleteTagByIdAsync(tagId);
 
         if (!tagDeleted)
         {
@@ -56,14 +68,19 @@ public class TagController(ITagService tagService) : BaseController
         return EmptyResult();
     }
 
-    [HttpPut("{id}")]
+    /// <summary>
+    /// Обновление тега.
+    /// </summary>
+    /// <param name="tagId">Id тега.</param>
+    /// <param name="input">Данные для обновления.</param>
+    [HttpPut("{tagId}")]
     [Authorization(RequiredRoles = new[] { UserRolesEnum.Admin })]
     [ProducesOkResponseType(typeof(TagModel))]
     [ProducesForbiddenResponseType]
     [ProducesNotFoundResponseType]
-    public async Task<ActionResult> UpdateTag([FromRoute] int id, [FromBody] UpdateTagRequest input)
+    public async Task<ActionResult> UpdateTag([FromRoute] int tagId, [FromBody] UpdateTagRequest input)
     {
-        var updateTagResult = await tagService.UpdateTagByIdAsync(id, input.Name, input.Description);
+        var updateTagResult = await tagService.UpdateTagByIdAsync(tagId, input.Name, input.Description);
 
         if (updateTagResult.IsFailure)
         {
@@ -90,6 +107,9 @@ public class TagController(ITagService tagService) : BaseController
         });
     }
 
+    /// <summary>
+    /// Получение всех тегов.
+    /// </summary>
     [HttpGet]
     [ProducesOkResponseType(typeof(GetAllTagsResponse))]
     public async Task<ActionResult> GetAllTags()
@@ -106,6 +126,10 @@ public class TagController(ITagService tagService) : BaseController
         });
     }
 
+    /// <summary>
+    /// Получение тега по Id.
+    /// </summary>
+    /// <param name="id">Id тега.</param>
     [HttpGet("{id}")]
     [ProducesOkResponseType(typeof(TagModel))]
     [ProducesNotFoundResponseType]

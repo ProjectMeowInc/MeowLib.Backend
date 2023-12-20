@@ -12,10 +12,19 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MeowLib.WebApi.Controllers.v1;
 
+/// <summary>
+/// Контроллер комментариев к книгам.
+/// </summary>
+/// <param name="bookCommentService">Сервис комментариев к книгам.</param>
 [ApiController]
 [Route("api/v1/books")]
 public class BookCommentController(IBookCommentService bookCommentService) : BaseController
 {
+    /// <summary>
+    /// Получние комментариев к книге.
+    /// </summary>
+    /// <param name="bookId">Id книги.</param>
+    /// <returns></returns>
     [HttpGet("{bookId}/comments")]
     [ProducesOkResponseType(typeof(GetBookCommentsResponse))]
     [ProducesNotFoundResponseType]
@@ -47,6 +56,11 @@ public class BookCommentController(IBookCommentService bookCommentService) : Bas
         });
     }
 
+    /// <summary>
+    /// Оправка нового комментария к книге.
+    /// </summary>
+    /// <param name="bookId">Id книги.</param>
+    /// <param name="input">Данные для отправки.</param>
     [HttpPost("{bookId}/comments")]
     [Authorization]
     [ProducesOkResponseType(typeof(BookCommentDto))]
