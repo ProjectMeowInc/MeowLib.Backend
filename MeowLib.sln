@@ -1,16 +1,12 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeowLib.WebApi", "MeowLib.WebApi\MeowLib.WebApi.csproj", "{29B57186-821F-43B2-B9B2-CE90E2ACF688}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeowLib.WebApi", "src\MeowLib.WebApi\MeowLib.WebApi.csproj", "{29B57186-821F-43B2-B9B2-CE90E2ACF688}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeowLib.Domain", "MeowLib.Domain\MeowLib.Domain.csproj", "{A3076A50-7530-48CF-8D32-A694BB1A35C4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeowLib.Domain", "src\MeowLib.Domain\MeowLib.Domain.csproj", "{A3076A50-7530-48CF-8D32-A694BB1A35C4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeowLib.WebApi.DAL", "MeowLib.WebApi.DAL\MeowLib.WebApi.DAL.csproj", "{35324175-AD84-4ED2-9E3E-C60832C5EC67}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeowLib.DAL", "src\MeowLib.DAL\MeowLib.DAL.csproj", "{35324175-AD84-4ED2-9E3E-C60832C5EC67}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeowLIb.WebApi.Services", "MeowLIb.WebApi.Services\MeowLIb.WebApi.Services.csproj", "{83648EFB-49E6-4C41-B63D-4251F75AEA17}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MeowLib.Tests", "MeowLib.Tests", "{ED876681-426D-489A-859E-157A4073E983}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeowLib.Tests.Services", "MeowLib.Tests.Services\MeowLib.Tests.Services.csproj", "{FF071EB1-7C3B-44D3-8F2E-83E65D6D685C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeowLib.Services", "src\MeowLib.Services\MeowLib.Services.csproj", "{83648EFB-49E6-4C41-B63D-4251F75AEA17}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{36C982CD-52A5-42F4-BF75-59E9916D3A0A}"
 	ProjectSection(SolutionItems) = preProject
@@ -41,12 +37,7 @@ Global
 		{83648EFB-49E6-4C41-B63D-4251F75AEA17}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{83648EFB-49E6-4C41-B63D-4251F75AEA17}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{83648EFB-49E6-4C41-B63D-4251F75AEA17}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FF071EB1-7C3B-44D3-8F2E-83E65D6D685C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FF071EB1-7C3B-44D3-8F2E-83E65D6D685C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FF071EB1-7C3B-44D3-8F2E-83E65D6D685C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FF071EB1-7C3B-44D3-8F2E-83E65D6D685C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{FF071EB1-7C3B-44D3-8F2E-83E65D6D685C} = {ED876681-426D-489A-859E-157A4073E983}
 	EndGlobalSection
 EndGlobal
