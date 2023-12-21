@@ -171,14 +171,11 @@ public class BookController(IBookService bookService) : BaseController
                     Name = foundedBook.Author.Name
                 }
                 : null,
-            Tags = foundedBook.Tags.Select(t =>
+            Tags = foundedBook.Tags.Select(t => new TagDto
             {
-                return new TagDto
-                {
-                    Id = t.Id,
-                    Name = t.Name,
-                    Description = t.Description
-                };
+                Id = t.Id,
+                Name = t.Name,
+                Description = t.Description
             }),
             Translations = foundedBook.Translations.Select(t => new TranslationDto
             {
