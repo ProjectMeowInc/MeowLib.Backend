@@ -155,7 +155,12 @@ public class BookService(
     /// <returns>Модель книги, или null если она не была найдена.</returns>
     public Task<BookEntityModel?> GetBookByIdAsync(int bookId)
     {
-        return dbContext.Books.FirstOrDefaultAsync(b => b.Id == bookId);
+        return dbContext.Books
+            .Include(b => b.Author)
+            .Include(b => b.Tags)
+            .Include(b => b.Translations)
+            .ThenInclude(t => t.Team)
+            .FirstOrDefaultAsync(b => b.Id == bookId);
     }
 
     /// <summary>
