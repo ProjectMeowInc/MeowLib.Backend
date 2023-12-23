@@ -55,6 +55,8 @@ public class BookService(
             Tags = new List<TagEntityModel>(),
             Translations = new List<TranslationEntityModel>()
         });
+        await dbContext.SaveChangesAsync();
+        
         return entry.Entity;
     }
 
