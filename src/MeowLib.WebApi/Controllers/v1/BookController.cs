@@ -26,6 +26,7 @@ public class BookController(IBookService bookService) : BaseController
     /// Получение всех книг.
     /// </summary>
     [HttpGet]
+    [DeprecatedMethod(30, 2, 2024)]
     [ProducesOkResponseType(typeof(GetAllBooksResponse))]
     public async Task<ActionResult> GetAllBooks()
     {
