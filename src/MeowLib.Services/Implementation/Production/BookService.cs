@@ -2,6 +2,7 @@ using MeowLib.DAL;
 using MeowLib.Domain.DbModels.BookEntity;
 using MeowLib.Domain.DbModels.TagEntity;
 using MeowLib.Domain.DbModels.TranslationEntity;
+using MeowLib.Domain.Dto.Author;
 using MeowLib.Domain.Dto.Book;
 using MeowLib.Domain.Exceptions;
 using MeowLib.Domain.Exceptions.Author;
@@ -233,7 +234,13 @@ public class BookService(
                 Id = b.Id,
                 Name = b.Name,
                 Description = b.Description,
-                ImageName = b.ImageUrl
+                ImageName = b.ImageUrl,
+                Author = b.Author != null ? new AuthorDto
+                {
+                    Id = b.Author.Id,
+                    Name = b.Author.Name
+                }
+                    : null
             })
             .ToListAsync();
     }
