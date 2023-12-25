@@ -2,6 +2,7 @@
 using MeowLib.Domain.DbModels.BookEntity;
 using MeowLib.Domain.DbModels.UserEntity;
 using MeowLib.Domain.DbModels.UserFavoriteEntity;
+using MeowLib.Domain.Dto.Author;
 using MeowLib.Domain.Dto.Book;
 using MeowLib.Domain.Dto.UserFavorite;
 using MeowLib.Domain.Enums;
@@ -73,7 +74,13 @@ public class UserFavoriteService(ApplicationDbContext dbContext, IUserService us
                     Id = uf.Book.Id,
                     Name = uf.Book.Name,
                     Description = uf.Book.Description,
-                    ImageName = uf.Book.ImageUrl
+                    ImageName = uf.Book.ImageUrl,
+                    Author = uf.Book.Author != null ?
+                        new AuthorDto
+                        {
+                            Id = uf.Book.Author.Id,
+                            Name = uf.Book.Author.Name
+                        } : null
                 }
             })
             .ToListAsync();
