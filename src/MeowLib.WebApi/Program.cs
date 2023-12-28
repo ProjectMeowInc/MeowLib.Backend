@@ -5,6 +5,7 @@ using MeowLib.DAL;
 using MeowLib.Domain.Models;
 using MeowLib.Services.Implementation.Production;
 using MeowLib.Services.Interface;
+using MeowLib.WebApi.Extensions;
 using MeowLib.WebApi.Middleware;
 using MeowLib.WebApi.Models.Responses.v1;
 using Microsoft.AspNetCore.Mvc;
@@ -140,6 +141,7 @@ if (app.Environment.IsDevelopment())
     logger.LogInformation("[{@DateTime}] Используется DEV окружение", DateTime.UtcNow);
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.ApplyMigrations();
 }
 
 app.MapControllers();
