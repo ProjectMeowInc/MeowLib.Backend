@@ -127,7 +127,7 @@ public class UserFavoriteController(IUserFavoriteService userFavoriteService) : 
                 Id = foundedFavorite.Book.Id,
                 Name = foundedFavorite.Book.Name,
                 Description = foundedFavorite.Book.Description,
-                ImageUrl = foundedFavorite.Book.ImageUrl
+                ImageUrl = foundedFavorite.Book.Image?.FileSystemName
             }
         });
     }

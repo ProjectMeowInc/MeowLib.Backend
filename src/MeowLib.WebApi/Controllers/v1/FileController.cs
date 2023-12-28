@@ -1,5 +1,6 @@
 ﻿using MeowLib.Services.Interface;
 using MeowLib.WebApi.Abstractions;
+using MeowLib.WebApi.Filters;
 using MeowLib.WebApi.ProducesResponseTypes;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,19 +15,21 @@ namespace MeowLib.WebApi.Controllers.v1;
 public class FileController(IFileService fileService) : BaseController
 {
     /// <summary>
-    /// Метод получает изображение по его названию.
+    /// [DEPRECATED] Метод получает изображение по его названию.
     /// </summary>
     /// <param name="imageName">Название изображения.</param>
     [HttpGet("book/{imageName}")]
     [ProducesNotFoundResponseType]
+    [DeprecatedMethod(10, 1, 2024)]
     public async Task<ActionResult> GetBookImage([FromRoute] string imageName)
     {
-        var getBookImageResult = await fileService.GetBookImageAsync(imageName);
-        if (getBookImageResult.content is null)
+        var getBookImageResult = await fileService.GetFileByNameAsync(imageName);
+        if (getBookImageResult is null)
         {
             return NotFoundError("Изображение не найдено");
         }
 
-        return File(getBookImageResult.content, getBookImageResult.mimeType);
+        var (content, mimeType) = getBookImageResult.Value;
+        return File(content, mimeType);
     }
 }
