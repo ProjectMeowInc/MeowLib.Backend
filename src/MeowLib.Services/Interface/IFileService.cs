@@ -1,4 +1,5 @@
-﻿using MeowLib.Domain.Exceptions;
+﻿using MeowLib.Domain.DbModels.FileEntity;
+using MeowLib.Domain.Exceptions.File;
 using MeowLib.Domain.Result;
 using Microsoft.AspNetCore.Http;
 
@@ -10,17 +11,18 @@ namespace MeowLib.Services.Interface;
 public interface IFileService
 {
     /// <summary>
-    /// Метод загружает изображение как изображение книги.
+    /// Метод загружает файл.
     /// </summary>
     /// <param name="file">Файл для загрузки.</param>
-    /// <returns>Название созданного файла</returns>
+    /// <exception cref="FileIsTooBigException">Возникает в случае, если переданный файл слишком большой.</exception>
     /// <exception cref="FileHasIncorrectExtensionException">Возникает в случае, если файл имеет некорретное расширение.</exception>
-    Task<Result<string>> UploadBookImageAsync(IFormFile file);
+    /// <returns>Созданный файл.</returns>
+    Task<Result<FileEntityModel>> UploadFileAsync(IFormFile file);
 
     /// <summary>
-    /// Метод возвращает загруженное ранее изображение книги.
+    /// Метод получает файл по имени.
     /// </summary>
-    /// <param name="imageName">Название книги.</param>
-    /// <returns>Картинка, в виде байтов и её mimeType, если картинка не найдена, то content - null</returns>
-    Task<(byte[]? content, string mimeType)> GetBookImageAsync(string imageName);
+    /// <param name="fileName">Имя файла.</param>
+    /// <returns>Полученный файл и подходящий Mime Type.</returns>
+    Task<(byte[] content, string mimeType)?> GetFileByNameAsync(string fileName);
 }
