@@ -10,7 +10,7 @@ public class TagEntityModel
     /// <summary>
     /// Id тега.
     /// </summary>
-    public int Id { get; set; }
+    public int Id { get; init; }
 
     /// <summary>
     /// Название тега.
@@ -25,5 +25,5 @@ public class TagEntityModel
     /// <summary>
     /// Список книг с данным тегом.
     /// </summary>
-    public required IEnumerable<BookEntityModel> Books { get; set; }
+    public required IEnumerable<BookEntityModel> Books { get; init; }
 }

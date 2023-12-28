@@ -30,5 +30,5 @@ public class ValidationException : ServiceLevelException
     /// <summary>
     /// Список ошибок валидации.
     /// </summary>
-    public IEnumerable<ValidationErrorModel> ValidationErrors { get; protected set; }
+    public IEnumerable<ValidationErrorModel> ValidationErrors { get; protected init; }
 }

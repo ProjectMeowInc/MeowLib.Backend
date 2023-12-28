@@ -14,5 +14,5 @@ public class ApiException : Exception
         ErrorMessage = errorMessage;
     }
 
-    public string ErrorMessage { get; protected set; }
+    public string ErrorMessage { get; protected init; }
 }
