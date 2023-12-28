@@ -91,8 +91,8 @@ if (string.IsNullOrEmpty(uploadFileDirectory))
     throw new Exception("Не указана директория для сервиса загрузки изображений");
 }
 
-services.AddScoped<IFileService>(_ => new FileService(uploadFileDirectory));
 
+services.AddScoped<IFileService, FileService>();
 services.AddScoped<IUserService, UserService>();
 services.AddScoped<IAuthorService, AuthorService>();
 services.AddScoped<ITagService, TagService>();
