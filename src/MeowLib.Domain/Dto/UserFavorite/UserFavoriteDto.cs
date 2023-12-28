@@ -5,6 +5,6 @@ namespace MeowLib.Domain.Dto.UserFavorite;
 
 public class UserFavoriteDto
 {
-    public required BookDto Book { get; set; }
-    public required UserFavoritesStatusEnum Status { get; set; }
+    public required BookDto Book { get; init; }
+    public required UserFavoritesStatusEnum Status { get; init; }
 }

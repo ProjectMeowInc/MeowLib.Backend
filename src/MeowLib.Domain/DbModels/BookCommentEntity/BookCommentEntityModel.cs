@@ -8,9 +8,9 @@ namespace MeowLib.Domain.DbModels.BookCommentEntity;
 /// </summary>
 public class BookCommentEntityModel
 {
-    public int Id { get; set; }
-    public required string Text { get; set; }
-    public required DateTime PostedAt { get; set; }
-    public required UserEntityModel Author { get; set; }
-    public required BookEntityModel Book { get; set; }
+    public int Id { get; init; }
+    public required string Text { get; init; }
+    public required DateTime PostedAt { get; init; }
+    public required UserEntityModel Author { get; init; }
+    public required BookEntityModel Book { get; init; }
 }

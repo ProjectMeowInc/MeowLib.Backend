@@ -10,12 +10,12 @@ public class ChapterEntityModel
     /// <summary>
     /// Id главы.
     /// </summary>
-    public int Id { get; set; }
+    public int Id { get; init; }
 
     /// <summary>
     /// Имя главы.
     /// </summary>
-    public required string Name { get; set; }
+    public required string Name { get; init; }
 
     /// <summary>
     /// Текст главы.
@@ -25,15 +25,15 @@ public class ChapterEntityModel
     /// <summary>
     /// Позиция главы в переводе.
     /// </summary>
-    public required uint Position { get; set; }
+    public required uint Position { get; init; }
 
     /// <summary>
     /// Время загрузки главы.
     /// </summary>
-    public required DateTime ReleaseDate { get; set; }
+    public required DateTime ReleaseDate { get; init; }
 
     /// <summary>
     /// Перевод, к которой принадлежит глава.
     /// </summary>
-    public required TranslationEntityModel Translation { get; set; }
+    public required TranslationEntityModel Translation { get; init; }
 }

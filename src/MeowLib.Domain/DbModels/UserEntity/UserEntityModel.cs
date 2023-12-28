@@ -10,7 +10,7 @@ public class UserEntityModel
     /// <summary>
     /// Id пользователя. PK.
     /// </summary>
-    public int Id { get; set; }
+    public int Id { get; init; }
 
     /// <summary>
     /// Логин пользователя.
@@ -35,5 +35,5 @@ public class UserEntityModel
     /// <summary>
     /// Роль пользователя.
     /// </summary>
-    public required UserRolesEnum Role { get; set; } = UserRolesEnum.User;
+    public required UserRolesEnum Role { get; init; } = UserRolesEnum.User;
 }

@@ -1,4 +1,5 @@
 using MeowLib.Domain.DbModels.AuthorEntity;
+using MeowLib.Domain.DbModels.FileEntity;
 using MeowLib.Domain.DbModels.TagEntity;
 using MeowLib.Domain.DbModels.TranslationEntity;
 
@@ -12,7 +13,7 @@ public class BookEntityModel
     /// <summary>
     /// Id книги.
     /// </summary>
-    public int Id { get; set; }
+    public int Id { get; init; }
 
     /// <summary>
     /// Имя книги.
@@ -27,7 +28,7 @@ public class BookEntityModel
     /// <summary>
     /// Название файла обложки книги.
     /// </summary>
-    public string? ImageUrl { get; set; }
+    public FileEntityModel? Image { get; set; }
 
     /// <summary>
     /// Автор книги. FK.
@@ -37,7 +38,7 @@ public class BookEntityModel
     /// <summary>
     /// Список переводов книги.
     /// </summary>
-    public required IEnumerable<TranslationEntityModel> Translations { get; set; }
+    public required IEnumerable<TranslationEntityModel> Translations { get; init; }
 
     /// <summary>
     /// Список тегов книги.

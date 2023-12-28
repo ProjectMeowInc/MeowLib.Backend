@@ -4,6 +4,7 @@ using MeowLib.Domain.DbModels.BookEntity;
 using MeowLib.Domain.DbModels.BookmarkEntity;
 using MeowLib.Domain.DbModels.ChapterEntity;
 using MeowLib.Domain.DbModels.CoinsChangeLogEntity;
+using MeowLib.Domain.DbModels.FileEntity;
 using MeowLib.Domain.DbModels.NotificationEntity;
 using MeowLib.Domain.DbModels.TagEntity;
 using MeowLib.Domain.DbModels.TeamEntity;
@@ -29,67 +30,72 @@ public class ApplicationDbContext : DbContext
     /// <summary>
     /// Таблица пользователей.
     /// </summary>
-    public required DbSet<UserEntityModel> Users { get; set; }
+    public required DbSet<UserEntityModel> Users { get; init; }
 
     /// <summary>
     /// Таблица авторов.
     /// </summary>
-    public required DbSet<AuthorEntityModel> Authors { get; set; }
+    public required DbSet<AuthorEntityModel> Authors { get; init; }
 
     /// <summary>
     /// Таблица тегов.
     /// </summary>
-    public required DbSet<TagEntityModel> Tags { get; set; }
+    public required DbSet<TagEntityModel> Tags { get; init; }
 
     /// <summary>
     /// Таблица книг.
     /// </summary>
-    public required DbSet<BookEntityModel> Books { get; set; }
+    public required DbSet<BookEntityModel> Books { get; init; }
 
     /// <summary>
     /// Таблица глав книг.
     /// </summary>
-    public required DbSet<ChapterEntityModel> Chapters { get; set; }
+    public required DbSet<ChapterEntityModel> Chapters { get; init; }
 
     /// <summary>
     /// Таблица избранных книг пользователя.
     /// </summary>
-    public required DbSet<UserFavoriteEntityModel> UsersFavorite { get; set; }
+    public required DbSet<UserFavoriteEntityModel> UsersFavorite { get; init; }
 
     /// <summary>
     /// Таблица закладок пользователей.
     /// </summary>
-    public required DbSet<BookmarkEntityModel> Bookmarks { get; set; }
+    public required DbSet<BookmarkEntityModel> Bookmarks { get; init; }
 
     /// <summary>
     /// Таблциа комментариев к книге.
     /// </summary>
-    public required DbSet<BookCommentEntityModel> BookComments { get; set; }
+    public required DbSet<BookCommentEntityModel> BookComments { get; init; }
 
     /// <summary>
     /// Таблица команд.
     /// </summary>
-    public required DbSet<TeamEntityModel> Teams { get; set; }
+    public required DbSet<TeamEntityModel> Teams { get; init; }
 
     /// <summary>
     /// Таблица членов команд.
     /// </summary>
-    public required DbSet<TeamMemberEntityModel> TeamMembers { get; set; }
+    public required DbSet<TeamMemberEntityModel> TeamMembers { get; init; }
 
     /// <summary>
     /// Таблица уведомлений пользователей.
     /// </summary>
-    public required DbSet<NotificationEntityModel> Notifications { get; set; }
+    public required DbSet<NotificationEntityModel> Notifications { get; init; }
 
     /// <summary>
     /// Таблица переводов.
     /// </summary>
-    public required DbSet<TranslationEntityModel> Translations { get; set; }
+    public required DbSet<TranslationEntityModel> Translations { get; init; }
 
     /// <summary>
     /// Таблица логов измененния денег пользователя.
     /// </summary>
-    public required DbSet<CoinsChangeLogEntityModel> CoinsChangeLog { get; set; }
+    public required DbSet<CoinsChangeLogEntityModel> CoinsChangeLog { get; init; }
+
+    /// <summary>
+    /// Таблица файлов.
+    /// </summary>
+    public required DbSet<FileEntityModel> Files { get; init; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

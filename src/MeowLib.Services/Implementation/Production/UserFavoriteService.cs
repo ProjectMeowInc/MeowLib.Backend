@@ -74,13 +74,14 @@ public class UserFavoriteService(ApplicationDbContext dbContext, IUserService us
                     Id = uf.Book.Id,
                     Name = uf.Book.Name,
                     Description = uf.Book.Description,
-                    ImageName = uf.Book.ImageUrl,
-                    Author = uf.Book.Author != null ?
-                        new AuthorDto
+                    ImageName = uf.Book.Image != null ? uf.Book.Image.FileSystemName : null,
+                    Author = uf.Book.Author != null
+                        ? new AuthorDto
                         {
                             Id = uf.Book.Author.Id,
                             Name = uf.Book.Author.Name
-                        } : null
+                        }
+                        : null
                 }
             })
             .ToListAsync();

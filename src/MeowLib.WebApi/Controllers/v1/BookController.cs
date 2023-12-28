@@ -23,7 +23,7 @@ namespace MeowLib.WebApi.Controllers.v1;
 public class BookController(IBookService bookService) : BaseController
 {
     /// <summary>
-    /// Получение всех книг.
+    /// [DEPRECATED] Получение всех книг.
     /// </summary>
     [HttpGet]
     [DeprecatedMethod(30, 2, 2024)]
@@ -60,7 +60,7 @@ public class BookController(IBookService bookService) : BaseController
         {
             Name = input.Name,
             Description = input.Description,
-            ImageUrl = null,
+            Image = null,
             Author = null,
             Translations = [],
             Tags = []
@@ -163,7 +163,7 @@ public class BookController(IBookService bookService) : BaseController
         {
             Id = foundedBook.Id,
             Name = foundedBook.Name,
-            ImageUrl = foundedBook.ImageUrl,
+            ImageUrl = foundedBook.Image?.FileSystemName,
             Description = foundedBook.Description,
             Author = foundedBook.Author is not null
                 ? new AuthorModel

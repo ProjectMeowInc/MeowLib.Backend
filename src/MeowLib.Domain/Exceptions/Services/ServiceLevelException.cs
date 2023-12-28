@@ -17,5 +17,5 @@ public class ServiceLevelException : ApiException
     /// <summary>
     /// Название сервиса в котором произошло исключение.
     /// </summary>
-    public string ServiceName { get; protected set; }
+    public string ServiceName { get; protected init; }
 }
