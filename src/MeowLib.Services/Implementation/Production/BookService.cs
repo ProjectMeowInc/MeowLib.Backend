@@ -57,7 +57,7 @@ public class BookService(
             Translations = new List<TranslationEntityModel>()
         });
         await dbContext.SaveChangesAsync();
-        
+
         return entry.Entity;
     }
 
@@ -79,7 +79,7 @@ public class BookService(
                 });
             }
         }
-        
+
         if (validationErrors.Any())
         {
             var validationException = new ValidationException(nameof(BookService), validationErrors);
@@ -202,7 +202,6 @@ public class BookService(
     /// <exception cref="UploadingFileException">Возникает в случае ошибки загрузки файла.</exception>
     public async Task<Result<BookEntityModel?>> UpdateBookImageAsync(int bookId, IFormFile file)
     {
-        // TODO: REFACTORING!!
         var foundedBook = await GetBookByIdAsync(bookId);
         if (foundedBook is null)
         {
@@ -210,7 +209,7 @@ public class BookService(
             return Result<BookEntityModel?>.Ok(null);
         }
 
-        var uploadBookImageResult = await fileService.UploadBookImageAsync(file);
+        var uploadBookImageResult = await fileService.UploadFileAsync(file);
         if (uploadBookImageResult.IsFailure)
         {
             logger.LogError("[{@DateTime}] Ошибка загрузки файла", DateTime.UtcNow);
@@ -219,7 +218,7 @@ public class BookService(
         }
 
         var uploadedFile = uploadBookImageResult.GetResult();
-        foundedBook.ImageUrl = uploadedFile;
+        foundedBook.Image = uploadedFile;
 
         dbContext.Books.Update(foundedBook);
         await dbContext.SaveChangesAsync();
@@ -234,12 +233,15 @@ public class BookService(
                 Id = b.Id,
                 Name = b.Name,
                 Description = b.Description,
-                ImageName = b.ImageUrl,
-                Author = b.Author != null ? new AuthorDto
-                {
-                    Id = b.Author.Id,
-                    Name = b.Author.Name
-                }
+                ImageName = b.Image != null
+                    ? b.Image.FileSystemName
+                    : null,
+                Author = b.Author != null
+                    ? new AuthorDto
+                    {
+                        Id = b.Author.Id,
+                        Name = b.Author.Name
+                    }
                     : null
             })
             .ToListAsync();
