@@ -76,7 +76,7 @@ public class UserController(IUserService userService) : BaseController
     }
 
     /// <summary>
-    ///     Получить пользователя по Id.
+    /// Получить пользователя по Id.
     /// </summary>
     /// <param name="userId">Id пользователя.</param>
     [HttpGet("{userId}")]
@@ -85,7 +85,10 @@ public class UserController(IUserService userService) : BaseController
     public async Task<IActionResult> GetUserByIdAsync([FromRoute] int userId)
     {
         var foundedUser = await userService.GetUserByIdAsync(userId);
-        if (foundedUser is null) return NotFoundError();
+        if (foundedUser is null)
+        {
+            return NotFoundError();
+        }
 
         return Ok(new UserModel
         {
