@@ -1,13 +1,13 @@
 ﻿using MeowLib.DAL;
-using MeowLib.Domain.DbModels.BookEntity;
-using MeowLib.Domain.DbModels.ChapterEntity;
-using MeowLib.Domain.DbModels.TeamEntity;
-using MeowLib.Domain.DbModels.TranslationEntity;
-using MeowLib.Domain.Dto.Chapter;
-using MeowLib.Domain.Exceptions;
-using MeowLib.Domain.Exceptions.Chapter;
-using MeowLib.Domain.Exceptions.Translation;
+using MeowLib.Domain.Book.Entity;
+using MeowLib.Domain.Chapter.Dto;
+using MeowLib.Domain.Chapter.Entity;
+using MeowLib.Domain.Chapter.Exceptions;
+using MeowLib.Domain.Shared;
 using MeowLib.Domain.Shared.Result;
+using MeowLib.Domain.Team.Entity;
+using MeowLib.Domain.Translation.Entity;
+using MeowLib.Domain.Translation.Exceptions;
 using MeowLib.Services.Interface;
 using Microsoft.EntityFrameworkCore;
 

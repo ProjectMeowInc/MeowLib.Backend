@@ -1,4 +1,4 @@
-﻿namespace MeowLib.Domain.Exceptions;
+﻿namespace MeowLib.Domain.Shared;
 
 /// <summary>
 /// Класс исключений, для ошибок связанных с внутренней реализацией (н.р. ошибка сохранения в БД)

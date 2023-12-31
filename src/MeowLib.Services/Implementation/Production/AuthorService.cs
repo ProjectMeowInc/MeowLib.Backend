@@ -1,8 +1,8 @@
 using MeowLib.DAL;
-using MeowLib.Domain.DbModels.AuthorEntity;
-using MeowLib.Domain.Dto.Author;
-using MeowLib.Domain.Exceptions.Services;
-using MeowLib.Domain.Models;
+using MeowLib.Domain.Author.Dto;
+using MeowLib.Domain.Author.Entity;
+using MeowLib.Domain.Shared.Exceptions.Services;
+using MeowLib.Domain.Shared.Models;
 using MeowLib.Domain.Shared.Result;
 using MeowLib.Services.Interface;
 using Microsoft.EntityFrameworkCore;

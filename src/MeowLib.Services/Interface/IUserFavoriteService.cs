@@ -1,9 +1,9 @@
-﻿using MeowLib.Domain.DbModels.UserFavoriteEntity;
-using MeowLib.Domain.Dto.UserFavorite;
-using MeowLib.Domain.Enums;
-using MeowLib.Domain.Exceptions.Book;
-using MeowLib.Domain.Exceptions.User;
+﻿using MeowLib.Domain.Book.Exceptions;
 using MeowLib.Domain.Shared.Result;
+using MeowLib.Domain.User.Exceptions;
+using MeowLib.Domain.UserFavorite.Dto;
+using MeowLib.Domain.UserFavorite.Entity;
+using MeowLib.Domain.UserFavorite.Enums;
 
 namespace MeowLib.Services.Interface;
 

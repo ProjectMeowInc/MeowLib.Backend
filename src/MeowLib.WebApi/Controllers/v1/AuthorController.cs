@@ -1,6 +1,6 @@
-using MeowLib.Domain.Dto.Author;
-using MeowLib.Domain.Enums;
-using MeowLib.Domain.Exceptions.Services;
+using MeowLib.Domain.Author.Dto;
+using MeowLib.Domain.Shared.Exceptions.Services;
+using MeowLib.Domain.User.Enums;
 using MeowLib.Services.Interface;
 using MeowLib.WebApi.Abstractions;
 using MeowLib.WebApi.Filters;

@@ -1,7 +1,7 @@
-﻿using MeowLib.Domain.Dto.Book;
-using MeowLib.Domain.Enums;
+﻿using MeowLib.Domain.Book.Dto;
+using MeowLib.Domain.UserFavorite.Enums;
 
-namespace MeowLib.Domain.Dto.UserFavorite;
+namespace MeowLib.Domain.UserFavorite.Dto;
 
 public class UserFavoriteDto
 {

@@ -1,5 +1,5 @@
 ﻿using System.Text.Json.Serialization;
-using MeowLib.Domain.Enums;
+using MeowLib.Domain.TeamMember.Enums;
 
 namespace MeowLib.WebApi.Models.Responses.v1.Team;
 

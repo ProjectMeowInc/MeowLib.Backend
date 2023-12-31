@@ -1,4 +1,6 @@
-﻿namespace MeowLib.Domain.Exceptions.Book;
+﻿using MeowLib.Domain.Shared;
+
+namespace MeowLib.Domain.Book.Exceptions;
 
 public class BookNotFoundException : ApiException
 {

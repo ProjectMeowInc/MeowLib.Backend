@@ -1,4 +1,4 @@
-namespace MeowLib.Domain.Exceptions.Services;
+namespace MeowLib.Domain.Shared.Exceptions.Services;
 
 /// <summary>
 /// Класс исключения для ситуаций, когда запрос пользователя на поиск не выдал никаких результатов.

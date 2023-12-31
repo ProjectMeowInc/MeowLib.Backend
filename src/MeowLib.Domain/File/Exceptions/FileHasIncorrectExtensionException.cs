@@ -1,4 +1,6 @@
-﻿namespace MeowLib.Domain.Exceptions.File;
+﻿using MeowLib.Domain.Shared;
+
+namespace MeowLib.Domain.File.Exceptions;
 
 /// <summary>
 /// Класс исключений, когда файл имеет некорректное расширение.

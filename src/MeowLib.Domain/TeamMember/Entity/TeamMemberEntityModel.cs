@@ -1,8 +1,8 @@
-﻿using MeowLib.Domain.DbModels.TeamEntity;
-using MeowLib.Domain.DbModels.UserEntity;
-using MeowLib.Domain.Enums;
+﻿using MeowLib.Domain.Team.Entity;
+using MeowLib.Domain.TeamMember.Enums;
+using MeowLib.Domain.User.Entity;
 
-namespace MeowLib.Domain.DbModels.TeamMemberEntity;
+namespace MeowLib.Domain.TeamMember.Entity;
 
 public class TeamMemberEntityModel
 {

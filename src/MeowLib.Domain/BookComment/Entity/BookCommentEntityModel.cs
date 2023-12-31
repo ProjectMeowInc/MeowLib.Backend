@@ -1,7 +1,7 @@
-﻿using MeowLib.Domain.DbModels.BookEntity;
-using MeowLib.Domain.DbModels.UserEntity;
+﻿using MeowLib.Domain.Book.Entity;
+using MeowLib.Domain.User.Entity;
 
-namespace MeowLib.Domain.DbModels.BookCommentEntity;
+namespace MeowLib.Domain.BookComment.Entity;
 
 /// <summary>
 /// Класс, описывающий сущность комментария к книге.

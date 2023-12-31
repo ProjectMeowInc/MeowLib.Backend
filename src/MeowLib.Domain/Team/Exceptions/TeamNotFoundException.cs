@@ -1,4 +1,6 @@
-﻿namespace MeowLib.Domain.Exceptions.Team;
+﻿using MeowLib.Domain.Shared;
+
+namespace MeowLib.Domain.Team.Exceptions;
 
 public class TeamNotFoundException : ApiException
 {

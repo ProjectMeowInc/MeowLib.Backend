@@ -1,4 +1,4 @@
-﻿namespace MeowLib.Domain.Exceptions.Services;
+﻿namespace MeowLib.Domain.Shared.Exceptions.Services;
 
 /// <summary>
 /// Класс описывающий исключения для некорректных авторизационные данных.

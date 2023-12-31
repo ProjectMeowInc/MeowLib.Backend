@@ -1,7 +1,7 @@
-﻿using MeowLib.Domain.DbModels.UserEntity;
-using MeowLib.Domain.Enums;
+﻿using MeowLib.Domain.Notification.Enums;
+using MeowLib.Domain.User.Entity;
 
-namespace MeowLib.Domain.DbModels.NotificationEntity;
+namespace MeowLib.Domain.Notification.Entity;
 
 public class NotificationEntityModel
 {

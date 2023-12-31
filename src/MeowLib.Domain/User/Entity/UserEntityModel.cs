@@ -1,6 +1,6 @@
-using MeowLib.Domain.Enums;
+using MeowLib.Domain.User.Enums;
 
-namespace MeowLib.Domain.DbModels.UserEntity;
+namespace MeowLib.Domain.User.Entity;
 
 /// <summary>
 /// Класс пользователя, хранящийся в БД.

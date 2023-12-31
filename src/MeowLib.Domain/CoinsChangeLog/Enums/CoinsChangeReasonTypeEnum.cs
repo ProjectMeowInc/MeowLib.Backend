@@ -1,4 +1,4 @@
-﻿namespace MeowLib.Domain.Enums;
+﻿namespace MeowLib.Domain.CoinsChangeLog.Enums;
 
 /// <summary>
 /// Причины изменения баланса.

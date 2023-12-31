@@ -1,5 +1,5 @@
-﻿using MeowLib.Domain.Exceptions.User;
-using MeowLib.Domain.Shared.Result;
+﻿using MeowLib.Domain.Shared.Result;
+using MeowLib.Domain.User.Exceptions;
 
 namespace MeowLib.Services.Interface;
 

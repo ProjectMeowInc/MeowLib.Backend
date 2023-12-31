@@ -1,6 +1,6 @@
-﻿using MeowLib.Domain.DbModels.TranslationEntity;
+﻿using MeowLib.Domain.Translation.Entity;
 
-namespace MeowLib.Domain.DbModels.ChapterEntity;
+namespace MeowLib.Domain.Chapter.Entity;
 
 /// <summary>
 /// Класс главы, хранящийся в БД.

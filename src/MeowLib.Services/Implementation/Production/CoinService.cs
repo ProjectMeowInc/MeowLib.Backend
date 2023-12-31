@@ -1,8 +1,8 @@
 ﻿using MeowLib.DAL;
-using MeowLib.Domain.DbModels.CoinsChangeLogEntity;
-using MeowLib.Domain.Enums;
-using MeowLib.Domain.Exceptions.User;
+using MeowLib.Domain.CoinsChangeLog.Entity;
+using MeowLib.Domain.CoinsChangeLog.Enums;
 using MeowLib.Domain.Shared.Result;
+using MeowLib.Domain.User.Exceptions;
 using MeowLib.Services.Interface;
 using Microsoft.EntityFrameworkCore;
 

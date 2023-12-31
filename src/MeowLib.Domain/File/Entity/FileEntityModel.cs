@@ -1,4 +1,4 @@
-﻿namespace MeowLib.Domain.DbModels.FileEntity;
+﻿namespace MeowLib.Domain.File.Entity;
 
 public class FileEntityModel
 {

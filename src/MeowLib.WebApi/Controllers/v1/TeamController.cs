@@ -1,5 +1,5 @@
-﻿using MeowLib.Domain.Exceptions.Team;
-using MeowLib.Domain.Exceptions.User;
+﻿using MeowLib.Domain.Team.Exceptions;
+using MeowLib.Domain.User.Exceptions;
 using MeowLib.Services.Interface;
 using MeowLib.WebApi.Abstractions;
 using MeowLib.WebApi.Filters;

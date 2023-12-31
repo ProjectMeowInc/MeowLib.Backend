@@ -1,6 +1,6 @@
 ﻿using MeowLib.DAL;
-using MeowLib.Domain.DbModels.FileEntity;
-using MeowLib.Domain.Exceptions.File;
+using MeowLib.Domain.File.Entity;
+using MeowLib.Domain.File.Exceptions;
 using MeowLib.Domain.Shared.Result;
 using MeowLib.Services.Interface;
 using Microsoft.AspNetCore.Http;

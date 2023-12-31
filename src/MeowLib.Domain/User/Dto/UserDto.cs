@@ -1,7 +1,7 @@
-using MeowLib.Domain.DbModels.UserEntity;
-using MeowLib.Domain.Enums;
+using MeowLib.Domain.User.Entity;
+using MeowLib.Domain.User.Enums;
 
-namespace MeowLib.Domain.Dto.User;
+namespace MeowLib.Domain.User.Dto;
 
 /// <summary>
 /// DTO для сущности <see cref="UserEntityModel" />

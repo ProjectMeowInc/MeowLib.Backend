@@ -1,4 +1,4 @@
-namespace MeowLib.Domain.DbModels.AuthorEntity;
+namespace MeowLib.Domain.Author.Entity;
 
 /// <summary>
 /// Класс автора, хранящийся в БД.

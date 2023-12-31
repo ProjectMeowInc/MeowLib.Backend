@@ -1,4 +1,4 @@
-﻿namespace MeowLib.Domain.Exceptions;
+﻿namespace MeowLib.Domain.Shared;
 
 /// <summary>
 /// Класс исключений, связанных с созданием токена.

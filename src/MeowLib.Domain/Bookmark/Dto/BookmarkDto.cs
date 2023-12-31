@@ -1,4 +1,4 @@
-﻿namespace MeowLib.Domain.Dto.Bookmark;
+﻿namespace MeowLib.Domain.Bookmark.Dto;
 
 public class BookmarkDto
 {

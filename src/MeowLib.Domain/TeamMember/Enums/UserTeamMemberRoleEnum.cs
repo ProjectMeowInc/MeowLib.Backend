@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace MeowLib.Domain.Enums;
+namespace MeowLib.Domain.TeamMember.Enums;
 
 [JsonConverter(typeof(JsonStringEnumConverter))]
 public enum UserTeamMemberRoleEnum

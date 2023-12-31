@@ -1,15 +1,15 @@
 ﻿using MeowLib.DAL;
-using MeowLib.Domain.DbModels.BookEntity;
-using MeowLib.Domain.DbModels.UserEntity;
-using MeowLib.Domain.DbModels.UserFavoriteEntity;
-using MeowLib.Domain.Dto.Author;
-using MeowLib.Domain.Dto.Book;
-using MeowLib.Domain.Dto.UserFavorite;
-using MeowLib.Domain.Enums;
-using MeowLib.Domain.Exceptions;
-using MeowLib.Domain.Exceptions.Book;
-using MeowLib.Domain.Exceptions.User;
+using MeowLib.Domain.Author.Dto;
+using MeowLib.Domain.Book.Dto;
+using MeowLib.Domain.Book.Entity;
+using MeowLib.Domain.Book.Exceptions;
+using MeowLib.Domain.Shared;
 using MeowLib.Domain.Shared.Result;
+using MeowLib.Domain.User.Entity;
+using MeowLib.Domain.User.Exceptions;
+using MeowLib.Domain.UserFavorite.Dto;
+using MeowLib.Domain.UserFavorite.Entity;
+using MeowLib.Domain.UserFavorite.Enums;
 using MeowLib.Services.Interface;
 using Microsoft.EntityFrameworkCore;
 

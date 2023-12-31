@@ -1,8 +1,8 @@
-using MeowLib.Domain.DbModels.BookEntity;
-using MeowLib.Domain.Dto.Tag;
-using MeowLib.Domain.Dto.Translation;
-using MeowLib.Domain.Enums;
-using MeowLib.Domain.Exceptions.Services;
+using MeowLib.Domain.Book.Entity;
+using MeowLib.Domain.Shared.Exceptions.Services;
+using MeowLib.Domain.Tag.Dto;
+using MeowLib.Domain.Translation.Dto;
+using MeowLib.Domain.User.Enums;
 using MeowLib.Services.Interface;
 using MeowLib.WebApi.Abstractions;
 using MeowLib.WebApi.Filters;

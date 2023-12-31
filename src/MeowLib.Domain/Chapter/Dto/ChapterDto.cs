@@ -1,4 +1,4 @@
-﻿namespace MeowLib.Domain.Dto.Chapter;
+﻿namespace MeowLib.Domain.Chapter.Dto;
 
 public class ChapterDto
 {

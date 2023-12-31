@@ -1,7 +1,7 @@
-﻿using MeowLib.Domain.DbModels.UserEntity;
-using MeowLib.Domain.Enums;
+﻿using MeowLib.Domain.CoinsChangeLog.Enums;
+using MeowLib.Domain.User.Entity;
 
-namespace MeowLib.Domain.DbModels.CoinsChangeLogEntity;
+namespace MeowLib.Domain.CoinsChangeLog.Entity;
 
 public class CoinsChangeLogEntityModel
 {

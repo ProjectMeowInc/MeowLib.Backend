@@ -1,4 +1,4 @@
-using MeowLib.Domain.Exceptions;
+using MeowLib.Domain.Shared;
 using MeowLib.Domain.Shared.Result;
 using MeowLib.Services.Interface;
 using Microsoft.Extensions.Logging;

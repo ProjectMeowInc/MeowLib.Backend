@@ -1,4 +1,4 @@
-﻿using MeowLib.Domain.Enums;
+﻿using MeowLib.Domain.TeamMember.Enums;
 
 namespace MeowLib.WebApi.Models.Requests.v1.Team;
 

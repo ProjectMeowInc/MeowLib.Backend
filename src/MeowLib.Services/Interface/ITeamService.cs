@@ -1,8 +1,8 @@
-﻿using MeowLib.Domain.DbModels.TeamEntity;
-using MeowLib.Domain.Enums;
-using MeowLib.Domain.Exceptions.Team;
-using MeowLib.Domain.Exceptions.User;
-using MeowLib.Domain.Shared.Result;
+﻿using MeowLib.Domain.Shared.Result;
+using MeowLib.Domain.Team.Entity;
+using MeowLib.Domain.Team.Exceptions;
+using MeowLib.Domain.TeamMember.Enums;
+using MeowLib.Domain.User.Exceptions;
 
 namespace MeowLib.Services.Interface;
 

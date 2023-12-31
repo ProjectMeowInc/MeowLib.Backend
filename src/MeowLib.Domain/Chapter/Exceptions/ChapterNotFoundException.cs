@@ -1,4 +1,6 @@
-﻿namespace MeowLib.Domain.Exceptions.Chapter;
+﻿using MeowLib.Domain.Shared;
+
+namespace MeowLib.Domain.Chapter.Exceptions;
 
 public class ChapterNotFoundException : ApiException
 {

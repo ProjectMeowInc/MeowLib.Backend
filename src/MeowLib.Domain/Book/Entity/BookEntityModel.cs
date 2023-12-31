@@ -1,9 +1,9 @@
-using MeowLib.Domain.DbModels.AuthorEntity;
-using MeowLib.Domain.DbModels.FileEntity;
-using MeowLib.Domain.DbModels.TagEntity;
-using MeowLib.Domain.DbModels.TranslationEntity;
+using MeowLib.Domain.Author.Entity;
+using MeowLib.Domain.File.Entity;
+using MeowLib.Domain.Tag.Entity;
+using MeowLib.Domain.Translation.Entity;
 
-namespace MeowLib.Domain.DbModels.BookEntity;
+namespace MeowLib.Domain.Book.Entity;
 
 /// <summary>
 /// Класс книги, хранящейся в БД.

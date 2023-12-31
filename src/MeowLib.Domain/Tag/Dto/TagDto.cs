@@ -1,4 +1,4 @@
-namespace MeowLib.Domain.Dto.Tag;
+namespace MeowLib.Domain.Tag.Dto;
 
 public class TagDto
 {

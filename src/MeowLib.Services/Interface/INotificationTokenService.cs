@@ -1,4 +1,4 @@
-using MeowLib.Domain.Models;
+using MeowLib.Domain.Shared.Models;
 
 namespace MeowLib.Services.Interface;
 

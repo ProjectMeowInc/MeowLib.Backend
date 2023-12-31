@@ -1,12 +1,12 @@
 ﻿using System.Text.RegularExpressions;
 using MeowLib.DAL;
-using MeowLib.Domain.DbModels.BookCommentEntity;
-using MeowLib.Domain.Dto.BookComment;
-using MeowLib.Domain.Dto.User;
-using MeowLib.Domain.Exceptions;
-using MeowLib.Domain.Exceptions.Book;
-using MeowLib.Domain.Exceptions.User;
+using MeowLib.Domain.Book.Exceptions;
+using MeowLib.Domain.BookComment.Dto;
+using MeowLib.Domain.BookComment.Entity;
+using MeowLib.Domain.Shared;
 using MeowLib.Domain.Shared.Result;
+using MeowLib.Domain.User.Dto;
+using MeowLib.Domain.User.Exceptions;
 using MeowLib.Services.Interface;
 using Microsoft.EntityFrameworkCore;
 

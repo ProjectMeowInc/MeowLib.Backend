@@ -1,4 +1,4 @@
-namespace MeowLib.Domain.Models;
+namespace MeowLib.Domain.Shared.Models;
 
 public class ErrorLogInfoModel
 {

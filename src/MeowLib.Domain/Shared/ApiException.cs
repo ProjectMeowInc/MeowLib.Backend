@@ -1,4 +1,4 @@
-namespace MeowLib.Domain.Exceptions;
+namespace MeowLib.Domain.Shared;
 
 /// <summary>
 /// Базовый класс для всех исключений внутри API

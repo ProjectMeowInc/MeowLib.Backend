@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace MeowLib.Domain.Enums;
+namespace MeowLib.Domain.Notification.Enums;
 
 [JsonConverter(typeof(JsonStringEnumConverter))]
 public enum NotificationTypeEnum

@@ -1,11 +1,11 @@
 using MeowLib.DAL;
-using MeowLib.Domain.DbModels.UserEntity;
-using MeowLib.Domain.Dto.User;
-using MeowLib.Domain.Enums;
-using MeowLib.Domain.Exceptions;
-using MeowLib.Domain.Exceptions.Services;
-using MeowLib.Domain.Models;
+using MeowLib.Domain.Shared;
+using MeowLib.Domain.Shared.Exceptions.Services;
+using MeowLib.Domain.Shared.Models;
 using MeowLib.Domain.Shared.Result;
+using MeowLib.Domain.User.Dto;
+using MeowLib.Domain.User.Entity;
+using MeowLib.Domain.User.Enums;
 using MeowLib.Services.Interface;
 using Microsoft.EntityFrameworkCore;
 

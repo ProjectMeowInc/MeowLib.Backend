@@ -1,4 +1,4 @@
-﻿namespace MeowLib.Domain.Dto.Translation;
+﻿namespace MeowLib.Domain.Translation.Dto;
 
 public class TranslationDto
 {

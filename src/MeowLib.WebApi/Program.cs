@@ -2,7 +2,7 @@ using System.Reflection;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
 using MeowLib.DAL;
-using MeowLib.Domain.Models;
+using MeowLib.Domain.Shared.Models;
 using MeowLib.Services.Implementation.Production;
 using MeowLib.Services.Interface;
 using MeowLib.WebApi.Extensions;

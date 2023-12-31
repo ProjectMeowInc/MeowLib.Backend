@@ -1,8 +1,8 @@
-﻿using MeowLib.Domain.Dto.BookComment;
-using MeowLib.Domain.Exceptions;
-using MeowLib.Domain.Exceptions.Book;
-using MeowLib.Domain.Exceptions.User;
+﻿using MeowLib.Domain.Book.Exceptions;
+using MeowLib.Domain.BookComment.Dto;
+using MeowLib.Domain.Shared;
 using MeowLib.Domain.Shared.Result;
+using MeowLib.Domain.User.Exceptions;
 
 namespace MeowLib.Services.Interface;
 

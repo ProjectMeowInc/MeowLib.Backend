@@ -1,7 +1,7 @@
-﻿using MeowLib.Domain.DbModels.ChapterEntity;
-using MeowLib.Domain.DbModels.UserEntity;
+﻿using MeowLib.Domain.Chapter.Entity;
+using MeowLib.Domain.User.Entity;
 
-namespace MeowLib.Domain.DbModels.BookmarkEntity;
+namespace MeowLib.Domain.Bookmark.Entity;
 
 /// <summary>
 /// Класс, описывающий закладку в БД.

@@ -1,4 +1,4 @@
-using MeowLib.Domain.Enums;
+using MeowLib.Domain.User.Enums;
 using MeowLib.Services.Interface;
 using MeowLib.WebApi.Models.Responses.v1;
 using Microsoft.AspNetCore.Mvc;

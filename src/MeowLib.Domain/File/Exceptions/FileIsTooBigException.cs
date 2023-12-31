@@ -1,3 +1,3 @@
-﻿namespace MeowLib.Domain.Exceptions.File;
+﻿namespace MeowLib.Domain.File.Exceptions;
 
 public class FileIsTooBigException : Exception;

@@ -1,5 +1,5 @@
-using MeowLib.Domain.Dto.User;
-using MeowLib.Domain.Models;
+using MeowLib.Domain.Shared.Models;
+using MeowLib.Domain.User.Dto;
 
 namespace MeowLib.Services.Interface;
 

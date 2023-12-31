@@ -1,5 +1,5 @@
-﻿using MeowLib.Domain.Exceptions.Chapter;
-using MeowLib.Domain.Exceptions.Translation;
+﻿using MeowLib.Domain.Chapter.Exceptions;
+using MeowLib.Domain.Translation.Exceptions;
 using MeowLib.Services.Interface;
 using MeowLib.WebApi.Abstractions;
 using MeowLib.WebApi.Filters;

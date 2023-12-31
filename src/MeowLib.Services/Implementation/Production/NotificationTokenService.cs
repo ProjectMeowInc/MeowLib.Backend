@@ -1,6 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using MeowLib.Domain.Models;
+using MeowLib.Domain.Shared.Models;
 using MeowLib.Services.Interface;
 using Microsoft.IdentityModel.Tokens;
 
@@ -9,19 +9,19 @@ namespace MeowLib.Services.Implementation.Production;
 public class NotificationTokenService : INotificationTokenService
 {
     private static readonly JwtSecurityTokenHandler TokenHandler = new();
+    private readonly string _audience;
     private readonly SymmetricSecurityKey _inviteTokenSecurityKey;
     private readonly string _issuer;
-    private readonly string _audience;
-    
+
     public NotificationTokenService()
     {
         var inviteTokenSecurityKey = "OCGRroap9tNmWNxohF8i3ImZUWYxa4L64nJxDKnqt60lgqddND2kwVDZJaEA"u8.ToArray();
         _inviteTokenSecurityKey = new SymmetricSecurityKey(inviteTokenSecurityKey);
-        
+
         _issuer = "MeowLib";
         _audience = "MeowLibUser";
     }
-    
+
     /// <summary>
     /// Метод генерирует токен для приглашения в комманду.
     /// </summary>
@@ -30,7 +30,7 @@ public class NotificationTokenService : INotificationTokenService
     public string GenerateInviteToTeamStringToken(InviteToTeamTokenModel data)
     {
         var expiredUnixDate = (long)data.InviteExpiredAt.Subtract(DateTime.UnixEpoch).TotalSeconds;
-        
+
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(new[]
@@ -89,7 +89,7 @@ public class NotificationTokenService : INotificationTokenService
             InviteExpiredAt = inviteExpiredDate
         };
     }
-    
+
     /// <summary>
     /// Метод подписывает JWT-токен.
     /// </summary>

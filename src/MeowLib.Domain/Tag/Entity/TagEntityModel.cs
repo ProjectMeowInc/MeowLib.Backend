@@ -1,6 +1,6 @@
-using MeowLib.Domain.DbModels.BookEntity;
+using MeowLib.Domain.Book.Entity;
 
-namespace MeowLib.Domain.DbModels.TagEntity;
+namespace MeowLib.Domain.Tag.Entity;
 
 /// <summary>
 /// Класс описывающий тег.

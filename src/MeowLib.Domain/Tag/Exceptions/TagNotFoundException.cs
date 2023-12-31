@@ -1,3 +1,5 @@
-﻿namespace MeowLib.Domain.Exceptions.Tag;
+﻿using MeowLib.Domain.Shared;
+
+namespace MeowLib.Domain.Tag.Exceptions;
 
 public class TagNotFoundException(int tagId) : ApiException($"Тег с Id = {tagId} не найден");

@@ -1,8 +1,8 @@
-﻿using MeowLib.Domain.DbModels.BookEntity;
-using MeowLib.Domain.DbModels.UserEntity;
-using MeowLib.Domain.Enums;
+﻿using MeowLib.Domain.Book.Entity;
+using MeowLib.Domain.User.Entity;
+using MeowLib.Domain.UserFavorite.Enums;
 
-namespace MeowLib.Domain.DbModels.UserFavoriteEntity;
+namespace MeowLib.Domain.UserFavorite.Entity;
 
 public class UserFavoriteEntityModel
 {

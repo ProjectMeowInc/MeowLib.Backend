@@ -1,6 +1,6 @@
-﻿using MeowLib.Domain.Dto.Author;
+﻿using MeowLib.Domain.Author.Dto;
 
-namespace MeowLib.Domain.Dto.Book;
+namespace MeowLib.Domain.Book.Dto;
 
 public class BookDto
 {

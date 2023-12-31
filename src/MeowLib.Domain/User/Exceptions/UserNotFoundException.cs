@@ -1,4 +1,6 @@
-﻿namespace MeowLib.Domain.Exceptions.User;
+﻿using MeowLib.Domain.Shared;
+
+namespace MeowLib.Domain.User.Exceptions;
 
 public class UserNotFoundException : ApiException
 {

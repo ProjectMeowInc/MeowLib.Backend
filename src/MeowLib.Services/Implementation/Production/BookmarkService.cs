@@ -1,12 +1,12 @@
 ﻿using MeowLib.DAL;
-using MeowLib.Domain.DbModels.BookmarkEntity;
-using MeowLib.Domain.DbModels.ChapterEntity;
-using MeowLib.Domain.DbModels.UserEntity;
-using MeowLib.Domain.Dto.Bookmark;
-using MeowLib.Domain.Exceptions;
-using MeowLib.Domain.Exceptions.Chapter;
-using MeowLib.Domain.Exceptions.User;
+using MeowLib.Domain.Bookmark.Dto;
+using MeowLib.Domain.Bookmark.Entity;
+using MeowLib.Domain.Chapter.Entity;
+using MeowLib.Domain.Chapter.Exceptions;
+using MeowLib.Domain.Shared;
 using MeowLib.Domain.Shared.Result;
+using MeowLib.Domain.User.Entity;
+using MeowLib.Domain.User.Exceptions;
 using MeowLib.Services.Interface;
 using Microsoft.EntityFrameworkCore;
 

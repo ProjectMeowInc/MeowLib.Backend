@@ -1,4 +1,4 @@
-﻿using MeowLib.Domain.Dto.Chapter;
+﻿using MeowLib.Domain.Chapter.Dto;
 
 namespace MeowLib.WebApi.Models.Responses.v1.Translation;
 

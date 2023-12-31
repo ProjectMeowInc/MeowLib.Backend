@@ -1,7 +1,7 @@
 using System.ComponentModel;
 using System.Text.Json.Serialization;
 
-namespace MeowLib.Domain.Enums;
+namespace MeowLib.Domain.User.Enums;
 
 /// <summary>
 /// Перечесление возможных ролей пользователя.

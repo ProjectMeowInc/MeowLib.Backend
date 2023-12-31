@@ -1,6 +1,6 @@
-﻿using MeowLib.Domain.Enums;
+﻿using MeowLib.Domain.Notification.Enums;
 
-namespace MeowLib.Domain.Dto.Notification;
+namespace MeowLib.Domain.Notification.Dto;
 
 public class NotificationDto
 {

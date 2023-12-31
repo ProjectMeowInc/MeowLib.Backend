@@ -1,4 +1,4 @@
-﻿namespace MeowLib.Domain.Models;
+﻿namespace MeowLib.Domain.Shared.Models;
 
 /// <summary>
 /// Класс описывает данные, хранящиеся в JWT-токене для обновления.

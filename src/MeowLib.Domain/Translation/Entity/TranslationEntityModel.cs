@@ -1,8 +1,8 @@
-﻿using MeowLib.Domain.DbModels.BookEntity;
-using MeowLib.Domain.DbModels.ChapterEntity;
-using MeowLib.Domain.DbModels.TeamEntity;
+﻿using MeowLib.Domain.Book.Entity;
+using MeowLib.Domain.Chapter.Entity;
+using MeowLib.Domain.Team.Entity;
 
-namespace MeowLib.Domain.DbModels.TranslationEntity;
+namespace MeowLib.Domain.Translation.Entity;
 
 public class TranslationEntityModel
 {
