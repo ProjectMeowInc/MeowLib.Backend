@@ -1,4 +1,4 @@
-﻿using MeowLib.Services.Interface;
+﻿using MeowLib.Domain.Book.Services;
 using MeowLib.WebApi.Abstractions;
 using MeowLib.WebApi.Filters;
 using MeowLib.WebApi.Models.Responses.v2.Author;
@@ -28,7 +28,7 @@ public class BookController(IBookService bookService) : BaseController
                     Name = b.Name,
                     Description = b.Description,
                     ImageUrl = b.ImageName,
-                    Author = b.Author != null 
+                    Author = b.Author != null
                         ? new AuthorShortModel
                         {
                             Id = b.Author.Id,

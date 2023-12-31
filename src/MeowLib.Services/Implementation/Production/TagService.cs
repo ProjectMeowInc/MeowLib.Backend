@@ -4,7 +4,7 @@ using MeowLib.Domain.Shared.Models;
 using MeowLib.Domain.Shared.Result;
 using MeowLib.Domain.Tag.Dto;
 using MeowLib.Domain.Tag.Entity;
-using MeowLib.Services.Interface;
+using MeowLib.Domain.Tag.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace MeowLib.Services.Implementation.Production;

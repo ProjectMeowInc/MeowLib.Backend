@@ -3,7 +3,7 @@ using MeowLib.Domain.Shared.Exceptions.Services;
 using MeowLib.Domain.Shared.Result;
 using MeowLib.Domain.Translation.Exceptions;
 
-namespace MeowLib.Services.Interface;
+namespace MeowLib.Domain.Chapter.Services;
 
 /// <summary>
 /// Абстракция сервиса для работы с главами.

@@ -7,7 +7,7 @@ using MeowLib.Domain.Team.Entity;
 using MeowLib.Domain.Translation.Entity;
 using MeowLib.Domain.Translation.Exceptions;
 
-namespace MeowLib.Services.Interface;
+namespace MeowLib.Domain.Translation.Services;
 
 public interface ITranslationService
 {

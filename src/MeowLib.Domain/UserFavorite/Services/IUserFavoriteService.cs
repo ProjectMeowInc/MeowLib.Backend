@@ -5,7 +5,7 @@ using MeowLib.Domain.UserFavorite.Dto;
 using MeowLib.Domain.UserFavorite.Entity;
 using MeowLib.Domain.UserFavorite.Enums;
 
-namespace MeowLib.Services.Interface;
+namespace MeowLib.Domain.UserFavorite.Services;
 
 public interface IUserFavoriteService
 {

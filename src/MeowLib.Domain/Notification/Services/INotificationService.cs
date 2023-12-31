@@ -5,7 +5,7 @@ using MeowLib.Domain.Notification.Exceptions;
 using MeowLib.Domain.Shared.Result;
 using MeowLib.Domain.User.Exceptions;
 
-namespace MeowLib.Services.Interface;
+namespace MeowLib.Domain.Notification.Services;
 
 public interface INotificationService
 {

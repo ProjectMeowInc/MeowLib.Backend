@@ -3,7 +3,7 @@ using MeowLib.Domain.Shared.Result;
 using MeowLib.Domain.Tag.Dto;
 using MeowLib.Domain.Tag.Entity;
 
-namespace MeowLib.Services.Interface;
+namespace MeowLib.Domain.Tag.Services;
 
 /// <summary>
 /// Абстракция сервси для работы с тегами.

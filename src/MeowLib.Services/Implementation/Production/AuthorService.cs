@@ -1,10 +1,10 @@
 using MeowLib.DAL;
 using MeowLib.Domain.Author.Dto;
 using MeowLib.Domain.Author.Entity;
+using MeowLib.Domain.Author.Services;
 using MeowLib.Domain.Shared.Exceptions.Services;
 using MeowLib.Domain.Shared.Models;
 using MeowLib.Domain.Shared.Result;
-using MeowLib.Services.Interface;
 using Microsoft.EntityFrameworkCore;
 
 namespace MeowLib.Services.Implementation.Production;

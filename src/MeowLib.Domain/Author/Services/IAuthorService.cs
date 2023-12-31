@@ -4,7 +4,7 @@ using MeowLib.Domain.Shared;
 using MeowLib.Domain.Shared.Exceptions.Services;
 using MeowLib.Domain.Shared.Result;
 
-namespace MeowLib.Services.Interface;
+namespace MeowLib.Domain.Author.Services;
 
 /// <summary>
 /// Абстракция сервиса для работы с авторами.

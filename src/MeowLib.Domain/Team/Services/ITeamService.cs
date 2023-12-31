@@ -4,7 +4,7 @@ using MeowLib.Domain.Team.Exceptions;
 using MeowLib.Domain.TeamMember.Enums;
 using MeowLib.Domain.User.Exceptions;
 
-namespace MeowLib.Services.Interface;
+namespace MeowLib.Domain.Team.Services;
 
 public interface ITeamService
 {

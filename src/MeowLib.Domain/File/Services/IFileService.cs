@@ -3,7 +3,7 @@ using MeowLib.Domain.File.Exceptions;
 using MeowLib.Domain.Shared.Result;
 using Microsoft.AspNetCore.Http;
 
-namespace MeowLib.Services.Interface;
+namespace MeowLib.Domain.File.Services;
 
 /// <summary>
 /// Абстракция сервиса работы с файлами.
@@ -14,8 +14,8 @@ public interface IFileService
     /// Метод загружает файл.
     /// </summary>
     /// <param name="file">Файл для загрузки.</param>
-    /// <exception cref="FileIsTooBigException">Возникает в случае, если переданный файл слишком большой.</exception>
-    /// <exception cref="FileHasIncorrectExtensionException">Возникает в случае, если файл имеет некорретное расширение.</exception>
+    /// <exception cref="FileHasIncorrectExtensionException">Возникает в случае, если переданный файл слишком большой.</exception>
+    /// <exception cref="FileIsTooBigException">Возникает в случае, если файл имеет некорретное расширение.</exception>
     /// <returns>Созданный файл.</returns>
     Task<Result<FileEntityModel>> UploadFileAsync(IFormFile file);
 

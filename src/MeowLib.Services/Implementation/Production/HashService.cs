@@ -1,6 +1,6 @@
 using System.Security.Cryptography;
 using System.Text;
-using MeowLib.Services.Interface;
+using MeowLib.Domain.Shared.Services;
 
 namespace MeowLib.Services.Implementation.Production;
 

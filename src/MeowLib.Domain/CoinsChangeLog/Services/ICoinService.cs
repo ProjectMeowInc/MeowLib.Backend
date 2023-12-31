@@ -1,7 +1,7 @@
 ﻿using MeowLib.Domain.Shared.Result;
 using MeowLib.Domain.User.Exceptions;
 
-namespace MeowLib.Services.Interface;
+namespace MeowLib.Domain.CoinsChangeLog.Services;
 
 public interface ICoinService
 {

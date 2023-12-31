@@ -3,14 +3,16 @@ using MeowLib.Domain.Author.Dto;
 using MeowLib.Domain.Book.Dto;
 using MeowLib.Domain.Book.Entity;
 using MeowLib.Domain.Book.Exceptions;
+using MeowLib.Domain.Book.Services;
 using MeowLib.Domain.Shared;
 using MeowLib.Domain.Shared.Result;
 using MeowLib.Domain.User.Entity;
 using MeowLib.Domain.User.Exceptions;
+using MeowLib.Domain.User.Services;
 using MeowLib.Domain.UserFavorite.Dto;
 using MeowLib.Domain.UserFavorite.Entity;
 using MeowLib.Domain.UserFavorite.Enums;
-using MeowLib.Services.Interface;
+using MeowLib.Domain.UserFavorite.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace MeowLib.Services.Implementation.Production;

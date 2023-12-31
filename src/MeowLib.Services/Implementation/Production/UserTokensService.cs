@@ -3,7 +3,7 @@ using System.Security.Claims;
 using MeowLib.Domain.Shared.Models;
 using MeowLib.Domain.User.Dto;
 using MeowLib.Domain.User.Enums;
-using MeowLib.Services.Interface;
+using MeowLib.Domain.User.Services;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 

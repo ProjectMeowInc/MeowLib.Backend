@@ -4,7 +4,7 @@ using MeowLib.Domain.Shared.Result;
 using MeowLib.Domain.User.Dto;
 using MeowLib.Domain.User.Entity;
 
-namespace MeowLib.Services.Interface;
+namespace MeowLib.Domain.User.Services;
 
 /// <summary>
 /// Абстракция сервиса для работы с пользователями.

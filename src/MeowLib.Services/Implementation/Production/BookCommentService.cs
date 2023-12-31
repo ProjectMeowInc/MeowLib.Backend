@@ -1,13 +1,15 @@
 ﻿using System.Text.RegularExpressions;
 using MeowLib.DAL;
 using MeowLib.Domain.Book.Exceptions;
+using MeowLib.Domain.Book.Services;
 using MeowLib.Domain.BookComment.Dto;
 using MeowLib.Domain.BookComment.Entity;
+using MeowLib.Domain.BookComment.Services;
 using MeowLib.Domain.Shared;
 using MeowLib.Domain.Shared.Result;
 using MeowLib.Domain.User.Dto;
 using MeowLib.Domain.User.Exceptions;
-using MeowLib.Services.Interface;
+using MeowLib.Domain.User.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace MeowLib.Services.Implementation.Production;

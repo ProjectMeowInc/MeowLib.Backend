@@ -1,6 +1,6 @@
 using MeowLib.Domain.Shared.Result;
 
-namespace MeowLib.Services.Interface;
+namespace MeowLib.Domain.Team.Services;
 
 public interface ITelegramLogService
 {

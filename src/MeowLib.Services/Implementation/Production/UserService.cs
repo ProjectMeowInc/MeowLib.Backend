@@ -3,10 +3,11 @@ using MeowLib.Domain.Shared;
 using MeowLib.Domain.Shared.Exceptions.Services;
 using MeowLib.Domain.Shared.Models;
 using MeowLib.Domain.Shared.Result;
+using MeowLib.Domain.Shared.Services;
 using MeowLib.Domain.User.Dto;
 using MeowLib.Domain.User.Entity;
 using MeowLib.Domain.User.Enums;
-using MeowLib.Services.Interface;
+using MeowLib.Domain.User.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace MeowLib.Services.Implementation.Production;

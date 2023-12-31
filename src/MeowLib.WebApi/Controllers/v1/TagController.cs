@@ -1,6 +1,6 @@
 using MeowLib.Domain.Shared.Exceptions.Services;
+using MeowLib.Domain.Tag.Services;
 using MeowLib.Domain.User.Enums;
-using MeowLib.Services.Interface;
 using MeowLib.WebApi.Abstractions;
 using MeowLib.WebApi.Filters;
 using MeowLib.WebApi.Models.Requests.v1.Tag;

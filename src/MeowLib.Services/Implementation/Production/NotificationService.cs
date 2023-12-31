@@ -6,10 +6,10 @@ using MeowLib.Domain.Notification.Dto;
 using MeowLib.Domain.Notification.Entity;
 using MeowLib.Domain.Notification.Enums;
 using MeowLib.Domain.Notification.Exceptions;
+using MeowLib.Domain.Notification.Services;
 using MeowLib.Domain.Shared.Models;
 using MeowLib.Domain.Shared.Result;
 using MeowLib.Domain.User.Exceptions;
-using MeowLib.Services.Interface;
 using Microsoft.EntityFrameworkCore;
 
 namespace MeowLib.Services.Implementation.Production;

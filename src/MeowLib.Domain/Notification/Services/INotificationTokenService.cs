@@ -1,6 +1,6 @@
 using MeowLib.Domain.Shared.Models;
 
-namespace MeowLib.Services.Interface;
+namespace MeowLib.Domain.Notification.Services;
 
 public interface INotificationTokenService
 {

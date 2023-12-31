@@ -1,7 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using MeowLib.Domain.Notification.Services;
 using MeowLib.Domain.Shared.Models;
-using MeowLib.Services.Interface;
 using Microsoft.IdentityModel.Tokens;
 
 namespace MeowLib.Services.Implementation.Production;
