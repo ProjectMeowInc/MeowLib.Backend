@@ -1,17 +1,15 @@
-﻿using MeowLib.DAL;
-using Microsoft.EntityFrameworkCore;
-
 namespace MeowLib.WebApi.Extensions;
 
 public static class AppExtensions
 {
-    public static void ApplyMigrations(this IApplicationBuilder app)
+    public static void SetUpCors(this WebApplication application)
     {
-        using var serviceScope = app.ApplicationServices.CreateScope();
-        var logService = serviceScope.ServiceProvider.GetRequiredService<ILogger<ApplicationDbContext>>();
-        using var dbContext = serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        logService.LogInformation("Начало применения миграций");
-        dbContext.Database.Migrate();
-        logService.LogInformation("Миграции успешно применены");
+        application.UseCors(corsBuilder =>
+        {
+            corsBuilder
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowAnyOrigin();
+        });
     }
 }
