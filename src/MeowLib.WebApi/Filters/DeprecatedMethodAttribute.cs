@@ -35,21 +35,7 @@ public class DeprecatedMethodAttribute(int expiredDay, int expiredMonth, int exp
     private bool IsEndpointDeprecated()
     {
         var currentData = DateTime.UtcNow;
-        if (currentData.Year > expiredYear)
-        {
-            return true;
-        }
-
-        if (currentData.Month > expiredMonth)
-        {
-            return true;
-        }
-
-        if (currentData.Day > expiredDay)
-        {
-            return true;
-        }
-
-        return false;
+        var deprecatedData = new DateTime(expiredYear, expiredMonth, expiredDay);
+        return currentData >= deprecatedData;
     }
 }
