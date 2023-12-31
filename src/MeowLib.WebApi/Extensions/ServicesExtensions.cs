@@ -10,7 +10,6 @@ using MeowLib.Domain.Chapter.Services;
 using MeowLib.Domain.CoinsChangeLog.Services;
 using MeowLib.Domain.File.Services;
 using MeowLib.Domain.Notification.Services;
-using MeowLib.Domain.Shared.Models;
 using MeowLib.Domain.Shared.Services;
 using MeowLib.Domain.Tag.Services;
 using MeowLib.Domain.Team.Services;
@@ -36,23 +35,11 @@ public static class ServicesExtensions
             })
             .ConfigureApiBehaviorOptions(options =>
             {
-                options.InvalidModelStateResponseFactory = actionContext =>
-                {
-                    var validationErrors = new List<ValidationErrorModel>();
-
-                    foreach (var modelStateValue in actionContext.ModelState.Values)
-                    foreach (var modelError in modelStateValue.Errors)
-                        validationErrors.Add(new ValidationErrorModel
-                        {
-                            PropertyName = modelStateValue.RawValue?.ToString() ?? "NULL",
-                            Message = modelError.ErrorMessage
-                        });
-
-                    return new JsonResult(new ValidationErrorResponse(validationErrors))
+                options.InvalidModelStateResponseFactory = _ =>
+                    new JsonResult(new BaseErrorResponse("Ошибка валидации данных"))
                     {
                         StatusCode = 400
                     };
-                };
             });
     }
 
