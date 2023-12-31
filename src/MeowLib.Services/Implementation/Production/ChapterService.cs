@@ -4,7 +4,7 @@ using MeowLib.Domain.Exceptions.Chapter;
 using MeowLib.Domain.Exceptions.Services;
 using MeowLib.Domain.Exceptions.Translation;
 using MeowLib.Domain.Models;
-using MeowLib.Domain.Result;
+using MeowLib.Domain.Shared.Result;
 using MeowLib.Services.Interface;
 using Microsoft.EntityFrameworkCore;
 

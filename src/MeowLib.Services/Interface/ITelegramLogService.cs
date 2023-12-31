@@ -1,4 +1,4 @@
-using MeowLib.Domain.Result;
+using MeowLib.Domain.Shared.Result;
 
 namespace MeowLib.Services.Interface;
 

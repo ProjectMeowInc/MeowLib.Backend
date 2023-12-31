@@ -1,7 +1,7 @@
 using MeowLib.Domain.DbModels.TagEntity;
 using MeowLib.Domain.Dto.Tag;
 using MeowLib.Domain.Exceptions.Services;
-using MeowLib.Domain.Result;
+using MeowLib.Domain.Shared.Result;
 
 namespace MeowLib.Services.Interface;
 

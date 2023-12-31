@@ -1,4 +1,4 @@
-namespace MeowLib.Domain.Result;
+namespace MeowLib.Domain.Shared.Result;
 
 public class Result
 {

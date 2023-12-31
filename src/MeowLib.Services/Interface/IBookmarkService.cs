@@ -2,7 +2,7 @@
 using MeowLib.Domain.Exceptions;
 using MeowLib.Domain.Exceptions.Chapter;
 using MeowLib.Domain.Exceptions.User;
-using MeowLib.Domain.Result;
+using MeowLib.Domain.Shared.Result;
 
 namespace MeowLib.Services.Interface;
 

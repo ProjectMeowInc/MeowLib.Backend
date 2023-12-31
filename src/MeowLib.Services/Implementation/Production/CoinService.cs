@@ -2,7 +2,7 @@
 using MeowLib.Domain.DbModels.CoinsChangeLogEntity;
 using MeowLib.Domain.Enums;
 using MeowLib.Domain.Exceptions.User;
-using MeowLib.Domain.Result;
+using MeowLib.Domain.Shared.Result;
 using MeowLib.Services.Interface;
 using Microsoft.EntityFrameworkCore;
 

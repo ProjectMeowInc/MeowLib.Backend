@@ -8,7 +8,7 @@ using MeowLib.Domain.Exceptions;
 using MeowLib.Domain.Exceptions.Author;
 using MeowLib.Domain.Exceptions.Services;
 using MeowLib.Domain.Models;
-using MeowLib.Domain.Result;
+using MeowLib.Domain.Shared.Result;
 using MeowLib.Services.Interface;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;

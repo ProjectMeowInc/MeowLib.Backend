@@ -1,6 +1,6 @@
 ﻿using MeowLib.Domain.DbModels.FileEntity;
 using MeowLib.Domain.Exceptions.File;
-using MeowLib.Domain.Result;
+using MeowLib.Domain.Shared.Result;
 using Microsoft.AspNetCore.Http;
 
 namespace MeowLib.Services.Interface;

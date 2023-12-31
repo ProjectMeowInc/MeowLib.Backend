@@ -3,7 +3,7 @@ using MeowLib.Domain.DbModels.AuthorEntity;
 using MeowLib.Domain.Dto.Author;
 using MeowLib.Domain.Exceptions.Services;
 using MeowLib.Domain.Models;
-using MeowLib.Domain.Result;
+using MeowLib.Domain.Shared.Result;
 using MeowLib.Services.Interface;
 using Microsoft.EntityFrameworkCore;
 

@@ -1,7 +1,7 @@
 ﻿using MeowLib.Domain.DbModels.ChapterEntity;
 using MeowLib.Domain.Exceptions.Services;
 using MeowLib.Domain.Exceptions.Translation;
-using MeowLib.Domain.Result;
+using MeowLib.Domain.Shared.Result;
 
 namespace MeowLib.Services.Interface;
 

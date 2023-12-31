@@ -1,7 +1,7 @@
 ﻿using MeowLib.DAL;
 using MeowLib.Domain.DbModels.FileEntity;
 using MeowLib.Domain.Exceptions.File;
-using MeowLib.Domain.Result;
+using MeowLib.Domain.Shared.Result;
 using MeowLib.Services.Interface;
 using Microsoft.AspNetCore.Http;
 
@@ -14,7 +14,7 @@ public class FileService(ApplicationDbContext dbContext) : IFileService
 {
     private const string UploadDirectoryPath = "./upload";
     private const long MaxFileSize = 512000; // 500 kb
-    
+
     private static readonly string[] ValidateExtension = [".png", ".jpg"];
 
     private static readonly Dictionary<string, string> MimeMappings = new()
@@ -30,7 +30,7 @@ public class FileService(ApplicationDbContext dbContext) : IFileService
         {
             return Result<FileEntityModel>.Fail(new FileIsTooBigException());
         }
-        
+
         var fileExtension = Path.GetExtension(file.FileName).ToLower();
 
         if (!ValidateExtension.Contains(fileExtension))
@@ -58,7 +58,7 @@ public class FileService(ApplicationDbContext dbContext) : IFileService
         {
             return null;
         }
-        
+
         var filePath = Path.Combine(UploadDirectoryPath, fileName);
         try
         {

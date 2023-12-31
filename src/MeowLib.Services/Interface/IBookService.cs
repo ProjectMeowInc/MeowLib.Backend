@@ -2,7 +2,7 @@ using MeowLib.Domain.DbModels.BookEntity;
 using MeowLib.Domain.Dto.Book;
 using MeowLib.Domain.Exceptions;
 using MeowLib.Domain.Exceptions.Services;
-using MeowLib.Domain.Result;
+using MeowLib.Domain.Shared.Result;
 using Microsoft.AspNetCore.Http;
 
 namespace MeowLib.Services.Interface;

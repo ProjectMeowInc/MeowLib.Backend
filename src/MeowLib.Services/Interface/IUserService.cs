@@ -2,7 +2,7 @@ using MeowLib.Domain.DbModels.UserEntity;
 using MeowLib.Domain.Dto.User;
 using MeowLib.Domain.Exceptions;
 using MeowLib.Domain.Exceptions.Services;
-using MeowLib.Domain.Result;
+using MeowLib.Domain.Shared.Result;
 
 namespace MeowLib.Services.Interface;
 

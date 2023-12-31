@@ -1,5 +1,5 @@
 using MeowLib.Domain.Exceptions;
-using MeowLib.Domain.Result;
+using MeowLib.Domain.Shared.Result;
 using MeowLib.Services.Interface;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;

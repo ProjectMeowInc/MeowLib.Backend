@@ -5,7 +5,7 @@ using MeowLib.Domain.Enums;
 using MeowLib.Domain.Exceptions;
 using MeowLib.Domain.Exceptions.Services;
 using MeowLib.Domain.Models;
-using MeowLib.Domain.Result;
+using MeowLib.Domain.Shared.Result;
 using MeowLib.Services.Interface;
 using Microsoft.EntityFrameworkCore;
 
@@ -67,7 +67,7 @@ public class UserService(ApplicationDbContext dbContext, IHashService hashServic
 
         return createdUserEntry.Entity;
     }
-    
+
     public async Task<Result<(string accessToken, string refreshToken)>> LogIn(string login, string password,
         bool isLongSession)
     {
@@ -121,7 +121,7 @@ public class UserService(ApplicationDbContext dbContext, IHashService hashServic
                 Role = u.Role
             }).ToListAsync();
     }
-    
+
     public async Task<Result<UserDto?>> UpdateUser(int id, string? login, string? password)
     {
         var validationErrors = new List<ValidationErrorModel>();
