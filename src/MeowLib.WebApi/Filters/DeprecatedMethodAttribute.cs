@@ -16,6 +16,11 @@ public class DeprecatedMethodAttribute(int expiredDay, int expiredMonth, int exp
     public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
     {
         context.HttpContext.Response.Headers.Append("Deprecated-Date", $"{expiredDay}.{expiredMonth}.{expiredYear}");
+        var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<DeprecatedMethodAttribute>>();
+
+        logger.LogWarning("Попытка использовать устаревший метод: {method} {path}",
+            context.HttpContext.Request.Method,
+            context.HttpContext.Request.Path);
 
         if (IsEndpointDeprecated())
         {
