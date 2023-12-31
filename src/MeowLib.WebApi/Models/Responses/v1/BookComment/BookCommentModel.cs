@@ -1,4 +1,4 @@
-﻿using MeowLib.Domain.Dto.User;
+﻿using MeowLib.Domain.User.Dto;
 
 namespace MeowLib.WebApi.Models.Responses.v1.BookComment;
 

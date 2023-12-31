@@ -1,6 +1,6 @@
-﻿using MeowLib.Domain.Enums;
-using MeowLib.Domain.Exceptions.User;
-using MeowLib.Services.Interface;
+﻿using MeowLib.Domain.CoinsChangeLog.Services;
+using MeowLib.Domain.User.Enums;
+using MeowLib.Domain.User.Exceptions;
 using MeowLib.WebApi.Abstractions;
 using MeowLib.WebApi.Filters;
 using MeowLib.WebApi.Models.Requests.v1.Coin;

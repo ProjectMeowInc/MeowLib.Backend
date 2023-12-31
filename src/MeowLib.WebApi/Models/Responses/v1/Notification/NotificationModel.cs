@@ -1,4 +1,4 @@
-﻿using MeowLib.Domain.Enums;
+﻿using MeowLib.Domain.Notification.Enums;
 
 namespace MeowLib.WebApi.Models.Responses.v1.Notification;
 

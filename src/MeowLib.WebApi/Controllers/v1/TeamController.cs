@@ -1,6 +1,6 @@
-﻿using MeowLib.Domain.Exceptions.Team;
-using MeowLib.Domain.Exceptions.User;
-using MeowLib.Services.Interface;
+﻿using MeowLib.Domain.Team.Exceptions;
+using MeowLib.Domain.Team.Services;
+using MeowLib.Domain.User.Exceptions;
 using MeowLib.WebApi.Abstractions;
 using MeowLib.WebApi.Filters;
 using MeowLib.WebApi.Models.Requests.v1.Team;

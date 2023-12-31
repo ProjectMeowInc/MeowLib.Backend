@@ -1,4 +1,4 @@
-﻿using MeowLib.Domain.Enums;
+﻿using MeowLib.Domain.UserFavorite.Enums;
 using MeowLib.WebApi.Models.Responses.v1.Book;
 
 namespace MeowLib.WebApi.Models.Responses.v1.UserFavorite;

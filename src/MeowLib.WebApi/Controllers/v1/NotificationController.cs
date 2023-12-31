@@ -1,5 +1,5 @@
-using MeowLib.Domain.Exceptions.Notification;
-using MeowLib.Services.Interface;
+using MeowLib.Domain.Notification.Exceptions;
+using MeowLib.Domain.Notification.Services;
 using MeowLib.WebApi.Abstractions;
 using MeowLib.WebApi.Filters;
 using MeowLib.WebApi.Models.Responses.v1.Notification;

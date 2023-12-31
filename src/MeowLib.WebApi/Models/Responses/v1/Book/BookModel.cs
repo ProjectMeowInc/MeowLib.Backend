@@ -1,5 +1,5 @@
-﻿using MeowLib.Domain.Dto.Tag;
-using MeowLib.Domain.Dto.Translation;
+﻿using MeowLib.Domain.Tag.Dto;
+using MeowLib.Domain.Translation.Dto;
 using MeowLib.WebApi.Models.Responses.v1.Author;
 
 namespace MeowLib.WebApi.Models.Responses.v1.Book;

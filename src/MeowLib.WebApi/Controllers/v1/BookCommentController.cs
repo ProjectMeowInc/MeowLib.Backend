@@ -1,7 +1,7 @@
-﻿using MeowLib.Domain.Dto.BookComment;
-using MeowLib.Domain.Exceptions.Book;
-using MeowLib.Domain.Exceptions.User;
-using MeowLib.Services.Interface;
+﻿using MeowLib.Domain.Book.Exceptions;
+using MeowLib.Domain.BookComment.Dto;
+using MeowLib.Domain.BookComment.Services;
+using MeowLib.Domain.User.Exceptions;
 using MeowLib.WebApi.Abstractions;
 using MeowLib.WebApi.Filters;
 using MeowLib.WebApi.Models.Requests.v1.BookComment;

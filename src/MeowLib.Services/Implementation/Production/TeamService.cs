@@ -1,12 +1,14 @@
 ﻿using MeowLib.DAL;
-using MeowLib.Domain.DbModels.TeamEntity;
-using MeowLib.Domain.DbModels.TeamMemberEntity;
-using MeowLib.Domain.Enums;
-using MeowLib.Domain.Exceptions;
-using MeowLib.Domain.Exceptions.Team;
-using MeowLib.Domain.Exceptions.User;
-using MeowLib.Domain.Result;
-using MeowLib.Services.Interface;
+using MeowLib.Domain.Notification.Services;
+using MeowLib.Domain.Shared;
+using MeowLib.Domain.Shared.Result;
+using MeowLib.Domain.Team.Entity;
+using MeowLib.Domain.Team.Exceptions;
+using MeowLib.Domain.Team.Services;
+using MeowLib.Domain.TeamMember.Entity;
+using MeowLib.Domain.TeamMember.Enums;
+using MeowLib.Domain.User.Exceptions;
+using MeowLib.Domain.User.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace MeowLib.Services.Implementation.Production;

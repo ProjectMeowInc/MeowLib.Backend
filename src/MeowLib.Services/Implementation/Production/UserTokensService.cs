@@ -1,9 +1,9 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using MeowLib.Domain.Dto.User;
-using MeowLib.Domain.Enums;
-using MeowLib.Domain.Models;
-using MeowLib.Services.Interface;
+using MeowLib.Domain.Shared.Models;
+using MeowLib.Domain.User.Dto;
+using MeowLib.Domain.User.Enums;
+using MeowLib.Domain.User.Services;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 

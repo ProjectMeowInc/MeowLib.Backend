@@ -1,4 +1,4 @@
-﻿using MeowLib.Services.Interface;
+﻿using MeowLib.Domain.File.Services;
 using MeowLib.WebApi.Abstractions;
 using MeowLib.WebApi.Filters;
 using MeowLib.WebApi.ProducesResponseTypes;
