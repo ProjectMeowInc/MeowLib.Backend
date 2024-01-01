@@ -1,7 +1,7 @@
 using MeowLib.DAL;
-using MeowLib.Domain.Author.Dto;
-using MeowLib.Domain.Author.Services;
+using MeowLib.Domain.People.Dto;
 using MeowLib.Domain.People.Entity;
+using MeowLib.Domain.People.Services;
 using MeowLib.Domain.Shared.Exceptions.Services;
 using MeowLib.Domain.Shared.Models;
 using MeowLib.Domain.Shared.Result;
@@ -38,7 +38,7 @@ public class PeopleService(ApplicationDbContext dbContext) : IPeopleService
             return Result<PeopleEntityModel>.Fail(new ValidationException(validationErrors));
         }
 
-        var entry = await dbContext.Authors.AddAsync(new PeopleEntityModel
+        var entry = await dbContext.Peoples.AddAsync(new PeopleEntityModel
         {
             Name = name
         });
@@ -53,7 +53,7 @@ public class PeopleService(ApplicationDbContext dbContext) : IPeopleService
     /// <returns>DTO список авторов.</returns>
     public async Task<IEnumerable<PeopleDto>> GetAllAuthorsAsync()
     {
-        var authors = await dbContext.Authors.Select(a => new PeopleDto
+        var authors = await dbContext.Peoples.Select(a => new PeopleDto
         {
             Id = a.Id,
             Name = a.Name
@@ -93,7 +93,7 @@ public class PeopleService(ApplicationDbContext dbContext) : IPeopleService
         }
 
         foundedAuthor.Name = data.Name;
-        dbContext.Authors.Update(foundedAuthor);
+        dbContext.Peoples.Update(foundedAuthor);
         await dbContext.SaveChangesAsync();
 
         return foundedAuthor;
@@ -112,7 +112,7 @@ public class PeopleService(ApplicationDbContext dbContext) : IPeopleService
             return false;
         }
 
-        dbContext.Authors.Remove(foundedAuthor);
+        dbContext.Peoples.Remove(foundedAuthor);
         await dbContext.SaveChangesAsync();
 
         return true;
@@ -125,7 +125,7 @@ public class PeopleService(ApplicationDbContext dbContext) : IPeopleService
     /// <returns>DTO-модель автора.</returns>
     public Task<PeopleEntityModel?> GetAuthorByIdAsync(int authorId)
     {
-        return dbContext.Authors.FirstOrDefaultAsync(a => a.Id == authorId);
+        return dbContext.Peoples.FirstOrDefaultAsync(a => a.Id == authorId);
     }
 
     /// <summary>
@@ -136,7 +136,7 @@ public class PeopleService(ApplicationDbContext dbContext) : IPeopleService
     /// <exception cref="SearchNotFoundException">Возникает если не был найден автор по заданным параметрам поиска.</exception>
     public async Task<Result<IEnumerable<PeopleDto>>> GetAuthorWithParams(string? name)
     {
-        var filteredAuthors = dbContext.Authors.AsNoTracking();
+        var filteredAuthors = dbContext.Peoples.AsNoTracking();
 
         if (name is not null)
         {
