@@ -1,9 +1,10 @@
 ﻿using MeowLib.DAL;
-using MeowLib.Domain.Author.Dto;
 using MeowLib.Domain.Book.Dto;
 using MeowLib.Domain.Book.Entity;
 using MeowLib.Domain.Book.Exceptions;
 using MeowLib.Domain.Book.Services;
+using MeowLib.Domain.BookPeople.Enums;
+using MeowLib.Domain.People.Dto;
 using MeowLib.Domain.Shared;
 using MeowLib.Domain.Shared.Result;
 using MeowLib.Domain.User.Entity;
@@ -77,13 +78,14 @@ public class UserFavoriteService(ApplicationDbContext dbContext, IUserService us
                     Name = uf.Book.Name,
                     Description = uf.Book.Description,
                     ImageName = uf.Book.Image != null ? uf.Book.Image.FileSystemName : null,
-                    Author = uf.Book.Author != null
-                        ? new PeopleDto
+                    Author = uf.Book.Peoples
+                        .Where(p => p.Role == BookPeopleRoleEnum.Author)
+                        .Select(p => new PeopleDto
                         {
-                            Id = uf.Book.Author.Id,
-                            Name = uf.Book.Author.Name
-                        }
-                        : null
+                            Id = p.People.Id,
+                            Name = p.People.Name
+                        })
+                        .FirstOrDefault()
                 }
             })
             .ToListAsync();
