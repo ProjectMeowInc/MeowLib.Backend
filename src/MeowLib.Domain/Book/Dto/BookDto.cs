@@ -1,4 +1,4 @@
-﻿using MeowLib.Domain.Author.Dto;
+﻿using MeowLib.Domain.People.Dto;
 
 namespace MeowLib.Domain.Book.Dto;
 

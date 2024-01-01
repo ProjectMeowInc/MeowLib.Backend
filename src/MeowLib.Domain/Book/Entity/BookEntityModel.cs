@@ -1,5 +1,5 @@
+using MeowLib.Domain.BookPeople.Entity;
 using MeowLib.Domain.File.Entity;
-using MeowLib.Domain.People.Entity;
 using MeowLib.Domain.Tag.Entity;
 using MeowLib.Domain.Translation.Entity;
 
@@ -26,14 +26,14 @@ public class BookEntityModel
     public required string Description { get; set; }
 
     /// <summary>
-    /// Название файла обложки книги.
+    /// Изображение книги.
     /// </summary>
     public FileEntityModel? Image { get; set; }
 
     /// <summary>
-    /// Автор книги. FK.
+    /// Связанный с книгой люди.
     /// </summary>
-    public required PeopleEntityModel? Author { get; set; }
+    public required List<BookPeopleEntityModel> Peoples { get; set; }
 
     /// <summary>
     /// Список переводов книги.
