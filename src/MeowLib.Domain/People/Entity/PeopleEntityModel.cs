@@ -1,3 +1,5 @@
+using MeowLib.Domain.BookPeople.Entity;
+
 namespace MeowLib.Domain.People.Entity;
 
 /// <summary>
@@ -14,4 +16,6 @@ public class PeopleEntityModel
     /// Имя человека.
     /// </summary>
     public required string Name { get; set; }
+
+    public required List<BookPeopleEntityModel> BooksPeople { get; init; }
 }
