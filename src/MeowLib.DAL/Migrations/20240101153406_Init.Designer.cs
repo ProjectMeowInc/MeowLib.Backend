@@ -8,11 +8,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace MeowLib.WebApi.Migrations
+namespace MeowLib.DAL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231114060537_Add notifications")]
-    partial class Addnotifications
+    [Migration("20240101153406_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -35,10 +35,17 @@ namespace MeowLib.WebApi.Migrations
                     b.ToTable("BookEntityModelTagEntityModel");
                 });
 
-            modelBuilder.Entity("MeowLib.Domain.DbModels.AuthorEntity.AuthorEntityModel", b =>
+            modelBuilder.Entity("MeowLib.Domain.Book.Entity.BookEntityModel", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("ImageId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
@@ -47,19 +54,18 @@ namespace MeowLib.WebApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Authors");
+                    b.HasIndex("ImageId");
+
+                    b.ToTable("Books");
                 });
 
-            modelBuilder.Entity("MeowLib.Domain.DbModels.BookCommentEntity.BookCommentEntityModel", b =>
+            modelBuilder.Entity("MeowLib.Domain.BookComment.Entity.BookCommentEntityModel", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("AuthorId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int?>("BookEntityModelId")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("BookId")
@@ -76,47 +82,39 @@ namespace MeowLib.WebApi.Migrations
 
                     b.HasIndex("AuthorId");
 
-                    b.HasIndex("BookEntityModelId");
-
                     b.HasIndex("BookId");
 
                     b.ToTable("BookComments");
                 });
 
-            modelBuilder.Entity("MeowLib.Domain.DbModels.BookEntity.BookEntityModel", b =>
+            modelBuilder.Entity("MeowLib.Domain.BookPeople.Entity.BookPeopleEntityModel", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("AuthorId")
+                    b.Property<int>("BookId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<int>("PeopleId")
+                        .HasColumnType("INTEGER");
 
-                    b.Property<string>("ImageUrl")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<int>("Role")
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AuthorId");
+                    b.HasIndex("BookId");
 
-                    b.ToTable("Books");
+                    b.HasIndex("PeopleId");
+
+                    b.ToTable("BookPeople");
                 });
 
-            modelBuilder.Entity("MeowLib.Domain.DbModels.BookmarkEntity.BookmarkEntityModel", b =>
+            modelBuilder.Entity("MeowLib.Domain.Bookmark.Entity.BookmarkEntityModel", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int?>("BookEntityModelId")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("ChapterId")
@@ -127,8 +125,6 @@ namespace MeowLib.WebApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BookEntityModelId");
-
                     b.HasIndex("ChapterId");
 
                     b.HasIndex("UserId");
@@ -136,18 +132,18 @@ namespace MeowLib.WebApi.Migrations
                     b.ToTable("Bookmarks");
                 });
 
-            modelBuilder.Entity("MeowLib.Domain.DbModels.ChapterEntity.ChapterEntityModel", b =>
+            modelBuilder.Entity("MeowLib.Domain.Chapter.Entity.ChapterEntityModel", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("BookId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
+
+                    b.Property<uint>("Position")
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("ReleaseDate")
                         .HasColumnType("TEXT");
@@ -156,14 +152,60 @@ namespace MeowLib.WebApi.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("TranslationId")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("BookId");
+                    b.HasIndex("TranslationId");
 
                     b.ToTable("Chapters");
                 });
 
-            modelBuilder.Entity("MeowLib.Domain.DbModels.NotificationEntity.NotificationEntityModel", b =>
+            modelBuilder.Entity("MeowLib.Domain.CoinsChangeLog.Entity.CoinsChangeLogEntityModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("Value")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("CoinsChangeLog");
+                });
+
+            modelBuilder.Entity("MeowLib.Domain.File.Entity.FileEntityModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("FileSystemName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("UploadAt")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Files");
+                });
+
+            modelBuilder.Entity("MeowLib.Domain.Notification.Entity.NotificationEntityModel", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -174,6 +216,10 @@ namespace MeowLib.WebApi.Migrations
 
                     b.Property<bool>("IsWatched")
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("Payload")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("Type")
                         .HasColumnType("INTEGER");
@@ -188,7 +234,22 @@ namespace MeowLib.WebApi.Migrations
                     b.ToTable("Notifications");
                 });
 
-            modelBuilder.Entity("MeowLib.Domain.DbModels.TagEntity.TagEntityModel", b =>
+            modelBuilder.Entity("MeowLib.Domain.People.Entity.PeopleEntityModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Peoples");
+                });
+
+            modelBuilder.Entity("MeowLib.Domain.Tag.Entity.TagEntityModel", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -207,7 +268,7 @@ namespace MeowLib.WebApi.Migrations
                     b.ToTable("Tags");
                 });
 
-            modelBuilder.Entity("MeowLib.Domain.DbModels.TeamEntity.TeamEntityModel", b =>
+            modelBuilder.Entity("MeowLib.Domain.Team.Entity.TeamEntityModel", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -231,7 +292,7 @@ namespace MeowLib.WebApi.Migrations
                     b.ToTable("Teams");
                 });
 
-            modelBuilder.Entity("MeowLib.Domain.DbModels.TeamMemberEntity.TeamMemberEntityModel", b =>
+            modelBuilder.Entity("MeowLib.Domain.TeamMember.Entity.TeamMemberEntityModel", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -255,11 +316,35 @@ namespace MeowLib.WebApi.Migrations
                     b.ToTable("TeamMembers");
                 });
 
-            modelBuilder.Entity("MeowLib.Domain.DbModels.UserEntity.UserEntityModel", b =>
+            modelBuilder.Entity("MeowLib.Domain.Translation.Entity.TranslationEntityModel", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
+
+                    b.Property<int>("BookId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("TeamId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BookId");
+
+                    b.HasIndex("TeamId");
+
+                    b.ToTable("Translations");
+                });
+
+            modelBuilder.Entity("MeowLib.Domain.User.Entity.UserEntityModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("Coins")
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Login")
                         .IsRequired()
@@ -280,7 +365,7 @@ namespace MeowLib.WebApi.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("MeowLib.Domain.DbModels.UserFavoriteEntity.UserFavoriteEntityModel", b =>
+            modelBuilder.Entity("MeowLib.Domain.UserFavorite.Entity.UserFavoriteEntityModel", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -306,33 +391,37 @@ namespace MeowLib.WebApi.Migrations
 
             modelBuilder.Entity("BookEntityModelTagEntityModel", b =>
                 {
-                    b.HasOne("MeowLib.Domain.DbModels.BookEntity.BookEntityModel", null)
+                    b.HasOne("MeowLib.Domain.Book.Entity.BookEntityModel", null)
                         .WithMany()
                         .HasForeignKey("BooksId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MeowLib.Domain.DbModels.TagEntity.TagEntityModel", null)
+                    b.HasOne("MeowLib.Domain.Tag.Entity.TagEntityModel", null)
                         .WithMany()
                         .HasForeignKey("TagsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MeowLib.Domain.DbModels.BookCommentEntity.BookCommentEntityModel", b =>
+            modelBuilder.Entity("MeowLib.Domain.Book.Entity.BookEntityModel", b =>
                 {
-                    b.HasOne("MeowLib.Domain.DbModels.UserEntity.UserEntityModel", "Author")
+                    b.HasOne("MeowLib.Domain.File.Entity.FileEntityModel", "Image")
+                        .WithMany()
+                        .HasForeignKey("ImageId");
+
+                    b.Navigation("Image");
+                });
+
+            modelBuilder.Entity("MeowLib.Domain.BookComment.Entity.BookCommentEntityModel", b =>
+                {
+                    b.HasOne("MeowLib.Domain.User.Entity.UserEntityModel", "Author")
                         .WithMany()
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MeowLib.Domain.DbModels.BookEntity.BookEntityModel", null)
-                        .WithMany()
-                        .HasForeignKey("BookEntityModelId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("MeowLib.Domain.DbModels.BookEntity.BookEntityModel", "Book")
+                    b.HasOne("MeowLib.Domain.Book.Entity.BookEntityModel", "Book")
                         .WithMany()
                         .HasForeignKey("BookId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -343,30 +432,34 @@ namespace MeowLib.WebApi.Migrations
                     b.Navigation("Book");
                 });
 
-            modelBuilder.Entity("MeowLib.Domain.DbModels.BookEntity.BookEntityModel", b =>
+            modelBuilder.Entity("MeowLib.Domain.BookPeople.Entity.BookPeopleEntityModel", b =>
                 {
-                    b.HasOne("MeowLib.Domain.DbModels.AuthorEntity.AuthorEntityModel", "Author")
-                        .WithMany()
-                        .HasForeignKey("AuthorId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                    b.HasOne("MeowLib.Domain.Book.Entity.BookEntityModel", "Book")
+                        .WithMany("Peoples")
+                        .HasForeignKey("BookId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("Author");
+                    b.HasOne("MeowLib.Domain.People.Entity.PeopleEntityModel", "People")
+                        .WithMany()
+                        .HasForeignKey("PeopleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Book");
+
+                    b.Navigation("People");
                 });
 
-            modelBuilder.Entity("MeowLib.Domain.DbModels.BookmarkEntity.BookmarkEntityModel", b =>
+            modelBuilder.Entity("MeowLib.Domain.Bookmark.Entity.BookmarkEntityModel", b =>
                 {
-                    b.HasOne("MeowLib.Domain.DbModels.BookEntity.BookEntityModel", null)
-                        .WithMany()
-                        .HasForeignKey("BookEntityModelId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("MeowLib.Domain.DbModels.ChapterEntity.ChapterEntityModel", "Chapter")
+                    b.HasOne("MeowLib.Domain.Chapter.Entity.ChapterEntityModel", "Chapter")
                         .WithMany()
                         .HasForeignKey("ChapterId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MeowLib.Domain.DbModels.UserEntity.UserEntityModel", "User")
+                    b.HasOne("MeowLib.Domain.User.Entity.UserEntityModel", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -377,49 +470,42 @@ namespace MeowLib.WebApi.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("MeowLib.Domain.DbModels.ChapterEntity.ChapterEntityModel", b =>
+            modelBuilder.Entity("MeowLib.Domain.Chapter.Entity.ChapterEntityModel", b =>
                 {
-                    b.HasOne("MeowLib.Domain.DbModels.BookEntity.BookEntityModel", "Book")
+                    b.HasOne("MeowLib.Domain.Translation.Entity.TranslationEntityModel", "Translation")
                         .WithMany("Chapters")
-                        .HasForeignKey("BookId")
+                        .HasForeignKey("TranslationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Book");
+                    b.Navigation("Translation");
                 });
 
-            modelBuilder.Entity("MeowLib.Domain.DbModels.NotificationEntity.NotificationEntityModel", b =>
+            modelBuilder.Entity("MeowLib.Domain.CoinsChangeLog.Entity.CoinsChangeLogEntityModel", b =>
                 {
-                    b.HasOne("MeowLib.Domain.DbModels.UserEntity.UserEntityModel", "User")
+                    b.HasOne("MeowLib.Domain.User.Entity.UserEntityModel", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.OwnsOne("MeowLib.Domain.DbModels.NotificationEntity.Payload.BaseNotificationPayload", "Payload", b1 =>
-                        {
-                            b1.Property<int>("NotificationEntityModelId")
-                                .HasColumnType("INTEGER");
+                    b.Navigation("User");
+                });
 
-                            b1.HasKey("NotificationEntityModelId");
-
-                            b1.ToTable("Notifications");
-
-                            b1.ToJson("Payload");
-
-                            b1.WithOwner()
-                                .HasForeignKey("NotificationEntityModelId");
-                        });
-
-                    b.Navigation("Payload")
+            modelBuilder.Entity("MeowLib.Domain.Notification.Entity.NotificationEntityModel", b =>
+                {
+                    b.HasOne("MeowLib.Domain.User.Entity.UserEntityModel", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("MeowLib.Domain.DbModels.TeamEntity.TeamEntityModel", b =>
+            modelBuilder.Entity("MeowLib.Domain.Team.Entity.TeamEntityModel", b =>
                 {
-                    b.HasOne("MeowLib.Domain.DbModels.UserEntity.UserEntityModel", "Owner")
+                    b.HasOne("MeowLib.Domain.User.Entity.UserEntityModel", "Owner")
                         .WithMany()
                         .HasForeignKey("OwnerId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -428,15 +514,15 @@ namespace MeowLib.WebApi.Migrations
                     b.Navigation("Owner");
                 });
 
-            modelBuilder.Entity("MeowLib.Domain.DbModels.TeamMemberEntity.TeamMemberEntityModel", b =>
+            modelBuilder.Entity("MeowLib.Domain.TeamMember.Entity.TeamMemberEntityModel", b =>
                 {
-                    b.HasOne("MeowLib.Domain.DbModels.TeamEntity.TeamEntityModel", "Team")
+                    b.HasOne("MeowLib.Domain.Team.Entity.TeamEntityModel", "Team")
                         .WithMany("Members")
                         .HasForeignKey("TeamId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MeowLib.Domain.DbModels.UserEntity.UserEntityModel", "User")
+                    b.HasOne("MeowLib.Domain.User.Entity.UserEntityModel", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -447,15 +533,34 @@ namespace MeowLib.WebApi.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("MeowLib.Domain.DbModels.UserFavoriteEntity.UserFavoriteEntityModel", b =>
+            modelBuilder.Entity("MeowLib.Domain.Translation.Entity.TranslationEntityModel", b =>
                 {
-                    b.HasOne("MeowLib.Domain.DbModels.BookEntity.BookEntityModel", "Book")
+                    b.HasOne("MeowLib.Domain.Book.Entity.BookEntityModel", "Book")
+                        .WithMany("Translations")
+                        .HasForeignKey("BookId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MeowLib.Domain.Team.Entity.TeamEntityModel", "Team")
+                        .WithMany()
+                        .HasForeignKey("TeamId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Book");
+
+                    b.Navigation("Team");
+                });
+
+            modelBuilder.Entity("MeowLib.Domain.UserFavorite.Entity.UserFavoriteEntityModel", b =>
+                {
+                    b.HasOne("MeowLib.Domain.Book.Entity.BookEntityModel", "Book")
                         .WithMany()
                         .HasForeignKey("BookId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MeowLib.Domain.DbModels.UserEntity.UserEntityModel", "User")
+                    b.HasOne("MeowLib.Domain.User.Entity.UserEntityModel", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -466,14 +571,21 @@ namespace MeowLib.WebApi.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("MeowLib.Domain.DbModels.BookEntity.BookEntityModel", b =>
+            modelBuilder.Entity("MeowLib.Domain.Book.Entity.BookEntityModel", b =>
                 {
-                    b.Navigation("Chapters");
+                    b.Navigation("Peoples");
+
+                    b.Navigation("Translations");
                 });
 
-            modelBuilder.Entity("MeowLib.Domain.DbModels.TeamEntity.TeamEntityModel", b =>
+            modelBuilder.Entity("MeowLib.Domain.Team.Entity.TeamEntityModel", b =>
                 {
                     b.Navigation("Members");
+                });
+
+            modelBuilder.Entity("MeowLib.Domain.Translation.Entity.TranslationEntityModel", b =>
+                {
+                    b.Navigation("Chapters");
                 });
 #pragma warning restore 612, 618
         }
