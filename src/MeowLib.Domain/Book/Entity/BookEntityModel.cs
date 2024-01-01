@@ -1,5 +1,5 @@
-using MeowLib.Domain.Author.Entity;
 using MeowLib.Domain.File.Entity;
+using MeowLib.Domain.People.Entity;
 using MeowLib.Domain.Tag.Entity;
 using MeowLib.Domain.Translation.Entity;
 
@@ -33,7 +33,7 @@ public class BookEntityModel
     /// <summary>
     /// Автор книги. FK.
     /// </summary>
-    public required AuthorEntityModel? Author { get; set; }
+    public required PeopleEntityModel? Author { get; set; }
 
     /// <summary>
     /// Список переводов книги.

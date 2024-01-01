@@ -25,7 +25,7 @@ public class BookService(
     IFileService fileService,
     ILogger<BookService> logger,
     ApplicationDbContext dbContext,
-    IAuthorService authorService)
+    IPeopleService peopleService)
     : IBookService
 {
     public async Task<Result<BookEntityModel>> CreateBookAsync(BookEntityModel createBookEntityModel)
@@ -118,11 +118,11 @@ public class BookService(
             return Result<BookEntityModel?>.Ok(null);
         }
 
-        var foundedAuthor = await authorService.GetAuthorByIdAsync(authorId);
+        var foundedAuthor = await peopleService.GetAuthorByIdAsync(authorId);
         if (foundedAuthor is null)
         {
             logger.LogInformation("[{@DateTime}] Автор не найден", DateTime.UtcNow);
-            return Result<BookEntityModel?>.Fail(new AuthorNotFoundException(authorId));
+            return Result<BookEntityModel?>.Fail(new PeopleNotFoundException(authorId));
         }
 
         foundedBook.Author = foundedAuthor;
@@ -239,7 +239,7 @@ public class BookService(
                     ? b.Image.FileSystemName
                     : null,
                 Author = b.Author != null
-                    ? new AuthorDto
+                    ? new PeopleDto
                     {
                         Id = b.Author.Id,
                         Name = b.Author.Name

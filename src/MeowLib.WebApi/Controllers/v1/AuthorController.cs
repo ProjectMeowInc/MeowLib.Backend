@@ -14,9 +14,9 @@ namespace MeowLib.WebApi.Controllers.v1;
 /// <summary>
 /// Контроллер авторов.
 /// </summary>
-/// <param name="authorService">Сервис авторов</param>
+/// <param name="peopleService">Сервис авторов</param>
 [Route("api/v1/authors")]
-public class AuthorController(IAuthorService authorService) : BaseController
+public class AuthorController(IPeopleService peopleService) : BaseController
 {
     /// <summary>
     /// Получение всех авторов.
@@ -25,7 +25,7 @@ public class AuthorController(IAuthorService authorService) : BaseController
     [ProducesOkResponseType(typeof(GetAllAuthorsResponse))]
     public async Task<ActionResult> GetAllAuthors()
     {
-        var authors = await authorService.GetAllAuthorsAsync();
+        var authors = await peopleService.GetAllAuthorsAsync();
         return Json(new GetAllAuthorsResponse
         {
             Items = authors.Select(a => new AuthorModel
@@ -46,7 +46,7 @@ public class AuthorController(IAuthorService authorService) : BaseController
     [ProducesForbiddenResponseType]
     public async Task<ActionResult> CreateAuthor([FromBody] CreateAuthorRequest input)
     {
-        var createResult = await authorService.CreateAuthorAsync(input.Name);
+        var createResult = await peopleService.CreateAuthorAsync(input.Name);
         if (createResult.IsFailure)
         {
             var exception = createResult.GetError();
@@ -78,7 +78,7 @@ public class AuthorController(IAuthorService authorService) : BaseController
     [ProducesNotFoundResponseType]
     public async Task<ActionResult> UpdateAuthor([FromRoute] int authorId, [FromBody] UpdateAuthorRequest input)
     {
-        var updateResult = await authorService.UpdateAuthorAsync(authorId, new AuthorDto
+        var updateResult = await peopleService.UpdateAuthorAsync(authorId, new PeopleDto
         {
             Id = authorId,
             Name = input.Name
@@ -119,7 +119,7 @@ public class AuthorController(IAuthorService authorService) : BaseController
     [ProducesNotFoundResponseType]
     public async Task<ActionResult> DeleteAuthor([FromRoute] int authorId)
     {
-        var deleteAuthorResult = await authorService.DeleteAuthorAsync(authorId);
+        var deleteAuthorResult = await peopleService.DeleteAuthorAsync(authorId);
         if (deleteAuthorResult.IsFailure)
         {
             return ServerError();
@@ -143,7 +143,7 @@ public class AuthorController(IAuthorService authorService) : BaseController
     [ProducesNotFoundResponseType]
     public async Task<ActionResult> GetAuthorById([FromRoute] int authorId)
     {
-        var foundedAuthor = await authorService.GetAuthorByIdAsync(authorId);
+        var foundedAuthor = await peopleService.GetAuthorByIdAsync(authorId);
         if (foundedAuthor is null)
         {
             return NotFoundError();
@@ -166,7 +166,7 @@ public class AuthorController(IAuthorService authorService) : BaseController
     [ProducesNotFoundResponseType]
     public async Task<ActionResult> GetAuthorWithParams([FromQuery] GetAuthorWithFilterRequest input)
     {
-        var getAuthorWithParamsResult = await authorService.GetAuthorWithParams(input.Name);
+        var getAuthorWithParamsResult = await peopleService.GetAuthorWithParams(input.Name);
         if (getAuthorWithParamsResult.IsFailure)
         {
             var exception = getAuthorWithParamsResult.GetError();

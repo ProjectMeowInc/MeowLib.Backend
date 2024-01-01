@@ -1,5 +1,5 @@
 using MeowLib.Domain.Author.Dto;
-using MeowLib.Domain.Author.Entity;
+using MeowLib.Domain.People.Entity;
 using MeowLib.Domain.Shared;
 using MeowLib.Domain.Shared.Exceptions.Services;
 using MeowLib.Domain.Shared.Result;
@@ -9,7 +9,7 @@ namespace MeowLib.Domain.Author.Services;
 /// <summary>
 /// Абстракция сервиса для работы с авторами.
 /// </summary>
-public interface IAuthorService
+public interface IPeopleService
 {
     /// <summary>
     /// Метод создаёт нового автора.
@@ -17,13 +17,13 @@ public interface IAuthorService
     /// <param name="name">Имя автора.</param>
     /// <returns>DTO-модель автора.</returns>
     /// <exception cref="ValidationException">Возникает в случае ошибки валидации данных.</exception>
-    Task<Result<AuthorEntityModel>> CreateAuthorAsync(string name);
+    Task<Result<PeopleEntityModel>> CreateAuthorAsync(string name);
 
     /// <summary>
     /// Метод получает всех авторов.
     /// </summary>
     /// <returns>DTO список авторов.</returns>
-    Task<IEnumerable<AuthorDto>> GetAllAuthorsAsync();
+    Task<IEnumerable<PeopleDto>> GetAllAuthorsAsync();
 
     /// <summary>
     /// Метод обновляет информацию об авторе.
@@ -32,7 +32,7 @@ public interface IAuthorService
     /// <param name="data">Данные для обновления.</param>
     /// <returns>Обновлённую модель данных.</returns>
     /// <exception cref="ValidationException">Возникает в случае, если введёные данные некорректны.</exception>
-    Task<Result<AuthorEntityModel?>> UpdateAuthorAsync(int id, AuthorDto data);
+    Task<Result<PeopleEntityModel?>> UpdateAuthorAsync(int id, PeopleDto data);
 
     /// <summary>
     /// Метод удаляет автора.
@@ -47,7 +47,7 @@ public interface IAuthorService
     /// </summary>
     /// <param name="authorId">Id автора.</param>
     /// <returns>DTO-модель автора.</returns>
-    Task<AuthorEntityModel?> GetAuthorByIdAsync(int authorId);
+    Task<PeopleEntityModel?> GetAuthorByIdAsync(int authorId);
 
     /// <summary>
     /// Метод получает список авторов подходящих под поисковые параметры.
@@ -55,5 +55,5 @@ public interface IAuthorService
     /// <param name="name">Имя автора</param>
     /// <returns>Список авторов подходящих под параметры поиска.</returns>
     /// <exception cref="SearchNotFoundException">Возникает если не был найден автор по заданным параметрам поиска.</exception>
-    Task<Result<IEnumerable<AuthorDto>>> GetAuthorWithParams(string? name);
+    Task<Result<IEnumerable<PeopleDto>>> GetAuthorWithParams(string? name);
 }

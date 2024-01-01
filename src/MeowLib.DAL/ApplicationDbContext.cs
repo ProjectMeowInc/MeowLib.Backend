@@ -1,4 +1,3 @@
-using MeowLib.Domain.Author.Entity;
 using MeowLib.Domain.Book.Entity;
 using MeowLib.Domain.BookComment.Entity;
 using MeowLib.Domain.Bookmark.Entity;
@@ -6,6 +5,7 @@ using MeowLib.Domain.Chapter.Entity;
 using MeowLib.Domain.CoinsChangeLog.Entity;
 using MeowLib.Domain.File.Entity;
 using MeowLib.Domain.Notification.Entity;
+using MeowLib.Domain.People.Entity;
 using MeowLib.Domain.Tag.Entity;
 using MeowLib.Domain.Team.Entity;
 using MeowLib.Domain.TeamMember.Entity;
@@ -35,7 +35,7 @@ public class ApplicationDbContext : DbContext
     /// <summary>
     /// Таблица авторов.
     /// </summary>
-    public required DbSet<AuthorEntityModel> Authors { get; init; }
+    public required DbSet<PeopleEntityModel> Authors { get; init; }
 
     /// <summary>
     /// Таблица тегов.

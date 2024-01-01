@@ -78,7 +78,7 @@ public class UserFavoriteService(ApplicationDbContext dbContext, IUserService us
                     Description = uf.Book.Description,
                     ImageName = uf.Book.Image != null ? uf.Book.Image.FileSystemName : null,
                     Author = uf.Book.Author != null
-                        ? new AuthorDto
+                        ? new PeopleDto
                         {
                             Id = uf.Book.Author.Id,
                             Name = uf.Book.Author.Name

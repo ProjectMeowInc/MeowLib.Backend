@@ -93,7 +93,7 @@ public static class ServicesExtensions
 
         serviceCollection.AddScoped<IFileService, FileService>();
         serviceCollection.AddScoped<IUserService, UserService>();
-        serviceCollection.AddScoped<IAuthorService, AuthorService>();
+        serviceCollection.AddScoped<IPeopleService, PeopleService>();
         serviceCollection.AddScoped<ITagService, TagService>();
         serviceCollection.AddScoped<IBookService, BookService>();
         serviceCollection.AddScoped<IChapterService, ChapterService>();
