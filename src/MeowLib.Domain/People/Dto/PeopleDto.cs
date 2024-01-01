@@ -1,4 +1,4 @@
-namespace MeowLib.Domain.Author.Dto;
+namespace MeowLib.Domain.People.Dto;
 
 public class PeopleDto
 {
