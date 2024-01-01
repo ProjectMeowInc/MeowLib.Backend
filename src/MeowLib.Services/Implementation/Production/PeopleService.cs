@@ -14,13 +14,7 @@ namespace MeowLib.Services.Implementation.Production;
 /// </summary>
 public class PeopleService(ApplicationDbContext dbContext) : IPeopleService
 {
-    /// <summary>
-    /// Метод создаёт нового автора.
-    /// </summary>
-    /// <param name="name">Имя автора.</param>
-    /// <returns>DTO-модель автора.</returns>
-    /// <exception cref="ValidationException">Возникает в случае ошибки валидации данных.</exception>
-    public async Task<Result<PeopleEntityModel>> CreateAuthorAsync(string name)
+    public async Task<Result<PeopleEntityModel>> CreatePeopleAsync(string name)
     {
         var validationErrors = new List<ValidationErrorModel>();
 
@@ -29,7 +23,7 @@ public class PeopleService(ApplicationDbContext dbContext) : IPeopleService
             validationErrors.Add(new ValidationErrorModel
             {
                 PropertyName = nameof(name),
-                Message = "Имя автора не может быть пустым"
+                Message = "Имя человека не может быть пустым"
             });
         }
 
@@ -40,7 +34,8 @@ public class PeopleService(ApplicationDbContext dbContext) : IPeopleService
 
         var entry = await dbContext.Peoples.AddAsync(new PeopleEntityModel
         {
-            Name = name
+            Name = name,
+            BooksPeople = []
         });
 
         await dbContext.SaveChangesAsync();
@@ -48,27 +43,28 @@ public class PeopleService(ApplicationDbContext dbContext) : IPeopleService
     }
 
     /// <summary>
-    /// Метод получает всех авторов.
+    /// Метод получает всех людей.
     /// </summary>
-    /// <returns>DTO список авторов.</returns>
-    public async Task<IEnumerable<PeopleDto>> GetAllAuthorsAsync()
+    /// <returns>DTO список людей.</returns>
+    public async Task<IEnumerable<PeopleDto>> GetAllPeoplesAsync()
     {
-        var authors = await dbContext.Peoples.Select(a => new PeopleDto
+        var peoples = await dbContext.Peoples.Select(a => new PeopleDto
         {
             Id = a.Id,
             Name = a.Name
         }).ToListAsync();
-        return authors;
+        return peoples;
     }
 
-    /// <summary>
-    /// Метод обновляет информацию об авторе.
-    /// </summary>
-    /// <param name="id">Id автора.</param>
-    /// <param name="data">Данные для обновления.</param>
-    /// <returns>Обновлённую модель данных.</returns>
-    /// <exception cref="ValidationException">Возникает в случае, если введёные данные некорректны.</exception>
-    public async Task<Result<PeopleEntityModel?>> UpdateAuthorAsync(int id, PeopleDto data)
+    public async Task<List<PeopleEntityModel>> GetAllPeoplesWithPageAsync(int perPageCount, int page)
+    {
+        return await dbContext.Peoples.OrderBy(p => p.Id)
+            .Skip(page * perPageCount)
+            .Take(perPageCount)
+            .ToListAsync();
+    }
+
+    public async Task<Result<PeopleEntityModel?>> UpdatePeopleAsync(int id, PeopleDto data)
     {
         var validationErrors = new List<ValidationErrorModel>();
 
@@ -86,7 +82,7 @@ public class PeopleService(ApplicationDbContext dbContext) : IPeopleService
             return Result<PeopleEntityModel?>.Fail(new ValidationException(validationErrors));
         }
 
-        var foundedAuthor = await GetAuthorByIdAsync(id);
+        var foundedAuthor = await GetPeopleByIdAsync(id);
         if (foundedAuthor is null)
         {
             return Result<PeopleEntityModel?>.Ok(null);
@@ -100,13 +96,13 @@ public class PeopleService(ApplicationDbContext dbContext) : IPeopleService
     }
 
     /// <summary>
-    /// Метод удаляет автора.
+    /// Метод удаляет человека.
     /// </summary>
-    /// <param name="id"></param>
-    /// <returns>True - в случае удачного удаления, false - в случае если автор не найден.</returns>
-    public async Task<Result<bool>> DeleteAuthorAsync(int id)
+    /// <param name="peopleId">Id человека.</param>
+    /// <returns>True - в случае удачного удаления, false - в случае если человек не найден.</returns>
+    public async Task<Result<bool>> DeletePeopleAsync(int peopleId)
     {
-        var foundedAuthor = await GetAuthorByIdAsync(id);
+        var foundedAuthor = await GetPeopleByIdAsync(peopleId);
         if (foundedAuthor is null)
         {
             return false;
@@ -119,22 +115,22 @@ public class PeopleService(ApplicationDbContext dbContext) : IPeopleService
     }
 
     /// <summary>
-    /// Метод получает автора по его Id.
+    /// Метод получает человека по его Id.
     /// </summary>
-    /// <param name="authorId">Id автора.</param>
+    /// <param name="peopleId">Id автора.</param>
     /// <returns>DTO-модель автора.</returns>
-    public Task<PeopleEntityModel?> GetAuthorByIdAsync(int authorId)
+    public Task<PeopleEntityModel?> GetPeopleByIdAsync(int peopleId)
     {
-        return dbContext.Peoples.FirstOrDefaultAsync(a => a.Id == authorId);
+        return dbContext.Peoples.FirstOrDefaultAsync(a => a.Id == peopleId);
     }
 
     /// <summary>
-    /// Метод получает список авторов подходящих под поисковые параметры.
+    /// Метод получает список людей подходящих под поисковые параметры.
     /// </summary>
-    /// <param name="name">Имя автора.</param>
-    /// <returns>Список авторов подходящих под параметры поиска.</returns>
-    /// <exception cref="SearchNotFoundException">Возникает если не был найден автор по заданным параметрам поиска.</exception>
-    public async Task<Result<IEnumerable<PeopleDto>>> GetAuthorWithParams(string? name)
+    /// <param name="name">Имя человека.</param>
+    /// <returns>Список людей подходящих под параметры поиска.</returns>
+    /// <exception cref="SearchNotFoundException">Возникает если не был найден человек по заданным параметрам поиска.</exception>
+    public async Task<Result<IEnumerable<PeopleDto>>> GetPeopleWithParams(string? name)
     {
         var filteredAuthors = dbContext.Peoples.AsNoTracking();
 
