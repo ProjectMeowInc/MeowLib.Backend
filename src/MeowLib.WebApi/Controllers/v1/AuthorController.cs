@@ -19,13 +19,14 @@ namespace MeowLib.WebApi.Controllers.v1;
 public class AuthorController(IPeopleService peopleService) : BaseController
 {
     /// <summary>
-    /// Получение всех авторов.
+    /// [DEPRECATED] Получение всех авторов.
     /// </summary>
     [HttpGet]
     [ProducesOkResponseType(typeof(GetAllAuthorsResponse))]
+    [DeprecatedMethod(10, 2, 2024)]
     public async Task<ActionResult> GetAllAuthors()
     {
-        var authors = await peopleService.GetAllAuthorsAsync();
+        var authors = await peopleService.GetAllPeoplesAsync();
         return Json(new GetAllAuthorsResponse
         {
             Items = authors.Select(a => new AuthorModel
@@ -37,16 +38,17 @@ public class AuthorController(IPeopleService peopleService) : BaseController
     }
 
     /// <summary>
-    /// Создание нового автора.
+    /// [DEPRECATED] Создание нового автора.
     /// </summary>
     /// <param name="input">Данные для создания.</param>
     [HttpPost]
     [Authorization(RequiredRoles = new[] { UserRolesEnum.Editor, UserRolesEnum.Admin })]
     [ProducesOkResponseType(typeof(AuthorModel))]
     [ProducesForbiddenResponseType]
+    [DeprecatedMethod(10, 2, 2024)]
     public async Task<ActionResult> CreateAuthor([FromBody] CreateAuthorRequest input)
     {
-        var createResult = await peopleService.CreateAuthorAsync(input.Name);
+        var createResult = await peopleService.CreatePeopleAsync(input.Name);
         if (createResult.IsFailure)
         {
             var exception = createResult.GetError();
@@ -67,7 +69,7 @@ public class AuthorController(IPeopleService peopleService) : BaseController
     }
 
     /// <summary>
-    /// Обновление автора
+    /// [DEPRECATED] Обновление автора
     /// </summary>
     /// <param name="authorId">Id автора.</param>
     /// <param name="input">Данные для обновления</param>
@@ -76,9 +78,10 @@ public class AuthorController(IPeopleService peopleService) : BaseController
     [ProducesOkResponseType(typeof(AuthorModel))]
     [ProducesForbiddenResponseType]
     [ProducesNotFoundResponseType]
+    [DeprecatedMethod(10, 2, 2024)]
     public async Task<ActionResult> UpdateAuthor([FromRoute] int authorId, [FromBody] UpdateAuthorRequest input)
     {
-        var updateResult = await peopleService.UpdateAuthorAsync(authorId, new PeopleDto
+        var updateResult = await peopleService.UpdatePeopleAsync(authorId, new PeopleDto
         {
             Id = authorId,
             Name = input.Name
@@ -110,16 +113,17 @@ public class AuthorController(IPeopleService peopleService) : BaseController
     }
 
     /// <summary>
-    /// Удаление автора.
+    /// [DEPRECATED] Удаление автора.
     /// </summary>
     /// <param name="authorId">Id автора.</param>
     [HttpDelete("{authorId}")]
     [Authorization(RequiredRoles = new[] { UserRolesEnum.Editor, UserRolesEnum.Admin })]
     [ProducesOkResponseType]
     [ProducesNotFoundResponseType]
+    [DeprecatedMethod(10, 2, 2024)]
     public async Task<ActionResult> DeleteAuthor([FromRoute] int authorId)
     {
-        var deleteAuthorResult = await peopleService.DeleteAuthorAsync(authorId);
+        var deleteAuthorResult = await peopleService.DeletePeopleAsync(authorId);
         if (deleteAuthorResult.IsFailure)
         {
             return ServerError();
@@ -135,15 +139,16 @@ public class AuthorController(IPeopleService peopleService) : BaseController
     }
 
     /// <summary>
-    /// Получение автора.
+    /// [DEPRECATED] Получение автора.
     /// </summary>
     /// <param name="authorId">Id автора.</param>
     [HttpGet("{authorId}")]
     [ProducesOkResponseType(typeof(AuthorModel))]
     [ProducesNotFoundResponseType]
+    [DeprecatedMethod(10, 2, 2024)]
     public async Task<ActionResult> GetAuthorById([FromRoute] int authorId)
     {
-        var foundedAuthor = await peopleService.GetAuthorByIdAsync(authorId);
+        var foundedAuthor = await peopleService.GetPeopleByIdAsync(authorId);
         if (foundedAuthor is null)
         {
             return NotFoundError();
@@ -157,16 +162,17 @@ public class AuthorController(IPeopleService peopleService) : BaseController
     }
 
     /// <summary>
-    /// Получение автора по заданным параметрам.
+    /// [DEPRECATED] Получение автора по заданным параметрам.
     /// </summary>
     /// <param name="input">Параметры для поиска.</param>
     [HttpGet]
     [Route("search")]
     [ProducesOkResponseType(typeof(GetAllAuthorsResponse))]
     [ProducesNotFoundResponseType]
+    [DeprecatedMethod(10, 2, 2024)]
     public async Task<ActionResult> GetAuthorWithParams([FromQuery] GetAuthorWithFilterRequest input)
     {
-        var getAuthorWithParamsResult = await peopleService.GetAuthorWithParams(input.Name);
+        var getAuthorWithParamsResult = await peopleService.GetPeopleWithParams(input.Name);
         if (getAuthorWithParamsResult.IsFailure)
         {
             var exception = getAuthorWithParamsResult.GetError();
