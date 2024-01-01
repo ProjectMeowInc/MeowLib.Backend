@@ -1,11 +1,12 @@
 using MeowLib.DAL;
-using MeowLib.Domain.Author.Dto;
-using MeowLib.Domain.Author.Exceptions;
-using MeowLib.Domain.Author.Services;
 using MeowLib.Domain.Book.Dto;
 using MeowLib.Domain.Book.Entity;
 using MeowLib.Domain.Book.Services;
+using MeowLib.Domain.BookPeople.Entity;
+using MeowLib.Domain.BookPeople.Enums;
 using MeowLib.Domain.File.Services;
+using MeowLib.Domain.People.Exceptions;
+using MeowLib.Domain.People.Services;
 using MeowLib.Domain.Shared;
 using MeowLib.Domain.Shared.Exceptions.Services;
 using MeowLib.Domain.Shared.Models;
@@ -54,9 +55,9 @@ public class BookService(
         {
             Name = inputName,
             Description = inputDescription,
-            Author = null,
             Tags = new List<TagEntityModel>(),
-            Translations = new List<TranslationEntityModel>()
+            Translations = new List<TranslationEntityModel>(),
+            Peoples = []
         });
         await dbContext.SaveChangesAsync();
 
@@ -125,12 +126,20 @@ public class BookService(
             return Result<BookEntityModel?>.Fail(new PeopleNotFoundException(authorId));
         }
 
-        foundedBook.Author = foundedAuthor;
+        if (await dbContext.BookPeople.AnyAsync(bp => bp.Book.Id == foundedBook.Id && bp.People.Id == foundedAuthor.Id))
+        {
+            return foundedBook;
+        }
 
-        dbContext.Books.Update(foundedBook);
+        await dbContext.BookPeople.AddAsync(new BookPeopleEntityModel
+        {
+            Book = foundedBook,
+            People = foundedAuthor,
+            Role = BookPeopleRoleEnum.Author
+        });
         await dbContext.SaveChangesAsync();
 
-        return foundedBook;
+        return await GetBookByIdAsync(bookId) ?? throw new NullReferenceException("Книга отсуствует");
     }
 
     /// <summary>
@@ -161,7 +170,6 @@ public class BookService(
     public Task<BookEntityModel?> GetBookByIdAsync(int bookId)
     {
         return dbContext.Books
-            .Include(b => b.Author)
             .Include(b => b.Tags)
             .Include(b => b.Translations)
             .ThenInclude(t => t.Team)
@@ -228,9 +236,9 @@ public class BookService(
         return foundedBook;
     }
 
-    public Task<List<BookDto>> GetAllBooksAsync()
+    public async Task<List<BookDto>> GetAllBooksAsync()
     {
-        return dbContext.Books.Select(b => new BookDto
+        return await dbContext.Books.Select(b => new BookDto
             {
                 Id = b.Id,
                 Name = b.Name,
@@ -238,13 +246,7 @@ public class BookService(
                 ImageName = b.Image != null
                     ? b.Image.FileSystemName
                     : null,
-                Author = b.Author != null
-                    ? new PeopleDto
-                    {
-                        Id = b.Author.Id,
-                        Name = b.Author.Name
-                    }
-                    : null
+                Author = null
             })
             .ToListAsync();
     }
