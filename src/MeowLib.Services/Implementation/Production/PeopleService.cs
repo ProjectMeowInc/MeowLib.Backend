@@ -58,7 +58,9 @@ public class PeopleService(ApplicationDbContext dbContext) : IPeopleService
 
     public async Task<List<PeopleEntityModel>> GetAllPeoplesWithPageAsync(int perPageCount, int page)
     {
-        return await dbContext.Peoples.OrderBy(p => p.Id)
+        return await dbContext.Peoples
+            .AsNoTracking()
+            .OrderBy(p => p.Id)
             .Skip(page * perPageCount)
             .Take(perPageCount)
             .ToListAsync();
