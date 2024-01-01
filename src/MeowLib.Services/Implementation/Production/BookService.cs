@@ -119,7 +119,7 @@ public class BookService(
             return Result<BookEntityModel?>.Ok(null);
         }
 
-        var foundedAuthor = await peopleService.GetAuthorByIdAsync(authorId);
+        var foundedAuthor = await peopleService.GetPeopleByIdAsync(authorId);
         if (foundedAuthor is null)
         {
             logger.LogInformation("[{@DateTime}] Автор не найден", DateTime.UtcNow);
