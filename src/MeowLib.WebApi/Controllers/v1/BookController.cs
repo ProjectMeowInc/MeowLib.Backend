@@ -1,5 +1,6 @@
 using MeowLib.Domain.Book.Entity;
 using MeowLib.Domain.Book.Services;
+using MeowLib.Domain.BookPeople.Enums;
 using MeowLib.Domain.Shared.Exceptions.Services;
 using MeowLib.Domain.Tag.Dto;
 using MeowLib.Domain.Translation.Dto;
@@ -61,9 +62,9 @@ public class BookController(IBookService bookService) : BaseController
             Name = input.Name,
             Description = input.Description,
             Image = null,
-            Author = null,
             Translations = [],
-            Tags = []
+            Tags = [],
+            Peoples = []
         });
 
         if (createBookResult.IsFailure)
@@ -165,13 +166,14 @@ public class BookController(IBookService bookService) : BaseController
             Name = foundedBook.Name,
             ImageUrl = foundedBook.Image?.FileSystemName,
             Description = foundedBook.Description,
-            Author = foundedBook.Author is not null
-                ? new AuthorModel
+            Author = foundedBook.Peoples
+                .Where(p => p.Role == BookPeopleRoleEnum.Author)
+                .Select(p => new AuthorModel
                 {
-                    Id = foundedBook.Author.Id,
-                    Name = foundedBook.Author.Name
-                }
-                : null,
+                    Id = p.People.Id,
+                    Name = p.People.Name
+                })
+                .FirstOrDefault(),
             Tags = foundedBook.Tags.Select(t => new TagDto
             {
                 Id = t.Id,
