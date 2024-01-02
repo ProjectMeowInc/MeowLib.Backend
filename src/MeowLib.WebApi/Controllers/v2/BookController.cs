@@ -1,6 +1,8 @@
 ﻿using MeowLib.Domain.Book.Services;
 using MeowLib.WebApi.Abstractions;
 using MeowLib.WebApi.Filters;
+using MeowLib.WebApi.Models.Responses.v1.Tag;
+using MeowLib.WebApi.Models.Responses.v1.Translation;
 using MeowLib.WebApi.Models.Responses.v2.Author;
 using MeowLib.WebApi.Models.Responses.v2.Book;
 using MeowLib.WebApi.ProducesResponseTypes;
@@ -37,6 +39,47 @@ public class BookController(IBookService bookService) : BaseController
                         : null
                 })
                 .ToList()
+        });
+    }
+
+    /// <summary>
+    /// Получение информации о книге.
+    /// </summary>
+    /// <param name="bookId">Id книги.</param>
+    [HttpGet("{bookId}")]
+    [ProducesOkResponseType(typeof(GetBookResponse))]
+    [ProducesNotFoundResponseType]
+    public async Task<IActionResult> GetBookById([FromRoute] int bookId)
+    {
+        var foundedBook = await bookService.GetBookByIdAsync(bookId);
+        if (foundedBook is null)
+        {
+            return NotFoundError();
+        }
+
+        return Ok(new GetBookResponse
+        {
+            Id = foundedBook.Id,
+            Name = foundedBook.Name,
+            Description = foundedBook.Description,
+            ImageUrl = foundedBook.Image?.FileSystemName,
+            Peoples = foundedBook.Peoples.Select(p => new PeopleWithBookRoleModel
+            {
+                Id = p.People.Id,
+                Name = p.People.Name,
+                Role = p.Role
+            }),
+            Tags = foundedBook.Tags.Select(t => new TagModel
+            {
+                Id = t.Id,
+                Name = t.Name,
+                Description = t.Description
+            }),
+            Translations = foundedBook.Translations.Select(t => new TranslationModel
+            {
+                Id = t.Id,
+                Name = t.Team.Name
+            })
         });
     }
 }

@@ -1,4 +1,4 @@
-﻿using MeowLib.Domain.Author.Dto;
+﻿using MeowLib.Domain.People.Dto;
 
 namespace MeowLib.Domain.Book.Dto;
 
@@ -8,5 +8,5 @@ public class BookDto
     public required string Name { get; init; }
     public required string Description { get; init; }
     public required string? ImageName { get; init; }
-    public required AuthorDto? Author { get; init; }
+    public required PeopleDto? Author { get; init; }
 }

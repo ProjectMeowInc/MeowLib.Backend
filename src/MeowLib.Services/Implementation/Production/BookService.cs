@@ -1,11 +1,13 @@
 using MeowLib.DAL;
-using MeowLib.Domain.Author.Dto;
-using MeowLib.Domain.Author.Exceptions;
-using MeowLib.Domain.Author.Services;
 using MeowLib.Domain.Book.Dto;
 using MeowLib.Domain.Book.Entity;
+using MeowLib.Domain.Book.Exceptions;
 using MeowLib.Domain.Book.Services;
+using MeowLib.Domain.BookPeople.Entity;
+using MeowLib.Domain.BookPeople.Enums;
 using MeowLib.Domain.File.Services;
+using MeowLib.Domain.People.Exceptions;
+using MeowLib.Domain.People.Services;
 using MeowLib.Domain.Shared;
 using MeowLib.Domain.Shared.Exceptions.Services;
 using MeowLib.Domain.Shared.Models;
@@ -25,7 +27,7 @@ public class BookService(
     IFileService fileService,
     ILogger<BookService> logger,
     ApplicationDbContext dbContext,
-    IAuthorService authorService)
+    IPeopleService peopleService)
     : IBookService
 {
     public async Task<Result<BookEntityModel>> CreateBookAsync(BookEntityModel createBookEntityModel)
@@ -54,9 +56,9 @@ public class BookService(
         {
             Name = inputName,
             Description = inputDescription,
-            Author = null,
             Tags = new List<TagEntityModel>(),
-            Translations = new List<TranslationEntityModel>()
+            Translations = new List<TranslationEntityModel>(),
+            Peoples = []
         });
         await dbContext.SaveChangesAsync();
 
@@ -118,19 +120,27 @@ public class BookService(
             return Result<BookEntityModel?>.Ok(null);
         }
 
-        var foundedAuthor = await authorService.GetAuthorByIdAsync(authorId);
+        var foundedAuthor = await peopleService.GetPeopleByIdAsync(authorId);
         if (foundedAuthor is null)
         {
             logger.LogInformation("[{@DateTime}] Автор не найден", DateTime.UtcNow);
-            return Result<BookEntityModel?>.Fail(new AuthorNotFoundException(authorId));
+            return Result<BookEntityModel?>.Fail(new PeopleNotFoundException(authorId));
         }
 
-        foundedBook.Author = foundedAuthor;
+        if (await dbContext.BookPeople.AnyAsync(bp => bp.Book.Id == foundedBook.Id && bp.People.Id == foundedAuthor.Id))
+        {
+            return foundedBook;
+        }
 
-        dbContext.Books.Update(foundedBook);
+        await dbContext.BookPeople.AddAsync(new BookPeopleEntityModel
+        {
+            Book = foundedBook,
+            People = foundedAuthor,
+            Role = BookPeopleRoleEnum.Author
+        });
         await dbContext.SaveChangesAsync();
 
-        return foundedBook;
+        return await GetBookByIdAsync(bookId) ?? throw new NullReferenceException("Книга отсуствует");
     }
 
     /// <summary>
@@ -161,7 +171,6 @@ public class BookService(
     public Task<BookEntityModel?> GetBookByIdAsync(int bookId)
     {
         return dbContext.Books
-            .Include(b => b.Author)
             .Include(b => b.Tags)
             .Include(b => b.Translations)
             .ThenInclude(t => t.Team)
@@ -228,9 +237,9 @@ public class BookService(
         return foundedBook;
     }
 
-    public Task<List<BookDto>> GetAllBooksAsync()
+    public async Task<List<BookDto>> GetAllBooksAsync()
     {
-        return dbContext.Books.Select(b => new BookDto
+        return await dbContext.Books.Select(b => new BookDto
             {
                 Id = b.Id,
                 Name = b.Name,
@@ -238,14 +247,68 @@ public class BookService(
                 ImageName = b.Image != null
                     ? b.Image.FileSystemName
                     : null,
-                Author = b.Author != null
-                    ? new AuthorDto
-                    {
-                        Id = b.Author.Id,
-                        Name = b.Author.Name
-                    }
-                    : null
+                Author = null
             })
             .ToListAsync();
+    }
+
+    public async Task<Result> AddPeopleToBookAsync(int bookId, int peopleId, BookPeopleRoleEnum role)
+    {
+        var foundedBook = await GetBookByIdAsync(bookId);
+        if (foundedBook is null)
+        {
+            return Result.Fail(new BookNotFoundException(bookId));
+        }
+
+        var foundedPeople = await peopleService.GetPeopleByIdAsync(peopleId);
+        if (foundedPeople is null)
+        {
+            return Result.Fail(new PeopleNotFoundException(peopleId));
+        }
+
+        var bookEntry = dbContext.Entry(foundedBook);
+        await bookEntry.Collection(b => b.Peoples)
+            .LoadAsync();
+
+        if (foundedBook.Peoples.Any(p => p.Id == foundedPeople.Id))
+        {
+            return Result.Fail(new PeopleAlreadyAttachedException());
+        }
+
+        foundedBook.Peoples.Add(new BookPeopleEntityModel
+        {
+            Book = foundedBook,
+            People = foundedPeople,
+            Role = role
+        });
+        dbContext.Books.Update(foundedBook);
+        await dbContext.SaveChangesAsync();
+        return Result.Ok();
+    }
+
+    public async Task<Result> DeletePeopleFromBookAsync(int peopleId, int bookId)
+    {
+        var foundedPeople = await peopleService.GetPeopleByIdAsync(peopleId);
+        if (foundedPeople is null)
+        {
+            return Result.Fail(new PeopleNotFoundException(peopleId));
+        }
+
+        var foundedBook = await GetBookByIdAsync(bookId);
+        if (foundedBook is null)
+        {
+            return Result.Fail(new BookNotFoundException(bookId));
+        }
+
+        var foundedBookPeople = await dbContext.BookPeople
+            .FirstOrDefaultAsync(bp => bp.Book.Id == foundedBook.Id && bp.People.Id == foundedPeople.Id);
+        if (foundedBookPeople is null)
+        {
+            return Result.Ok();
+        }
+
+        dbContext.BookPeople.Remove(foundedBookPeople);
+        await dbContext.SaveChangesAsync();
+        return Result.Ok();
     }
 }

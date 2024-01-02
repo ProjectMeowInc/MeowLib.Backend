@@ -2,7 +2,6 @@ using System.Reflection;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
 using MeowLib.DAL;
-using MeowLib.Domain.Author.Services;
 using MeowLib.Domain.Book.Services;
 using MeowLib.Domain.BookComment.Services;
 using MeowLib.Domain.Bookmark.Services;
@@ -10,6 +9,7 @@ using MeowLib.Domain.Chapter.Services;
 using MeowLib.Domain.CoinsChangeLog.Services;
 using MeowLib.Domain.File.Services;
 using MeowLib.Domain.Notification.Services;
+using MeowLib.Domain.People.Services;
 using MeowLib.Domain.Shared.Services;
 using MeowLib.Domain.Tag.Services;
 using MeowLib.Domain.Team.Services;
@@ -93,7 +93,7 @@ public static class ServicesExtensions
 
         serviceCollection.AddScoped<IFileService, FileService>();
         serviceCollection.AddScoped<IUserService, UserService>();
-        serviceCollection.AddScoped<IAuthorService, AuthorService>();
+        serviceCollection.AddScoped<IPeopleService, PeopleService>();
         serviceCollection.AddScoped<ITagService, TagService>();
         serviceCollection.AddScoped<IBookService, BookService>();
         serviceCollection.AddScoped<IChapterService, ChapterService>();
@@ -118,7 +118,7 @@ public static class ServicesExtensions
             }
 
             dbOptions.UseSqlite(connectionString,
-                optionsBuilder => { optionsBuilder.MigrationsAssembly("MeowLib.WebApi"); });
+                optionsBuilder => { optionsBuilder.MigrationsAssembly("MeowLib.DAL"); });
         });
     }
 }

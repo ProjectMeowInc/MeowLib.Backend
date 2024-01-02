@@ -1,11 +1,12 @@
-using MeowLib.Domain.Author.Entity;
 using MeowLib.Domain.Book.Entity;
 using MeowLib.Domain.BookComment.Entity;
 using MeowLib.Domain.Bookmark.Entity;
+using MeowLib.Domain.BookPeople.Entity;
 using MeowLib.Domain.Chapter.Entity;
 using MeowLib.Domain.CoinsChangeLog.Entity;
 using MeowLib.Domain.File.Entity;
 using MeowLib.Domain.Notification.Entity;
+using MeowLib.Domain.People.Entity;
 using MeowLib.Domain.Tag.Entity;
 using MeowLib.Domain.Team.Entity;
 using MeowLib.Domain.TeamMember.Entity;
@@ -35,7 +36,7 @@ public class ApplicationDbContext : DbContext
     /// <summary>
     /// Таблица авторов.
     /// </summary>
-    public required DbSet<AuthorEntityModel> Authors { get; init; }
+    public required DbSet<PeopleEntityModel> Peoples { get; init; }
 
     /// <summary>
     /// Таблица тегов.
@@ -97,6 +98,11 @@ public class ApplicationDbContext : DbContext
     /// </summary>
     public required DbSet<FileEntityModel> Files { get; init; }
 
+    /// <summary>
+    /// Таблица для связи людей и книг.
+    /// </summary>
+    public required DbSet<BookPeopleEntityModel> BookPeople { get; init; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<BookEntityModel>()
@@ -109,18 +115,13 @@ public class ApplicationDbContext : DbContext
             .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<BookEntityModel>()
-            .HasOne(b => b.Author)
-            .WithMany()
-            .OnDelete(DeleteBehavior.SetNull);
-
-        modelBuilder.Entity<BookEntityModel>()
-            .HasMany<BookmarkEntityModel>()
-            .WithOne()
+            .HasMany(b => b.Peoples)
+            .WithOne(b => b.Book)
             .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<BookEntityModel>()
             .HasMany<BookCommentEntityModel>()
-            .WithOne()
+            .WithOne(c => c.Book)
             .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<TranslationEntityModel>()
