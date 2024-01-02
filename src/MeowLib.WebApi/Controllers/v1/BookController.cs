@@ -1,6 +1,8 @@
 using MeowLib.Domain.Book.Entity;
+using MeowLib.Domain.Book.Exceptions;
 using MeowLib.Domain.Book.Services;
 using MeowLib.Domain.BookPeople.Enums;
+using MeowLib.Domain.People.Exceptions;
 using MeowLib.Domain.Shared.Exceptions.Services;
 using MeowLib.Domain.Tag.Dto;
 using MeowLib.Domain.Translation.Dto;
@@ -21,7 +23,7 @@ namespace MeowLib.WebApi.Controllers.v1;
 /// </summary>
 /// <param name="bookService">Сервис книг.</param>
 [Route("api/v1/books")]
-public class BookController(IBookService bookService) : BaseController
+public class BookController(IBookService bookService, ILogger<BookController> logger) : BaseController
 {
     /// <summary>
     /// [DEPRECATED] Получение всех книг.
@@ -265,5 +267,65 @@ public class BookController(IBookService bookService) : BaseController
         }
 
         return EmptyResult();
+    }
+
+    [HttpPost("{bookId}/people")]
+    [Authorization(RequiredRoles = new[] { UserRolesEnum.Admin, UserRolesEnum.Moderator })]
+    [ProducesOkResponseType]
+    [ProducesUserErrorResponseType]
+    [ProducesNotFoundResponseType]
+    public async Task<IActionResult> AddPeople([FromRoute] int bookId, [FromBody] AddPeopleRequest payload)
+    {
+        var addPeopleResult = await bookService.AddPeopleToBookAsync(bookId, payload.PeopleId, payload.Role);
+        if (addPeopleResult.IsFailure)
+        {
+            var exception = addPeopleResult.GetError();
+            if (exception is BookNotFoundException)
+            {
+                return NotFoundError("Книга не найдена");
+            }
+
+            if (exception is PeopleNotFoundException)
+            {
+                return NotFoundError("Человек не найден");
+            }
+
+            if (exception is PeopleAlreadyAttachedException)
+            {
+                return Error("Человек уже прикреплён к книге", 400);
+            }
+
+            logger.LogError("Ошибка добавления человека к книге: {exception}", exception);
+            return ServerError();
+        }
+
+        return Ok();
+    }
+
+    [HttpDelete("{bookId}/people/{peopleId}")]
+    [Authorization(RequiredRoles = new[] { UserRolesEnum.Admin, UserRolesEnum.Moderator })]
+    [ProducesOkResponseType]
+    [ProducesNotFoundResponseType]
+    public async Task<IActionResult> RemovePeople([FromRoute] int bookId, [FromRoute] int peopleId)
+    {
+        var removePeopleResult = await bookService.DeletePeopleFromBookAsync(peopleId, bookId);
+        if (removePeopleResult.IsFailure)
+        {
+            var exception = removePeopleResult.GetError();
+            if (exception is PeopleNotFoundException)
+            {
+                return NotFoundError("Человек не найден");
+            }
+
+            if (exception is BookNotFoundException)
+            {
+                return NotFoundError("Книга не найдена");
+            }
+
+            logger.LogError("Ошибка удаления человека из книги: {exception}", exception);
+            return ServerError();
+        }
+
+        return Ok();
     }
 }
