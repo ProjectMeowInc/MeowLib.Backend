@@ -191,7 +191,7 @@ public class BookController(IBookService bookService, ILogger<BookController> lo
     }
 
     /// <summary>
-    /// Обновление автора книги.
+    /// [DEPRECATED] Обновление автора книги.
     /// </summary>
     /// <param name="bookId">Id книги.</param>
     /// <param name="authorId">Id автора.</param>
@@ -200,6 +200,7 @@ public class BookController(IBookService bookService, ILogger<BookController> lo
     [ProducesOkResponseType]
     [ProducesResponseType(400, Type = typeof(BaseErrorResponse))]
     [ProducesNotFoundResponseType]
+    [DeprecatedMethod(10, 2, 2024)]
     public async Task<ActionResult> UpdateBookAuthor([FromRoute] int bookId, [FromRoute] int authorId)
     {
         var updateBookResult = await bookService.UpdateBookAuthorAsync(bookId, authorId);
