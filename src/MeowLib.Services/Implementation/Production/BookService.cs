@@ -1,6 +1,7 @@
 using MeowLib.DAL;
 using MeowLib.Domain.Book.Dto;
 using MeowLib.Domain.Book.Entity;
+using MeowLib.Domain.Book.Exceptions;
 using MeowLib.Domain.Book.Services;
 using MeowLib.Domain.BookPeople.Entity;
 using MeowLib.Domain.BookPeople.Enums;
@@ -249,5 +250,65 @@ public class BookService(
                 Author = null
             })
             .ToListAsync();
+    }
+
+    public async Task<Result> AddPeopleToBookAsync(int bookId, int peopleId, BookPeopleRoleEnum role)
+    {
+        var foundedBook = await GetBookByIdAsync(bookId);
+        if (foundedBook is null)
+        {
+            return Result.Fail(new BookNotFoundException(bookId));
+        }
+
+        var foundedPeople = await peopleService.GetPeopleByIdAsync(peopleId);
+        if (foundedPeople is null)
+        {
+            return Result.Fail(new PeopleNotFoundException(peopleId));
+        }
+
+        var bookEntry = dbContext.Entry(foundedBook);
+        await bookEntry.Collection(b => b.Peoples)
+            .LoadAsync();
+
+        if (foundedBook.Peoples.Any(p => p.Id == foundedPeople.Id))
+        {
+            return Result.Fail(new PeopleAlreadyAttachedException());
+        }
+
+        foundedBook.Peoples.Add(new BookPeopleEntityModel
+        {
+            Book = foundedBook,
+            People = foundedPeople,
+            Role = role
+        });
+        dbContext.Books.Update(foundedBook);
+        await dbContext.SaveChangesAsync();
+        return Result.Ok();
+    }
+
+    public async Task<Result> DeletePeopleFromBookAsync(int peopleId, int bookId)
+    {
+        var foundedPeople = await peopleService.GetPeopleByIdAsync(peopleId);
+        if (foundedPeople is null)
+        {
+            return Result.Fail(new PeopleNotFoundException(peopleId));
+        }
+
+        var foundedBook = await GetBookByIdAsync(bookId);
+        if (foundedBook is null)
+        {
+            return Result.Fail(new BookNotFoundException(bookId));
+        }
+
+        var foundedBookPeople = await dbContext.BookPeople
+            .FirstOrDefaultAsync(bp => bp.Book.Id == foundedBook.Id && bp.People.Id == foundedPeople.Id);
+        if (foundedBookPeople is null)
+        {
+            return Result.Ok();
+        }
+
+        dbContext.BookPeople.Remove(foundedBookPeople);
+        await dbContext.SaveChangesAsync();
+        return Result.Ok();
     }
 }

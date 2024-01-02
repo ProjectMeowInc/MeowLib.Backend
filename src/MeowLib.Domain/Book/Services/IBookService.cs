@@ -1,5 +1,8 @@
 using MeowLib.Domain.Book.Dto;
 using MeowLib.Domain.Book.Entity;
+using MeowLib.Domain.Book.Exceptions;
+using MeowLib.Domain.BookPeople.Enums;
+using MeowLib.Domain.People.Exceptions;
 using MeowLib.Domain.Shared;
 using MeowLib.Domain.Shared.Exceptions.Services;
 using MeowLib.Domain.Shared.Result;
@@ -73,4 +76,26 @@ public interface IBookService
     /// </summary>
     /// <returns>Все книги в виде Dto.</returns>
     Task<List<BookDto>> GetAllBooksAsync();
+
+    /// <summary>
+    /// Метод добавляет человека к книге.
+    /// </summary>
+    /// <param name="bookId">Id книги.</param>
+    /// <param name="peopleId">Id человека.</param>
+    /// <param name="role">Роль человека.</param>
+    /// <returns>Результат добавления.</returns>
+    /// <exception cref="BookNotFoundException">Возникает в случае, если книга не была найдена.</exception>
+    /// <exception cref="PeopleNotFoundException">Возникает в случае, если человек не был найден.</exception>
+    /// <exception cref="PeopleAlreadyAttachedException">Возникает в случае, если человек уже прикреплён к данной книги.</exception>
+    Task<Result> AddPeopleToBookAsync(int bookId, int peopleId, BookPeopleRoleEnum role);
+
+    /// <summary>
+    /// Метод удаляет человека из книги.
+    /// </summary>
+    /// <param name="peopleId">Id человека.</param>
+    /// <param name="bookId">Id книги.</param>
+    /// <returns>Результат удаления.</returns>
+    /// <exception cref="PeopleNotFoundException">Возникает в случае, если человек не найден.</exception>
+    /// <exception cref="BookNotFoundException">Возникает в случае, если книга не была найдена.</exception>
+    Task<Result> DeletePeopleFromBookAsync(int peopleId, int bookId);
 }
