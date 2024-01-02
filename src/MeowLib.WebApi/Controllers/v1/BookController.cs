@@ -5,7 +5,6 @@ using MeowLib.Domain.BookPeople.Enums;
 using MeowLib.Domain.People.Exceptions;
 using MeowLib.Domain.Shared.Exceptions.Services;
 using MeowLib.Domain.Tag.Dto;
-using MeowLib.Domain.Translation.Dto;
 using MeowLib.Domain.User.Enums;
 using MeowLib.WebApi.Abstractions;
 using MeowLib.WebApi.Filters;
@@ -13,6 +12,7 @@ using MeowLib.WebApi.Models.Requests.v1.Book;
 using MeowLib.WebApi.Models.Responses.v1;
 using MeowLib.WebApi.Models.Responses.v1.Author;
 using MeowLib.WebApi.Models.Responses.v1.Book;
+using MeowLib.WebApi.Models.Responses.v1.Translation;
 using MeowLib.WebApi.ProducesResponseTypes;
 using Microsoft.AspNetCore.Mvc;
 
@@ -148,12 +148,13 @@ public class BookController(IBookService bookService, ILogger<BookController> lo
     }
 
     /// <summary>
-    /// Получение информации о книге.
+    /// [DEPRECATED] Получение информации о книге.
     /// </summary>
     /// <param name="bookId">Id книги.</param>
     [HttpGet("{bookId}")]
     [ProducesOkResponseType(typeof(BookModel))]
     [ProducesNotFoundResponseType]
+    [DeprecatedMethod(10, 2, 2024)]
     public async Task<ActionResult> GetBookInfo([FromRoute] int bookId)
     {
         var foundedBook = await bookService.GetBookByIdAsync(bookId);
@@ -182,7 +183,7 @@ public class BookController(IBookService bookService, ILogger<BookController> lo
                 Name = t.Name,
                 Description = t.Description
             }),
-            Translations = foundedBook.Translations.Select(t => new TranslationDto
+            Translations = foundedBook.Translations.Select(t => new TranslationModel
             {
                 Id = t.Id,
                 Name = t.Team.Name
