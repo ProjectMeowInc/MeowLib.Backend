@@ -271,6 +271,11 @@ public class BookController(IBookService bookService, ILogger<BookController> lo
         return EmptyResult();
     }
 
+    /// <summary>
+    /// Добавления человека к книге.
+    /// </summary>
+    /// <param name="bookId">Id книги.</param>
+    /// <param name="payload">Данные для добавления.</param>
     [HttpPost("{bookId}/people")]
     [Authorization(RequiredRoles = new[] { UserRolesEnum.Admin, UserRolesEnum.Moderator })]
     [ProducesOkResponseType]
@@ -304,6 +309,11 @@ public class BookController(IBookService bookService, ILogger<BookController> lo
         return Ok();
     }
 
+    /// <summary>
+    /// Удаление человека из книги.
+    /// </summary>
+    /// <param name="bookId">Id книги.</param>
+    /// <param name="peopleId">Id человека.</param>
     [HttpDelete("{bookId}/people/{peopleId}")]
     [Authorization(RequiredRoles = new[] { UserRolesEnum.Admin, UserRolesEnum.Moderator })]
     [ProducesOkResponseType]

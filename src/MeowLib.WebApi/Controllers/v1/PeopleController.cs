@@ -16,6 +16,10 @@ namespace MeowLib.WebApi.Controllers.v1;
 [ProducesForbiddenResponseType]
 public class PeopleController(IPeopleService peopleService, ILogger<PeopleController> logger) : BaseController
 {
+    /// <summary>
+    /// Создание человека.
+    /// </summary>
+    /// <param name="payload">Данные для создания.</param>
     [HttpPost]
     [Authorization(RequiredRoles = new[] { UserRolesEnum.Moderator, UserRolesEnum.Admin })]
     public async Task<IActionResult> CreatePeople([FromBody] CreatePeopleRequest payload)
@@ -41,6 +45,11 @@ public class PeopleController(IPeopleService peopleService, ILogger<PeopleContro
         });
     }
 
+    /// <summary>
+    /// Обновление человека.
+    /// </summary>
+    /// <param name="peopleId">Id человека.</param>
+    /// <param name="payload">Данные для обновления.</param>
     [HttpPut("{peopleId}")]
     [ProducesOkResponseType(typeof(PeopleModel))]
     [ProducesForbiddenResponseType]
@@ -78,6 +87,10 @@ public class PeopleController(IPeopleService peopleService, ILogger<PeopleContro
         });
     }
 
+    /// <summary>
+    /// Получение информации о человеке.
+    /// </summary>
+    /// <param name="peopleId">Id человека.</param>
     [HttpGet("{peopleId}")]
     [ProducesOkResponseType(typeof(GetPeopleResponse))]
     [ProducesNotFoundResponseType]
@@ -107,6 +120,11 @@ public class PeopleController(IPeopleService peopleService, ILogger<PeopleContro
         });
     }
 
+    /// <summary>
+    /// Получения списка людей.
+    /// </summary>
+    /// <remarks>Количество людей на одной странице - 10</remarks>
+    /// <param name="page">Номер страницы.</param>
     [HttpGet]
     [ProducesOkResponseType(typeof(GetAllPeoplesResponse))]
     public async Task<IActionResult> GetAllPeoples([FromQuery] int page = 1)
@@ -124,6 +142,10 @@ public class PeopleController(IPeopleService peopleService, ILogger<PeopleContro
         });
     }
 
+    /// <summary>
+    /// Удаление человека.
+    /// </summary>
+    /// <param name="peopleId">Id человека.</param>
     [HttpDelete("{peopleId}")]
     [ProducesOkResponseType]
     [ProducesNotFoundResponseType]

@@ -42,6 +42,10 @@ public class BookController(IBookService bookService) : BaseController
         });
     }
 
+    /// <summary>
+    /// Получение информации о книге.
+    /// </summary>
+    /// <param name="bookId">Id книги.</param>
     [HttpGet("{bookId}")]
     [ProducesOkResponseType(typeof(GetBookResponse))]
     [ProducesNotFoundResponseType]
