@@ -171,6 +171,9 @@ public class BookService(
     public Task<BookEntityModel?> GetBookByIdAsync(int bookId)
     {
         return dbContext.Books
+            .Include(b => b.Image)
+            .Include(b => b.Peoples)
+            .ThenInclude(p => p.People)
             .Include(b => b.Tags)
             .Include(b => b.Translations)
             .ThenInclude(t => t.Team)
