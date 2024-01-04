@@ -123,7 +123,11 @@ public class PeopleService(ApplicationDbContext dbContext) : IPeopleService
     /// <returns>DTO-модель автора.</returns>
     public Task<PeopleEntityModel?> GetPeopleByIdAsync(int peopleId)
     {
-        return dbContext.Peoples.FirstOrDefaultAsync(a => a.Id == peopleId);
+        return dbContext.Peoples
+            .Include(p => p.BooksPeople)
+            .ThenInclude(bp => bp.Book)
+            .ThenInclude(bp => bp.Image)
+            .FirstOrDefaultAsync(a => a.Id == peopleId);
     }
 
     /// <summary>

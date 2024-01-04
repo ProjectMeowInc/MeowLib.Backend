@@ -22,6 +22,8 @@ public class PeopleController(IPeopleService peopleService, ILogger<PeopleContro
     /// <param name="payload">Данные для создания.</param>
     [HttpPost]
     [Authorization(RequiredRoles = new[] { UserRolesEnum.Moderator, UserRolesEnum.Admin })]
+    [ProducesOkResponseType(typeof(PeopleModel))]
+    [ProducesForbiddenResponseType]
     public async Task<IActionResult> CreatePeople([FromBody] CreatePeopleRequest payload)
     {
         var createdPeopleResult = await peopleService.CreatePeopleAsync(payload.Name);
