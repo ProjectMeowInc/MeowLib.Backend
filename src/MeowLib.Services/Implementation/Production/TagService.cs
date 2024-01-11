@@ -1,5 +1,5 @@
 using MeowLib.DAL;
-using MeowLib.Domain.Shared.Exceptions.Services;
+using MeowLib.Domain.Shared.Exceptions;
 using MeowLib.Domain.Shared.Models;
 using MeowLib.Domain.Shared.Result;
 using MeowLib.Domain.Tag.Dto;

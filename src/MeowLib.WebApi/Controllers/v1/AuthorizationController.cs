@@ -1,5 +1,5 @@
 ﻿using MeowLib.Domain.Shared;
-using MeowLib.Domain.Shared.Exceptions.Services;
+using MeowLib.Domain.Shared.Exceptions;
 using MeowLib.Domain.User.Services;
 using MeowLib.WebApi.Abstractions;
 using MeowLib.WebApi.Models.Requests.v1.Authorization;

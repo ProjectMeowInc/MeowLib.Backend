@@ -1,6 +1,6 @@
 using MeowLib.Domain.People.Dto;
 using MeowLib.Domain.People.Entity;
-using MeowLib.Domain.Shared.Exceptions.Services;
+using MeowLib.Domain.Shared.Exceptions;
 using MeowLib.Domain.Shared.Result;
 
 namespace MeowLib.Domain.People.Services;

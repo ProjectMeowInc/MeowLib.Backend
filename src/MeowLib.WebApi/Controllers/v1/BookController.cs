@@ -3,7 +3,7 @@ using MeowLib.Domain.Book.Exceptions;
 using MeowLib.Domain.Book.Services;
 using MeowLib.Domain.BookPeople.Enums;
 using MeowLib.Domain.People.Exceptions;
-using MeowLib.Domain.Shared.Exceptions.Services;
+using MeowLib.Domain.Shared.Exceptions;
 using MeowLib.Domain.Tag.Dto;
 using MeowLib.Domain.User.Enums;
 using MeowLib.WebApi.Abstractions;

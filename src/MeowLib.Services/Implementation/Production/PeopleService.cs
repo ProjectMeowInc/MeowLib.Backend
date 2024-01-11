@@ -2,7 +2,7 @@ using MeowLib.DAL;
 using MeowLib.Domain.People.Dto;
 using MeowLib.Domain.People.Entity;
 using MeowLib.Domain.People.Services;
-using MeowLib.Domain.Shared.Exceptions.Services;
+using MeowLib.Domain.Shared.Exceptions;
 using MeowLib.Domain.Shared.Models;
 using MeowLib.Domain.Shared.Result;
 using Microsoft.EntityFrameworkCore;

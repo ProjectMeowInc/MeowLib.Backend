@@ -9,7 +9,7 @@ using MeowLib.Domain.File.Services;
 using MeowLib.Domain.People.Exceptions;
 using MeowLib.Domain.People.Services;
 using MeowLib.Domain.Shared;
-using MeowLib.Domain.Shared.Exceptions.Services;
+using MeowLib.Domain.Shared.Exceptions;
 using MeowLib.Domain.Shared.Models;
 using MeowLib.Domain.Shared.Result;
 using MeowLib.Domain.Tag.Entity;

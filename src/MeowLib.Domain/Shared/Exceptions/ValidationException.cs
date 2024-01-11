@@ -1,6 +1,6 @@
 using MeowLib.Domain.Shared.Models;
 
-namespace MeowLib.Domain.Shared.Exceptions.Services;
+namespace MeowLib.Domain.Shared.Exceptions;
 
 /// <summary>
 /// Класс для ошибок связанные с валидацией данных.
