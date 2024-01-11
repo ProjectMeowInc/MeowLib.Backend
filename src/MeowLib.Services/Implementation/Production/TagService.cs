@@ -59,7 +59,7 @@ public class TagService(ApplicationDbContext dbContext) : ITagService
 
         if (validationErrors.Any())
         {
-            var validationException = new ValidationException(nameof(TagService), validationErrors);
+            var validationException = new ValidationException(validationErrors);
             return Result<TagEntityModel>.Fail(validationException);
         }
 
@@ -154,7 +154,7 @@ public class TagService(ApplicationDbContext dbContext) : ITagService
 
         if (validationErrors.Any())
         {
-            var validationException = new ValidationException(nameof(TagService), validationErrors);
+            var validationException = new ValidationException(validationErrors);
             return Result<TagEntityModel?>.Fail(validationException);
         }
 

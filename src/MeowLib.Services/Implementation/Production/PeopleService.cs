@@ -147,7 +147,7 @@ public class PeopleService(ApplicationDbContext dbContext) : IPeopleService
 
         if (!filteredAuthors.Any())
         {
-            return Result<IEnumerable<PeopleDto>>.Fail(new SearchNotFoundException(nameof(PeopleService)));
+            return Result<IEnumerable<PeopleDto>>.Fail(new SearchNotFoundException());
         }
 
         return await filteredAuthors.Select(a => new PeopleDto

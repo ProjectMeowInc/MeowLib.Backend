@@ -5,24 +5,13 @@ namespace MeowLib.Domain.Shared.Exceptions;
 /// <summary>
 /// Класс для ошибок связанные с валидацией данных.
 /// </summary>
-public class ValidationException : ServiceLevelException
+public class ValidationException : Exception
 {
     /// <summary>
     /// Конструктор.
     /// </summary>
     /// <param name="validationErrors">Список ошибок валидации.</param>
-    public ValidationException(IEnumerable<ValidationErrorModel> validationErrors) : base("N/A")
-    {
-        ValidationErrors = validationErrors;
-    }
-
-    /// <summary>
-    /// Конструктор.
-    /// </summary>
-    /// <param name="serviceName">Название сервиса.</param>
-    /// <param name="validationErrors">Список ошибок валидации.</param>
-    public ValidationException(string serviceName, IEnumerable<ValidationErrorModel> validationErrors) :
-        base(serviceName)
+    public ValidationException(IEnumerable<ValidationErrorModel> validationErrors)
     {
         ValidationErrors = validationErrors;
     }
@@ -30,5 +19,5 @@ public class ValidationException : ServiceLevelException
     /// <summary>
     /// Список ошибок валидации.
     /// </summary>
-    public IEnumerable<ValidationErrorModel> ValidationErrors { get; protected init; }
+    public IEnumerable<ValidationErrorModel> ValidationErrors { get; }
 }

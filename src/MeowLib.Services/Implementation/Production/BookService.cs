@@ -48,7 +48,7 @@ public class BookService(
 
         if (validationErrors.Any())
         {
-            return Result<BookEntityModel>.Fail(new ValidationException(nameof(BookService), validationErrors));
+            return Result<BookEntityModel>.Fail(new ValidationException(validationErrors));
         }
 
         // todo: fix author
@@ -86,7 +86,7 @@ public class BookService(
 
         if (validationErrors.Any())
         {
-            var validationException = new ValidationException(nameof(BookService), validationErrors);
+            var validationException = new ValidationException(validationErrors);
             return Result<BookEntityModel?>.Fail(validationException);
         }
 

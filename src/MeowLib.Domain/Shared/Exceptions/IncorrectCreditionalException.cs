@@ -3,7 +3,4 @@
 /// <summary>
 /// Класс описывающий исключения для некорректных авторизационные данных.
 /// </summary>
-public class IncorrectCreditionalException : ApiException
-{
-    public IncorrectCreditionalException(string errorMessage) : base(errorMessage) { }
-}
+public class IncorrectCreditionalException(string errorMessage) : Exception(errorMessage);
