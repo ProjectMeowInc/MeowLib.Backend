@@ -46,6 +46,9 @@ public class CoinController(ICoinService coinService, ILogger<CoinController> lo
         return Ok();
     }
 
+    /// <summary>
+    /// Получения истории изменения монет текущего пользователя.
+    /// </summary>
     [HttpGet("my")]
     [Authorization]
     [ProducesOkResponseType(typeof(GetCoinChangeLogsResponse))]
@@ -74,6 +77,11 @@ public class CoinController(ICoinService coinService, ILogger<CoinController> lo
         });
     }
 
+    /// <summary>
+    /// Получение истории изменения монет пользователя.
+    /// <remarks>Необходима роль администратора.</remarks>
+    /// </summary>
+    /// <param name="userId">Id пользователя</param>
     [HttpGet("admin-get/{userId}")]
     [Authorization(RequiredRoles = new[] { UserRolesEnum.Admin })]
     public async Task<IActionResult> GetUserChangeCoinLog([FromRoute] int userId)
