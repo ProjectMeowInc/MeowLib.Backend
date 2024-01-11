@@ -64,9 +64,9 @@ public class AuthorizationController(IUserService userService) : BaseController
         if (logInResult.IsFailure)
         {
             var exception = logInResult.GetError();
-            if (exception is IncorrectCreditionalException incorrectCreditionalException)
+            if (exception is IncorrectCreditionalException)
             {
-                return Error(incorrectCreditionalException.ErrorMessage, 401);
+                return Error("Введены некоректные данные", 401);
             }
 
             return ServerError();
@@ -94,9 +94,9 @@ public class AuthorizationController(IUserService userService) : BaseController
         if (loginResult.IsFailure)
         {
             var exception = loginResult.GetError();
-            if (exception is IncorrectCreditionalException incorrectCreditionalException)
+            if (exception is IncorrectCreditionalException)
             {
-                return Error(incorrectCreditionalException.ErrorMessage, 401);
+                return Error("Введены некорректные данные", 401);
             }
 
             return ServerError();
