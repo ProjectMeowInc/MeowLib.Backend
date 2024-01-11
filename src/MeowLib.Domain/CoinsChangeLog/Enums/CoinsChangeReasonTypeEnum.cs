@@ -1,8 +1,11 @@
-﻿namespace MeowLib.Domain.CoinsChangeLog.Enums;
+﻿using System.Text.Json.Serialization;
+
+namespace MeowLib.Domain.CoinsChangeLog.Enums;
 
 /// <summary>
 /// Причины изменения баланса.
 /// </summary>
+[JsonConverter(typeof(JsonStringEnumConverter))]
 public enum CoinsChangeReasonTypeEnum
 {
     /// <summary>
