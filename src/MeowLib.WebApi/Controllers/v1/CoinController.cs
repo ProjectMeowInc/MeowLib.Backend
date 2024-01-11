@@ -4,6 +4,7 @@ using MeowLib.Domain.User.Exceptions;
 using MeowLib.WebApi.Abstractions;
 using MeowLib.WebApi.Filters;
 using MeowLib.WebApi.Models.Requests.v1.Coin;
+using MeowLib.WebApi.Models.Responses.v1.Coin;
 using MeowLib.WebApi.ProducesResponseTypes;
 using Microsoft.AspNetCore.Mvc;
 
@@ -43,5 +44,59 @@ public class CoinController(ICoinService coinService, ILogger<CoinController> lo
         }
 
         return Ok();
+    }
+
+    [HttpGet("my")]
+    [Authorization]
+    [ProducesOkResponseType(typeof(GetCoinChangeLogsResponse))]
+    public async Task<IActionResult> GetMyChangeCoinsLog()
+    {
+        var userData = await GetUserDataAsync();
+        var getLogsResult = await coinService.GetUserCoinsChangeLogAsync(userData.Id);
+        if (getLogsResult.IsFailure)
+        {
+            var exception = getLogsResult.GetError();
+            logger.LogError("Ошибка получения логов изменения монет пользователя: {exception}", exception);
+            return ServerError();
+        }
+
+        var models = getLogsResult.GetResult().Select(log => new CoinChangeLogModel
+        {
+            Id = log.Id,
+            Value = log.Value,
+            Reason = log.Type,
+            Date = log.Date
+        });
+
+        return Ok(new GetCoinChangeLogsResponse
+        {
+            Items = models
+        });
+    }
+
+    [HttpGet("admin-get/{userId}")]
+    [Authorization(RequiredRoles = new[] { UserRolesEnum.Admin })]
+    public async Task<IActionResult> GetUserChangeCoinLog([FromRoute] int userId)
+    {
+        var getLogsResult = await coinService.GetUserCoinsChangeLogAsync(userId);
+        if (getLogsResult.IsFailure)
+        {
+            var exception = getLogsResult.GetError();
+            logger.LogError("Ошибка получения логов изменения монет пользователя: {exception}", exception);
+            return ServerError();
+        }
+
+        var models = getLogsResult.GetResult().Select(log => new CoinChangeLogModel
+        {
+            Id = log.Id,
+            Value = log.Value,
+            Reason = log.Type,
+            Date = log.Date
+        });
+
+        return Ok(new GetCoinChangeLogsResponse
+        {
+            Items = models
+        });
     }
 }
