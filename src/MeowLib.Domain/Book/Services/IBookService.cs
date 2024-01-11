@@ -4,7 +4,7 @@ using MeowLib.Domain.Book.Exceptions;
 using MeowLib.Domain.BookPeople.Enums;
 using MeowLib.Domain.People.Exceptions;
 using MeowLib.Domain.Shared;
-using MeowLib.Domain.Shared.Exceptions.Services;
+using MeowLib.Domain.Shared.Exceptions;
 using MeowLib.Domain.Shared.Result;
 using Microsoft.AspNetCore.Http;
 

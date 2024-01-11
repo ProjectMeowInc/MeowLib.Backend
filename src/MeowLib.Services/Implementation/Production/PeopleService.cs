@@ -2,7 +2,7 @@ using MeowLib.DAL;
 using MeowLib.Domain.People.Dto;
 using MeowLib.Domain.People.Entity;
 using MeowLib.Domain.People.Services;
-using MeowLib.Domain.Shared.Exceptions.Services;
+using MeowLib.Domain.Shared.Exceptions;
 using MeowLib.Domain.Shared.Models;
 using MeowLib.Domain.Shared.Result;
 using Microsoft.EntityFrameworkCore;
@@ -147,7 +147,7 @@ public class PeopleService(ApplicationDbContext dbContext) : IPeopleService
 
         if (!filteredAuthors.Any())
         {
-            return Result<IEnumerable<PeopleDto>>.Fail(new SearchNotFoundException(nameof(PeopleService)));
+            return Result<IEnumerable<PeopleDto>>.Fail(new SearchNotFoundException());
         }
 
         return await filteredAuthors.Select(a => new PeopleDto

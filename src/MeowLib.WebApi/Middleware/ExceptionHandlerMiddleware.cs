@@ -1,4 +1,4 @@
-using MeowLib.Domain.Shared.Exceptions.Services;
+using MeowLib.Domain.Shared.Exceptions;
 using MeowLib.WebApi.Models.Responses.v1;
 
 namespace MeowLib.WebApi.Middleware;

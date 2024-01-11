@@ -1,5 +1,5 @@
 ﻿using MeowLib.Domain.Chapter.Entity;
-using MeowLib.Domain.Shared.Exceptions.Services;
+using MeowLib.Domain.Shared.Exceptions;
 using MeowLib.Domain.Shared.Result;
 using MeowLib.Domain.Translation.Exceptions;
 

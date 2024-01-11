@@ -1,4 +1,4 @@
-using MeowLib.Domain.Shared.Exceptions.Services;
+using MeowLib.Domain.Shared.Exceptions;
 using MeowLib.Domain.Tag.Services;
 using MeowLib.Domain.User.Enums;
 using MeowLib.WebApi.Abstractions;

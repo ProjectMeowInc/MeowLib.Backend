@@ -22,7 +22,6 @@ public class BookCommentService(IUserService userService, IBookService bookServi
 {
     private static readonly Regex HtmlRegex = new("<[^>]*>", RegexOptions.Compiled);
 
-
     /// <summary>
     /// Метод создаёт новый комментарий.
     /// </summary>
