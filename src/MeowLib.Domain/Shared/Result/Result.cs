@@ -63,7 +63,7 @@ public class Result<TResult>
             throw new NotImplementedException();
         }
 
-        return _result ?? throw new NullReferenceException();
+        return _result!;
     }
 
     public Exception GetError()
