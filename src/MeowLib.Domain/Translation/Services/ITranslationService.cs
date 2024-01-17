@@ -44,10 +44,11 @@ public interface ITranslationService
     /// <param name="name">Название главы.</param>
     /// <param name="text">Контент главы.</param>
     /// <param name="position">Пизиция в списке глав.</param>
+    /// <param name="volume">Номер тома</param>
     /// <returns>Результат добавления главы.</returns>
     /// <exception cref="TranslationNotFoundException">Возникает в случае, если перевод не был найден.</exception>
     /// <exception cref="ChapterPositionAlreadyTaken">Возникает в случае, если заданная позиция уже занята.</exception>
-    Task<Result> AddChapterAsync(int translationId, string name, string text, uint position);
+    Task<Result> AddChapterAsync(int translationId, string name, string text, uint position, uint volume);
 
     /// <summary>
     /// Метод возвращает перевод по его Id

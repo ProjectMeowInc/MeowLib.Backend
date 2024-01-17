@@ -16,10 +16,11 @@ public interface IChapterService
     /// <param name="name">Название главы.</param>
     /// <param name="text">Текст главы.</param>
     /// <param name="translationId">Id перевода.</param>
+    /// <param name="volume">Номер тома.</param>
     /// <returns>Модель созданной главы.</returns>
     /// <exception cref="ValidationException">Возникает в случае ошибки валидации данных.</exception>
     /// <exception cref="TranslationNotFoundException">Возникает в случае, если перевод не был найден.</exception>
-    Task<Result<ChapterEntityModel>> CreateChapterAsync(string name, string text, int translationId);
+    Task<Result<ChapterEntityModel>> CreateChapterAsync(string name, string text, int translationId, uint volume);
 
     /// <summary>
     /// Метод обновляет текст главы.

@@ -156,7 +156,7 @@ public class TranslationController(
         }
 
         var addChapterResult =
-            await translationService.AddChapterAsync(translationId, payload.Name, payload.Text, payload.Position);
+            await translationService.AddChapterAsync(translationId, payload.Name, payload.Text, payload.Position, 1);
         if (addChapterResult.IsFailure)
         {
             var exception = addChapterResult.GetError();
