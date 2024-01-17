@@ -27,12 +27,13 @@ public class TranslationController(
     ILogger<TranslationController> logger) : BaseController
 {
     /// <summary>
-    /// Получение глав перевода.
+    /// [DEPRECATED] Получение глав перевода.
     /// </summary>
     /// <param name="translationId">Id перевода.</param>
     [HttpGet("{translationId}")]
     [ProducesOkResponseType(typeof(GetAllTranslationChaptersResponse))]
     [ProducesUserErrorResponseType]
+    [DeprecatedMethod(20, 2, 2024)]
     public async Task<IActionResult> GetTranslationChapters([FromRoute] int translationId)
     {
         var getTranslationChaptersResult = await translationService.GetTranslationChaptersAsync(translationId);
@@ -139,7 +140,7 @@ public class TranslationController(
     }
 
     /// <summary>
-    /// Добавление главы в перевод.
+    /// [DEPRECATED] Добавление главы в перевод.
     /// </summary>
     /// <param name="translationId">Id перевода.</param>
     /// <param name="payload">Данные для добавления главы.</param>
@@ -148,6 +149,7 @@ public class TranslationController(
     [ProducesOkResponseType]
     [ProducesUserErrorResponseType]
     [ProducesNotFoundResponseType]
+    [DeprecatedMethod(20, 2, 2024)]
     public async Task<IActionResult> AddChapterToTranslation([FromRoute] int translationId,
         [FromBody] AddChapterToTranslationRequest payload)
     {
