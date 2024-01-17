@@ -64,13 +64,13 @@ public class TranslationController(
     }
 
     /// <summary>
-    /// Получение списка глав перевода.
+    /// Получение списка томов перевода.
     /// </summary>
     /// <param name="translationId">Id перевода.</param>
-    [HttpGet("{translationId}/chapters")]
-    [ProducesOkResponseType(typeof(GetTranslationChaptersResponse))]
+    [HttpGet("{translationId}/volume")]
+    [ProducesOkResponseType(typeof(GetTranslationVolumesResponse))]
     [ProducesNotFoundResponseType]
-    public async Task<IActionResult> GetTranslationChapters([FromRoute] int translationId)
+    public async Task<IActionResult> GetTranslationVolumes([FromRoute] int translationId)
     {
         var getTranslationChaptersResult = await translationService.GetTranslationChaptersAsync(translationId);
         if (getTranslationChaptersResult.IsFailure)
@@ -85,19 +85,23 @@ public class TranslationController(
             return ServerError();
         }
 
-        var chapters = getTranslationChaptersResult.GetResult();
-        return Ok(new GetTranslationChaptersResponse
+        var volumes = getTranslationChaptersResult.GetResult()
+            .GroupBy(c => c.Volume)
+            .Select(group => new VolumeModel
+            {
+                Number = group.Key,
+                Chapters = group.Select(chap => new ChapterModel
+                    {
+                        Id = chap.Id,
+                        Name = chap.Name,
+                        ReleaseDate = chap.ReleaseDate,
+                        Position = chap.Position
+                    })
+                    .ToList()
+            });
+        return Ok(new GetTranslationVolumesResponse
         {
-            Items = chapters.Select(c => new ChapterModel
-                {
-                    Id = c.Id,
-                    Name = c.Name,
-                    ReleaseDate = c.ReleaseDate,
-                    Volume = c.Volume,
-                    Position = c.Position
-                })
-                .ToList(),
-            Count = chapters.Count
+            Volumes = volumes
         });
     }
 }
