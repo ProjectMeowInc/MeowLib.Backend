@@ -173,7 +173,7 @@ public class TranslationController(
         if (addChapterResult.IsFailure)
         {
             var exception = addChapterResult.GetError();
-            if (exception is ChapterPositionAlreadyTaken)
+            if (exception is ChapterPositionAlreadyTakenException)
             {
                 logger.LogWarning("При добавлении главы позиция была занята: {position}", payload.Position);
                 return Error("Заданная позиция уже занята", 400);

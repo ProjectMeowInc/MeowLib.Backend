@@ -51,7 +51,7 @@ public class TranslationController(
                 return Error("Запрашиваемый перевод не найден", 400);
             }
 
-            if (exception is ChapterPositionAlreadyTaken)
+            if (exception is ChapterPositionAlreadyTakenException)
             {
                 return Error("Позиция для главы уже занята", 400);
             }

@@ -47,7 +47,7 @@ public interface ITranslationService
     /// <param name="volume">Номер тома</param>
     /// <returns>Результат добавления главы.</returns>
     /// <exception cref="TranslationNotFoundException">Возникает в случае, если перевод не был найден.</exception>
-    /// <exception cref="ChapterPositionAlreadyTaken">Возникает в случае, если заданная позиция уже занята.</exception>
+    /// <exception cref="ChapterPositionAlreadyTakenException">Возникает в случае, если заданная позиция уже занята.</exception>
     Task<Result> AddChapterAsync(int translationId, string name, string text, uint position, uint volume);
 
     /// <summary>

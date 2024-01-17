@@ -103,7 +103,7 @@ public class TranslationService(ApplicationDbContext dbContext, INotificationSer
 
         if (foundedTranslation.Chapters.Any(c => c.Volume == volume && c.Position == position))
         {
-            return Result.Fail(new ChapterPositionAlreadyTaken(position));
+            return Result.Fail(new ChapterPositionAlreadyTakenException(position));
         }
 
         var newChapter = new ChapterEntityModel
