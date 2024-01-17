@@ -155,6 +155,11 @@ public class TranslationController(
             return NotFoundError();
         }
 
+        if (!await teamService.CheckUserInTeamAsync(requestUserData.Id, foundedTranslation.Team.Id))
+        {
+            return Error("У вас нет доступа для добавления глав", 400);
+        }
+
         var addChapterResult =
             await translationService.AddChapterAsync(translationId, payload.Name, payload.Text, payload.Position, 1);
         if (addChapterResult.IsFailure)
