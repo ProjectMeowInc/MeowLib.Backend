@@ -138,6 +138,9 @@ public class TranslationService(ApplicationDbContext dbContext, INotificationSer
     /// <returns>Найденный перевод или null</returns>
     public async Task<TranslationEntityModel?> GetTranslationByIdAsync(int translationId)
     {
-        return await dbContext.Translations.FirstOrDefaultAsync(t => t.Id == translationId);
+        return await dbContext
+            .Translations
+            .Include(t => t.Team)
+            .FirstOrDefaultAsync(t => t.Id == translationId);
     }
 }
