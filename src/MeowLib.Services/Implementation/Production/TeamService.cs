@@ -2,6 +2,7 @@
 using MeowLib.Domain.Notification.Services;
 using MeowLib.Domain.Shared;
 using MeowLib.Domain.Shared.Result;
+using MeowLib.Domain.Team.Dto;
 using MeowLib.Domain.Team.Entity;
 using MeowLib.Domain.Team.Exceptions;
 using MeowLib.Domain.Team.Services;
@@ -176,5 +177,16 @@ public class TeamService(
     public Task<bool> CheckUserInTeamAsync(int userId, int teamId)
     {
         return dbContext.TeamMembers.AnyAsync(tm => tm.Team.Id == teamId && tm.User.Id == userId);
+    }
+
+    public async Task<List<TeamDto>> GetAllUserTeams(int userId)
+    {
+        return await dbContext.TeamMembers.Where(t => t.User.Id == userId)
+            .Select(t => new TeamDto
+            {
+                Id = t.Team.Id,
+                Name = t.Team.Name
+            })
+            .ToListAsync();
     }
 }

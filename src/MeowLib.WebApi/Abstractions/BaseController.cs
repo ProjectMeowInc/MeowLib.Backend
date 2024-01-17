@@ -1,5 +1,7 @@
+using System.Diagnostics;
 using MeowLib.Domain.Shared;
 using MeowLib.Domain.Shared.Models;
+using MeowLib.Domain.Team.Dto;
 using MeowLib.Domain.User.Dto;
 using MeowLib.WebApi.Models.Responses.v1;
 using MeowLib.WebApi.ProducesResponseTypes;
@@ -117,5 +119,19 @@ public class BaseController : ControllerBase
             ErrorMessage = "Ошибка авторизации"
         });
         throw new ApiException("Не найдены данные для авторизации");
+    }
+
+    [NonAction]
+    protected List<TeamDto> GetUserTeams()
+    {
+        if (HttpContext.Items.TryGetValue("UserTeams", out var data))
+        {
+            if (data is List<TeamDto> userTeams)
+            {
+                return userTeams;
+            }
+        }
+
+        throw new UnreachableException("Список комманд пользователя не может быть null");
     }
 }

@@ -1,4 +1,5 @@
 ﻿using MeowLib.Domain.Shared.Result;
+using MeowLib.Domain.Team.Dto;
 using MeowLib.Domain.Team.Entity;
 using MeowLib.Domain.Team.Exceptions;
 using MeowLib.Domain.TeamMember.Enums;
@@ -77,4 +78,11 @@ public interface ITeamService
     /// <param name="teamId">Id комманды.</param>
     /// <returns>True - если состоит, иначе - false</returns>
     Task<bool> CheckUserInTeamAsync(int userId, int teamId);
+
+    /// <summary>
+    /// Метод получает список комманд в которых состоит пользователь.
+    /// </summary>
+    /// <param name="userId">Id пользователя</param>
+    /// <returns>Список комманд в которых состоит пользователь.</returns>
+    Task<List<TeamDto>> GetAllUserTeams(int userId);
 }
