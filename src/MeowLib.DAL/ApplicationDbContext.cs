@@ -129,6 +129,10 @@ public class ApplicationDbContext : DbContext
             .WithOne(c => c.Translation)
             .OnDelete(DeleteBehavior.Cascade);
 
+        modelBuilder.Entity<ChapterEntityModel>()
+            .Property(c => c.Volume)
+            .HasDefaultValue(1);
+
         base.OnModelCreating(modelBuilder);
     }
 }
