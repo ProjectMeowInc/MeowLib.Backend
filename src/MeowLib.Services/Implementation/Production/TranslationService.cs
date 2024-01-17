@@ -101,7 +101,7 @@ public class TranslationService(ApplicationDbContext dbContext, INotificationSer
             return Result.Fail(new TranslationNotFoundException(translationId));
         }
 
-        if (foundedTranslation.Chapters.Any(c => c.Position == position))
+        if (foundedTranslation.Chapters.Any(c => c.Volume == volume && c.Position == position))
         {
             return Result.Fail(new ChapterPositionAlreadyTaken(position));
         }
