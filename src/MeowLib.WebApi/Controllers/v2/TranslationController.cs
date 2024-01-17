@@ -68,6 +68,8 @@ public class TranslationController(
     /// </summary>
     /// <param name="translationId">Id перевода.</param>
     [HttpGet("{translationId}/chapters")]
+    [ProducesOkResponseType(typeof(GetTranslationChaptersResponse))]
+    [ProducesNotFoundResponseType]
     public async Task<IActionResult> GetTranslationChapters([FromRoute] int translationId)
     {
         var getTranslationChaptersResult = await translationService.GetTranslationChaptersAsync(translationId);
