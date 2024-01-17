@@ -66,7 +66,8 @@ public class TranslationService(ApplicationDbContext dbContext, INotificationSer
                 Id = c.Id,
                 Name = c.Name,
                 ReleaseDate = c.ReleaseDate,
-                Position = c.Position
+                Position = c.Position,
+                Volume = c.Volume
             })
             .ToListAsync();
 
