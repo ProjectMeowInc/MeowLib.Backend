@@ -1,10 +1,10 @@
 using MeowLib.Domain.Chapter.Exceptions;
-using MeowLib.Domain.Team.Services;
 using MeowLib.Domain.Translation.Exceptions;
 using MeowLib.Domain.Translation.Services;
 using MeowLib.WebApi.Abstractions;
 using MeowLib.WebApi.Filters;
 using MeowLib.WebApi.Models.Requests.v2.Translation;
+using MeowLib.WebApi.Models.Responses.v2.Translation;
 using MeowLib.WebApi.ProducesResponseTypes;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,7 +13,6 @@ namespace MeowLib.WebApi.Controllers.v2;
 [Route("api/v2/translation")]
 public class TranslationController(
     ITranslationService translationService,
-    ITeamService teamService,
     ILogger<TranslationController> logger) : BaseController
 {
     /// <summary>
@@ -71,6 +70,32 @@ public class TranslationController(
     [HttpGet("{translationId}/chapters")]
     public async Task<IActionResult> GetTranslationChapters([FromRoute] int translationId)
     {
-        throw new NotImplementedException();
+        var getTranslationChaptersResult = await translationService.GetTranslationChaptersAsync(translationId);
+        if (getTranslationChaptersResult.IsFailure)
+        {
+            var exception = getTranslationChaptersResult.GetError();
+            if (exception is TranslationNotFoundException)
+            {
+                return NotFoundError();
+            }
+
+            logger.LogError("Неизвестная ошибка получения глав перевода: {exception}", exception);
+            return ServerError();
+        }
+
+        var chapters = getTranslationChaptersResult.GetResult();
+        return Ok(new GetTranslationChaptersResponse
+        {
+            Items = chapters.Select(c => new ChapterModel
+                {
+                    Id = c.Id,
+                    Name = c.Name,
+                    ReleaseDate = c.ReleaseDate,
+                    Volume = c.Volume,
+                    Position = c.Position
+                })
+                .ToList(),
+            Count = chapters.Count
+        });
     }
 }
