@@ -52,7 +52,13 @@ public class TranslationController(
         return Json(new GetAllTranslationChaptersResponse
         {
             Count = content.Count,
-            Items = content
+            Items = content.Select(c => new ChapterModel
+            {
+                Id = c.Id,
+                Name = c.Name,
+                ReleaseDate = c.ReleaseDate,
+                Position = c.Position
+            })
         });
     }
 
