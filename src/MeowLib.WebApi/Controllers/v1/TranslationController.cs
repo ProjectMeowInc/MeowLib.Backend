@@ -27,12 +27,13 @@ public class TranslationController(
     ILogger<TranslationController> logger) : BaseController
 {
     /// <summary>
-    /// Получение глав перевода.
+    /// [DEPRECATED] Получение глав перевода.
     /// </summary>
     /// <param name="translationId">Id перевода.</param>
     [HttpGet("{translationId}")]
     [ProducesOkResponseType(typeof(GetAllTranslationChaptersResponse))]
     [ProducesUserErrorResponseType]
+    [DeprecatedMethod(20, 2, 2024)]
     public async Task<IActionResult> GetTranslationChapters([FromRoute] int translationId)
     {
         var getTranslationChaptersResult = await translationService.GetTranslationChaptersAsync(translationId);
@@ -52,7 +53,13 @@ public class TranslationController(
         return Json(new GetAllTranslationChaptersResponse
         {
             Count = content.Count,
-            Items = content
+            Items = content.Select(c => new ChapterModel
+            {
+                Id = c.Id,
+                Name = c.Name,
+                ReleaseDate = c.ReleaseDate,
+                Position = c.Position
+            })
         });
     }
 
@@ -133,7 +140,7 @@ public class TranslationController(
     }
 
     /// <summary>
-    /// Добавление главы в перевод.
+    /// [DEPRECATED] Добавление главы в перевод.
     /// </summary>
     /// <param name="translationId">Id перевода.</param>
     /// <param name="payload">Данные для добавления главы.</param>
@@ -142,6 +149,7 @@ public class TranslationController(
     [ProducesOkResponseType]
     [ProducesUserErrorResponseType]
     [ProducesNotFoundResponseType]
+    [DeprecatedMethod(20, 2, 2024)]
     public async Task<IActionResult> AddChapterToTranslation([FromRoute] int translationId,
         [FromBody] AddChapterToTranslationRequest payload)
     {
@@ -155,12 +163,17 @@ public class TranslationController(
             return NotFoundError();
         }
 
+        if (!await teamService.CheckUserInTeamAsync(requestUserData.Id, foundedTranslation.Team.Id))
+        {
+            return Error("У вас нет доступа для добавления глав", 400);
+        }
+
         var addChapterResult =
-            await translationService.AddChapterAsync(translationId, payload.Name, payload.Text, payload.Position);
+            await translationService.AddChapterAsync(translationId, payload.Name, payload.Text, payload.Position, 1);
         if (addChapterResult.IsFailure)
         {
             var exception = addChapterResult.GetError();
-            if (exception is ChapterPositionAlreadyTaken)
+            if (exception is ChapterPositionAlreadyTakenException)
             {
                 logger.LogWarning("При добавлении главы позиция была занята: {position}", payload.Position);
                 return Error("Заданная позиция уже занята", 400);

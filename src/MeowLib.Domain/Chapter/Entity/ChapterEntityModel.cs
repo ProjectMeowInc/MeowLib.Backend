@@ -23,6 +23,11 @@ public class ChapterEntityModel
     public required string Text { get; set; }
 
     /// <summary>
+    /// Номер тома главы.
+    /// </summary>
+    public required uint Volume { get; init; }
+
+    /// <summary>
     /// Позиция главы в переводе.
     /// </summary>
     public required uint Position { get; init; }
