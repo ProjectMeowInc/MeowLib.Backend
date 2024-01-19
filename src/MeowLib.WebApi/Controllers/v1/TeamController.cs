@@ -44,7 +44,7 @@ public class TeamController(ITeamService teamService, ILogger<TeamController> lo
 
             if (exception is TeamNameAlreadyTakenException)
             {
-                return Error("Название комманды занято", 400);
+                return Error("Название команды занято", 400);
             }
 
             logger.LogError("Произошла неизвестная ошибка при создании команды: {error}", exception);
@@ -55,7 +55,7 @@ public class TeamController(ITeamService teamService, ILogger<TeamController> lo
     }
 
     /// <summary>
-    /// Получение комманды.
+    /// Получение команды.
     /// </summary>
     /// <param name="teamId">Id комманды.</param>
     [HttpGet("{teamId}")]
@@ -137,9 +137,9 @@ public class TeamController(ITeamService teamService, ILogger<TeamController> lo
     }
 
     /// <summary>
-    /// Покинуть комманду.
+    /// Покинуть команду.
     /// </summary>
-    /// <param name="teamId">Id комманды.</param>
+    /// <param name="teamId">Id команды.</param>
     [HttpPost("{teamId}/leave")]
     [Authorization]
     [ProducesOkResponseType]
