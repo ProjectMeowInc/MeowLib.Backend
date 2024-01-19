@@ -228,8 +228,13 @@ public class TeamController(ITeamService teamService, ILogger<TeamController> lo
         return Ok();
     }
 
+    /// <summary>
+    /// Принять приглашение в команду.
+    /// </summary>
+    /// <param name="payload">Данные.</param>
     [HttpPost("invite/accept")]
     [Authorization]
+    [ProducesOkResponseType]
     [ProducesUserErrorResponseType]
     public async Task<IActionResult> AcceptInviteToTeam([FromBody] AcceptInviteRequest payload)
     {
@@ -305,6 +310,10 @@ public class TeamController(ITeamService teamService, ILogger<TeamController> lo
         return Ok();
     }
 
+    /// <summary>
+    /// Получить список команд.
+    /// </summary>
+    /// <param name="page">Страница. Начинается с 1.</param>
     [HttpGet]
     [ProducesOkResponseType(typeof(GetTeamsListResponse))]
     [ProducesUserErrorResponseType]
