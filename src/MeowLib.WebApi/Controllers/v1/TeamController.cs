@@ -228,6 +228,33 @@ public class TeamController(ITeamService teamService, ILogger<TeamController> lo
         return Ok();
     }
 
+    [HttpPost("invite/accept")]
+    [Authorization]
+    [ProducesUserErrorResponseType]
+    public async Task<IActionResult> AcceptInviteToTeam([FromBody] AcceptInviteRequest payload)
+    {
+        var user = await GetUserDataAsync();
+        var acceptInviteResult = await teamService.AcceptInviteToTeamAsync(user.Id, payload.Data);
+        if (acceptInviteResult.IsFailure)
+        {
+            var exception = acceptInviteResult.GetError();
+            if (exception is TeamInvitationIsNotForUserException)
+            {
+                return Error("У вас нет сюда доступа", 400);
+            }
+
+            if (exception is TeamInvitationExpiredException)
+            {
+                return Error("Приглашение истекло", 400);
+            }
+
+            logger.LogError("Ошибка принятие приглашения в команду: {exception}", exception);
+            return ServerError();
+        }
+
+        return Ok();
+    }
+
     /// <summary>
     /// Удалить пользователя из комманды.
     /// </summary>
