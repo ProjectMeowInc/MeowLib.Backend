@@ -62,7 +62,7 @@ public interface ITeamService
     Task<Result> RemoveFromTeamAsync(int teamId, int userId);
 
     /// <summary>
-    /// Метод отправляет приглашение на вступление в комманду.
+    /// Метод отправляет приглашение на вступление в команду.
     /// </summary>
     /// <param name="teamId">Id комманды.</param>
     /// <param name="userId">Id пользователя.</param>
@@ -73,7 +73,7 @@ public interface ITeamService
     Task<Result> InviteUserToTeamAsync(int teamId, int userId);
 
     /// <summary>
-    /// Метод проверяет сосотит ли пользователь в заданной комманде.
+    /// Метод проверяет сосотит ли пользователь в заданной команде.
     /// </summary>
     /// <param name="userId">Id пользователя.</param>
     /// <param name="teamId">Id комманды.</param>
@@ -86,4 +86,12 @@ public interface ITeamService
     /// <param name="userId">Id пользователя</param>
     /// <returns>Список комманд в которых состоит пользователь.</returns>
     Task<List<TeamDto>> GetAllUserTeams(int userId);
+
+    /// <summary>
+    /// Метод получает список комманд.
+    /// </summary>
+    /// <param name="skipCount">Сколько команд надо пропустить.</param>
+    /// <param name="takeCount">СКолько максимум команд надо вернуть.</param>
+    /// <returns>Список команд.</returns>
+    Task<List<TeamDto>> GetTeamsAsync(int skipCount, int takeCount);
 }

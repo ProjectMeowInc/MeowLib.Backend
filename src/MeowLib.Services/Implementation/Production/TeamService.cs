@@ -194,4 +194,18 @@ public class TeamService(
             })
             .ToListAsync();
     }
+
+    public async Task<List<TeamDto>> GetTeamsAsync(int skipCount, int takeCount)
+    {
+        return await dbContext.Teams
+            .OrderBy(t => t.Id)
+            .Skip(skipCount)
+            .Take(takeCount)
+            .Select(t => new TeamDto
+            {
+                Id = t.Id,
+                Name = t.Name
+            })
+            .ToListAsync();
+    }
 }

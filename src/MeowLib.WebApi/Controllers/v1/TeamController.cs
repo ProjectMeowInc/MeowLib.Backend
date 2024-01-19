@@ -277,4 +277,21 @@ public class TeamController(ITeamService teamService, ILogger<TeamController> lo
 
         return Ok();
     }
+
+    [HttpGet]
+    [ProducesOkResponseType(typeof(GetTeamsListResponse))]
+    [ProducesUserErrorResponseType]
+    public async Task<IActionResult> GetTeamsListAsync([FromQuery] uint page)
+    {
+        var skipCount = (page - 1) * 20;
+        var teams = await teamService.GetTeamsAsync((int)skipCount, 20);
+        return Ok(new GetTeamsListResponse
+        {
+            Items = teams.Select(t => new TeamModel
+            {
+                Id = t.Id,
+                Name = t.Name
+            })
+        });
+    }
 }
