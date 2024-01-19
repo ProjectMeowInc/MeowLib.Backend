@@ -28,6 +28,11 @@ public class TeamService(
             return Result<TeamEntityModel>.Fail(new TeamOwnerNotFoundException(createdById));
         }
 
+        if (await dbContext.Teams.AnyAsync(t => t.Name == name))
+        {
+            return Result<TeamEntityModel>.Fail(new TeamNameAlreadyTakenException());
+        }
+
         // create team
         var createdEntry = await dbContext.Teams.AddAsync(new TeamEntityModel
         {

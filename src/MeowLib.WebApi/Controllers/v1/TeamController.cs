@@ -26,6 +26,7 @@ public class TeamController(ITeamService teamService, ILogger<TeamController> lo
     [HttpPost]
     [Authorization]
     [ProducesOkResponseType]
+    [ProducesUserErrorResponseType]
     [ProducesResponseType(401, Type = typeof(BaseErrorResponse))]
     public async Task<IActionResult> CreateNewTeam([FromBody] CreateTeamRequest payload)
     {
@@ -39,6 +40,11 @@ public class TeamController(ITeamService teamService, ILogger<TeamController> lo
             {
                 logger.LogError(teamOwnerNotFoundException.ErrorMessage);
                 return UpdateAuthorizeError();
+            }
+
+            if (exception is TeamNameAlreadyTakenException)
+            {
+                return Error("Название комманды занято", 400);
             }
 
             logger.LogError("Произошла неизвестная ошибка при создании команды: {error}", exception);

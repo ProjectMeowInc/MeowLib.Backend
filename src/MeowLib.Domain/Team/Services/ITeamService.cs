@@ -20,6 +20,7 @@ public interface ITeamService
     /// Возникает в случае, если пользователь запросивший создание команды не
     /// найден
     /// </exception>
+    /// <exception cref="TeamNameAlreadyTakenException">Возникает в случае, если имя комманды уже занято.</exception>
     Task<Result<TeamEntityModel>> CreateNewTeamAsync(int createdById, string name, string description);
 
     /// <summary>
