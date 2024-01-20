@@ -103,6 +103,16 @@ public class ApplicationDbContext : DbContext
     /// </summary>
     public required DbSet<BookPeopleEntityModel> BookPeople { get; init; }
 
+    /// <summary>
+    /// Таблица персонажей.
+    /// </summary>
+    public required DbSet<CharacterEntityModel> Characters { get; init; }
+
+    /// <summary>
+    /// Таблица для связи персонажей и книг.
+    /// </summary>
+    public required DbSet<BookCharacterEntityModel> BookCharacter { get; init; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<BookEntityModel>()
