@@ -6,6 +6,7 @@ using MeowLib.Domain.Book.Services;
 using MeowLib.Domain.BookComment.Services;
 using MeowLib.Domain.Bookmark.Services;
 using MeowLib.Domain.Chapter.Services;
+using MeowLib.Domain.Character.Services;
 using MeowLib.Domain.CoinsChangeLog.Services;
 using MeowLib.Domain.File.Services;
 using MeowLib.Domain.Notification.Services;
@@ -105,6 +106,7 @@ public static class ServicesExtensions
         serviceCollection.AddScoped<ITranslationService, TranslationService>();
         serviceCollection.AddScoped<ICoinService, CoinService>();
         serviceCollection.AddScoped<INotificationTokenService, NotificationTokenService>();
+        serviceCollection.AddScoped<ICharacterService, CharacterService>();
     }
 
     public static void InitDatabase(this IServiceCollection serviceCollection, WebApplicationBuilder builder)
