@@ -48,15 +48,7 @@ public class NotificationService(ApplicationDbContext dbContext, INotificationTo
             InviteExpiredAt = DateTime.UtcNow.AddDays(3)
         });
 
-        var sendNotificationResult =
-            await SendNotificationToUserAsync(userId, NotificationTypeEnum.TeamInvite, inviteToken);
-
-        if (sendNotificationResult.IsFailure)
-        {
-            return Result.Fail(sendNotificationResult.GetError());
-        }
-
-        return Result.Ok();
+        return await SendNotificationToUserAsync(userId, NotificationTypeEnum.TeamInvite, inviteToken);
     }
 
     public async Task<IEnumerable<NotificationDto>> GetUserNotificationsAsync(int userId)

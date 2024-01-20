@@ -3,6 +3,7 @@ using MeowLib.Domain.Team.Dto;
 using MeowLib.Domain.Team.Entity;
 using MeowLib.Domain.Team.Exceptions;
 using MeowLib.Domain.TeamMember.Enums;
+using MeowLib.Domain.User.Entity;
 using MeowLib.Domain.User.Exceptions;
 
 namespace MeowLib.Domain.Team.Services;
@@ -20,6 +21,7 @@ public interface ITeamService
     /// Возникает в случае, если пользователь запросивший создание команды не
     /// найден
     /// </exception>
+    /// <exception cref="TeamNameAlreadyTakenException">Возникает в случае, если имя комманды уже занято.</exception>
     Task<Result<TeamEntityModel>> CreateNewTeamAsync(int createdById, string name, string description);
 
     /// <summary>
@@ -61,7 +63,7 @@ public interface ITeamService
     Task<Result> RemoveFromTeamAsync(int teamId, int userId);
 
     /// <summary>
-    /// Метод отправляет приглашение на вступление в комманду.
+    /// Метод отправляет приглашение на вступление в команду.
     /// </summary>
     /// <param name="teamId">Id комманды.</param>
     /// <param name="userId">Id пользователя.</param>
@@ -72,11 +74,30 @@ public interface ITeamService
     Task<Result> InviteUserToTeamAsync(int teamId, int userId);
 
     /// <summary>
-    /// Метод проверяет сосотит ли пользователь в заданной комманде.
+    /// Метод принимает приглашение в команду.
+    /// </summary>
+    /// <param name="userId">Id пользователя.</param>
+    /// <param name="token">Токен-приглашение.</param>
+    /// <returns>Результат принятия. Сохраняет все исключения метода <see cref="AddUserToTeamAsync"/></returns>
+    /// <exception cref="TeamInvitationExpiredException">Возникает в случае, если время принятие приглашение истекло.</exception>
+    /// <exception cref="TeamInvitationIsNotForUserException">Возникает в случае, если приглашение отправлено другому пользователю.</exception>
+    Task<Result> AcceptInviteToTeamAsync(int userId, string token);
+
+    /// <summary>
+    /// Метод добавляет пользователя в команду.
+    /// </summary>
+    /// <param name="user">Пользователь.</param>
+    /// <param name="team">Команда.</param>
+    /// <returns>Результат добавления.</returns>
+    /// <exception cref="UserAlreadyInTeamException">Возникает в случае, если пользователь уже в команде.</exception>
+    Task<Result> AddUserToTeamAsync(UserEntityModel user, TeamEntityModel team);
+
+    /// <summary>
+    /// Метод проверяет сосотит ли пользователь в заданной команде.
     /// </summary>
     /// <param name="userId">Id пользователя.</param>
     /// <param name="teamId">Id комманды.</param>
-    /// <returns>True - если состоит, иначе - false</returns>
+    /// <returns>True - если состоит, иначе - false.</returns>
     Task<bool> CheckUserInTeamAsync(int userId, int teamId);
 
     /// <summary>
@@ -85,4 +106,12 @@ public interface ITeamService
     /// <param name="userId">Id пользователя</param>
     /// <returns>Список комманд в которых состоит пользователь.</returns>
     Task<List<TeamDto>> GetAllUserTeams(int userId);
+
+    /// <summary>
+    /// Метод получает список комманд.
+    /// </summary>
+    /// <param name="skipCount">Сколько команд надо пропустить.</param>
+    /// <param name="takeCount">СКолько максимум команд надо вернуть.</param>
+    /// <returns>Список команд.</returns>
+    Task<List<TeamDto>> GetTeamsAsync(int skipCount, int takeCount);
 }
