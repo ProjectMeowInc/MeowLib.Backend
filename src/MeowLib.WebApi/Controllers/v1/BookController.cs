@@ -386,6 +386,11 @@ public class BookController(
         return Ok();
     }
 
+    /// <summary>
+    /// Удалить персонажа из книги.
+    /// </summary>
+    /// <param name="bookId">Id книги.</param>
+    /// <param name="characterId">Id персонажа.</param>
     [HttpDelete("{bookId}/character/{characterId}")]
     [Authorization(RequiredRoles = new[] { UserRolesEnum.Admin, UserRolesEnum.Editor })]
     [ProducesOkResponseType]
