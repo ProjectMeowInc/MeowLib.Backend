@@ -8,6 +8,7 @@ using MeowLib.Domain.Team.Exceptions;
 using MeowLib.Domain.Team.Services;
 using MeowLib.Domain.TeamMember.Entity;
 using MeowLib.Domain.TeamMember.Enums;
+using MeowLib.Domain.User.Entity;
 using MeowLib.Domain.User.Exceptions;
 using MeowLib.Domain.User.Services;
 using Microsoft.EntityFrameworkCore;
@@ -17,6 +18,7 @@ namespace MeowLib.Services.Implementation.Production;
 public class TeamService(
     ApplicationDbContext dbContext,
     INotificationService notificationService,
+    INotificationTokenService notificationTokenService,
     IUserService userService)
     : ITeamService
 {
@@ -26,6 +28,11 @@ public class TeamService(
         if (foundedOwner is null)
         {
             return Result<TeamEntityModel>.Fail(new TeamOwnerNotFoundException(createdById));
+        }
+
+        if (await dbContext.Teams.AnyAsync(t => t.Name == name))
+        {
+            return Result<TeamEntityModel>.Fail(new TeamNameAlreadyTakenException());
         }
 
         // create team
@@ -174,6 +181,57 @@ public class TeamService(
         return Result.Ok();
     }
 
+    public async Task<Result> AcceptInviteToTeamAsync(int userId, string token)
+    {
+        var parsedToken = await notificationTokenService.ParseInviteToTeamTokenAsync(token);
+        if (parsedToken is null)
+        {
+            // todo: change this?
+            return Result.Fail(new TeamInvitationIsNotForUserException());
+        }
+
+        if (userId != parsedToken.UserId)
+        {
+            return Result.Fail(new TeamInvitationIsNotForUserException());
+        }
+
+        if (DateTime.UtcNow > parsedToken.InviteExpiredAt)
+        {
+            return Result.Fail(new TeamInvitationExpiredException());
+        }
+
+        var foundedUser = await userService.GetUserByIdAsync(parsedToken.UserId);
+        if (foundedUser is null)
+        {
+            return Result.Fail(new InnerException("Пользователь не найден"));
+        }
+
+        var foundedTeam = await GetTeamByIdAsync(parsedToken.TeamId);
+        if (foundedTeam is null)
+        {
+            return Result.Fail(new InnerException("Команда не найдена"));
+        }
+
+        return await AddUserToTeamAsync(foundedUser, foundedTeam);
+    }
+
+    public async Task<Result> AddUserToTeamAsync(UserEntityModel user, TeamEntityModel team)
+    {
+        if (await dbContext.TeamMembers.AnyAsync(t => t.Team.Id == team.Id && t.User.Id == user.Id))
+        {
+            return Result.Fail(new UserAlreadyInTeamException(user.Id, team.Id));
+        }
+
+        await dbContext.TeamMembers.AddAsync(new TeamMemberEntityModel
+        {
+            User = user,
+            Team = team,
+            Role = UserTeamMemberRoleEnum.Standard
+        });
+        await dbContext.SaveChangesAsync();
+        return Result.Ok();
+    }
+
     public Task<bool> CheckUserInTeamAsync(int userId, int teamId)
     {
         return dbContext.TeamMembers.AnyAsync(tm => tm.Team.Id == teamId && tm.User.Id == userId);
@@ -186,6 +244,20 @@ public class TeamService(
             {
                 Id = t.Team.Id,
                 Name = t.Team.Name
+            })
+            .ToListAsync();
+    }
+
+    public async Task<List<TeamDto>> GetTeamsAsync(int skipCount, int takeCount)
+    {
+        return await dbContext.Teams
+            .OrderBy(t => t.Id)
+            .Skip(skipCount)
+            .Take(takeCount)
+            .Select(t => new TeamDto
+            {
+                Id = t.Id,
+                Name = t.Name
             })
             .ToListAsync();
     }

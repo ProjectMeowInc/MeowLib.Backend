@@ -84,6 +84,7 @@ public class CoinController(ICoinService coinService, ILogger<CoinController> lo
     /// <param name="userId">Id пользователя</param>
     [HttpGet("admin-get/{userId}")]
     [Authorization(RequiredRoles = new[] { UserRolesEnum.Admin })]
+    [ProducesOkResponseType(typeof(GetCoinChangeLogsResponse))]
     public async Task<IActionResult> GetUserChangeCoinLog([FromRoute] int userId)
     {
         var getLogsResult = await coinService.GetUserCoinsChangeLogAsync(userId);
