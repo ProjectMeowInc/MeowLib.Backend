@@ -326,7 +326,8 @@ public class TeamController(ITeamService teamService, ILogger<TeamController> lo
             Items = teams.Select(t => new TeamModel
             {
                 Id = t.Id,
-                Name = t.Name
+                Name = t.Name,
+                Description = t.Description
             })
         });
     }

@@ -1,8 +1,10 @@
+using MeowLib.DAL.Configuration;
 using MeowLib.Domain.Book.Entity;
 using MeowLib.Domain.BookComment.Entity;
 using MeowLib.Domain.Bookmark.Entity;
 using MeowLib.Domain.BookPeople.Entity;
 using MeowLib.Domain.Chapter.Entity;
+using MeowLib.Domain.Character.Entity;
 using MeowLib.Domain.CoinsChangeLog.Entity;
 using MeowLib.Domain.File.Entity;
 using MeowLib.Domain.Notification.Entity;
@@ -103,35 +105,23 @@ public class ApplicationDbContext : DbContext
     /// </summary>
     public required DbSet<BookPeopleEntityModel> BookPeople { get; init; }
 
+    /// <summary>
+    /// Таблица персонажей.
+    /// </summary>
+    public required DbSet<CharacterEntityModel> Characters { get; init; }
+
+    /// <summary>
+    /// Таблица для связи персонажей и книг.
+    /// </summary>
+    public required DbSet<BookCharacterEntityModel> BookCharacter { get; init; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<BookEntityModel>()
-            .HasMany(b => b.Tags)
-            .WithMany(t => t.Books);
+        modelBuilder.ApplyConfiguration(new BookEntityModelConfiguration());
 
-        modelBuilder.Entity<BookEntityModel>()
-            .HasMany(b => b.Translations)
-            .WithOne(t => t.Book)
-            .OnDelete(DeleteBehavior.Cascade);
+        modelBuilder.ApplyConfiguration(new TranslationEntityModelConfiguration());
 
-        modelBuilder.Entity<BookEntityModel>()
-            .HasMany(b => b.Peoples)
-            .WithOne(b => b.Book)
-            .OnDelete(DeleteBehavior.Cascade);
-
-        modelBuilder.Entity<BookEntityModel>()
-            .HasMany<BookCommentEntityModel>()
-            .WithOne(c => c.Book)
-            .OnDelete(DeleteBehavior.Cascade);
-
-        modelBuilder.Entity<TranslationEntityModel>()
-            .HasMany(t => t.Chapters)
-            .WithOne(c => c.Translation)
-            .OnDelete(DeleteBehavior.Cascade);
-
-        modelBuilder.Entity<ChapterEntityModel>()
-            .Property(c => c.Volume)
-            .HasDefaultValue(1);
+        modelBuilder.ApplyConfiguration(new ChapterEntityModelConfiguration());
 
         base.OnModelCreating(modelBuilder);
     }

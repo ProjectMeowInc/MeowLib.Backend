@@ -79,8 +79,8 @@ public class CoinController(ICoinService coinService, ILogger<CoinController> lo
 
     /// <summary>
     /// Получение истории изменения монет пользователя.
-    /// <remarks>Необходима роль администратора.</remarks>
     /// </summary>
+    /// <remarks>Необходима роль администратора.</remarks>
     /// <param name="userId">Id пользователя</param>
     [HttpGet("admin-get/{userId}")]
     [Authorization(RequiredRoles = new[] { UserRolesEnum.Admin })]

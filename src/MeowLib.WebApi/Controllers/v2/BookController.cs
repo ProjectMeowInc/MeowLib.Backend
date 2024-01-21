@@ -1,6 +1,5 @@
 ﻿using MeowLib.Domain.Book.Services;
 using MeowLib.WebApi.Abstractions;
-using MeowLib.WebApi.Filters;
 using MeowLib.WebApi.Models.Responses.v1.Tag;
 using MeowLib.WebApi.Models.Responses.v1.Translation;
 using MeowLib.WebApi.Models.Responses.v2.Author;
@@ -17,7 +16,6 @@ public class BookController(IBookService bookService) : BaseController
     /// Получение всех книг.
     /// </summary>
     [HttpGet]
-    [UnstableMethod]
     [ProducesOkResponseType(typeof(GetAllBooksResponse))]
     public async Task<IActionResult> GetAllBooks()
     {

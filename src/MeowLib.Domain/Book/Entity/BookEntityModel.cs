@@ -1,4 +1,5 @@
 using MeowLib.Domain.BookPeople.Entity;
+using MeowLib.Domain.Character.Entity;
 using MeowLib.Domain.File.Entity;
 using MeowLib.Domain.Tag.Entity;
 using MeowLib.Domain.Translation.Entity;
@@ -44,4 +45,9 @@ public class BookEntityModel
     /// Список тегов книги.
     /// </summary>
     public required IEnumerable<TagEntityModel> Tags { get; set; }
+
+    /// <summary>
+    /// Список персонажей.
+    /// </summary>
+    public required List<BookCharacterEntityModel> Characters { get; init; }
 }
