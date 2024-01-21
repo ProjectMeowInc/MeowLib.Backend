@@ -5,8 +5,8 @@ namespace MeowLib.Domain.Character.Entity;
 
 public class BookCharacterEntityModel
 {
-    public required int Id { get; init; }
+    public int Id { get; init; }
     public required CharacterEntityModel Character { get; init; }
     public required BookEntityModel Book { get; init; }
-    public required BookCharacterRoleEnum Role { get; init; }
+    public required BookCharacterRoleEnum Role { get; set; }
 }
