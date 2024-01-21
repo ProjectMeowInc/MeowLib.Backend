@@ -243,7 +243,8 @@ public class TeamService(
             .Select(t => new TeamDto
             {
                 Id = t.Team.Id,
-                Name = t.Team.Name
+                Name = t.Team.Name,
+                Description = t.Team.Description
             })
             .ToListAsync();
     }
@@ -257,7 +258,8 @@ public class TeamService(
             .Select(t => new TeamDto
             {
                 Id = t.Id,
-                Name = t.Name
+                Name = t.Name,
+                Description = t.Description
             })
             .ToListAsync();
     }
