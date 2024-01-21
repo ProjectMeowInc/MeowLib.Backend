@@ -107,6 +107,7 @@ public static class ServicesExtensions
         serviceCollection.AddScoped<ICoinService, CoinService>();
         serviceCollection.AddScoped<INotificationTokenService, NotificationTokenService>();
         serviceCollection.AddScoped<ICharacterService, CharacterService>();
+        serviceCollection.AddScoped<IBookCharacterService, BookCharacterService>();
     }
 
     public static void InitDatabase(this IServiceCollection serviceCollection, WebApplicationBuilder builder)
