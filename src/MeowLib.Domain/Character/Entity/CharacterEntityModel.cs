@@ -8,4 +8,6 @@ public class CharacterEntityModel
     public required string Name { get; set; }
     public required string Description { get; set; }
     public required FileEntityModel Image { get; set; }
+
+    public required List<BookCharacterEntityModel> Books { get; init; }
 }

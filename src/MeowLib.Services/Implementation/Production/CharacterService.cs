@@ -30,7 +30,8 @@ public class CharacterService(ApplicationDbContext dbContext) : ICharacterServic
         {
             Name = character.Name,
             Description = character.Description,
-            Image = foundedImage
+            Image = foundedImage,
+            Books = []
         });
 
         await dbContext.SaveChangesAsync();

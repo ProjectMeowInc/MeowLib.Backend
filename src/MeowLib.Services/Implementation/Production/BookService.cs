@@ -58,7 +58,8 @@ public class BookService(
             Description = inputDescription,
             Tags = new List<TagEntityModel>(),
             Translations = new List<TranslationEntityModel>(),
-            Peoples = []
+            Peoples = [],
+            Characters = []
         });
         await dbContext.SaveChangesAsync();
 

@@ -66,7 +66,8 @@ public class BookController(IBookService bookService, ILogger<BookController> lo
             Image = null,
             Translations = [],
             Tags = [],
-            Peoples = []
+            Peoples = [],
+            Characters = []
         });
 
         if (createBookResult.IsFailure)
