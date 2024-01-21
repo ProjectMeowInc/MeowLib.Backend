@@ -2,6 +2,8 @@ using MeowLib.Domain.Book.Entity;
 using MeowLib.Domain.Book.Exceptions;
 using MeowLib.Domain.Book.Services;
 using MeowLib.Domain.BookPeople.Enums;
+using MeowLib.Domain.Character.Exceptions;
+using MeowLib.Domain.Character.Services;
 using MeowLib.Domain.People.Exceptions;
 using MeowLib.Domain.Shared.Exceptions;
 using MeowLib.Domain.Tag.Dto;
@@ -23,7 +25,10 @@ namespace MeowLib.WebApi.Controllers.v1;
 /// </summary>
 /// <param name="bookService">Сервис книг.</param>
 [Route("api/v1/books")]
-public class BookController(IBookService bookService, ILogger<BookController> logger) : BaseController
+public class BookController(
+    IBookService bookService,
+    IBookCharacterService bookCharacterService,
+    ILogger<BookController> logger) : BaseController
 {
     /// <summary>
     /// [DEPRECATED] Получение всех книг.
@@ -336,6 +341,45 @@ public class BookController(IBookService bookService, ILogger<BookController> lo
             }
 
             logger.LogError("Ошибка удаления человека из книги: {exception}", exception);
+            return ServerError();
+        }
+
+        return Ok();
+    }
+
+    /// <summary>
+    /// Прикрепить персонажа к книге.
+    /// </summary>
+    /// <param name="bookId">Id книги.</param>
+    /// <param name="payload">Данные.</param>
+    [HttpPost("{bookId}/character")]
+    [Authorization(RequiredRoles = new[] { UserRolesEnum.Admin, UserRolesEnum.Editor })]
+    [ProducesOkResponseType]
+    [ProducesUserErrorResponseType]
+    public async Task<IActionResult> AttachCharacter([FromRoute] int bookId, [FromBody] AttachCharacterRequest payload)
+    {
+        var result =
+            await bookCharacterService.AttachCharacterToBookAsync(payload.CharacterId, bookId, payload.Role);
+
+        if (result.IsFailure)
+        {
+            var exception = result.GetError();
+            if (exception is CharacterNotFoundException)
+            {
+                return Error("Запрашиваемый персонаж не найден", 400);
+            }
+
+            if (exception is BookNotFoundException)
+            {
+                return Error("Запрашиваемая книга не найдена", 400);
+            }
+
+            if (exception is CharacterAlreadyAttachedToBookException)
+            {
+                return Error("Персонаж уже прикреплён к книге", 400);
+            }
+
+            logger.LogError("Ошибка прикрепления персонажа: {exception}", exception);
             return ServerError();
         }
 
