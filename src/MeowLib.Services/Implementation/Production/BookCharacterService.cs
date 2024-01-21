@@ -63,6 +63,23 @@ public class BookCharacterService(
         return Result.Ok();
     }
 
+    public async Task<Result> RemoveBookCharacterAsync(int characterId, int bookId)
+    {
+        var foundedBookCharacter =
+            await dbContext.BookCharacter.FirstOrDefaultAsync(bc =>
+                bc.Character.Id == characterId && bc.Book.Id == bookId);
+
+        if (foundedBookCharacter is null)
+        {
+            return Result.Fail(new BookCharacterNotFoundException());
+        }
+
+        dbContext.BookCharacter.Remove(foundedBookCharacter);
+        await dbContext.SaveChangesAsync();
+
+        return Result.Ok();
+    }
+
     public async Task<bool> CheckCharacterAlreadyAttachedAsync(int characterId, int bookId)
     {
         return await dbContext.BookCharacter.AnyAsync(bc => bc.Book.Id == bookId

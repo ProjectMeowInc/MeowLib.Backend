@@ -32,6 +32,15 @@ public interface IBookCharacterService
     Task<Result> UpdateBookCharacterRoleAsync(int characterId, int bookId, BookCharacterRoleEnum newRole);
 
     /// <summary>
+    /// Метод удаляет персонажа из книги.
+    /// </summary>
+    /// <param name="characterId">Id персонажа.</param>
+    /// <param name="bookId">Id книги.</param>
+    /// <returns>Результат удаления.</returns>
+    /// <exception cref="BookCharacterNotFoundException">Возникает в случае, если персонаж не был прикреплён к книге.</exception>
+    Task<Result> RemoveBookCharacterAsync(int characterId, int bookId);
+
+    /// <summary>
     /// Метод проверяет прикреплён ли персонаж к книге.
     /// </summary>
     /// <param name="characterId">Id персонажа.</param>

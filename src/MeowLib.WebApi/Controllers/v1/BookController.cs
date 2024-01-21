@@ -385,4 +385,26 @@ public class BookController(
 
         return Ok();
     }
+
+    [HttpDelete("{bookId}/character/{characterId}")]
+    [Authorization(RequiredRoles = new[] { UserRolesEnum.Admin, UserRolesEnum.Editor })]
+    [ProducesOkResponseType]
+    [ProducesUserErrorResponseType]
+    public async Task<IActionResult> RemoveCharacter([FromRoute] int bookId, [FromRoute] int characterId)
+    {
+        var result = await bookCharacterService.RemoveBookCharacterAsync(characterId, bookId);
+        if (result.IsFailure)
+        {
+            var exception = result.GetError();
+            if (exception is BookCharacterNotFoundException)
+            {
+                return Error("Персонаж не прикреплён к данной книге", 400);
+            }
+
+            logger.LogError("Ошибка удаления персонажа книги: {exception}", exception);
+            return ServerError();
+        }
+
+        return Ok();
+    }
 }
