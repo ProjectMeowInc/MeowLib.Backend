@@ -15,7 +15,7 @@ namespace MeowLib.WebApi.Controllers.v1;
 /// </summary>
 /// <param name="tagService">Сервис тегов.</param>
 [Route("api/v1/tags")]
-public class TagController(ITagService tagService) : BaseController
+public class TagController(ITagService tagService, ILogger<TagController> logger) : BaseController
 {
     /// <summary>
     /// Создание тега.
@@ -37,6 +37,7 @@ public class TagController(ITagService tagService) : BaseController
                 return ValidationError(validationException.ValidationErrors);
             }
 
+            logger.LogError("Неизвестная ошибка создания тега: {exception}", exception);
             return ServerError();
         }
 
@@ -90,6 +91,7 @@ public class TagController(ITagService tagService) : BaseController
                 return ValidationError(validationException.ValidationErrors);
             }
 
+            logger.LogError("Неизвестная ошибка обновления тега: {exception}", exception);
             return ServerError();
         }
 
