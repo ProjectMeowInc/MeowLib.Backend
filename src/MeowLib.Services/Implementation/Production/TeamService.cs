@@ -136,13 +136,7 @@ public class TeamService(
         {
             return Result.Fail(new UserNotFoundException(userId));
         }
-
-        var sendNotificationResult =
-            await notificationService.SendInviteToTeamNotificationAsync(foundedTeam.Id, foundedUser.Id);
-        if (sendNotificationResult.IsFailure)
-        {
-            return Result.Fail(new InnerException(sendNotificationResult.GetError().Message));
-        }
+        // todo: add notification send?
 
         dbContext.Remove(foundedUser);
         await dbContext.SaveChangesAsync();
