@@ -18,7 +18,6 @@ public interface IBookService
     /// <param name="createBookEntityModel">Данные для создания книги.</param>
     /// <returns>Модель созданной книги.</returns>
     /// <exception cref="ValidationException">Возникает в случае ошибки валидации.</exception>
-    /// <exception cref="ApiException">Возникает в случае ошибки сохранения данных.</exception>
     Task<Result<BookEntityModel>> CreateBookAsync(BookEntityModel createBookEntityModel);
 
     /// <summary>
