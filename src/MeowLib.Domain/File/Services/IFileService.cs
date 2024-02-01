@@ -25,4 +25,11 @@ public interface IFileService
     /// <param name="fileName">Имя файла.</param>
     /// <returns>Полученный файл и подходящий Mime Type.</returns>
     Task<(byte[] content, string mimeType)?> GetFileByNameAsync(string fileName);
+
+    /// <summary>
+    /// Метод получает сущность файла по его Id.
+    /// </summary>
+    /// <param name="fileId">Id файла.</param>
+    /// <returns>Найденный файл, если он есть.</returns>
+    Task<FileEntityModel?> GetFileByIdAsync(int fileId);
 }

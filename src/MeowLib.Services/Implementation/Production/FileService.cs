@@ -4,6 +4,7 @@ using MeowLib.Domain.File.Exceptions;
 using MeowLib.Domain.File.Services;
 using MeowLib.Domain.Shared.Result;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 
 namespace MeowLib.Services.Implementation.Production;
 
@@ -71,6 +72,11 @@ public class FileService(ApplicationDbContext dbContext) : IFileService
         {
             return null;
         }
+    }
+
+    public async Task<FileEntityModel?> GetFileByIdAsync(int fileId)
+    {
+        return await dbContext.Files.FirstOrDefaultAsync(f => f.Id == fileId);
     }
 
     private async Task<string> SaveFileWithUniqueNameAsync(IFormFile file, string fileExtension)
