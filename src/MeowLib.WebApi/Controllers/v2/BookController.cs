@@ -1,5 +1,9 @@
-﻿using MeowLib.Domain.Book.Services;
+﻿using MeowLib.Domain.Book.Entity;
+using MeowLib.Domain.Book.Services;
+using MeowLib.Domain.File.Services;
+using MeowLib.Domain.Shared.Exceptions;
 using MeowLib.WebApi.Abstractions;
+using MeowLib.WebApi.Models.Requests.v2.Book;
 using MeowLib.WebApi.Models.Responses.v1.Tag;
 using MeowLib.WebApi.Models.Responses.v1.Translation;
 using MeowLib.WebApi.Models.Responses.v2.Author;
@@ -10,7 +14,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace MeowLib.WebApi.Controllers.v2;
 
 [Route("api/v2/books")]
-public class BookController(IBookService bookService) : BaseController
+public class BookController(IBookService bookService, IFileService fileService, ILogger<BookController> logger)
+    : BaseController
 {
     /// <summary>
     /// Получение всех книг.
@@ -78,6 +83,52 @@ public class BookController(IBookService bookService) : BaseController
                 Id = t.Id,
                 Name = t.Team.Name
             })
+        });
+    }
+
+    /// <summary>
+    /// Создание новой книги.
+    /// </summary>
+    /// <param name="payload">Данные для создания</param>
+    [HttpPost]
+    [ProducesOkResponseType(typeof(CreateBookRequest))]
+    [ProducesUserErrorResponseType]
+    [ProducesForbiddenResponseType]
+    public async Task<IActionResult> CreateBook([FromBody] CreateBookRequest payload)
+    {
+        var foundedImage = await fileService.GetFileByIdAsync(payload.ImageId);
+        if (foundedImage is null)
+        {
+            return Error("Изображение не найдено", 400);
+        }
+
+        var result = await bookService.CreateBookAsync(new BookEntityModel
+        {
+            Name = payload.Name,
+            Description = payload.Description,
+            Image = foundedImage,
+            Peoples = [],
+            Translations = [],
+            Tags = [],
+            Characters = []
+        });
+
+        if (result.IsFailure)
+        {
+            var exception = result.GetError();
+            if (exception is ValidationException validationException)
+            {
+                return ValidationError(validationException.ValidationErrors);
+            }
+
+            logger.LogError("Неизвестная ошибка создания книги: {exception}", exception);
+            return ServerError();
+        }
+
+        var book = result.GetResult();
+        return Ok(new CreateBookResponse
+        {
+            CreatedId = book.Id
         });
     }
 }
