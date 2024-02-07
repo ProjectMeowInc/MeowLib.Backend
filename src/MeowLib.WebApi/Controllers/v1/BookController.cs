@@ -47,7 +47,7 @@ public class BookController(
                 Id = b.Id,
                 Name = b.Name,
                 Description = b.Description,
-                ImageUrl = b.ImageName
+                Image = b.ImageName
             })
         };
 
@@ -55,13 +55,14 @@ public class BookController(
     }
 
     /// <summary>
-    /// Создание новой книги.
+    /// [DEPRECATED] Создание новой книги.
     /// </summary>
     /// <param name="input">Данные для создания книги.</param>
     [HttpPost]
     [Authorization(RequiredRoles = new[] { UserRolesEnum.Admin, UserRolesEnum.Editor })]
     [ProducesOkResponseType(typeof(CreateBookResponse))]
     [ProducesForbiddenResponseType]
+    [DeprecatedMethod(25, 2, 2024)]
     public async Task<ActionResult> CreateBook([FromBody] CreateBookRequest input)
     {
         var createBookResult = await bookService.CreateBookAsync(new BookEntityModel
