@@ -1,6 +1,6 @@
-using MeowLib.Domain.Enums;
-using MeowLib.Domain.Exceptions.Services;
-using MeowLib.Services.Interface;
+using MeowLib.Domain.Shared.Exceptions;
+using MeowLib.Domain.User.Enums;
+using MeowLib.Domain.User.Services;
 using MeowLib.WebApi.Abstractions;
 using MeowLib.WebApi.Filters;
 using MeowLib.WebApi.Models.Requests.v1.User;
@@ -39,16 +39,16 @@ public class UserController(IUserService userService) : BaseController
     /// <summary>
     /// Обновление пользователя.
     /// </summary>
-    /// <param name="id">Id пользователя.</param>
+    /// <param name="userId">Id пользователя.</param>
     /// <param name="input">Данные для обновления.</param>
-    [HttpPut("{id}")]
+    [HttpPut("{userId}")]
     [Authorization(RequiredRoles = new[] { UserRolesEnum.Admin })]
     [ProducesOkResponseType(typeof(UserModel))]
     [ProducesForbiddenResponseType]
     [ProducesNotFoundResponseType]
-    public async Task<ActionResult> UpdateUser([FromRoute] int id, [FromBody] UpdateUserRequest input)
+    public async Task<ActionResult> UpdateUser([FromRoute] int userId, [FromBody] UpdateUserRequest input)
     {
-        var updateUserResult = await userService.UpdateUser(id, input.Login, input.Password);
+        var updateUserResult = await userService.UpdateUser(userId, input.Login, input.Password);
 
         if (updateUserResult.IsFailure)
         {
@@ -72,6 +72,29 @@ public class UserController(IUserService userService) : BaseController
             Id = updatedUser.Id,
             Login = updatedUser.Login,
             Role = updatedUser.Role
+        });
+    }
+
+    /// <summary>
+    /// Получить пользователя по Id.
+    /// </summary>
+    /// <param name="userId">Id пользователя.</param>
+    [HttpGet("{userId}")]
+    [ProducesOkResponseType(typeof(UserModel))]
+    [ProducesNotFoundResponseType]
+    public async Task<IActionResult> GetUserByIdAsync([FromRoute] int userId)
+    {
+        var foundedUser = await userService.GetUserByIdAsync(userId);
+        if (foundedUser is null)
+        {
+            return NotFoundError();
+        }
+
+        return Ok(new UserModel
+        {
+            Id = foundedUser.Id,
+            Login = foundedUser.Login,
+            Role = foundedUser.Role
         });
     }
 }

@@ -1,13 +1,15 @@
 ﻿using System.Text.RegularExpressions;
 using MeowLib.DAL;
-using MeowLib.Domain.DbModels.BookCommentEntity;
-using MeowLib.Domain.Dto.BookComment;
-using MeowLib.Domain.Dto.User;
-using MeowLib.Domain.Exceptions;
-using MeowLib.Domain.Exceptions.Book;
-using MeowLib.Domain.Exceptions.User;
-using MeowLib.Domain.Result;
-using MeowLib.Services.Interface;
+using MeowLib.Domain.Book.Exceptions;
+using MeowLib.Domain.Book.Services;
+using MeowLib.Domain.BookComment.Dto;
+using MeowLib.Domain.BookComment.Entity;
+using MeowLib.Domain.BookComment.Services;
+using MeowLib.Domain.Shared;
+using MeowLib.Domain.Shared.Result;
+using MeowLib.Domain.User.Dto;
+using MeowLib.Domain.User.Exceptions;
+using MeowLib.Domain.User.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace MeowLib.Services.Implementation.Production;
@@ -19,7 +21,6 @@ public class BookCommentService(IUserService userService, IBookService bookServi
     : IBookCommentService
 {
     private static readonly Regex HtmlRegex = new("<[^>]*>", RegexOptions.Compiled);
-
 
     /// <summary>
     /// Метод создаёт новый комментарий.
@@ -55,7 +56,7 @@ public class BookCommentService(IUserService userService, IBookService bookServi
 
         var createCommentResult = await dbContext.BookComments.AddAsync(newComment);
         await dbContext.SaveChangesAsync();
-        
+
         var createdComment = createCommentResult.Entity;
         return new BookCommentDto
         {

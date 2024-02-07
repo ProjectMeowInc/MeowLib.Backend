@@ -15,14 +15,14 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.0-rc.2.23480.1"/>
-        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.0-rc.2.23480.1" />
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\MeowLib.Domain\MeowLib.Domain.csproj"/>
-        <ProjectReference Include="..\MeowLib.DAL\MeowLib.DAL.csproj"/>
-        <ProjectReference Include="..\MeowLib.Services\MeowLib.Services.csproj"/>
+        <ProjectReference Include="..\MeowLib.Domain\MeowLib.Domain.csproj" />
+        <ProjectReference Include="..\MeowLib.DAL\MeowLib.DAL.csproj" />
+        <ProjectReference Include="..\MeowLib.Services\MeowLib.Services.csproj" />
     </ItemGroup>
 
     <ItemGroup>
@@ -32,8 +32,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="Models\"/>
-        <Folder Include="Models\Requests\v1\"/>
+        <Folder Include="Models\" />
     </ItemGroup>
 
 </Project>

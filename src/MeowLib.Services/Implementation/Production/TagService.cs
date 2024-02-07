@@ -1,10 +1,10 @@
 using MeowLib.DAL;
-using MeowLib.Domain.DbModels.TagEntity;
-using MeowLib.Domain.Dto.Tag;
-using MeowLib.Domain.Exceptions.Services;
-using MeowLib.Domain.Models;
-using MeowLib.Domain.Result;
-using MeowLib.Services.Interface;
+using MeowLib.Domain.Shared.Exceptions;
+using MeowLib.Domain.Shared.Models;
+using MeowLib.Domain.Shared.Result;
+using MeowLib.Domain.Tag.Dto;
+using MeowLib.Domain.Tag.Entity;
+using MeowLib.Domain.Tag.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace MeowLib.Services.Implementation.Production;
@@ -59,7 +59,7 @@ public class TagService(ApplicationDbContext dbContext) : ITagService
 
         if (validationErrors.Any())
         {
-            var validationException = new ValidationException(nameof(TagService), validationErrors);
+            var validationException = new ValidationException(validationErrors);
             return Result<TagEntityModel>.Fail(validationException);
         }
 
@@ -154,7 +154,7 @@ public class TagService(ApplicationDbContext dbContext) : ITagService
 
         if (validationErrors.Any())
         {
-            var validationException = new ValidationException(nameof(TagService), validationErrors);
+            var validationException = new ValidationException(validationErrors);
             return Result<TagEntityModel?>.Fail(validationException);
         }
 

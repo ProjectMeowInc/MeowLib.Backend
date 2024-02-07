@@ -1,15 +1,15 @@
 ﻿using System.Text;
 using System.Text.Json;
 using MeowLib.DAL;
-using MeowLib.Domain.DbModels.NotificationEntity;
-using MeowLib.Domain.Dto.Notification;
-using MeowLib.Domain.Enums;
-using MeowLib.Domain.Exceptions.Book;
-using MeowLib.Domain.Exceptions.Notification;
-using MeowLib.Domain.Exceptions.User;
-using MeowLib.Domain.Models;
-using MeowLib.Domain.Result;
-using MeowLib.Services.Interface;
+using MeowLib.Domain.Book.Exceptions;
+using MeowLib.Domain.Notification.Dto;
+using MeowLib.Domain.Notification.Entity;
+using MeowLib.Domain.Notification.Enums;
+using MeowLib.Domain.Notification.Exceptions;
+using MeowLib.Domain.Notification.Services;
+using MeowLib.Domain.Shared.Models;
+using MeowLib.Domain.Shared.Result;
+using MeowLib.Domain.User.Exceptions;
 using Microsoft.EntityFrameworkCore;
 
 namespace MeowLib.Services.Implementation.Production;
@@ -48,15 +48,7 @@ public class NotificationService(ApplicationDbContext dbContext, INotificationTo
             InviteExpiredAt = DateTime.UtcNow.AddDays(3)
         });
 
-        var sendNotificationResult =
-            await SendNotificationToUserAsync(userId, NotificationTypeEnum.TeamInvite, inviteToken);
-
-        if (sendNotificationResult.IsFailure)
-        {
-            return Result.Fail(sendNotificationResult.GetError());
-        }
-
-        return Result.Ok();
+        return await SendNotificationToUserAsync(userId, NotificationTypeEnum.TeamInvite, inviteToken);
     }
 
     public async Task<IEnumerable<NotificationDto>> GetUserNotificationsAsync(int userId)

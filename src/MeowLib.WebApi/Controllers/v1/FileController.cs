@@ -1,5 +1,9 @@
-﻿using MeowLib.Services.Interface;
+﻿using MeowLib.Domain.File.Exceptions;
+using MeowLib.Domain.File.Services;
+using MeowLib.Domain.User.Enums;
 using MeowLib.WebApi.Abstractions;
+using MeowLib.WebApi.Filters;
+using MeowLib.WebApi.Models.Responses.v1.File;
 using MeowLib.WebApi.ProducesResponseTypes;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,22 +15,57 @@ namespace MeowLib.WebApi.Controllers.v1;
 /// <param name="fileService">Сервис файлов.</param>
 [ApiController]
 [Route("api/v1/images")]
-public class FileController(IFileService fileService) : BaseController
+public class FileController(IFileService fileService, ILogger<FileController> logger) : BaseController
 {
     /// <summary>
-    /// Метод получает изображение по его названию.
+    /// Получение изображения по его имени.
     /// </summary>
-    /// <param name="imageName">Название изображения.</param>
-    [HttpGet("book/{imageName}")]
-    [ProducesNotFoundResponseType]
-    public async Task<ActionResult> GetBookImage([FromRoute] string imageName)
+    /// <param name="imageName">Название изображение.</param>
+    [HttpGet("{imageName}")]
+    public async Task<IActionResult> GetImageByName([FromRoute] string imageName)
     {
-        var getBookImageResult = await fileService.GetBookImageAsync(imageName);
-        if (getBookImageResult.content is null)
+        var result = await fileService.GetFileByNameAsync(imageName);
+        if (result is null)
         {
-            return NotFoundError("Изображение не найдено");
+            return NotFoundError("Запрашиваемый файл не найден");
         }
 
-        return File(getBookImageResult.content, getBookImageResult.mimeType);
+        var (data, contentType) = result.Value;
+
+        return File(data, contentType);
+    }
+
+    /// <summary>
+    /// Метод загружает файл.
+    /// </summary>
+    /// <param name="file">Файл для загрузки.</param>
+    [HttpPost("upload")]
+    [Authorization(RequiredRoles = new[] { UserRolesEnum.Admin, UserRolesEnum.Editor })]
+    [ProducesOkResponseType(typeof(UploadFileResponse))]
+    [ProducesUserErrorResponseType]
+    public async Task<IActionResult> UploadFile(IFormFile file)
+    {
+        var result = await fileService.UploadFileAsync(file);
+        if (result.IsFailure)
+        {
+            var exception = result.GetError();
+            if (exception is FileHasIncorrectExtensionException)
+            {
+                return Error("У файла некоректное расширение", 400);
+            }
+
+            if (exception is FileIsTooBigException)
+            {
+                return Error("Файл слишком большой", 400);
+            }
+
+            logger.LogError("Неизвестная ошибка загрузки файла: {exception}", exception);
+            return ServerError();
+        }
+
+        return Ok(new UploadFileResponse
+        {
+            CreatedId = result.GetResult().Id
+        });
     }
 }

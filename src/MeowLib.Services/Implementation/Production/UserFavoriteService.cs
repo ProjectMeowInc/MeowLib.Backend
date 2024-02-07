@@ -1,15 +1,19 @@
 ﻿using MeowLib.DAL;
-using MeowLib.Domain.DbModels.BookEntity;
-using MeowLib.Domain.DbModels.UserEntity;
-using MeowLib.Domain.DbModels.UserFavoriteEntity;
-using MeowLib.Domain.Dto.Book;
-using MeowLib.Domain.Dto.UserFavorite;
-using MeowLib.Domain.Enums;
-using MeowLib.Domain.Exceptions;
-using MeowLib.Domain.Exceptions.Book;
-using MeowLib.Domain.Exceptions.User;
-using MeowLib.Domain.Result;
-using MeowLib.Services.Interface;
+using MeowLib.Domain.Book.Dto;
+using MeowLib.Domain.Book.Entity;
+using MeowLib.Domain.Book.Exceptions;
+using MeowLib.Domain.Book.Services;
+using MeowLib.Domain.BookPeople.Enums;
+using MeowLib.Domain.People.Dto;
+using MeowLib.Domain.Shared;
+using MeowLib.Domain.Shared.Result;
+using MeowLib.Domain.User.Entity;
+using MeowLib.Domain.User.Exceptions;
+using MeowLib.Domain.User.Services;
+using MeowLib.Domain.UserFavorite.Dto;
+using MeowLib.Domain.UserFavorite.Entity;
+using MeowLib.Domain.UserFavorite.Enums;
+using MeowLib.Domain.UserFavorite.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace MeowLib.Services.Implementation.Production;
@@ -73,7 +77,15 @@ public class UserFavoriteService(ApplicationDbContext dbContext, IUserService us
                     Id = uf.Book.Id,
                     Name = uf.Book.Name,
                     Description = uf.Book.Description,
-                    ImageName = uf.Book.ImageUrl
+                    ImageName = uf.Book.Image != null ? uf.Book.Image.FileSystemName : null,
+                    Author = uf.Book.Peoples
+                        .Where(p => p.Role == BookPeopleRoleEnum.Author)
+                        .Select(p => new PeopleDto
+                        {
+                            Id = p.People.Id,
+                            Name = p.People.Name
+                        })
+                        .FirstOrDefault()
                 }
             })
             .ToListAsync();

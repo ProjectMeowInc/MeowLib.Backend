@@ -5,5 +5,5 @@ public class BookShortModel
     public required int Id { get; init; }
     public required string Name { get; set; }
     public required string Description { get; set; }
-    public required string? ImageUrl { get; set; }
+    public required string? Image { get; set; }
 }

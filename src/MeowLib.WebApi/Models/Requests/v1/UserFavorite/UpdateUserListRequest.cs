@@ -1,5 +1,5 @@
 ﻿using System.Text.Json.Serialization;
-using MeowLib.Domain.Enums;
+using MeowLib.Domain.UserFavorite.Enums;
 
 namespace MeowLib.WebApi.Models.Requests.v1.UserFavorite;
 

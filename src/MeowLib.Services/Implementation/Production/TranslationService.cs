@@ -1,20 +1,21 @@
 ﻿using MeowLib.DAL;
-using MeowLib.Domain.DbModels.BookEntity;
-using MeowLib.Domain.DbModels.ChapterEntity;
-using MeowLib.Domain.DbModels.TeamEntity;
-using MeowLib.Domain.DbModels.TranslationEntity;
-using MeowLib.Domain.Dto.Chapter;
-using MeowLib.Domain.Exceptions;
-using MeowLib.Domain.Exceptions.Chapter;
-using MeowLib.Domain.Exceptions.Translation;
-using MeowLib.Domain.Result;
-using MeowLib.Services.Interface;
+using MeowLib.Domain.Book.Entity;
+using MeowLib.Domain.Chapter.Dto;
+using MeowLib.Domain.Chapter.Entity;
+using MeowLib.Domain.Chapter.Exceptions;
+using MeowLib.Domain.Notification.Services;
+using MeowLib.Domain.Shared;
+using MeowLib.Domain.Shared.Result;
+using MeowLib.Domain.Team.Entity;
+using MeowLib.Domain.Translation.Entity;
+using MeowLib.Domain.Translation.Exceptions;
+using MeowLib.Domain.Translation.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace MeowLib.Services.Implementation.Production;
 
-public class TranslationService
-    (ApplicationDbContext dbContext, INotificationService notificationService) : ITranslationService
+public class TranslationService(ApplicationDbContext dbContext, INotificationService notificationService)
+    : ITranslationService
 {
     /// <summary>
     /// Метод создаёт перевод для заданной книги.
@@ -65,7 +66,8 @@ public class TranslationService
                 Id = c.Id,
                 Name = c.Name,
                 ReleaseDate = c.ReleaseDate,
-                Position = c.Position
+                Position = c.Position,
+                Volume = c.Volume
             })
             .ToListAsync();
 
@@ -87,17 +89,7 @@ public class TranslationService
         return foundedChapter;
     }
 
-    /// <summary>
-    /// Метод добавляет главу в перевод.
-    /// </summary>
-    /// <param name="translationId">Id перевода.</param>
-    /// <param name="name">Название главы.</param>
-    /// <param name="text">Контент главы.</param>
-    /// <param name="position">Пизиция в списке глав.</param>
-    /// <returns>Результат добавления главы.</returns>
-    /// <exception cref="TranslationNotFoundException">Возникает в случае, если перевод не был найден.</exception>
-    /// <exception cref="ChapterPositionAlreadyTaken">Возникает в случае, если заданная позиция уже занята.</exception>
-    public async Task<Result> AddChapterAsync(int translationId, string name, string text, uint position)
+    public async Task<Result> AddChapterAsync(int translationId, string name, string text, uint position, uint volume)
     {
         var foundedTranslation = await dbContext.Translations
             .Include(translationEntityModel => translationEntityModel.Chapters)
@@ -109,9 +101,9 @@ public class TranslationService
             return Result.Fail(new TranslationNotFoundException(translationId));
         }
 
-        if (foundedTranslation.Chapters.Any(c => c.Position == position))
+        if (foundedTranslation.Chapters.Any(c => c.Volume == volume && c.Position == position))
         {
-            return Result.Fail(new ChapterPositionAlreadyTaken(position));
+            return Result.Fail(new ChapterPositionAlreadyTakenException(position));
         }
 
         var newChapter = new ChapterEntityModel
@@ -120,7 +112,8 @@ public class TranslationService
             Text = text,
             ReleaseDate = DateTime.UtcNow,
             Position = position,
-            Translation = foundedTranslation
+            Translation = foundedTranslation,
+            Volume = volume
         };
 
         var newChapterEntry = await dbContext.Chapters.AddAsync(newChapter);
@@ -146,6 +139,9 @@ public class TranslationService
     /// <returns>Найденный перевод или null</returns>
     public async Task<TranslationEntityModel?> GetTranslationByIdAsync(int translationId)
     {
-        return await dbContext.Translations.FirstOrDefaultAsync(t => t.Id == translationId);
+        return await dbContext
+            .Translations
+            .Include(t => t.Team)
+            .FirstOrDefaultAsync(t => t.Id == translationId);
     }
 }

@@ -1,6 +1,6 @@
-﻿using MeowLib.Domain.Exceptions.Team;
-using MeowLib.Domain.Exceptions.User;
-using MeowLib.Services.Interface;
+﻿using MeowLib.Domain.Team.Exceptions;
+using MeowLib.Domain.Team.Services;
+using MeowLib.Domain.User.Exceptions;
 using MeowLib.WebApi.Abstractions;
 using MeowLib.WebApi.Filters;
 using MeowLib.WebApi.Models.Requests.v1.Team;
@@ -26,6 +26,7 @@ public class TeamController(ITeamService teamService, ILogger<TeamController> lo
     [HttpPost]
     [Authorization]
     [ProducesOkResponseType]
+    [ProducesUserErrorResponseType]
     [ProducesResponseType(401, Type = typeof(BaseErrorResponse))]
     public async Task<IActionResult> CreateNewTeam([FromBody] CreateTeamRequest payload)
     {
@@ -41,6 +42,11 @@ public class TeamController(ITeamService teamService, ILogger<TeamController> lo
                 return UpdateAuthorizeError();
             }
 
+            if (exception is TeamNameAlreadyTakenException)
+            {
+                return Error("Название команды занято", 400);
+            }
+
             logger.LogError("Произошла неизвестная ошибка при создании команды: {error}", exception);
             return ServerError();
         }
@@ -49,7 +55,7 @@ public class TeamController(ITeamService teamService, ILogger<TeamController> lo
     }
 
     /// <summary>
-    /// Получение комманды.
+    /// Получение команды.
     /// </summary>
     /// <param name="teamId">Id комманды.</param>
     [HttpGet("{teamId}")]
@@ -131,9 +137,9 @@ public class TeamController(ITeamService teamService, ILogger<TeamController> lo
     }
 
     /// <summary>
-    /// Покинуть комманду.
+    /// Покинуть команду.
     /// </summary>
-    /// <param name="teamId">Id комманды.</param>
+    /// <param name="teamId">Id команды.</param>
     [HttpPost("{teamId}/leave")]
     [Authorization]
     [ProducesOkResponseType]
@@ -223,6 +229,38 @@ public class TeamController(ITeamService teamService, ILogger<TeamController> lo
     }
 
     /// <summary>
+    /// Принять приглашение в команду.
+    /// </summary>
+    /// <param name="payload">Данные.</param>
+    [HttpPost("invite/accept")]
+    [Authorization]
+    [ProducesOkResponseType]
+    [ProducesUserErrorResponseType]
+    public async Task<IActionResult> AcceptInviteToTeam([FromBody] AcceptInviteRequest payload)
+    {
+        var user = await GetUserDataAsync();
+        var acceptInviteResult = await teamService.AcceptInviteToTeamAsync(user.Id, payload.Data);
+        if (acceptInviteResult.IsFailure)
+        {
+            var exception = acceptInviteResult.GetError();
+            if (exception is TeamInvitationIsNotForUserException)
+            {
+                return Error("У вас нет сюда доступа", 400);
+            }
+
+            if (exception is TeamInvitationExpiredException)
+            {
+                return Error("Приглашение истекло", 400);
+            }
+
+            logger.LogError("Ошибка принятие приглашения в команду: {exception}", exception);
+            return ServerError();
+        }
+
+        return Ok();
+    }
+
+    /// <summary>
     /// Удалить пользователя из комманды.
     /// </summary>
     /// <param name="teamId">Id комманды.</param>
@@ -270,5 +308,27 @@ public class TeamController(ITeamService teamService, ILogger<TeamController> lo
         }
 
         return Ok();
+    }
+
+    /// <summary>
+    /// Получить список команд.
+    /// </summary>
+    /// <param name="page">Страница. Начинается с 1.</param>
+    [HttpGet]
+    [ProducesOkResponseType(typeof(GetTeamsListResponse))]
+    [ProducesUserErrorResponseType]
+    public async Task<IActionResult> GetTeamsListAsync([FromQuery] uint page)
+    {
+        var skipCount = (page - 1) * 20;
+        var teams = await teamService.GetTeamsAsync((int)skipCount, 20);
+        return Ok(new GetTeamsListResponse
+        {
+            Items = teams.Select(t => new TeamModel
+            {
+                Id = t.Id,
+                Name = t.Name,
+                Description = t.Description
+            })
+        });
     }
 }

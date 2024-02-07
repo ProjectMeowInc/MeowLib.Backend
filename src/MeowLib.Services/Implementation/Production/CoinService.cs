@@ -1,9 +1,10 @@
 ﻿using MeowLib.DAL;
-using MeowLib.Domain.DbModels.CoinsChangeLogEntity;
-using MeowLib.Domain.Enums;
-using MeowLib.Domain.Exceptions.User;
-using MeowLib.Domain.Result;
-using MeowLib.Services.Interface;
+using MeowLib.Domain.CoinsChangeLog.Dto;
+using MeowLib.Domain.CoinsChangeLog.Entity;
+using MeowLib.Domain.CoinsChangeLog.Enums;
+using MeowLib.Domain.CoinsChangeLog.Services;
+using MeowLib.Domain.Shared.Result;
+using MeowLib.Domain.User.Exceptions;
 using Microsoft.EntityFrameworkCore;
 
 namespace MeowLib.Services.Implementation.Production;
@@ -39,5 +40,20 @@ public class CoinService(ApplicationDbContext dbContext) : ICoinService
 
         await dbContext.SaveChangesAsync();
         return Result.Ok();
+    }
+
+    public async Task<Result<List<CoinsChangeLogDto>>> GetUserCoinsChangeLogAsync(int userId)
+    {
+        return await dbContext.CoinsChangeLog
+            .Where(log => log.User.Id == userId)
+            .OrderByDescending(log => log.Date)
+            .Select(log => new CoinsChangeLogDto
+            {
+                Id = log.Id,
+                Value = log.Value,
+                Type = log.Type,
+                Date = log.Date
+            })
+            .ToListAsync();
     }
 }

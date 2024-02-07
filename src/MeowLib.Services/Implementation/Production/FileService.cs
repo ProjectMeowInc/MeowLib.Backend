@@ -1,16 +1,22 @@
-﻿using MeowLib.Domain.Exceptions;
-using MeowLib.Domain.Result;
-using MeowLib.Services.Interface;
+﻿using MeowLib.DAL;
+using MeowLib.Domain.File.Entity;
+using MeowLib.Domain.File.Exceptions;
+using MeowLib.Domain.File.Services;
+using MeowLib.Domain.Shared.Result;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 
 namespace MeowLib.Services.Implementation.Production;
 
 /// <summary>
 /// Сервис для работы с файлами
 /// </summary>
-public class FileService : IFileService
+public class FileService(ApplicationDbContext dbContext) : IFileService
 {
-    private static readonly string[] ValidateExtension = { ".png", ".jpg" };
+    private const string UploadDirectoryPath = "./upload";
+    private const long MaxFileSize = 512000; // 500 kb
+
+    private static readonly string[] ValidateExtension = [".png", ".jpg"];
 
     private static readonly Dictionary<string, string> MimeMappings = new()
     {
@@ -18,69 +24,72 @@ public class FileService : IFileService
         { "jpg", "image/jpg" }
     };
 
-    private readonly string _uploadDirectoryPath;
-    
-    public FileService(string uploadDirectoryPath)
-    {
-        _uploadDirectoryPath = uploadDirectoryPath;
-        if (!Directory.Exists(_uploadDirectoryPath))
-        {
-            Directory.CreateDirectory(_uploadDirectoryPath);
-        }
-    }
 
-    /// <summary>
-    /// Метод загружает изображение как изображение книги.
-    /// </summary>
-    /// <param name="file">Файл для загрузки.</param>
-    /// <returns>Название созданного файла</returns>
-    /// <exception cref="FileHasIncorrectExtensionException">Возникает в случае, если файл имеет некорретное расширение.</exception>
-    public async Task<Result<string>> UploadBookImageAsync(IFormFile file)
+    public async Task<Result<FileEntityModel>> UploadFileAsync(IFormFile file)
     {
+        if (file.Length > MaxFileSize)
+        {
+            return Result<FileEntityModel>.Fail(new FileIsTooBigException());
+        }
+
         var fileExtension = Path.GetExtension(file.FileName).ToLower();
 
         if (!ValidateExtension.Contains(fileExtension))
         {
             var fileHasIncorrectExtensionException = new FileHasIncorrectExtensionException(
                 "Файл имеет некорректное расширение", fileExtension);
-            return Result<string>.Fail(fileHasIncorrectExtensionException);
+            return Result<FileEntityModel>.Fail(fileHasIncorrectExtensionException);
         }
 
-        return await SaveFileWithUniqueName(file, fileExtension, "book_photo");
+        var fileName = await SaveFileWithUniqueNameAsync(file, fileExtension);
+        // todo: if save error need remove file
+        var fileEntity = await dbContext.Files.AddAsync(new FileEntityModel
+        {
+            Id = 0,
+            FileSystemName = fileName,
+            UploadAt = DateTime.UtcNow
+        });
+        await dbContext.SaveChangesAsync();
+        return fileEntity.Entity;
     }
 
-    /// <summary>
-    /// Метод возвращает загруженное ранее изображение книги.
-    /// </summary>
-    /// <param name="imageName">Название книги.</param>
-    /// <returns>Картинка, в виде байтов и её mimeType, если картинка не найдена, то content - null</returns>
-    public async Task<(byte[]? content, string mimeType)> GetBookImageAsync(string imageName)
+    public async Task<(byte[] content, string mimeType)?> GetFileByNameAsync(string fileName)
     {
-        var foundPath = Path.Combine(_uploadDirectoryPath, "book_photo", imageName);
-
-        if (!File.Exists(foundPath))
+        if (fileName.Contains('/'))
         {
-            return (null, "application/unknown");
+            return null;
         }
 
-        var fileExtension = Path.GetExtension(foundPath);
+        var filePath = Path.Combine(UploadDirectoryPath, fileName);
+        try
+        {
+            var fileData = await File.ReadAllBytesAsync(filePath);
+            var fileExtension = Path.GetExtension(fileName);
 
-        var fileContent = await File.ReadAllBytesAsync(foundPath);
-        var mimeType = GetMimeTypeByExtension(fileExtension);
-        return (fileContent, mimeType);
+            return (fileData, GetMimeTypeByExtension(fileExtension));
+        }
+        catch (FileNotFoundException)
+        {
+            return null;
+        }
     }
 
-    private async Task<string> SaveFileWithUniqueName(IFormFile file, string fileExtension, string filePrefix)
+    public async Task<FileEntityModel?> GetFileByIdAsync(int fileId)
     {
-        var newFileName = string.Concat(Path.GetRandomFileName().Replace(".", string.Empty), fileExtension);
+        return await dbContext.Files.FirstOrDefaultAsync(f => f.Id == fileId);
+    }
 
-        var uploadDirectory = Path.Combine(_uploadDirectoryPath, filePrefix);
-        if (!Directory.Exists(uploadDirectory))
+    private async Task<string> SaveFileWithUniqueNameAsync(IFormFile file, string fileExtension)
+    {
+        // точка не нужна
+        var newFileName = $"{Guid.NewGuid()}{fileExtension}";
+
+        if (!Directory.Exists(UploadDirectoryPath))
         {
-            Directory.CreateDirectory(uploadDirectory);
+            Directory.CreateDirectory(UploadDirectoryPath);
         }
 
-        await using var fileStream = File.Create($"{uploadDirectory}/{newFileName}");
+        await using var fileStream = File.Create(Path.Combine(UploadDirectoryPath, newFileName));
         await file.CopyToAsync(fileStream);
 
         return newFileName;

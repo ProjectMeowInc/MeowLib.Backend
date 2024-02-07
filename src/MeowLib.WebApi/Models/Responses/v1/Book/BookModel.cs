@@ -1,6 +1,6 @@
-﻿using MeowLib.Domain.Dto.Tag;
-using MeowLib.Domain.Dto.Translation;
+﻿using MeowLib.Domain.Tag.Dto;
 using MeowLib.WebApi.Models.Responses.v1.Author;
+using MeowLib.WebApi.Models.Responses.v1.Translation;
 
 namespace MeowLib.WebApi.Models.Responses.v1.Book;
 
@@ -12,5 +12,5 @@ public class BookModel
     public required string? ImageUrl { get; set; }
     public required AuthorModel? Author { get; set; }
     public required IEnumerable<TagDto> Tags { get; set; }
-    public required IEnumerable<TranslationDto> Translations { get; set; }
+    public required IEnumerable<TranslationModel> Translations { get; set; }
 }

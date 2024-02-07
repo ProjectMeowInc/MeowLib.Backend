@@ -1,11 +1,11 @@
 ﻿using MeowLib.DAL;
-using MeowLib.Domain.DbModels.ChapterEntity;
-using MeowLib.Domain.Exceptions.Chapter;
-using MeowLib.Domain.Exceptions.Services;
-using MeowLib.Domain.Exceptions.Translation;
-using MeowLib.Domain.Models;
-using MeowLib.Domain.Result;
-using MeowLib.Services.Interface;
+using MeowLib.Domain.Chapter.Entity;
+using MeowLib.Domain.Chapter.Exceptions;
+using MeowLib.Domain.Chapter.Services;
+using MeowLib.Domain.Shared.Exceptions;
+using MeowLib.Domain.Shared.Models;
+using MeowLib.Domain.Shared.Result;
+using MeowLib.Domain.Translation.Exceptions;
 using Microsoft.EntityFrameworkCore;
 
 namespace MeowLib.Services.Implementation.Production;
@@ -16,7 +16,8 @@ namespace MeowLib.Services.Implementation.Production;
 public class ChapterService(ApplicationDbContext dbContext)
     : IChapterService
 {
-    public async Task<Result<ChapterEntityModel>> CreateChapterAsync(string name, string text, int translationId)
+    public async Task<Result<ChapterEntityModel>> CreateChapterAsync(string name, string text, int translationId,
+        uint volume)
     {
         var validationErrors = new List<ValidationErrorModel>();
 
@@ -56,7 +57,8 @@ public class ChapterService(ApplicationDbContext dbContext)
             Text = text,
             ReleaseDate = DateTime.UtcNow,
             Translation = foundedTranslation,
-            Position = 1
+            Position = 1,
+            Volume = volume
         };
 
         var entry = await dbContext.Chapters.AddAsync(newChapter);

@@ -1,6 +1,6 @@
-﻿using MeowLib.Domain.Exceptions;
-using MeowLib.Domain.Exceptions.Services;
-using MeowLib.Services.Interface;
+﻿using MeowLib.Domain.Shared;
+using MeowLib.Domain.Shared.Exceptions;
+using MeowLib.Domain.User.Services;
 using MeowLib.WebApi.Abstractions;
 using MeowLib.WebApi.Models.Requests.v1.Authorization;
 using MeowLib.WebApi.Models.Requests.v1.User;
@@ -64,9 +64,9 @@ public class AuthorizationController(IUserService userService) : BaseController
         if (logInResult.IsFailure)
         {
             var exception = logInResult.GetError();
-            if (exception is IncorrectCreditionalException incorrectCreditionalException)
+            if (exception is IncorrectCreditionalException)
             {
-                return Error(incorrectCreditionalException.ErrorMessage, 401);
+                return Error("Введены некоректные данные", 401);
             }
 
             return ServerError();
@@ -94,9 +94,9 @@ public class AuthorizationController(IUserService userService) : BaseController
         if (loginResult.IsFailure)
         {
             var exception = loginResult.GetError();
-            if (exception is IncorrectCreditionalException incorrectCreditionalException)
+            if (exception is IncorrectCreditionalException)
             {
-                return Error(incorrectCreditionalException.ErrorMessage, 401);
+                return Error("Введены некорректные данные", 401);
             }
 
             return ServerError();

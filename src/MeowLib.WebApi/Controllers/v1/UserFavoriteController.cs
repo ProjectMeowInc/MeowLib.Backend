@@ -1,6 +1,6 @@
-﻿using MeowLib.Domain.Exceptions.Book;
-using MeowLib.Domain.Exceptions.User;
-using MeowLib.Services.Interface;
+﻿using MeowLib.Domain.Book.Exceptions;
+using MeowLib.Domain.User.Exceptions;
+using MeowLib.Domain.UserFavorite.Services;
 using MeowLib.WebApi.Abstractions;
 using MeowLib.WebApi.Filters;
 using MeowLib.WebApi.Models.Requests.v1.UserFavorite;
@@ -74,7 +74,7 @@ public class UserFavoriteController(IUserFavoriteService userFavoriteService) : 
                         Id = b.Book.Id,
                         Name = b.Book.Name,
                         Description = b.Book.Description,
-                        ImageUrl = b.Book.ImageName
+                        Image = b.Book.ImageName
                     })
                 })
         };
@@ -127,7 +127,7 @@ public class UserFavoriteController(IUserFavoriteService userFavoriteService) : 
                 Id = foundedFavorite.Book.Id,
                 Name = foundedFavorite.Book.Name,
                 Description = foundedFavorite.Book.Description,
-                ImageUrl = foundedFavorite.Book.ImageUrl
+                Image = foundedFavorite.Book.Image?.FileSystemName
             }
         });
     }

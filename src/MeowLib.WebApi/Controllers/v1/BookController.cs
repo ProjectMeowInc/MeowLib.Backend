@@ -1,15 +1,20 @@
-using MeowLib.Domain.DbModels.BookEntity;
-using MeowLib.Domain.Dto.Tag;
-using MeowLib.Domain.Dto.Translation;
-using MeowLib.Domain.Enums;
-using MeowLib.Domain.Exceptions.Services;
-using MeowLib.Services.Interface;
+using MeowLib.Domain.Book.Entity;
+using MeowLib.Domain.Book.Exceptions;
+using MeowLib.Domain.Book.Services;
+using MeowLib.Domain.BookPeople.Enums;
+using MeowLib.Domain.Character.Exceptions;
+using MeowLib.Domain.Character.Services;
+using MeowLib.Domain.People.Exceptions;
+using MeowLib.Domain.Shared.Exceptions;
+using MeowLib.Domain.Tag.Dto;
+using MeowLib.Domain.User.Enums;
 using MeowLib.WebApi.Abstractions;
 using MeowLib.WebApi.Filters;
 using MeowLib.WebApi.Models.Requests.v1.Book;
 using MeowLib.WebApi.Models.Responses.v1;
 using MeowLib.WebApi.Models.Responses.v1.Author;
 using MeowLib.WebApi.Models.Responses.v1.Book;
+using MeowLib.WebApi.Models.Responses.v1.Translation;
 using MeowLib.WebApi.ProducesResponseTypes;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,12 +25,16 @@ namespace MeowLib.WebApi.Controllers.v1;
 /// </summary>
 /// <param name="bookService">Сервис книг.</param>
 [Route("api/v1/books")]
-public class BookController(IBookService bookService) : BaseController
+public class BookController(
+    IBookService bookService,
+    IBookCharacterService bookCharacterService,
+    ILogger<BookController> logger) : BaseController
 {
     /// <summary>
-    /// Получение всех книг.
+    /// [DEPRECATED] Получение всех книг.
     /// </summary>
     [HttpGet]
+    [DeprecatedMethod(10, 2, 2024)]
     [ProducesOkResponseType(typeof(GetAllBooksResponse))]
     public async Task<ActionResult> GetAllBooks()
     {
@@ -38,7 +47,7 @@ public class BookController(IBookService bookService) : BaseController
                 Id = b.Id,
                 Name = b.Name,
                 Description = b.Description,
-                ImageUrl = b.ImageName
+                Image = b.ImageName
             })
         };
 
@@ -46,23 +55,25 @@ public class BookController(IBookService bookService) : BaseController
     }
 
     /// <summary>
-    /// Создание новой книги.
+    /// [DEPRECATED] Создание новой книги.
     /// </summary>
     /// <param name="input">Данные для создания книги.</param>
     [HttpPost]
     [Authorization(RequiredRoles = new[] { UserRolesEnum.Admin, UserRolesEnum.Editor })]
     [ProducesOkResponseType(typeof(CreateBookResponse))]
     [ProducesForbiddenResponseType]
+    [DeprecatedMethod(25, 2, 2024)]
     public async Task<ActionResult> CreateBook([FromBody] CreateBookRequest input)
     {
         var createBookResult = await bookService.CreateBookAsync(new BookEntityModel
         {
             Name = input.Name,
             Description = input.Description,
-            ImageUrl = null,
-            Author = null,
+            Image = null,
             Translations = [],
-            Tags = []
+            Tags = [],
+            Peoples = [],
+            Characters = []
         });
 
         if (createBookResult.IsFailure)
@@ -144,12 +155,13 @@ public class BookController(IBookService bookService) : BaseController
     }
 
     /// <summary>
-    /// Получение информации о книге.
+    /// [DEPRECATED] Получение информации о книге.
     /// </summary>
     /// <param name="bookId">Id книги.</param>
     [HttpGet("{bookId}")]
     [ProducesOkResponseType(typeof(BookModel))]
     [ProducesNotFoundResponseType]
+    [DeprecatedMethod(10, 2, 2024)]
     public async Task<ActionResult> GetBookInfo([FromRoute] int bookId)
     {
         var foundedBook = await bookService.GetBookByIdAsync(bookId);
@@ -162,25 +174,23 @@ public class BookController(IBookService bookService) : BaseController
         {
             Id = foundedBook.Id,
             Name = foundedBook.Name,
-            ImageUrl = foundedBook.ImageUrl,
+            ImageUrl = foundedBook.Image?.FileSystemName,
             Description = foundedBook.Description,
-            Author = foundedBook.Author is not null
-                ? new AuthorModel
+            Author = foundedBook.Peoples
+                .Where(p => p.Role == BookPeopleRoleEnum.Author)
+                .Select(p => new AuthorModel
                 {
-                    Id = foundedBook.Author.Id,
-                    Name = foundedBook.Author.Name
-                }
-                : null,
-            Tags = foundedBook.Tags.Select(t =>
+                    Id = p.People.Id,
+                    Name = p.People.Name
+                })
+                .FirstOrDefault(),
+            Tags = foundedBook.Tags.Select(t => new TagDto
             {
-                return new TagDto
-                {
-                    Id = t.Id,
-                    Name = t.Name,
-                    Description = t.Description
-                };
+                Id = t.Id,
+                Name = t.Name,
+                Description = t.Description
             }),
-            Translations = foundedBook.Translations.Select(t => new TranslationDto
+            Translations = foundedBook.Translations.Select(t => new TranslationModel
             {
                 Id = t.Id,
                 Name = t.Team.Name
@@ -189,7 +199,7 @@ public class BookController(IBookService bookService) : BaseController
     }
 
     /// <summary>
-    /// Обновление автора книги.
+    /// [DEPRECATED] Обновление автора книги.
     /// </summary>
     /// <param name="bookId">Id книги.</param>
     /// <param name="authorId">Id автора.</param>
@@ -198,6 +208,7 @@ public class BookController(IBookService bookService) : BaseController
     [ProducesOkResponseType]
     [ProducesResponseType(400, Type = typeof(BaseErrorResponse))]
     [ProducesNotFoundResponseType]
+    [DeprecatedMethod(10, 2, 2024)]
     public async Task<ActionResult> UpdateBookAuthor([FromRoute] int bookId, [FromRoute] int authorId)
     {
         var updateBookResult = await bookService.UpdateBookAuthorAsync(bookId, authorId);
@@ -265,5 +276,141 @@ public class BookController(IBookService bookService) : BaseController
         }
 
         return EmptyResult();
+    }
+
+    /// <summary>
+    /// Добавления человека к книге.
+    /// </summary>
+    /// <param name="bookId">Id книги.</param>
+    /// <param name="payload">Данные для добавления.</param>
+    [HttpPost("{bookId}/people")]
+    [Authorization(RequiredRoles = new[] { UserRolesEnum.Admin, UserRolesEnum.Moderator })]
+    [ProducesOkResponseType]
+    [ProducesUserErrorResponseType]
+    [ProducesNotFoundResponseType]
+    public async Task<IActionResult> AddPeople([FromRoute] int bookId, [FromBody] AddPeopleRequest payload)
+    {
+        var addPeopleResult = await bookService.AddPeopleToBookAsync(bookId, payload.PeopleId, payload.Role);
+        if (addPeopleResult.IsFailure)
+        {
+            var exception = addPeopleResult.GetError();
+            if (exception is BookNotFoundException)
+            {
+                return NotFoundError("Книга не найдена");
+            }
+
+            if (exception is PeopleNotFoundException)
+            {
+                return NotFoundError("Человек не найден");
+            }
+
+            if (exception is PeopleAlreadyAttachedException)
+            {
+                return Error("Человек уже прикреплён к книге", 400);
+            }
+
+            logger.LogError("Ошибка добавления человека к книге: {exception}", exception);
+            return ServerError();
+        }
+
+        return Ok();
+    }
+
+    /// <summary>
+    /// Удаление человека из книги.
+    /// </summary>
+    /// <param name="bookId">Id книги.</param>
+    /// <param name="peopleId">Id человека.</param>
+    [HttpDelete("{bookId}/people/{peopleId}")]
+    [Authorization(RequiredRoles = new[] { UserRolesEnum.Admin, UserRolesEnum.Moderator })]
+    [ProducesOkResponseType]
+    [ProducesNotFoundResponseType]
+    public async Task<IActionResult> RemovePeople([FromRoute] int bookId, [FromRoute] int peopleId)
+    {
+        var removePeopleResult = await bookService.DeletePeopleFromBookAsync(peopleId, bookId);
+        if (removePeopleResult.IsFailure)
+        {
+            var exception = removePeopleResult.GetError();
+            if (exception is PeopleNotFoundException)
+            {
+                return NotFoundError("Человек не найден");
+            }
+
+            if (exception is BookNotFoundException)
+            {
+                return NotFoundError("Книга не найдена");
+            }
+
+            logger.LogError("Ошибка удаления человека из книги: {exception}", exception);
+            return ServerError();
+        }
+
+        return Ok();
+    }
+
+    /// <summary>
+    /// Прикрепить персонажа к книге.
+    /// </summary>
+    /// <param name="bookId">Id книги.</param>
+    /// <param name="payload">Данные.</param>
+    [HttpPost("{bookId}/character")]
+    [Authorization(RequiredRoles = new[] { UserRolesEnum.Admin, UserRolesEnum.Editor })]
+    [ProducesOkResponseType]
+    [ProducesUserErrorResponseType]
+    public async Task<IActionResult> AttachCharacter([FromRoute] int bookId, [FromBody] AttachCharacterRequest payload)
+    {
+        var result =
+            await bookCharacterService.AttachCharacterToBookAsync(payload.CharacterId, bookId, payload.Role);
+
+        if (result.IsFailure)
+        {
+            var exception = result.GetError();
+            if (exception is CharacterNotFoundException)
+            {
+                return Error("Запрашиваемый персонаж не найден", 400);
+            }
+
+            if (exception is BookNotFoundException)
+            {
+                return Error("Запрашиваемая книга не найдена", 400);
+            }
+
+            if (exception is CharacterAlreadyAttachedToBookException)
+            {
+                return Error("Персонаж уже прикреплён к книге", 400);
+            }
+
+            logger.LogError("Ошибка прикрепления персонажа: {exception}", exception);
+            return ServerError();
+        }
+
+        return Ok();
+    }
+
+    /// <summary>
+    /// Удалить персонажа из книги.
+    /// </summary>
+    /// <param name="bookId">Id книги.</param>
+    /// <param name="characterId">Id персонажа.</param>
+    [HttpDelete("{bookId}/character/{characterId}")]
+    [Authorization(RequiredRoles = new[] { UserRolesEnum.Admin, UserRolesEnum.Editor })]
+    [ProducesOkResponseType]
+    [ProducesUserErrorResponseType]
+    public async Task<IActionResult> RemoveCharacter([FromRoute] int bookId, [FromRoute] int characterId)
+    {
+        var result = await bookCharacterService.RemoveBookCharacterAsync(characterId, bookId);
+        if (result.IsFailure)
+        {
+            var exception = result.GetError();
+            if (exception is BookCharacterNotFoundException)
+            {
+                return Error("Персонаж не прикреплён к данной книге", 400);
+            }
+
+            logger.LogError("Ошибка удаления персонажа книги: {exception}", exception);
+            return ServerError();
+        }
+
+        return Ok();
     }
 }

@@ -1,6 +1,6 @@
-﻿using MeowLib.Domain.Exceptions.Chapter;
-using MeowLib.Domain.Exceptions.User;
-using MeowLib.Services.Interface;
+﻿using MeowLib.Domain.Bookmark.Services;
+using MeowLib.Domain.Chapter.Exceptions;
+using MeowLib.Domain.User.Exceptions;
 using MeowLib.WebApi.Abstractions;
 using MeowLib.WebApi.Filters;
 using MeowLib.WebApi.Models.Requests.v1.Bookmark;
