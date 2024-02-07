@@ -12,8 +12,6 @@ using MeowLib.Domain.Shared;
 using MeowLib.Domain.Shared.Exceptions;
 using MeowLib.Domain.Shared.Models;
 using MeowLib.Domain.Shared.Result;
-using MeowLib.Domain.Tag.Entity;
-using MeowLib.Domain.Translation.Entity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -52,15 +50,7 @@ public class BookService(
         }
 
         // todo: fix author
-        var entry = await dbContext.Books.AddAsync(new BookEntityModel
-        {
-            Name = inputName,
-            Description = inputDescription,
-            Tags = new List<TagEntityModel>(),
-            Translations = new List<TranslationEntityModel>(),
-            Peoples = [],
-            Characters = []
-        });
+        var entry = await dbContext.Books.AddAsync(createBookEntityModel);
         await dbContext.SaveChangesAsync();
 
         return entry.Entity;
@@ -248,9 +238,7 @@ public class BookService(
                 Id = b.Id,
                 Name = b.Name,
                 Description = b.Description,
-                ImageName = b.Image != null
-                    ? b.Image.FileSystemName
-                    : null,
+                ImageName = b.Image != null ? b.Image.FileSystemName : null,
                 Author = null
             })
             .ToListAsync();

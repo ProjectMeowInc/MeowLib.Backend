@@ -81,7 +81,8 @@ public class FileService(ApplicationDbContext dbContext) : IFileService
 
     private async Task<string> SaveFileWithUniqueNameAsync(IFormFile file, string fileExtension)
     {
-        var newFileName = $"{Guid.NewGuid()}.{fileExtension}";
+        // точка не нужна
+        var newFileName = $"{Guid.NewGuid()}{fileExtension}";
 
         if (!Directory.Exists(UploadDirectoryPath))
         {
