@@ -32,7 +32,7 @@ public class BookController(IBookService bookService, IFileService fileService, 
                     Id = b.Id,
                     Name = b.Name,
                     Description = b.Description,
-                    ImageUrl = b.ImageName,
+                    Image = b.ImageName,
                     Author = b.Author != null
                         ? new AuthorShortModel
                         {
@@ -65,7 +65,7 @@ public class BookController(IBookService bookService, IFileService fileService, 
             Id = foundedBook.Id,
             Name = foundedBook.Name,
             Description = foundedBook.Description,
-            ImageUrl = foundedBook.Image?.FileSystemName,
+            Image = foundedBook.Image?.FileSystemName,
             Peoples = foundedBook.Peoples.Select(p => new PeopleWithBookRoleModel
             {
                 Id = p.People.Id,

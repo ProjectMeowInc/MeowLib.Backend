@@ -47,7 +47,7 @@ public class BookController(
                 Id = b.Id,
                 Name = b.Name,
                 Description = b.Description,
-                ImageUrl = b.ImageName
+                Image = b.ImageName
             })
         };
 

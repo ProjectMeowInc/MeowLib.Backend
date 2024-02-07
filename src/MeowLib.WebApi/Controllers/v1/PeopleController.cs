@@ -114,7 +114,7 @@ public class PeopleController(IPeopleService peopleService, ILogger<PeopleContro
                     {
                         Id = bp.Book.Id,
                         Name = bp.Book.Name,
-                        ImageUrl = bp.Book.Image?.FileSystemName
+                        Image = bp.Book.Image?.FileSystemName
                     },
                     Role = bp.Role
                 })

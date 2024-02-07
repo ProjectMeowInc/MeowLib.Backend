@@ -74,7 +74,7 @@ public class UserFavoriteController(IUserFavoriteService userFavoriteService) : 
                         Id = b.Book.Id,
                         Name = b.Book.Name,
                         Description = b.Book.Description,
-                        ImageUrl = b.Book.ImageName
+                        Image = b.Book.ImageName
                     })
                 })
         };
@@ -127,7 +127,7 @@ public class UserFavoriteController(IUserFavoriteService userFavoriteService) : 
                 Id = foundedFavorite.Book.Id,
                 Name = foundedFavorite.Book.Name,
                 Description = foundedFavorite.Book.Description,
-                ImageUrl = foundedFavorite.Book.Image?.FileSystemName
+                Image = foundedFavorite.Book.Image?.FileSystemName
             }
         });
     }
