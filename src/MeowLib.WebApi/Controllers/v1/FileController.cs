@@ -27,7 +27,7 @@ public class FileController(IFileService fileService, ILogger<FileController> lo
         var result = await fileService.GetFileByNameAsync(imageName);
         if (result is null)
         {
-            return NotFoundError();
+            return NotFoundError("Запрашиваемый файл не найден");
         }
 
         var (data, contentType) = result.Value;
@@ -38,7 +38,7 @@ public class FileController(IFileService fileService, ILogger<FileController> lo
     /// <summary>
     /// Метод загружает файл.
     /// </summary>
-    /// <param name="file">Файл для загрузки</param>
+    /// <param name="file">Файл для загрузки.</param>
     [HttpPost("upload")]
     [Authorization(RequiredRoles = new[] { UserRolesEnum.Admin, UserRolesEnum.Editor })]
     [ProducesOkResponseType(typeof(UploadFileResponse))]
@@ -60,8 +60,8 @@ public class FileController(IFileService fileService, ILogger<FileController> lo
             }
 
             logger.LogError("Неизвестная ошибка загрузки файла: {exception}", exception);
+            return ServerError();
         }
-
 
         return Ok(new UploadFileResponse
         {
